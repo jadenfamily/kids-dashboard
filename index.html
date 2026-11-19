@@ -7,18 +7,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="format-detection" content="telephone=no">
-<title>jadenfamily</title>
-<meta name="description" content="우리 집 대시보드">
-<meta name="apple-mobile-web-app-title" content="jadenfamily">
-<meta property="og:title" content="jadenfamily">
-<meta property="og:description" content="우리 집 대시보드">
+<title>Jaden's Today</title>
+<meta name="description" content="하루 루틴 · 칭찬 스티커 · 학원 시간표">
+<meta name="apple-mobile-web-app-title" content="Jaden's Today">
+<meta property="og:title" content="Jaden's Today">
+<meta property="og:description" content="하루 루틴 · 칭찬 스티커 · 학원 시간표">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="jadenfamily">
 <meta property="og:url" content="https://jadenfamily.github.io/kids-dashboard/">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="jadenfamily">
-<meta name="twitter:description" content="우리 집 대시보드">
+<meta name="twitter:title" content="Jaden's Today">
+<meta name="twitter:description" content="하루 루틴 · 칭찬 스티커 · 학원 시간표">
 <style>
   :root{
     --ink:#2c2440;
@@ -181,7 +181,7 @@
   .icon-btn:active{ transform:scale(.95); }
   .edit-btn{
     width:auto; min-height:38px; padding:0 12px; border-radius:999px; border:none;
-    background:#fff; box-shadow:var(--shadow); color:var(--ink);
+    background:#fff; box-shadow:var(--shadow); color:var(--ink); text-decoration:none;
     font-size:13.5px; font-weight:900; cursor:pointer; white-space:nowrap;
     touch-action:manipulation; display:inline-flex; align-items:center; justify-content:center; gap:5px;
   }
@@ -548,6 +548,7 @@
   }
   .lf-btn:active{ transform:translateY(1px); }
   .lf-btn:disabled{ opacity:.6; cursor:default; }
+  a.lf-btn{ display:flex; align-items:center; justify-content:center; text-decoration:none; }
   .lf-msg{ margin:0; min-height:17px; font-size:12.5px; font-weight:800; color:#c6415a; line-height:1.45; }
   .lf-msg.ok{ color:#12805c; }
   .lf-link{ border:none; background:none; color:#7c6aa8; font-size:12.5px; font-weight:900; cursor:pointer; text-decoration:underline; padding:4px; }
@@ -1011,7 +1012,7 @@
         </div>
       </div>
       <div class="action-grid">
-        <button class="edit-btn hub-btn" id="hubBtn" data-act="hub-open" aria-haspopup="dialog"><span class="bi" aria-hidden="true">🏠</span><span class="bl">허브</span></button>
+        <a class="edit-btn hub-btn" id="hubBtn" href="../home/" title="가족 허브"><span class="bi" aria-hidden="true">🏠</span><span class="bl">허브</span></a>
         <button class="icon-btn" id="soundBtn" data-act="sound-toggle" aria-label="소리 켜기">🔔</button>
         <button class="edit-btn" id="accountsBtn" data-act="accounts-open" aria-haspopup="dialog" hidden><span class="bi" aria-hidden="true">👥</span><span class="bl">계정</span></button>
         <button class="edit-btn hist-btn" id="historyBtn" data-act="history-open" aria-haspopup="dialog"><span class="bi" aria-hidden="true">📅</span><span class="bl">기록</span></button>
@@ -1114,27 +1115,11 @@
     <div class="login-brand">
       <span class="login-logo">🏠</span>
       <div>
-        <h1>우리 집 대시보드</h1>
+        <h1>Jaden's Today</h1>
         <p>가족만 들어올 수 있어요</p>
       </div>
     </div>
     <div id="loginBody"></div>
-  </div>
-</div>
-
-<div class="hub" id="hubScreen" hidden role="dialog" aria-modal="true" aria-labelledby="hubTitle">
-  <div class="hub-card">
-    <div class="hub-head">
-      <div>
-        <h2 id="hubTitle">🏠 우리 집 대시보드</h2>
-        <p class="hub-sub" id="hubSub">오늘은 어디로 갈까요?</p>
-      </div>
-      <button class="hist-close" data-act="hub-close" aria-label="허브 닫기">✕</button>
-    </div>
-    <div class="hub-grid" id="hubGrid"></div>
-    <div class="hub-foot">
-      <p class="hub-note">🧊 냉장고 대시보드도 여기서 함께 열 수 있어요. 📒 가계부는 다음에 만들 예정이에요.</p>
-    </div>
   </div>
 </div>
 
@@ -1230,13 +1215,6 @@
     child: { label: '아이', perms: { check: 1, sticker: 1, history: 1 } },
     viewer: { label: '보기 전용', perms: { history: 1 } }
   };
-
-  /* 가족 허브: 대시보드 목록(여기에 한 줄씩 추가하면 허브에 카드가 생겨요) */
-  var DASHBOARDS = [
-    { id: 'kids', emoji: '👦', title: '아이 대시보드', desc: '루틴 체크 · 칭찬 스티커 · 학원 시간표', kind: 'here' },
-    { id: 'fridge', emoji: '🧊', title: '냉장고 파먹기', desc: '식재료 재고 · 장보기 알림 · 주간 식단', kind: 'link', urlKey: 'fridge', fallback: '../fridge-dashboard/' },
-    { id: 'ledger', emoji: '📒', title: '가계부', desc: '식비·생활비 기록을 한곳에 모아요', kind: 'soon' }
-  ];
 
   var cloud = {
     conn: null, users: null, me: null, session: null,
@@ -4308,8 +4286,6 @@
   function showLogin(mode) {
     var login = document.getElementById('loginScreen');
     var app = document.getElementById('appRoot');
-    var hb = document.getElementById('hubScreen');
-    if (hb) hb.hidden = true;
     if (login) login.hidden = false;
     if (app) app.hidden = true;
     document.body.style.overflow = '';
@@ -4317,12 +4293,33 @@
     renderSyncPill();
   }
 
-  function renderLoginBody(mode) {
+  /* 문은 가족 허브(../home/)예요. 이 화면은 허브로 보내고, 필요하면 여기서 바로 로그인할 수 있어요. */
+  function gateHtml(mode) {
+    var setup = (mode === 'setup');
+    return '<div class="lf">' +
+      '<p class="lf-note">' + (setup
+        ? '아직 이 기기가 저장소에 연결되지 않았어요. 가족 허브에서 한 번만 연결하면 여기서도 바로 이어서 쓸 수 있어요.'
+        : '로그인이 필요해요. 가족 허브에서 로그인하면 여기서도 바로 이어서 볼 수 있어요.') + '</p>' +
+      '<a class="lf-btn gate-go" href="../home/">🏠 가족 허브로 가기</a>' +
+      '<p class="lf-msg" id="loginMsg"></p>' +
+      '<button class="lf-link" type="button" data-act="gate-direct" data-mode="' + (setup ? 'setup' : 'login') + '">' +
+        (setup ? '이 기기에서 직접 연결하기' : '이 기기에서 바로 로그인') + '</button>' +
+      '</div>';
+  }
+
+  function renderLoginBody(mode, direct) {
     var body = document.getElementById('loginBody');
     if (!body) return;
-    body.innerHTML = (mode === 'setup') ? setupHtml() : loginHtml();
+    mode = mode || (cloud.conn ? 'login' : 'setup');
+    body.innerHTML = direct ? ((mode === 'setup') ? setupHtml() : loginHtml()) : gateHtml(mode);
     var first = body.querySelector('input');
     if (first) { try { first.focus(); } catch (e) { /* 무시 */ } }
+  }
+
+  function showLoginForm(mode) {
+    mode = mode || (cloud.conn ? 'login' : 'setup');
+    showLogin(mode);
+    renderLoginBody(mode, true);
   }
 
   function setupHtml() {
@@ -4428,7 +4425,7 @@
       clearSession(); /* 기기를 다시 연결했으면 다시 로그인 */
       cloud.lastSig = settingsSignature();
       setSync('ok');
-      renderLoginBody('login');
+      showLoginForm('login');
       var lm = document.getElementById('loginMsg');
       if (lm) { lm.className = 'lf-msg ok'; lm.textContent = '기기 연결 완료! 아이디와 비밀번호로 로그인해 주세요.'; }
     } catch (e) {
@@ -4448,7 +4445,7 @@
     var msg = document.getElementById('loginMsg');
     function fail(t) { if (msg) { msg.className = 'lf-msg'; msg.textContent = t; } }
     if (!id || !pw) return fail('아이디와 비밀번호를 넣어 주세요.');
-    if (!cloud.conn) { renderLoginBody('setup'); return; }
+    if (!cloud.conn) { renderLoginBody('setup', true); return; }
 
     var btn = document.getElementById('loginBtn');
     if (btn) { btn.disabled = true; btn.textContent = '확인 중…'; }
@@ -4479,7 +4476,6 @@
       cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer' };
       saveSession(cloud.me, remember, null);
       await enterDashboard();
-      if (cloud.me) { lsSet(HUB_LAST_KEY, 'kids'); openHub(); }
     } catch (e) {
       fail('로그인 중 문제가 생겼어요. ' + (e && e.message ? e.message : ''));
     } finally {
@@ -4488,6 +4484,7 @@
   }
 
   async function enterDashboard() {
+    lsSet(HUB_LAST_KEY, 'kids'); /* 가족 허브(/home/)의 '최근 사용' 표시용 */
     var login = document.getElementById('loginScreen');
     var app = document.getElementById('appRoot');
     if (login) login.hidden = true;
@@ -4528,53 +4525,6 @@
     if (cloud.dirty.day) scheduleSync('day');
   }
 
-  /* ============ 가족 허브 ============ */
-  function renderHub() {
-    var grid = document.getElementById('hubGrid');
-    if (!grid) return;
-    var last = lsGet(HUB_LAST_KEY) || 'kids';
-    var html = '';
-    for (var i = 0; i < DASHBOARDS.length; i++) {
-      var d = DASHBOARDS[i];
-      var badge = '';
-      if (d.id === 'kids' && last === 'kids' && cloud.me) badge = '<span class="ht-badge">최근 사용</span>';
-      if (d.id === 'fridge' && last === 'fridge') badge = '<span class="ht-badge">최근 사용</span>';
-      var body = '<span class="ht-emoji">' + d.emoji + '</span>' +
-        '<span class="ht-body"><span class="ht-title">' + esc(d.title) + '</span>' +
-        '<span class="ht-desc">' + esc(d.desc) + '</span></span>';
-      if (d.kind === 'here') {
-        html += '<button type="button" class="hub-tile kids" data-act="hub-go-kids">' + badge + body +
-          '<span class="ht-go">바로 열기 →</span></button>';
-      } else if (d.kind === 'link') {
-        var u = d.fallback;
-        if (u) {
-          html += '<a class="hub-tile fridge" href="' + esc(u) + '" data-act="hub-open-fridge">' + badge + body +
-            '<span class="ht-go">열기 →</span></a>';
-        } else {
-          html += '<div class="hub-tile ledger">' + badge + body + '<span class="ht-go">아직 주소가 없어요</span></div>';
-        }
-      } else {
-        html += '<div class="hub-tile ledger">' + badge + body + '<span class="ht-go">준비 중 🚧</span></div>';
-      }
-    }
-    grid.innerHTML = html;
-  }
-
-  function openHub() {
-    renderHub();
-    var sub = document.getElementById('hubSub');
-    if (sub) sub.textContent = (cloud.me ? (cloud.me.name || cloud.me.id) + '님, ' : '') + '오늘은 어디로 갈까요?';
-    var h = document.getElementById('hubScreen');
-    if (h) h.hidden = false;
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeHub() {
-    var h = document.getElementById('hubScreen');
-    if (h) h.hidden = true;
-    if (!document.getElementById('histModal') || document.getElementById('histModal').hidden) document.body.style.overflow = '';
-  }
-
   async function doLogout(silent) {
     clearSession(); /* 새로고침해도 자동 로그인되지 않도록 즉시 세션 삭제 */
     try {
@@ -4588,7 +4538,6 @@
     ui.editing = false;
     closeHistory();
     closeAccounts();
-    closeHub();
     showLogin('login');
   }
 
@@ -4650,7 +4599,7 @@
   function setLoginMsg(text, ok) {
     var body = document.getElementById('loginBody');
     if (!body) return;
-    if (!body.querySelector('#loginForm') && !body.querySelector('#setupForm')) renderLoginBody(cloud.conn ? 'login' : 'setup');
+    if (!body.querySelector('#loginForm') && !body.querySelector('#setupForm')) renderLoginBody(cloud.conn ? 'login' : 'setup', true);
     var m = document.getElementById('loginMsg') || document.getElementById('setupMsg');
     if (m) { m.className = 'lf-msg' + (ok ? ' ok' : ''); m.textContent = text; }
   }
@@ -4881,12 +4830,17 @@
     while (t.length % 4) t += '=';
     return b64decodeUtf8(t);
   }
+  /* 새 기기 연결 링크는 가족 허브(/home/)의 로그인 화면으로 보내요 */
+  function homePortalUrl() {
+    try { return new URL('../home/', window.location.href).href.replace(/[?#].*$/, ''); }
+    catch (e) { return 'https://jadenfamily.github.io/home/'; }
+  }
+
   function buildConnectLink() {
     var c = cloud.conn;
     if (!c || !c.owner || !c.repo || !c.token) return '';
     var payload = { owner: c.owner, repo: c.repo, token: c.token, branch: c.branch || 'main' };
-    var base = String(window.location.href || '').split('#')[0];
-    return base + '#connect=' + b64urlEncodeUtf8(JSON.stringify(payload));
+    return homePortalUrl() + '#connect=' + b64urlEncodeUtf8(JSON.stringify(payload));
   }
 
   function showToast(text) {
@@ -4985,8 +4939,6 @@
   function showConnectProgress(text) {
     var login = document.getElementById('loginScreen');
     var app = document.getElementById('appRoot');
-    var hb = document.getElementById('hubScreen');
-    if (hb) hb.hidden = true;
     if (login) login.hidden = false;
     if (app) app.hidden = true;
     document.body.style.overflow = '';
@@ -5001,7 +4953,7 @@
   }
 
   function connectFail(msg) {
-    showLogin('setup');
+    showLoginForm('setup');
     var m = document.getElementById('setupMsg');
     if (m) { m.className = 'lf-msg'; m.textContent = msg; }
   }
@@ -5054,7 +5006,7 @@
       cloud.lastSig = settingsSignature();
       connectJustDone = true;
       setSync('ok');
-      renderLoginBody('login');
+      showLoginForm('login');
       var lm = document.getElementById('loginMsg');
       if (lm) { lm.className = 'lf-msg ok'; lm.textContent = '기기가 자동으로 연결됐어요! 아이디와 비밀번호로 로그인해 주세요.'; }
     } catch (e) {
@@ -5098,10 +5050,7 @@
     var act = el.getAttribute('data-act');
 
     if (act === 'logout') { doLogout(); return; }
-    if (act === 'hub-open') { openHub(); return; }
-    if (act === 'hub-close') { closeHub(); return; }
-    if (act === 'hub-go-kids') { lsSet(HUB_LAST_KEY, 'kids'); closeHub(); return; }
-    if (act === 'hub-open-fridge') { lsSet(HUB_LAST_KEY, 'fridge'); return; } /* 기본 동작(이동)은 그대로 */
+    if (act === 'gate-direct') { renderLoginBody(el.getAttribute('data-mode') || (cloud.conn ? 'login' : 'setup'), true); return; }
     if (act === 'accounts-open') { openAccounts(); return; }
     if (act === 'accounts-close') { closeAccounts(); return; }
     if (act === 'acct-pw') { acct.pwFor = el.getAttribute('data-id') || ''; acct.msg = ''; renderAccounts(); return; }
@@ -5109,8 +5058,8 @@
     if (act === 'acct-del') { deleteAccount(el.getAttribute('data-id')); return; }
     if (act === 'acct-connect-link') { copyConnectLink(); return; }
     if (act === 'acct-link-select') { try { el.focus(); el.select(); } catch (e) { /* 무시 */ } return; }
-    if (act === 'relink') { renderLoginBody('setup'); return; }
-    if (act === 'relink-cancel') { renderLoginBody(cloud.conn ? 'login' : 'setup'); return; }
+    if (act === 'relink') { renderLoginBody('setup', true); return; }
+    if (act === 'relink-cancel') { renderLoginBody(cloud.conn ? 'login' : 'setup', true); return; }
 
     if (act === 'toggle-check' && !can('check')) return;
     if ((act === 'sticker-add' || act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-new-direct' || act === 'sticker-clear') && !can('sticker')) return;
@@ -5224,14 +5173,10 @@
     if (st && !st.hidden && e.target === st) closeStats();
     var wb = document.getElementById('wbModal');
     if (wb && !wb.hidden && e.target === wb) closeWb();
-    var hs = document.getElementById('hubScreen');
-    if (hs && !hs.hidden && e.target === hs) closeHub();
   });
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape' && e.key !== 'Esc') return;
-    var hb = document.getElementById('hubScreen');
-    if (hb && !hb.hidden) { closeHub(); return; }
     var w2 = document.getElementById('winModal');
     if (w2 && !w2.hidden) { closeWin(); return; }
     var s2 = document.getElementById('statsModal');
