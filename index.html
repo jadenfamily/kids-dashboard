@@ -427,6 +427,12 @@
     background:linear-gradient(135deg,#ffd43b,#ff9f1c); color:#5a3200;
     font-size:18px; font-weight:900; cursor:pointer; touch-action:manipulation;
   }
+  .modal-actions{ display:flex; flex-direction:column; gap:8px; }
+  .modal-btn.sub{
+    background:#fff; color:#8a6a2f; border:2px solid #f0dcb4;
+    min-height:50px; font-size:15.5px;
+  }
+  #goalModalText b{ color:#0f7a55; }
 
   /* ---------- 로그인 ---------- */
   .login{
@@ -728,7 +734,14 @@
   .spend-form label{ display:flex; flex-direction:column; gap:4px; font-size:12px; font-weight:900; color:#6d6484; }
   .spend-form input{ min-height:46px; border-radius:12px; border:2px solid #e6dccf; padding:8px 11px; font-size:15px; font-weight:800; background:#fffdf9; color:var(--ink); }
   .spend-form .full{ grid-column:1 / -1; }
-  .spend-preview{ grid-column:1 / -1; background:#fff8ec; border-radius:13px; padding:9px 12px; font-size:12.5px; font-weight:900; color:#a8722a; }
+  .spend-preview{ grid-column:1 / -1; background:#fff8ec; border-radius:13px; padding:9px 12px; font-size:12.5px; font-weight:900; color:#a8722a; line-height:1.55; }
+  .spend-preview b{ color:#b4436c; }
+  .spend-preview .pv-later{ margin-top:3px; color:#0f7a55; }
+  .spend-preview .pv-later b{ color:#0f7a55; }
+  .spend-preview .pv-warn{ color:#c6415a; font-size:11.5px; }
+  .spend-balance{ grid-column:1 / -1; background:#eefaf3; border:2px solid #ccefdc; border-radius:14px; padding:9px 12px; font-size:13px; font-weight:900; color:#0f7a55; line-height:1.5; }
+  .spend-balance b{ font-size:16px; }
+  .spend-balance .unit{ font-size:11.5px; font-weight:800; color:#6a9a83; }
   .win-card{ max-width:430px; background:linear-gradient(180deg,#fffdf5,#fff6e6); }
   .win-badge{ font-size:76px; line-height:1; animation:spot .6s cubic-bezier(.2,1.5,.4,1); }
   .win-sub{ font-size:14px; font-weight:900; color:#c46a00; margin:-4px 0 12px; }
@@ -852,7 +865,7 @@
         <h2 id="secTitleSticker">칭찬 스티커</h2>
         <span class="rt-percent"><strong id="stickerCount">0</strong> / <span id="stickerSlots">10</span></span>
       </div>
-      <p class="goal">스티커 <b id="goalSlots">10</b>개 모으면 <strong id="goalText">주말 피자 파티 🍕</strong></p>
+      <p class="goal" id="stickerUnitLine" hidden></p>
       <div class="board" id="stickerBoard"></div>
       <div class="ledger" id="stickerLedger"></div>
       <div class="sticker-actions">
@@ -888,9 +901,12 @@
 <div class="modal" id="goalModal" hidden role="dialog" aria-modal="true" aria-labelledby="goalModalTitle">
   <div class="modal-card">
     <div class="modal-emoji">🎉</div>
-    <h2 id="goalModalTitle">스티커를 다 모았어요!</h2>
+    <h2 id="goalModalTitle">스티커 판 완성!</h2>
     <p id="goalModalText">정말 잘했어요!</p>
-    <button class="modal-btn" data-act="close-goal">좋아요!</button>
+    <div class="modal-actions">
+      <button class="modal-btn" data-act="sticker-new-direct">새 판 이어서 시작</button>
+      <button class="modal-btn sub" data-act="close-goal">닫기</button>
+    </div>
   </div>
 </div>
 
@@ -1160,7 +1176,7 @@
         }
       ],
       sticker: {
-        slots: 10, goal: '주말 피자 파티 🍕', stickers: [], celebrated: false,
+        slots: 10, goal: '', stickers: [], celebrated: false,
         unit: 1000,
         reasons: ['루틴 완료', '독서', '심부름', '문제집', '착한 일']
       },
@@ -1260,6 +1276,8 @@
     s.sticker.slots = Math.max(slots, list.length);
     s.sticker.stickers = list;
     s.sticker.goal = (typeof s.sticker.goal === 'string') ? s.sticker.goal : d.sticker.goal;
+    /* 예전 기본값('주말 피자 파티')은 토큰형 UI에서 쓰지 않으므로 비워 둔다 */
+    if (s.sticker.goal === '주말 피자 파티 🍕') s.sticker.goal = '';
     s.sticker.celebrated = (s.sticker.celebrated === true);
     var unit = parseInt(s.sticker.unit, 10);
     s.sticker.unit = (isNaN(unit) || unit < 100 || unit > 100000) ? 1000 : unit;
@@ -1322,10 +1340,12 @@
         var bt = Number(be.t);
         if (!bt || isNaN(bt)) continue;
         var bd = (typeof be.d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(be.d)) ? be.d : dateKey(new Date(bt));
+        var bg = (typeof be.goal === 'string') ? be.goal : '';
+        if (bg === '주말 피자 파티 🍕') bg = ''; /* 예전 기본 문구는 기록에서도 숨김 */
         boardLog.push({
           d: bd, t: bt,
           slots: Math.max(0, parseInt(be.slots, 10) || 0),
-          goal: (typeof be.goal === 'string') ? be.goal : ''
+          goal: bg
         });
       }
     }
@@ -2045,10 +2065,17 @@
     if (cnt) cnt.textContent = list.length;
     var slotsEl = document.getElementById('stickerSlots');
     if (slotsEl) slotsEl.textContent = slots;
-    var goalText = document.getElementById('goalText');
-    if (goalText) goalText.textContent = st.goal || '칭찬 선물';
-    var goalSlots = document.getElementById('goalSlots');
-    if (goalSlots) goalSlots.textContent = slots;
+    var unitLine = document.getElementById('stickerUnitLine');
+    if (unitLine) {
+      var sub = (st.goal || '').trim();
+      if (sub) {
+        unitLine.textContent = sub;
+        unitLine.hidden = false;
+      } else {
+        unitLine.textContent = '';
+        unitLine.hidden = true;
+      }
+    }
 
     var btn = document.getElementById('stickerBtn');
     if (btn) {
@@ -2059,8 +2086,8 @@
         btn.classList.remove('full');
       } else if (list.length >= slots) {
         btn.disabled = false;
-        btn.textContent = '🎉 다 모았어요! 새 보드 시작';
-        btn.setAttribute('data-act', 'sticker-new');
+        btn.textContent = '🎉 판 완성! 새 판 시작';
+        btn.setAttribute('data-act', 'sticker-new-direct');
         btn.classList.add('full');
       } else {
         btn.disabled = false;
@@ -2140,8 +2167,9 @@
     snd('uncheck');
   }
 
-  function newBoard() {
-    if (!window.confirm('새 보드를 시작할까요?\n지금까지 붙인 스티커가 모두 사라져요.')) return;
+  function newBoard(direct) {
+    /* direct: 완성 축하 모달의 '새 판 이어서 시작'처럼 잃을 게 없을 때는 확인 없이 진행 */
+    if (!direct && !window.confirm('새 스티커 판을 시작할까요?\n적립된 스티커 개수와 사용 내역은 그대로 유지돼요.')) return;
     state.sticker.stickers = [];
     state.sticker.celebrated = false;
     saveState();
@@ -2159,9 +2187,13 @@
 
   function openGoalModal() {
     var m = document.getElementById('goalModal');
+    var title = document.getElementById('goalModalTitle');
     var t = document.getElementById('goalModalText');
+    var unit = state.sticker.unit || 1000;
+    var remain = remainStickers();
+    if (title) title.textContent = '스티커 판 ' + state.sticker.slots + '칸 완성!';
     if (t) {
-      t.textContent = '스티커 ' + state.sticker.slots + '개를 다 모았어요! ' + (state.sticker.goal || '칭찬 선물');
+      t.innerHTML = '<b>남은 스티커 ' + fmtNum(remain) + '개 · ' + fmtNum(remain * unit) + '원</b>';
     }
     if (m) m.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -2301,8 +2333,8 @@
         fieldWrap('인사말', '<input class="inp" data-field="greeting" value="' + esc(s.greeting) + '" placeholder="예: 오늘도 화이팅! 🌟" maxlength="40">') +
         fieldWrap('동네 (날씨)', '<select class="inp" data-field="city">' + cityOptions(s.city) + '</select>') +
         fieldWrap('스티커 칸 수', '<select class="inp" data-field="stickerSlots">' + slotsOptions(state.sticker.slots) + '</select>') +
-        fieldWrap('스티커 목표', '<input class="inp" data-field="stickerGoal" value="' + esc(state.sticker.goal) + '" placeholder="예: 주말 피자 파티 🍕" maxlength="40">') +
-        fieldWrap('스티커 1개 가치(원)', '<input class="inp" type="number" data-field="stickerUnit" min="100" max="100000" step="100" value="' + (state.sticker.unit || 1000) + '">') +
+        fieldWrap('스티커 1개 금액(원)', '<input class="inp" type="number" data-field="stickerUnit" min="100" max="100000" step="100" value="' + (state.sticker.unit || 1000) + '">') +
+        fieldWrap('스티커 한 줄 소개', '<input class="inp" data-field="stickerGoal" value="' + esc(state.sticker.goal) + '" placeholder="비워 두면 안 보여요 (예: 모아서 원하는 선물에 써요)" maxlength="40">') +
         fieldWrap('스티커 이유 (콤마로 구분)', '<input class="inp" data-field="stickerReasons" value="' + esc((state.sticker.reasons || []).join(', ')) + '" placeholder="루틴 완료, 독서, 심부름">') +
       '</div>' +
       '<div class="ep-sub">' +
@@ -3061,20 +3093,30 @@
     if (isOnlyModal('spendModal')) document.body.style.overflow = '';
   }
 
-  function spendPreviewText() {
+  function spendPreviewHtml() {
     var unit = state.sticker.unit || 1000;
+    var left = remainStickers();
     var cnt = spendState.count || 1;
-    return cnt + '개 = ' + fmtNum(cnt * unit) + '원 · 지금 남은 스티커 ' + fmtNum(remainStickers()) + '개';
+    if (left < 1) return '<div class="pv-line">지금은 쓸 수 있는 스티커가 없어요</div>';
+    var after = Math.max(0, left - cnt);
+    return '<div class="pv-line">사용 ' + fmtNum(cnt) + '개 = <b>' + fmtNum(cnt * unit) + '원</b></div>' +
+      '<div class="pv-line pv-later">사용 후 남은 스티커: <b>' + fmtNum(after) + '개</b> (' + fmtNum(after * unit) + '원)' +
+      (cnt > left ? ' <span class="pv-warn">남은 ' + fmtNum(left) + '개보다 많이 쓸 수 없어요</span>' : '') + '</div>';
   }
 
   function spendHtml() {
     var left = remainStickers();
+    var unit = state.sticker.unit || 1000;
+    var none = left < 1;
     return '<form class="spend-form" id="spendForm" autocomplete="off">' +
+      '<div class="spend-balance">현재 남은 스티커: <b>' + fmtNum(left) + '개</b> · ' + fmtNum(left * unit) + '원' +
+        '<div class="unit">스티커 1개 = ' + fmtNum(unit) + '원' + (none ? ' · 지금은 쓸 수 있는 스티커가 없어요' : '') + '</div>' +
+      '</div>' +
       '<label>날짜<input type="date" id="spendDate" value="' + esc(spendState.date) + '"></label>' +
-      '<label>몇 개 쓸까요? (남은 ' + left + '개)<input type="number" id="spendCount" min="1" max="' + Math.max(1, left) + '" step="1" value="' + (spendState.count || 1) + '"></label>' +
+      '<label>몇 개 쓸까요?<input type="number" id="spendCount" min="1" max="' + Math.max(1, left) + '" step="1" value="' + (spendState.count || 1) + '"' + (none ? ' disabled' : '') + '></label>' +
       '<label class="full">무엇을 샀나요?<input id="spendItem" maxlength="40" placeholder="예: 레고 미니피규어" value="' + esc(spendState.item) + '"></label>' +
-      '<div class="spend-preview" id="spendPreview">' + spendPreviewText() + '</div>' +
-      '<div class="full"><button class="lf-btn" type="submit">기록하기</button></div>' +
+      '<div class="spend-preview" id="spendPreview">' + spendPreviewHtml() + '</div>' +
+      '<div class="full"><button class="lf-btn" type="submit"' + (none ? ' disabled' : '') + '>기록하기</button></div>' +
       '</form>' +
       '<p class="lf-msg" id="spendMsg">' + esc(spendState.msg || '') + '</p>';
   }
@@ -4418,8 +4460,9 @@
     if (act === 'relink-cancel') { renderLoginBody(cloud.conn ? 'login' : 'setup'); return; }
 
     if (act === 'toggle-check' && !can('check')) return;
-    if ((act === 'sticker-add' || act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-clear') && !can('sticker')) return;
-    if ((act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-clear') && !can('stickerManage')) return;    if ((act === 'edit-toggle' || act === 'add-item' || act === 'del-item' || act === 'add-event' || act === 'del-event') && !can('edit')) return;
+    if ((act === 'sticker-add' || act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-new-direct' || act === 'sticker-clear') && !can('sticker')) return;
+    if ((act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-clear') && !can('stickerManage')) return;
+    if ((act === 'edit-toggle' || act === 'add-item' || act === 'del-item' || act === 'add-event' || act === 'del-event') && !can('edit')) return;
     if ((act === 'reset-today' || act === 'reset-all') && !can('reset')) return;
 
     if (act === 'toggle-check') { onToggleCheck(el); return; }
@@ -4429,6 +4472,13 @@
     if (act === 'sticker-add') { openReason(); return; }
     if (act === 'sticker-undo') { undoSticker(parseInt(el.getAttribute('data-i'), 10)); return; }
     if (act === 'sticker-new') { newBoard(); return; }
+    if (act === 'sticker-new-direct') {
+      /* 판이 꽉 찼을 때(또는 관리자)만 확인 없이 새 판 시작 — 적립·사용 기록은 그대로 */
+      if (state.sticker.stickers.length < state.sticker.slots && !can('stickerManage')) return;
+      closeGoal();
+      newBoard(true);
+      return;
+    }
     if (act === 'sticker-clear') { clearBoard(); return; }
     if (act === 'edit-toggle') { toggleEdit(); return; }
     if (act === 'sound-toggle') { toggleSound(); return; }
@@ -4538,7 +4588,7 @@
     var n = parseInt(el.value, 10);
     spendState.count = (isNaN(n) || n < 1) ? 1 : n;
     var pv = document.getElementById('spendPreview');
-    if (pv) pv.textContent = spendPreviewText();
+    if (pv) pv.innerHTML = spendPreviewHtml();
   });
 
   document.addEventListener('submit', function (e) {
@@ -4608,10 +4658,9 @@
       return;
     }
     if (field === 'stickerGoal') {
-      state.sticker.goal = el.value;
+      state.sticker.goal = el.value.slice(0, 40);
       saveState();
-      var g = document.getElementById('goalText');
-      if (g) g.textContent = el.value || '칭찬 선물';
+      renderStickers();
       return;
     }
     if (field === 'stickerUnit') {
