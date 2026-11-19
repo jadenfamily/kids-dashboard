@@ -57,6 +57,7 @@
 
   .app{
     max-width:1420px;
+    width:100%;
     margin:0 auto;
     padding:clamp(14px,2vw,26px) clamp(14px,2.4vw,30px) 44px;
     display:flex;
@@ -291,7 +292,20 @@
     border:2px solid transparent; display:flex; flex-direction:column; gap:9px; min-width:0;
     transition:border-color .25s, box-shadow .25s;
   }
-  .routine-card.complete{ border-color:var(--c); box-shadow:0 8px 18px rgba(255,170,60,.12); }
+  .routine-card.complete{
+    border-color:var(--c);
+    background:linear-gradient(180deg,#fffdf3 0%,#fff8e2 58%,var(--ct) 100%);
+    box-shadow:0 10px 24px rgba(255,170,60,.20), 0 0 0 4px rgba(255,213,110,.18);
+  }
+  .routine-card.complete .rc-emoji{ animation:petBob 2.6s ease-in-out infinite; }
+  .rc-bonus{
+    display:flex; align-items:center; justify-content:center; gap:5px; margin-top:2px;
+    border-radius:12px; padding:6px 8px; font-size:11.5px; font-weight:900; color:#8a5200;
+    background:linear-gradient(100deg,#fff0bf,#ffe08a,#fff0bf);
+    background-size:220% 100%; animation:bonusShine 2.6s linear infinite;
+    border:1.5px solid #ffdd93;
+  }
+  @keyframes bonusShine{ 0%{background-position:0% 0} 100%{background-position:220% 0} }
   .rc-head{ display:flex; align-items:center; gap:9px; }
   .rc-emoji{
     width:40px; height:40px; border-radius:14px; background:#fff; flex:0 0 auto;
@@ -408,21 +422,141 @@
   }
   .slot.filled:active{ transform:scale(.94); }
   .slot .num{ font-size:12px; font-weight:900; color:#dcccB8; }
+  .slot.empty.tappable{ cursor:pointer; touch-action:manipulation; transition:border-color .15s, background .15s, transform .1s; }
+  .slot.empty.tappable .num{ font-size:17px; color:#e6d6c1; font-weight:900; }
+  .slot.empty.tappable:active{ transform:scale(.95); border-color:#ffc46b; background:#fff5e2; }
+  .slot.empty.locked{ opacity:.72; }
   .slot.fresh{ animation:spot .5s cubic-bezier(.2,1.5,.4,1); }
   @keyframes spot{ 0%{transform:scale(.2) rotate(-25deg)} 70%{transform:scale(1.12) rotate(6deg)} 100%{transform:scale(1) rotate(0)} }
-  .sticker-btn{
-    width:100%; min-height:60px; border:none; border-radius:18px;
-    background:linear-gradient(135deg,#ffd43b,#ff9f1c);
-    color:#5a3200; font-size:19px; font-weight:900; letter-spacing:-.01em;
-    cursor:pointer; box-shadow:0 8px 18px rgba(255,159,28,.32);
-    touch-action:manipulation;
+  .sticker-hint{ margin:4px 0 0; font-size:11.5px; font-weight:700; color:#b3a696; text-align:center; }
+  .head-tools{ display:flex; align-items:center; gap:7px; margin-left:auto; flex-wrap:wrap; justify-content:flex-end; }
+  .head-tools .rt-percent{ padding:4px 10px; font-size:13px; }
+  .pill-btn{
+    border:none; border-radius:999px; background:#f1edff; color:#5b4bb0;
+    font-size:12.5px; font-weight:900; padding:0 13px; min-height:36px;
+    cursor:pointer; touch-action:manipulation; white-space:nowrap;
   }
-  .sticker-btn:active{ transform:translateY(1px) scale(.995); }
-  .sticker-btn.full{
-    background:linear-gradient(135deg,#c6f7e0,#79e3b9); color:#085c3f;
-    box-shadow:0 8px 18px rgba(70,200,150,.28);
+  .pill-btn:active{ transform:scale(.96); }
+  .pill-btn.warm{
+    background:linear-gradient(135deg,#ffd43b,#ff9f1c); color:#5a3200;
+    box-shadow:0 6px 14px rgba(255,159,28,.30);
   }
-  .sticker-hint{ margin:9px 0 0; font-size:11.5px; font-weight:700; color:#b3a696; text-align:center; }
+  .pill-btn:disabled{ opacity:.55; cursor:default; }
+
+  /* ---------- 오늘의 친구 (펫 키우기) ---------- */
+  .petbar{
+    display:flex; align-items:center; gap:clamp(9px,1.5vw,16px); flex-wrap:wrap;
+    border-radius:24px; padding:9px 13px;
+    background:linear-gradient(118deg,#fffdf7 0%,var(--pet-t,#fff6e0) 62%,#fffdf7 100%);
+    border:2px solid #ffe3b3; box-shadow:0 8px 20px rgba(255,190,90,.16);
+    position:relative; overflow:hidden;
+  }
+  .pet-visual{
+    flex:0 0 auto; width:clamp(52px,6.4vw,66px); height:clamp(52px,6.4vw,66px);
+    border-radius:20px; background:#fff; display:grid; place-items:center; position:relative;
+    box-shadow:0 6px 14px rgba(180,140,80,.16);
+  }
+  .pet-visual .egg-svg{ width:82%; height:82%; }
+  .pet-visual .pet-face{ font-size:clamp(28px,3.4vw,36px); line-height:1; animation:petBob 2.4s ease-in-out infinite; }
+  .pet-visual.wiggle{ animation:eggWiggle .9s ease-in-out; }
+  @keyframes petBob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  @keyframes eggWiggle{ 0%,100%{transform:rotate(0)} 20%{transform:rotate(-8deg)} 50%{transform:rotate(8deg)} 78%{transform:rotate(-4deg)} }
+  .pet-pop{
+    position:absolute; left:50%; top:-4px; transform:translate(-50%,0);
+    font-size:13px; font-weight:900; color:#ff8a3d; animation:petPop 1s ease-out forwards; pointer-events:none;
+  }
+  @keyframes petPop{ 0%{opacity:0; transform:translate(-50%,8px) scale(.75)} 30%{opacity:1} 100%{opacity:0; transform:translate(-50%,-22px) scale(1.15)} }
+  .pet-meta{ min-width:0; flex:0 0 auto; }
+  .pet-name{ display:flex; align-items:center; gap:6px; font-size:16px; font-weight:900; letter-spacing:-.02em; white-space:nowrap; }
+  .pet-name .pet-stage{ font-size:10.5px; font-weight:900; color:#8a5a00; background:#fff3d1; border-radius:999px; padding:3px 8px; white-space:nowrap; }
+  .pet-sub{ font-size:11.5px; font-weight:800; color:var(--ink-2); margin-top:2px; white-space:nowrap; }
+  .pet-sub b{ color:#b4436c; }
+  .pet-grow{ flex:1 1 220px; min-width:140px; }
+  .pet-steps{ display:flex; align-items:center; gap:5px; font-size:10.5px; font-weight:900; color:#b3a696; margin-bottom:4px; flex-wrap:wrap; }
+  .pet-steps .st{ padding:2px 7px; border-radius:999px; background:rgba(255,255,255,.75); }
+  .pet-steps .st.on{ background:#2c2440; color:#fff; }
+  .pet-gauge{ position:relative; height:13px; border-radius:999px; background:#fff; border:1.5px solid #ffe2ae; overflow:hidden; }
+  .pet-gauge i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#ffd93d,var(--pet-c,#ff9f1c)); transition:width .5s cubic-bezier(.2,.8,.2,1); }
+  .pet-growline{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:3px; font-size:10.5px; font-weight:800; color:#a2937f; }
+  .pet-growline b{ color:#8a5200; }
+  .pet-next{ display:inline-flex; align-items:center; gap:3px; color:#b3a696; }
+  .pet-next svg, .pet-next img{ width:22px; height:22px; opacity:.45; filter:grayscale(.7); }
+  .mon-svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .pet-img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .rt-rocket svg, .rt-rocket img{ width:26px; height:26px; display:block; }
+  .pet-go{
+    flex:0 0 auto; margin-left:auto; border:none; border-radius:15px; background:#fff; color:#7a5a1f;
+    font-size:12.5px; font-weight:900; padding:0 13px; min-height:42px; cursor:pointer;
+    box-shadow:0 4px 10px rgba(180,140,80,.16); touch-action:manipulation; white-space:nowrap;
+  }
+  .pet-go:active{ transform:scale(.96); }
+  .pet-go b{ color:#b4436c; }
+  .pet-go.warm{ background:linear-gradient(135deg,#ffd43b,#ff9f1c); color:#5a3200; }
+  .pet-steps .st.done{ background:#eafaf1; color:#0f7a55; }
+
+  /* 도감 */
+  .type-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:10px; font-weight:900; color:#fff; letter-spacing:-.01em;
+    background:var(--tc,#9aa0a6); border-radius:999px; padding:2px 7px; white-space:nowrap;
+  }
+  .type-filter{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+  .tchip{
+    display:inline-flex; align-items:center; gap:4px; border:1.5px solid #eee2d2;
+    background:#fff; color:#6d6484; border-radius:999px; padding:4px 9px;
+    font-size:11px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .tchip i{ width:8px; height:8px; border-radius:50%; flex:0 0 auto; }
+  .tchip.on{ background:#2c2440; border-color:#2c2440; color:#fff; }
+  .tchip.on i{ box-shadow:0 0 0 1.5px #fff; }
+  .pet-dex{ display:grid; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); gap:9px; }
+  .pet-card{ border-radius:18px; padding:10px 7px; text-align:center; background:#fffdf8; border:2px solid #f3e7d6; }
+  .pet-card .pc-face{ width:56px; height:56px; margin:0 auto; }
+  .pet-card.locked .pc-face{ filter:grayscale(1); opacity:.42; }
+  .pet-card .pc-name{ font-size:13px; font-weight:900; margin-top:3px; }
+  .pet-card .pc-kind{ font-size:10.5px; font-weight:800; color:#a2937f; }
+  .pet-card .pc-type{ margin-top:3px; }
+  .pc-chain{ display:flex; align-items:center; justify-content:center; gap:2px; margin-top:4px; }
+  .pc-chain .pcs{ width:22px; height:22px; display:grid; place-items:center; opacity:.95; }
+  .pc-chain .pcs.off{ font-size:10px; font-weight:900; color:#d9cdbd; }
+  .pet-card .pc-when{ font-size:10px; font-weight:800; color:#c0b3a2; margin-top:2px; }
+  .pet-card.now{ border-color:#ffc46b; background:#fff8e6; box-shadow:0 6px 14px rgba(255,180,60,.20); }
+  .pet-nowbox{ border:2px solid #ffe3b3; background:#fffaf0; border-radius:18px; padding:11px 13px; margin-bottom:12px; }
+  .pet-nowbox .nw-head{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:900; }
+  .pet-nowbox .nw-face{ font-size:26px; line-height:1; }
+  .pet-nowbox .nw-art{ width:46px; height:46px; display:block; flex:0 0 auto; }
+  .pet-nowbox .nw-sub{ font-size:11.5px; font-weight:800; color:#a2937f; margin-top:3px; }
+  .pet-nowbox .pet-gauge{ margin-top:8px; }
+  .pet-sec-title{ margin:14px 0 8px; font-size:13px; font-weight:900; letter-spacing:-.01em; }
+  .pet-log{ display:flex; flex-direction:column; gap:6px; }
+  .pet-log .pl{ display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; background:#fff; border:1.5px solid #f4eadd; border-radius:12px; padding:7px 10px; }
+  .pet-log .pl .d{ color:#a2937f; font-size:11px; font-weight:800; min-width:48px; }
+  .pet-log .pl .em{ font-size:16px; }
+
+  /* 부화·진화 축하 팝업 */
+  .evo-card{ max-width:420px; background:linear-gradient(180deg,#fffdf6,#fff0dc); }
+  .evo-badge{ font-size:52px; line-height:1; animation:spot .6s cubic-bezier(.2,1.5,.4,1); }
+  .evo-art{ width:150px; height:150px; margin:6px auto 4px; animation:spot .7s cubic-bezier(.2,1.5,.4,1); }
+  .evo-name{ margin:0; font-size:19px; font-weight:900; letter-spacing:-.02em; }
+  .evo-line{ margin:5px 0 11px; font-size:13px; font-weight:800; color:var(--ink-2); }
+  .evo-next{
+    display:flex; align-items:center; justify-content:center; gap:8px; background:#fff;
+    border-radius:16px; padding:8px 10px; margin-bottom:13px;
+    font-size:11.5px; font-weight:900; color:#a2937f;
+  }
+  .evo-next svg, .evo-next img{ width:46px; height:46px; opacity:.6; filter:grayscale(.55); }
+  .evo-next b{ color:#b3a696; letter-spacing:.12em; }
+
+  /* 친구 그림 바꾸기 (편집 모드) */
+  .art-edit{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .art-edit .inp{ width:auto; flex:1 1 150px; min-height:42px; font-size:13px; }
+  .art-edit select{ flex:0 1 auto; }
+  .art-preview{ width:64px; height:64px; border-radius:16px; background:#fff; border:2px solid #f0e6d8; display:grid; place-items:center; flex:0 0 auto; }
+  .art-file{
+    display:inline-flex; align-items:center; gap:5px; min-height:42px; padding:0 13px;
+    border-radius:12px; background:#fff; border:2px solid #e6dccf; color:#6d6484;
+    font-size:12.5px; font-weight:900; cursor:pointer; white-space:nowrap;
+  }
 
   .ta-day{
     display:inline-block; margin:0 0 10px; font-size:12.5px; font-weight:900;
@@ -784,27 +918,22 @@
 
   /* ---------- 섹션 배치 / 스티커 원장 / 문제지 / 통계 ---------- */
   .sections{
-    display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
-    gap:clamp(12px,1.5vw,18px); align-items:start;
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:clamp(12px,1.5vw,18px);
+    align-items:start;
   }
-  .sec-routine, .sec-week{ grid-column:1 / -1; }
-  @media (max-width:980px){
+  .sections > .sec{ grid-column:1 / -1; min-width:0; }
+  .sec-pair{ align-self:stretch; display:flex; flex-direction:column; }
+  .sec-pair .board{ align-content:start; }
+  @media (max-width:767px){
     .sections{ grid-template-columns:minmax(0,1fr); }
-    .sec-routine, .sec-week{ grid-column:auto; }
   }
   .ledger{ display:flex; flex-wrap:wrap; gap:6px; margin:0 0 11px; font-size:12px; font-weight:900; color:#8a7f70; }
   .ledger .lchip{ background:#f7f1e9; border-radius:999px; padding:5px 10px; }
   .ledger .lchip b{ color:var(--ink); }
   .ledger .lchip.rem{ background:#eafaf1; color:#0f7a55; }
   .ledger .lchip.use{ background:#fff0f3; color:#b4436c; }
-  .sticker-actions{ display:flex; gap:8px; align-items:stretch; }
-  .sticker-actions .sticker-btn{ flex:1 1 auto; }
-  .spend-btn{
-    flex:0 0 auto; border:none; border-radius:18px; padding:0 15px; min-height:60px;
-    background:#f1edff; color:#5b4bb0; font-size:14px; font-weight:900; cursor:pointer;
-    touch-action:manipulation;
-  }
-  .spend-btn:active{ transform:translateY(1px); }
   .reason-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:9px; }
   .reason-chip{
     min-height:58px; border-radius:16px; border:2px solid #ffe0a0; background:#fffaea;
@@ -978,6 +1107,16 @@
     .w-cityline{ font-size:10px; }
     .w-chips{ min-width:0; max-width:100%; flex-wrap:nowrap; overflow-x:auto; gap:4px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
     .w-chips::-webkit-scrollbar{ display:none; }
+    .petbar{ padding:8px 10px; gap:8px; border-radius:20px; }
+    .pet-grow{ flex:1 1 100%; order:3; max-width:none; min-width:0; }
+    .pet-sub{ white-space:normal; }
+    .pet-go{ margin-left:auto; min-height:38px; padding:0 10px; font-size:12px; }
+    .pet-name{ font-size:15px; }
+    .pet-visual{ width:48px; height:48px; border-radius:16px; }
+    .card-head{ gap:7px; }
+    .head-tools{ gap:5px; }
+    .pill-btn{ min-height:34px; padding:0 10px; font-size:11.5px; }
+    .head-tools .rt-percent{ font-size:12px; padding:3px 8px; }
     .w-chip{ flex:0 0 auto; font-size:11px; padding:3px 8px; }
     .w-foot{ gap:5px; }
     .w-refresh{ width:26px; height:26px; }
@@ -1024,6 +1163,8 @@
 
   <section class="card edit-panel" id="editPanel" hidden></section>
 
+  <section class="petbar" id="petBar" aria-label="오늘의 친구 (펫 키우기)"></section>
+
   <div class="sections" id="sections">
 
   <section class="card routine sec sec-routine" id="secRoutine" data-sec="routine">
@@ -1052,16 +1193,16 @@
     <section class="card sticker sec" id="secSticker" data-sec="sticker">
       <div class="card-head">
         <h2 id="secTitleSticker">칭찬 스티커</h2>
-        <span class="rt-percent"><strong id="stickerCount">0</strong> / <span id="stickerSlots">10</span></span>
+        <div class="head-tools">
+          <span class="rt-percent"><strong id="stickerCount">0</strong> / <span id="stickerSlots">10</span></span>
+          <button class="pill-btn" id="spendBtn" data-act="spend-open" hidden>🎁 쓰기</button>
+          <button class="pill-btn warm" id="newBoardBtn" data-act="sticker-new" hidden>🎉 새 판 시작</button>
+        </div>
       </div>
       <p class="goal" id="stickerUnitLine" hidden></p>
       <div class="board" id="stickerBoard"></div>
       <div class="ledger" id="stickerLedger"></div>
-      <div class="sticker-actions">
-        <button class="sticker-btn" id="stickerBtn" data-act="sticker-add">+ 스티커 붙이기</button>
-        <button class="spend-btn" id="spendBtn" data-act="spend-open" hidden>🎁 쓰기</button>
-      </div>
-      <p class="sticker-hint">붙인 스티커를 누르면 뗄 수 있어요</p>
+      <p class="sticker-hint" id="stickerHint">빈 칸을 누르면 스티커가 붙어요 · 붙인 스티커를 누르면 뗄 수 있어요</p>
     </section>
 
     <section class="card today-academy sec" id="secAcademy" data-sec="academy">
@@ -1173,6 +1314,30 @@
   </div>
 </div>
 
+<div class="hist" id="petModal" hidden role="dialog" aria-modal="true" aria-labelledby="petTitle">
+  <div class="hist-card" style="max-width:600px">
+    <div class="hist-head">
+      <h2 id="petTitle">🐾 몬스터 도감</h2>
+      <button class="hist-close" data-act="pet-close" aria-label="도감 닫기">✕</button>
+    </div>
+    <div class="hist-body" id="petBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="evoModal" hidden role="dialog" aria-modal="true" aria-labelledby="evoTitle">
+  <div class="modal-card evo-card">
+    <div class="evo-badge" id="evoBadge">🎉</div>
+    <h2 id="evoTitle">알이 부화했어요!</h2>
+    <div class="evo-art" id="evoArt"></div>
+    <p class="evo-name" id="evoName">콩이 등장!</p>
+    <p class="evo-line" id="evoLine">기운을 모아 1차 진화에 도전해요!</p>
+    <div class="evo-next" id="evoNext"></div>
+    <div class="modal-actions" id="evoActions">
+      <button class="modal-btn" data-act="evo-close">좋아!</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="winModal" hidden role="dialog" aria-modal="true" aria-labelledby="winTitle">
   <div class="modal-card win-card">
     <div class="win-badge">🏆</div>
@@ -1253,6 +1418,88 @@
 
   var STICKER_SET = ['⭐️', '🌟', '🌈', '🦄', '🐰', '🍓', '🎈', '🌸', '🐥', '💎', '🍀', '🚀', '🍭', '🐼', '🎁', '🌻'];
   var CONF = ['⭐️', '🎉', '✨', '🌟', '🎈', '💛', '💙', '💖', '🍬', '🌈'];
+
+  /* ============ 오늘의 친구 (몬스터 키우기) 기본값 ============ */
+  var PET_NEED = [5, 10, 15];   /* 0→1 부화, 1→2 1차 진화, 2→3 2차 진화 (단계마다 필요한 기운) */
+  var PET_STAGE_LABEL = ['🥚 알', '🐣 아기', '✨ 1차 진화', '🌟 2차 진화'];
+  var PET_STAGE_SHORT = ['알', '아기', '1차', '2차'];
+  /* 18가지 속성 — 각자 다른 색과 머리 장식으로 그린 우리만의 몬스터 라인 */
+  var PET_TYPES = [
+    { id: 'normal', label: '노멀', color: '#9aa0a6' },
+    { id: 'fire', label: '불', color: '#ff7a3d' },
+    { id: 'water', label: '물', color: '#3fa4ea' },
+    { id: 'grass', label: '풀', color: '#2fbf7a' },
+    { id: 'electric', label: '전기', color: '#e0ac00' },
+    { id: 'ice', label: '얼음', color: '#41c3dd' },
+    { id: 'fighting', label: '격투', color: '#cf5640' },
+    { id: 'poison', label: '독', color: '#9a5bc4' },
+    { id: 'ground', label: '땅', color: '#bf9a55' },
+    { id: 'flying', label: '비행', color: '#749ee8' },
+    { id: 'psychic', label: '에스퍼', color: '#e8639f' },
+    { id: 'bug', label: '벌레', color: '#7cb342' },
+    { id: 'rock', label: '바위', color: '#a89a83' },
+    { id: 'ghost', label: '고스트', color: '#6f5aa8' },
+    { id: 'dragon', label: '드래곤', color: '#4b5ae0' },
+    { id: 'dark', label: '악', color: '#5a5364' },
+    { id: 'steel', label: '강철', color: '#8fa3ad' },
+    { id: 'fairy', label: '페어리', color: '#f078a8' }
+  ];
+  var PET_NAMES = {
+    normal: ['몽글', '몽글이', '몽글룡'],
+    fire: ['콩이', '불콩', '화르르'],
+    water: ['방울', '물방울', '파도링'],
+    grass: ['새싹', '잎새', '나무룡'],
+    electric: ['찌릿', '번쩍', '뇌룡'],
+    ice: ['고드름', '얼음이', '빙룡'],
+    fighting: ['주먹이', '힘센손', '투혼룡'],
+    poison: ['방긋', '독방울', '맹독룡'],
+    ground: ['흙돌이', '모래언덕', '대지룡'],
+    flying: ['솜깃', '날개콩', '천공룡'],
+    psychic: ['반짝', '눈빛이', '초능룡'],
+    bug: ['꼬물', '꼬물이', '갑옷룡'],
+    rock: ['돌멩', '바위콩', '암석룡'],
+    ghost: ['깜깜', '그림자', '유령룡'],
+    dragon: ['꼬리', '비늘콩', '용왕룡'],
+    dark: ['심술', '까칠이', '암흑룡'],
+    steel: ['나사', '철컥이', '강철룡'],
+    fairy: ['별사탕', '요정이', '페어룡']
+  };
+
+  function shadeColor(hex, t) {
+    var h = String(hex || '#9aa0a6').replace('#', '');
+    var r = parseInt(h.substr(0, 2), 16);
+    var g = parseInt(h.substr(2, 2), 16);
+    var b = parseInt(h.substr(4, 2), 16);
+    var mix = t >= 0 ? 255 : 0;
+    var k = Math.abs(t);
+    r = Math.round(r + (mix - r) * k);
+    g = Math.round(g + (mix - g) * k);
+    b = Math.round(b + (mix - b) * k);
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  }
+
+  var PET_SPECIES = (function () {
+    var out = [];
+    for (var i = 0; i < PET_TYPES.length; i++) {
+      var t = PET_TYPES[i];
+      out.push({
+        id: t.id, type: t.id, typeLabel: t.label, kind: t.label,
+        c: t.color, d: shadeColor(t.color, -0.3), l: shadeColor(t.color, 0.78), accent: shadeColor(t.color, 0.3),
+        names: PET_NAMES[t.id] || ['몽글', '몽글이', '몽글룡'],
+        desc: t.label + ' 친구'
+      });
+    }
+    return out;
+  })();
+
+  function petTypeInfo(id) {
+    for (var i = 0; i < PET_TYPES.length; i++) if (PET_TYPES[i].id === id) return PET_TYPES[i];
+    return PET_TYPES[0];
+  }
+
+  function defaultPet() {
+    return { currentEgg: PET_SPECIES[0].id, stage: 0, exp: 0, hatchedAt: 0, collection: [], awarded: {} };
+  }
   var EV_COLORS = ['#ff8a3d', '#7c5cfc', '#ff5c8a', '#3d9be9', '#12b886', '#f6a600', '#8e6bff', '#ff6b6b'];
 
   /* ============ 작은 도구들 ============ */
@@ -1394,6 +1641,7 @@
       ],
       workbookPicks: {},
       layoutOrder: ['routine', 'sticker', 'academy', 'week'],
+      pet: defaultPet(),
       stats: { stickersTotal: 0 }
     };
   }
@@ -1602,6 +1850,63 @@
     for (var dun = 0; dun < duKeys.length; dun++) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(duKeys[dun]) || typeof s.dayUpdated[duKeys[dun]] !== 'string') delete s.dayUpdated[duKeys[dun]];
     }
+
+    /* 오늘의 친구 (몬스터 키우기) */
+    var dp = defaultPet();
+    if (!s.pet || typeof s.pet !== 'object') s.pet = dp;
+    var pet = s.pet;
+    var spIds = [];
+    for (var psi = 0; psi < PET_SPECIES.length; psi++) spIds.push(PET_SPECIES[psi].id);
+    if (spIds.indexOf(pet.currentEgg) < 0) pet.currentEgg = dp.currentEgg;
+    var pst = parseInt(pet.stage, 10);
+    pet.stage = (isNaN(pst) || pst < 0) ? 0 : Math.min(pst, 3);
+    var pex = parseInt(pet.exp, 10);
+    var pexMax = pet.stage < 3 ? PET_NEED[pet.stage] : 0;
+    pet.exp = (isNaN(pex) || pex < 0) ? 0 : Math.min(pex, pexMax);
+    var pcol = [];
+    var rawCol = (Object.prototype.toString.call(pet.collection) === '[object Array]') ? pet.collection : [];
+    for (var pci = 0; pci < rawCol.length && pcol.length < PET_SPECIES.length; pci++) {
+      var pc = rawCol[pci] || {};
+      if (typeof pc === 'string') pc = { id: pc };
+      if (spIds.indexOf(pc.id) < 0) continue;
+      var dup = false;
+      for (var pck = 0; pck < pcol.length; pck++) if (pcol[pck].id === pc.id) dup = true;
+      if (dup) continue;
+      var pat = Number(pc.at);
+      pcol.push({ id: pc.id, at: (pat && !isNaN(pat)) ? pat : Date.now() });
+    }
+    pet.collection = pcol;
+    var phat = Number(pet.hatchedAt);
+    pet.hatchedAt = (phat && !isNaN(phat)) ? phat : 0;
+    var paw = {};
+    var rawAw = (pet.awarded && typeof pet.awarded === 'object') ? pet.awarded : {};
+    var awLimit = dateKey(new Date(new Date().getTime() - 7 * 86400000));
+    for (var awk in rawAw) {
+      if (!Object.prototype.hasOwnProperty.call(rawAw, awk)) continue;
+      var awDay = String(awk).split('|')[0];
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(awDay) || awDay < awLimit) continue;
+      paw[awk] = 1;
+    }
+    pet.awarded = paw;
+    /* 친구 그림(직접 올린 그림) */
+    var art = {};
+    if (pet.art && typeof pet.art === 'object') {
+      for (var asid in pet.art) {
+        if (!Object.prototype.hasOwnProperty.call(pet.art, asid) || spIds.indexOf(asid) < 0) continue;
+        var abox = pet.art[asid];
+        if (!abox || typeof abox !== 'object') continue;
+        var aclean = {};
+        for (var ast in abox) {
+          if (!Object.prototype.hasOwnProperty.call(abox, ast)) continue;
+          if (!/^[0-3]$/.test(ast)) continue;
+          var au = String(abox[ast] || '');
+          if (petArtOk(au)) aclean[ast] = au;
+        }
+        if (aclean['0'] || aclean['1'] || aclean['2'] || aclean['3']) art[asid] = aclean;
+      }
+    }
+    pet.art = art;
+    s.pet = pet;
 
     var totalSt = parseInt(s.stats && s.stats.stickersTotal, 10);
     if (isNaN(totalSt) || totalSt < 0) totalSt = stickLog.length || s.sticker.stickers.length;
@@ -2257,6 +2562,8 @@
 
       if (cat.id === 'study') html += wbBoxHtml();
 
+      if (complete && !ui.editing) html += '<div class="rc-bonus">✨ 그룹 완료 보너스 <span>+3 기운</span></div>';
+
       if (ui.editing) {
         html += '<button class="add-item" data-act="add-item" data-cat="' + esc(cat.id) + '">+ 할 일 추가</button>';
       }
@@ -2291,6 +2598,18 @@
     if (bar) bar.style.width = pct + '%';
     if (complete) card.classList.add('complete');
     else card.classList.remove('complete');
+
+    var bonus = card.querySelector('.rc-bonus');
+    if (complete && !ui.editing) {
+      if (!bonus) {
+        bonus = document.createElement('div');
+        bonus.className = 'rc-bonus';
+        bonus.innerHTML = '✨ 그룹 완료 보너스 <span>+3 기운</span>';
+        card.appendChild(bonus);
+      }
+    } else if (bonus && bonus.parentNode) {
+      bonus.parentNode.removeChild(bonus);
+    }
   }
 
   function updateOverall(silent) {
@@ -2355,6 +2674,16 @@
     snd(on ? 'check' : 'uncheck');
     updateCardStats(catId);
     updateOverall(false);
+
+    if (on) {
+      petAward('i:' + itemId, 1);
+      var gcat = findCat(catId);
+      if (gcat && gcat.items.length) {
+        var allDone = true;
+        for (var gi = 0; gi < gcat.items.length; gi++) if (!ck[gcat.items[gi].id]) allDone = false;
+        if (allDone) petAward('g:' + catId, 3, { label: (gcat.title || '루틴') + ' 그룹 완료 보너스' });
+      }
+    }
   }
 
   function onAddItem(catId) {
@@ -2420,7 +2749,12 @@
           html += '<span class="slot filled' + (i === freshIdx ? ' fresh' : '') + '">' + em + '</span>';
         }
       } else {
-        html += '<span class="slot empty"><span class="num">' + (i + 1) + '</span></span>';
+        if (can('sticker')) {
+          html += '<button class="slot empty tappable" data-act="sticker-slot-add" data-i="' + i +
+            '" aria-label="' + (i + 1) + '번째 칸에 스티커 붙이기"><span class="num">+</span></button>';
+        } else {
+          html += '<span class="slot empty locked"><span class="num">' + (i + 1) + '</span></span>';
+        }
       }
     }
     board.innerHTML = html;
@@ -2442,24 +2776,16 @@
       }
     }
 
-    var btn = document.getElementById('stickerBtn');
+    var btn = document.getElementById('newBoardBtn');
     if (btn) {
-      if (!can('sticker')) {
-        btn.textContent = '보기 전용이에요 👀';
-        btn.disabled = true;
-        btn.removeAttribute('data-act');
-        btn.classList.remove('full');
-      } else if (list.length >= slots) {
-        btn.disabled = false;
-        btn.textContent = '🎉 판 완성! 새 판 시작';
-        btn.setAttribute('data-act', 'sticker-new-direct');
-        btn.classList.add('full');
-      } else {
-        btn.disabled = false;
-        btn.textContent = '+ 스티커 붙이기';
-        btn.setAttribute('data-act', 'sticker-add');
-        btn.classList.remove('full');
-      }
+      var full = list.length >= st.slots;
+      btn.hidden = !(full && can('sticker'));
+    }
+    var hint = document.getElementById('stickerHint');
+    if (hint) {
+      if (!can('sticker')) hint.textContent = '지금은 보기만 할 수 있어요 👀';
+      else if (list.length >= st.slots) hint.textContent = '판을 다 채웠어요! 🎉 새 판을 시작해 보세요';
+      else hint.textContent = '빈 칸을 누르면 스티커가 붙어요 · 붙인 스티커를 누르면 뗄 수 있어요';
     }
     renderLedger();
   }
@@ -2505,8 +2831,9 @@
     renderStickers();
 
     var slot = document.querySelector('.slot[data-i="' + (st.stickers.length - 1) + '"]');
-    confetti(12, slot || document.getElementById('stickerBtn'));
+    confetti(12, slot || document.getElementById('stickerBoard'));
     snd('sticker');
+    petGainExp(3, { label: '칭찬 스티커' });
 
     if (st.stickers.length >= st.slots && !st.celebrated) {
       st.celebrated = true;
@@ -2515,6 +2842,8 @@
       window.setTimeout(function () {
         confetti(70);
         snd('win');
+        var evo = document.getElementById('evoModal');
+        if (evo && !evo.hidden) return;   /* 진화 축하 팝업이 먼저 떠 있으면 겹치지 않게 */
         openGoalModal();
       }, 420);
     }
@@ -2539,7 +2868,7 @@
     state.sticker.celebrated = false;
     saveState();
     renderStickers();
-    confetti(16, document.getElementById('stickerBtn'));
+    confetti(16, document.getElementById('stickerBoard'));
   }
 
   function clearBoard() {
@@ -2568,6 +2897,616 @@
     var m = document.getElementById('goalModal');
     if (m) m.hidden = true;
     document.body.style.overflow = '';
+  }
+
+  /* ============ 오늘의 친구 (몬스터 키우기) ============ */
+  function petState() {
+    if (!state.pet || typeof state.pet !== 'object') state.pet = defaultPet();
+    return state.pet;
+  }
+
+  /* ---- 친구 도감 필터 ---- */
+  var petFilter = '';
+
+  function typeBadgeHtml(sp) {
+    var t = petTypeInfo(sp.type);
+    return '<span class="type-badge" style="--tc:' + t.color + '">' + esc(t.label) + '</span>';
+  }
+
+  function petSpecies(id) {
+    for (var i = 0; i < PET_SPECIES.length; i++) if (PET_SPECIES[i].id === id) return PET_SPECIES[i];
+    return PET_SPECIES[0];
+  }
+
+  function petNeed(stage) {
+    return (stage >= 0 && stage < 3) ? PET_NEED[stage] : 0;
+  }
+
+  /* ---- 친구 그림(선택): 보호자·관리자가 직접 올린 그림으로 바꿀 수 있어요 ---- */
+  function petArtUrl(spId, stage) {
+    var p = petState();
+    if (!p.art || typeof p.art !== 'object') return '';
+    var box = p.art[spId];
+    if (!box || typeof box !== 'object') return '';
+    var u = box[String(stage)];
+    return (typeof u === 'string' && u) ? u : '';
+  }
+
+  function petArtSet(spId, stage, url) {
+    var p = petState();
+    if (!p.art || typeof p.art !== 'object') p.art = {};
+    if (!p.art[spId] || typeof p.art[spId] !== 'object') p.art[spId] = {};
+    if (url) p.art[spId][String(stage)] = String(url).slice(0, 300000);
+    else delete p.art[spId][String(stage)];
+  }
+
+  function petArtOk(u) {
+    u = String(u || '');
+    if (!u || u.length > 300000) return false;
+    return /^https?:\/\//i.test(u) || /^data:image\//i.test(u);
+  }
+
+  function petArt(sp, stage, ratio) {
+    var custom = petArtUrl(sp.id, stage);
+    if (custom) {
+      return '<img class="pet-img" src="' + esc(custom) + '" alt="' + esc(stage === 0 ? '알' : sp.names[stage - 1]) + '" loading="lazy">';
+    }
+    return stage === 0 ? eggSvgHtml(sp.c, ratio || 0) : monSvg(sp, stage);
+  }
+
+  function petNextEgg(p) {
+    var have = {};
+    for (var i = 0; i < p.collection.length; i++) have[p.collection[i].id] = 1;
+    var left = [];
+    for (var j = 0; j < PET_SPECIES.length; j++) if (!have[PET_SPECIES[j].id]) left.push(PET_SPECIES[j].id);
+    if (!left.length) left = PET_SPECIES.map(function (s) { return s.id; });
+    return left[Math.floor(Math.random() * left.length)];
+  }
+
+  /* ---- 그림 (직접 그린 SVG 캐릭터) ---- */
+  function eggSvgHtml(color, ratio) {
+    var spots = '';
+    var pts = [[34, 48, 7], [62, 40, 5.5], [48, 72, 8], [70, 78, 5], [26, 88, 4.5], [54, 22, 4]];
+    for (var i = 0; i < pts.length; i++) {
+      spots += '<circle cx="' + pts[i][0] + '" cy="' + pts[i][1] + '" r="' + pts[i][2] + '" fill="' + color + '" opacity=".62"/>';
+    }
+    var crack = '';
+    if (ratio > 0.5) {
+      crack += '<path d="M32 44 L42 55 L35 65 L46 74" fill="none" stroke="#c9a97c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/>';
+    }
+    if (ratio > 0.8) {
+      crack += '<path d="M70 56 L61 66 L68 74" fill="none" stroke="#c9a97c" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>';
+    }
+    return '<svg class="egg-svg" viewBox="0 0 100 124" aria-hidden="true">' +
+      '<circle cx="50" cy="64" r="45" fill="' + color + '" opacity=".10"/>' +
+      '<ellipse cx="50" cy="116" rx="27" ry="6" fill="' + color + '" opacity=".22"/>' +
+      '<path d="M50 5C75 5 92 43 92 73c0 26-18 41-42 41S8 99 8 73C8 43 25 5 50 5Z" fill="#fff4e0" stroke="' + color + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M24 62c0-24 12-46 26-46 6 0 11 5 15 12-10 3-20 16-24 34Z" fill="#ffffff" opacity=".8"/>' +
+      spots + crack + '</svg>';
+  }
+
+  /* 속성 장식 (머리 위) — 18가지 타입별로 다르게 */
+  function petGlyph(sp) {
+    var a = sp.accent, d = sp.d, t = sp.type;
+    if (t === 'fire') {
+      return '<path d="M50 8C56 17 63 22 58 32C55 28 52 28 50 31C46 27 41 22 50 8Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>' +
+        '<path d="M50 17C53 22 55 25 53 29C51 27 49 27 47 29C45 25 47 21 50 17Z" fill="#fff3b0"/>';
+    }
+    if (t === 'water') {
+      return '<path d="M50 6C57 17 64 23 64 30C64 37 58 41 50 41C42 41 36 37 36 30C36 23 43 17 50 6Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>' +
+        '<ellipse cx="45" cy="29" rx="3.2" ry="5" fill="#fff" opacity=".65"/>';
+    }
+    if (t === 'grass') {
+      return '<path d="M50 36L50 15" stroke="' + d + '" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M50 23C40 23 33 17 33 8C43 8 50 14 50 23Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.4"/>' +
+        '<path d="M50 27C60 27 67 21 67 12C57 12 50 18 50 27Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.4"/>';
+    }
+    if (t === 'electric') {
+      return '<path d="M53 6L65 26L54 26L60 44L41 23L52 23Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>';
+    }
+    if (t === 'ice') {
+      return '<path d="M50 5L61 20L50 35L39 20Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>' +
+        '<path d="M50 11L55 20L50 27L45 20Z" fill="#fff" opacity=".6"/>';
+    }
+    if (t === 'normal') {
+      return '<circle cx="50" cy="24" r="12" fill="' + a + '" stroke="' + d + '" stroke-width="1.8"/>' +
+        '<circle cx="45" cy="20" r="3.4" fill="#fff" opacity=".65"/>';
+    }
+    if (t === 'fighting') {
+      return '<rect x="38" y="12" width="24" height="21" rx="8" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>' +
+        '<path d="M45 21v7M50 21v7M55 21v7" stroke="' + d + '" stroke-width="1.8" stroke-linecap="round"/>';
+    }
+    if (t === 'poison') {
+      return '<path d="M50 8c7 9 13 14 13 21a13 13 0 0 1-26 0c0-7 6-12 13-21Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>' +
+        '<circle cx="44" cy="26" r="3.2" fill="#fff" opacity=".6"/>' +
+        '<circle cx="57" cy="19" r="2.4" fill="#fff" opacity=".5"/>';
+    }
+    if (t === 'ground') {
+      return '<path d="M31 35l8-15 7 9 6-12 8 18Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>' +
+        '<path d="M38 41h24" stroke="' + d + '" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>';
+    }
+    if (t === 'flying') {
+      return '<path d="M50 22c-8-11-19-9-21 0 6-2 13 1 21 7Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.5"/>' +
+        '<path d="M50 22c8-11 19-9 21 0-6-2-13 1-21 7Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.5"/>';
+    }
+    if (t === 'psychic') {
+      return '<ellipse cx="50" cy="22" rx="13" ry="10" fill="#fff" stroke="' + d + '" stroke-width="1.6"/>' +
+        '<circle cx="50" cy="22" r="5" fill="' + a + '"/><circle cx="50" cy="22" r="2" fill="' + d + '"/>';
+    }
+    if (t === 'bug') {
+      return '<path d="M44 28c-6-8-10-11-14-11" fill="none" stroke="' + d + '" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<path d="M56 28c6-8 10-11 14-11" fill="none" stroke="' + d + '" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<circle cx="30" cy="16" r="3.4" fill="' + a + '"/><circle cx="70" cy="16" r="3.4" fill="' + a + '"/>';
+    }
+    if (t === 'rock') {
+      return '<path d="M33 33l5-14 9 4 6-10 12 11-4 12Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>' +
+        '<path d="M42 23l3 6 4-4" fill="none" stroke="' + d + '" stroke-width="1.6" stroke-linecap="round"/>';
+    }
+    if (t === 'ghost') {
+      return '<path d="M50 6c9 0 15 7 15 15v11c-3-3-6-3-9 0-3-3-6-3-9 0V21C34 13 41 6 50 6Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>' +
+        '<circle cx="45" cy="20" r="2.2" fill="#2c2440"/><circle cx="55" cy="20" r="2.2" fill="#2c2440"/>';
+    }
+    if (t === 'dragon') {
+      return '<path d="M50 4l8 14-8 7-8-7Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.5"/>' +
+        '<path d="M37 24l7-7 4 9Z" fill="' + a + '" opacity=".8"/><path d="M63 24l-7-7-4 9Z" fill="' + a + '" opacity=".8"/>';
+    }
+    if (t === 'dark') {
+      return '<path d="M34 32C31 16 44 5 60 7c-9 5-13 12-11 20 2 8-9 12-15 5Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.5"/>' +
+        '<circle cx="52" cy="16" r="2" fill="' + d + '"/>';
+    }
+    if (t === 'steel') {
+      return '<circle cx="50" cy="22" r="9" fill="' + a + '" stroke="' + d + '" stroke-width="1.8"/>' +
+        '<path d="M50 7v5M50 32v5M35 22h5M60 22h5" stroke="' + d + '" stroke-width="2.8" stroke-linecap="round"/>';
+    }
+    /* fairy */
+    return '<path d="M50 6l3.6 10.8L64 20l-10.4 3.6L50 34l-3.6-10.4L36 20l10.4-3.2Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>' +
+      '<circle cx="32" cy="14" r="2.2" fill="' + a + '"/><circle cx="68" cy="16" r="2" fill="' + a + '"/>';
+  }
+
+  /* stage: 1 아기, 2 1차 진화, 3 2차 진화 */
+  function monSvg(sp, stage) {
+    var c = sp.c, d = sp.d, l = sp.l, a = sp.accent;
+    stage = Math.max(1, Math.min(3, stage || 1));
+    var rx = stage === 1 ? 21 : (stage === 2 ? 25 : 27);
+    var ry = stage === 1 ? 19 : (stage === 2 ? 23 : 25);
+    var cy = stage === 1 ? 63 : (stage === 2 ? 61 : 59);
+    var s = '<svg viewBox="0 0 100 100" class="mon-svg" aria-hidden="true">';
+    s += '<ellipse cx="50" cy="90" rx="' + (rx - 1) + '" ry="4.5" fill="#000" opacity=".08"/>';
+    if (stage === 3) {
+      s += '<circle cx="50" cy="' + cy + '" r="41" fill="' + a + '" opacity=".14"/>';
+      s += '<path d="M18 22l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="#ffd93d" opacity=".9"/>';
+      s += '<path d="M84 34l1.6 4.8 4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8-4.8-1.6 4.8-1.6Z" fill="#fff3b0"/>';
+    }
+    if (stage >= 2) {
+      s += '<ellipse cx="' + (50 - rx - 3) + '" cy="' + (cy - 2) + '" rx="12" ry="7" fill="' + l + '" stroke="' + d + '" stroke-width="1.6" transform="rotate(-24 ' + (50 - rx - 3) + ' ' + (cy - 2) + ')"/>';
+      s += '<ellipse cx="' + (50 + rx + 3) + '" cy="' + (cy - 2) + '" rx="12" ry="7" fill="' + l + '" stroke="' + d + '" stroke-width="1.6" transform="rotate(24 ' + (50 + rx + 3) + ' ' + (cy - 2) + ')"/>';
+      s += '<path d="M' + (50 + rx - 5) + ' ' + (cy + ry - 9) + 'q16 6 10 16q-3 5-8 1" fill="none" stroke="' + d + '" stroke-width="4" stroke-linecap="round"/>';
+    }
+    s += '<ellipse cx="' + (50 - rx * 0.42) + '" cy="' + (cy + ry - 1) + '" rx="7.5" ry="4.2" fill="' + d + '"/>';
+    s += '<ellipse cx="' + (50 + rx * 0.42) + '" cy="' + (cy + ry - 1) + '" rx="7.5" ry="4.2" fill="' + d + '"/>';
+    s += '<ellipse cx="50" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + c + '" stroke="' + d + '" stroke-width="2.6"/>';
+    s += '<ellipse cx="50" cy="' + (cy + ry * 0.42) + '" rx="' + (rx * 0.58) + '" ry="' + (ry * 0.4) + '" fill="' + l + '" opacity=".9"/>';
+    var ey = cy - 3;
+    s += '<ellipse cx="' + (50 - rx * 0.36) + '" cy="' + ey + '" rx="4.3" ry="5" fill="#2c2440"/>';
+    s += '<ellipse cx="' + (50 + rx * 0.36) + '" cy="' + ey + '" rx="4.3" ry="5" fill="#2c2440"/>';
+    s += '<circle cx="' + (50 - rx * 0.36 + 1.5) + '" cy="' + (ey - 1.8) + '" r="1.6" fill="#fff"/>';
+    s += '<circle cx="' + (50 + rx * 0.36 + 1.5) + '" cy="' + (ey - 1.8) + '" r="1.6" fill="#fff"/>';
+    s += '<ellipse cx="' + (50 - rx * 0.7) + '" cy="' + (ey + 6) + '" rx="4" ry="2.5" fill="#ff9db4" opacity=".7"/>';
+    s += '<ellipse cx="' + (50 + rx * 0.7) + '" cy="' + (ey + 6) + '" rx="4" ry="2.5" fill="#ff9db4" opacity=".7"/>';
+    if (stage === 3) {
+      s += '<path d="M44 ' + (ey + 6) + 'q6 8 12 0q-6 4-12 0Z" fill="#7a3b2e"/>';
+    } else {
+      s += '<path d="M45 ' + (ey + 7) + 'q5 5 10 0" fill="none" stroke="#7a3b2e" stroke-width="2.2" stroke-linecap="round"/>';
+    }
+    if (stage === 3) {
+      s += '<path d="M40 ' + (cy - ry - 1) + 'l4-10 6 7 6-7 4 10Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>';
+    } else if (stage === 2) {
+      s += '<path d="M' + (50 - rx * 0.62) + ' ' + (cy - ry + 2) + 'l-5-11 9 5Z" fill="' + a + '"/>';
+      s += '<path d="M' + (50 + rx * 0.62) + ' ' + (cy - ry + 2) + 'l5-11-9 5Z" fill="' + a + '"/>';
+    }
+    s += '<g transform="translate(0,10)">' + petGlyph(sp) + '</g>';
+    s += '</svg>';
+    return s;
+  }
+
+  /* ---- 기운(EXP) 쌓기 & 진화 ---- */
+  function petPop(n) {
+    var vis = document.getElementById('petVisual');
+    if (!vis || !n) return;
+    var el = document.createElement('span');
+    el.className = 'pet-pop';
+    el.textContent = (n > 0 ? '+' + n : String(n)) + ' 기운';
+    vis.appendChild(el);
+    window.setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1100);
+  }
+
+  function petCollectNow(p) {
+    var sp = petSpecies(p.currentEgg);
+    var dup = false;
+    for (var i = 0; i < p.collection.length; i++) if (p.collection[i].id === sp.id) dup = true;
+    if (!dup) p.collection.push({ id: sp.id, at: Date.now() });
+  }
+
+  function petGainExp(n, opts) {
+    opts = opts || {};
+    var p = petState();
+    if (!n) return p.exp;
+    if (p.stage >= 3) {
+      if (!opts.quiet) showToast('🥚 새 알을 받으면 다시 기운을 모을 수 있어요!');
+      return p.exp;
+    }
+    if (!opts.quiet) petPop(n);
+    p.exp += n;
+    var reached = -1;
+    while (p.stage < 3 && p.exp >= PET_NEED[p.stage]) {
+      p.exp -= PET_NEED[p.stage];
+      p.stage += 1;
+      reached = p.stage;
+    }
+    if (p.stage === 1 && !p.hatchedAt) p.hatchedAt = Date.now();
+    if (p.stage >= 3) {
+      p.exp = 0;
+      petCollectNow(p);
+    }
+    saveState();
+    renderPet();
+
+    if (reached >= 0 && !opts.quiet) {
+      var vis = document.getElementById('petVisual');
+      if (vis) { vis.classList.remove('wiggle'); void vis.offsetWidth; vis.classList.add('wiggle'); }
+      confetti(reached >= 3 ? 80 : 46, vis || document.getElementById('petBar'));
+      snd('win');
+      window.setTimeout(function () { showEvo(reached); }, 320);
+    }
+    return p.exp;
+  }
+
+  function petAward(key, n, opts) {
+    var p = petState();
+    var k = currentKey + '|' + key;
+    if (p.awarded[k]) return false;
+    p.awarded[k] = 1;
+    petGainExp(n, opts);
+    return true;
+  }
+
+  function petEnsure() {
+    var p = petState();
+    if (p.stage >= 3) petCollectNow(p);
+  }
+
+  /* 다른 기기(구름 저장)의 친구 기록을 합칩니다 — 더 많이 자란 쪽을 따라가요 */
+  function petMergeFrom(d) {
+    if (!d || typeof d !== 'object') return;
+    var p = petState();
+    var spIds = [];
+    for (var i = 0; i < PET_SPECIES.length; i++) spIds.push(PET_SPECIES[i].id);
+    var rawCol = (Object.prototype.toString.call(d.collection) === '[object Array]') ? d.collection : [];
+    for (var j = 0; j < rawCol.length; j++) {
+      var cc = rawCol[j] || {};
+      var cid = (typeof cc === 'string') ? cc : cc.id;
+      if (spIds.indexOf(cid) < 0) continue;
+      var has = false;
+      for (var k = 0; k < p.collection.length; k++) if (p.collection[k].id === cid) has = true;
+      if (!has) p.collection.push({ id: cid, at: Number(cc.at) || Date.now() });
+    }
+    var rs = parseInt(d.stage, 10);
+    if (isNaN(rs) || rs < 0) rs = 0;
+    if (rs > 3) rs = 3;
+    var re = parseInt(d.exp, 10);
+    if (isNaN(re) || re < 0) re = 0;
+    if (rs > p.stage || (rs === p.stage && re > p.exp)) {
+      if (rs !== p.stage && spIds.indexOf(d.currentEgg) >= 0) p.currentEgg = d.currentEgg;
+      p.stage = rs;
+      p.exp = Math.min(re, petNeed(rs));
+    }
+    if (d.art && typeof d.art === 'object') {
+      for (var sid in d.art) {
+        if (!Object.prototype.hasOwnProperty.call(d.art, sid) || spIds.indexOf(sid) < 0) continue;
+        var box = d.art[sid];
+        if (!box || typeof box !== 'object') continue;
+        for (var st in box) {
+          if (!Object.prototype.hasOwnProperty.call(box, st)) continue;
+          if (!/^[0-3]$/.test(st)) continue;
+          var u = String(box[st] || '');
+          if (!petArtUrl(sid, st) && petArtOk(u)) petArtSet(sid, st, u);
+        }
+      }
+    }
+    saveLocalOnly();
+    renderPet();
+  }
+
+  function petNewEgg() {
+    var p = petState();
+    if (p.stage < 3) return;
+    p.currentEgg = petNextEgg(p);
+    p.stage = 0;
+    p.exp = 0;
+    p.hatchedAt = 0;
+    saveState();
+    renderPet();
+    showToast('🥚 새 알이 도착했어요! 무엇이 나올까요?');
+  }
+
+  /* ---- 화면 ---- */
+  function renderPet() {
+    petEnsure();
+    var p = petState();
+    var sp = petSpecies(p.currentEgg);
+    var stage = p.stage;
+
+    var runner = document.getElementById('overallRocket');
+    if (runner) runner.innerHTML = petArt(sp, stage, p.exp / Math.max(1, petNeed(stage)));
+
+    var bar = document.getElementById('petBar');
+    if (!bar) return;
+
+    var need = petNeed(stage);
+    var pct = need ? Math.min(100, Math.round(p.exp / need * 100)) : 100;
+    var art = petArt(sp, stage, p.exp / Math.max(1, need));
+    var title = stage === 0 ? '수수께끼 알' : sp.names[stage - 1];
+    var sub;
+    if (stage === 0) {
+      sub = '알이 부화하려면 기운 <b>' + need + '</b>개가 필요해요';
+    } else if (stage === 1) {
+      sub = sp.kind + ' · 1차 진화까지 <b>' + Math.max(0, need - p.exp) + '</b>번 더!';
+    } else if (stage === 2) {
+      sub = sp.kind + ' · 2차 진화까지 <b>' + Math.max(0, need - p.exp) + '</b>번 더!';
+    } else {
+      sub = '🎉 2차 진화 완성! 도감에 저장됐어요';
+    }
+
+    var nextMini = '';
+    if (stage < 3) {
+      nextMini = '<span class="pet-next">다음' + petArt(sp, stage + 1, 0) + '</span>';
+    }
+
+    var actions = stage >= 3
+      ? '<button class="pet-go warm" data-act="pet-new-egg">🥚 새 알 받기</button>'
+      : '<button class="pet-go" data-act="pet-open" aria-haspopup="dialog">🐾 도감 <b>' + p.collection.length + '</b>/' + PET_SPECIES.length + '</button>';
+
+    bar.style.setProperty('--pet-c', sp.c);
+    bar.style.setProperty('--pet-t', sp.l);
+    bar.innerHTML =
+      '<div class="pet-visual" id="petVisual">' + art + '</div>' +
+      '<div class="pet-meta">' +
+        '<div class="pet-name">' + esc(title) + '<span class="pet-stage">' + PET_STAGE_LABEL[stage] + '</span>' + typeBadgeHtml(sp) + '</div>' +
+        '<div class="pet-sub">' + sub + '</div>' +
+      '</div>' +
+      '<div class="pet-grow">' +
+        '<div class="pet-gauge"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="pet-growline"><span>EXP <b>' + p.exp + '</b> / ' + (need || 'MAX') + '</span>' + (nextMini || '<span>✨ MAX</span>') + '</div>' +
+      '</div>' +
+      actions;
+
+    var modal = document.getElementById('petModal');
+    if (modal && !modal.hidden) renderPetDex();
+  }
+
+  function petDexHtml() {
+    var p = petState();
+    var stage = p.stage;
+    var spNow = petSpecies(p.currentEgg);
+    var have = {};
+    for (var i = 0; i < p.collection.length; i++) have[p.collection[i].id] = p.collection[i];
+
+    var need = petNeed(stage);
+    var pct = need ? Math.min(100, Math.round(p.exp / need * 100)) : 100;
+    var nowArt = petArt(spNow, stage, p.exp / Math.max(1, need));
+    var nowSub;
+    if (stage === 0) nowSub = 'EXP ' + p.exp + ' / ' + need + ' — ' + Math.max(0, need - p.exp) + '번 더 모으면 부화!';
+    else if (stage < 3) nowSub = 'EXP ' + p.exp + ' / ' + need + ' — ' + Math.max(0, need - p.exp) + '번 더 모으면 ' + PET_STAGE_LABEL[stage + 1] + '!';
+    else nowSub = '2차 진화 완성! 새 알을 받으면 다시 키울 수 있어요.';
+
+    var h = '<div class="pet-nowbox">' +
+      '<div class="nw-head"><span class="nw-art">' + nowArt + '</span><span>' +
+        (stage === 0 ? '지금 키우는 알' : '지금 키우는 ' + esc(spNow.names[stage - 1])) + '</span></div>' +
+      '<div class="nw-sub">' + nowSub + '</div>' +
+      '<div class="pet-gauge"><i style="width:' + pct + '%"></i></div>' +
+      '</div>';
+
+    h += '<h3 class="pet-sec-title">🐾 몬스터 도감 ' + p.collection.length + ' / ' + PET_SPECIES.length + '</h3>';
+    h += '<div class="type-filter">' +
+      '<button type="button" class="tchip' + (petFilter === '' ? ' on' : '') + '" data-act="pet-filter" data-t="">전체</button>';
+    for (var ti = 0; ti < PET_TYPES.length; ti++) {
+      var tt = PET_TYPES[ti];
+      h += '<button type="button" class="tchip' + (petFilter === tt.id ? ' on' : '') + '" data-act="pet-filter" data-t="' + esc(tt.id) + '">' +
+        '<i style="background:' + tt.color + '"></i>' + esc(tt.label) + '</button>';
+    }
+    h += '</div>';
+    h += '<div class="pet-dex">';
+    var shown = 0;
+    for (var k = 0; k < PET_SPECIES.length; k++) {
+      var sp = PET_SPECIES[k];
+      if (petFilter && sp.type !== petFilter) continue;
+      shown++;
+      var got = have[sp.id];
+      var isNow = p.currentEgg === sp.id;
+      var chain = '';
+      if (got || isNow) {
+        chain = '<div class="pc-chain">';
+        for (var csi = 1; csi <= 3; csi++) {
+          var haveStage = got ? true : (stage >= csi);
+          chain += '<span class="pcs' + (haveStage ? '' : ' off') + '">' + (haveStage ? petArt(sp, csi, 0) : '?') + '</span>';
+        }
+        chain += '</div>';
+      }
+      h += '<div class="pet-card' + (got ? '' : ' locked') + (isNow ? ' now' : '') + '" style="--tc:' + petTypeInfo(sp.type).color + '">' +
+        '<div class="pc-face">' + (got || isNow ? petArt(sp, got ? 3 : Math.max(1, stage)) : '❓') + '</div>' +
+        '<div class="pc-name">' + (got || isNow ? esc(sp.names[0]) : '???') + '</div>' +
+        '<div class="pc-type">' + typeBadgeHtml(sp) + '</div>' +
+        chain +
+        '<div class="pc-when">' + (got ? fmtShort(got.at) + ' 완성' : (isNow ? '키우는 중' : '아직 못 만났어요')) + '</div>' +
+        '</div>';
+    }
+    if (!shown) h += '<p class="spend-empty">이 속성 친구는 아직 없어요.</p>';
+    h += '</div>';
+
+    h += '<h3 class="pet-sec-title">⭐ 최근 칭찬 스티커</h3><div class="pet-log">';
+    var log = state.stickerLog.slice(-6).reverse();
+    if (!log.length) h += '<p class="spend-empty">아직 붙인 스티커가 없어요. 빈 칸을 눌러 붙여 보세요!</p>';
+    for (var j = 0; j < log.length; j++) {
+      var d = new Date(log[j].t);
+      h += '<div class="pl"><span class="d">' + (d.getMonth() + 1) + '/' + d.getDate() + '</span>' +
+        '<span class="em">' + esc(log[j].e || '⭐️') + '</span><span>' + esc(log[j].r || '칭찬 스티커') + '</span></div>';
+    }
+    h += '</div>';
+    h += '<p class="lf-note" style="margin-top:10px">루틴 체크 +1 · 그룹 완료 보너스 +3 · 칭찬 스티커 +3 으로 기운을 모아요. 알 → 아기 → 1차 진화 → 2차 진화 순서로 자라요!</p>';
+    return h;
+  }
+
+  function renderPetDex() {
+    var body = document.getElementById('petBody');
+    if (body) body.innerHTML = petDexHtml();
+  }
+
+  function openPet() {
+    renderPetDex();
+    var m = document.getElementById('petModal');
+    if (m) m.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePet() {
+    var m = document.getElementById('petModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('petModal')) document.body.style.overflow = '';
+  }
+
+  /* ---- 부화·진화 축하 팝업 ---- */
+  function showEvo(stage) {
+    var p = petState();
+    var sp = petSpecies(p.currentEgg);
+    var m = document.getElementById('evoModal');
+    if (!m) return;
+    var badge = document.getElementById('evoBadge');
+    var title = document.getElementById('evoTitle');
+    var art = document.getElementById('evoArt');
+    var nameEl = document.getElementById('evoName');
+    var line = document.getElementById('evoLine');
+    var next = document.getElementById('evoNext');
+    var actions = document.getElementById('evoActions');
+
+    if (stage === 1) {
+      badge.textContent = '🎉';
+      title.textContent = '알이 부화했어요!';
+      nameEl.textContent = sp.names[0] + ' 등장!';
+      line.textContent = '기운을 모아 1차 진화에 도전해요!';
+    } else if (stage === 2) {
+      badge.textContent = '✨';
+      title.textContent = '1차 진화!';
+      nameEl.textContent = sp.names[0] + ' → ' + sp.names[1];
+      line.textContent = '더 크고 멋져졌어요! 기운을 모아 2차 진화에 도전!';
+    } else {
+      badge.textContent = '🌟';
+      title.textContent = '2차 진화 완성!';
+      nameEl.textContent = sp.names[0] + ' → ' + sp.names[1] + ' → ' + sp.names[2];
+      line.textContent = '도감에 저장했어요! 새 알을 받아 또 키워 볼까요?';
+    }
+    nameEl.innerHTML = esc(nameEl.textContent) + ' ' + typeBadgeHtml(sp);
+
+    art.innerHTML = petArt(sp, Math.max(1, stage), 1);
+    next.innerHTML = stage < 3
+      ? '<span>다음 모습</span>' + petArt(sp, stage + 1, 0) + '<b>???</b>'
+      : '<span>🐾 몬스터 도감에 저장됐어요!</span>';
+    actions.innerHTML = stage < 3
+      ? '<button class="modal-btn" data-act="evo-close">좋아, 더 모을래!</button>'
+      : '<button class="modal-btn" data-act="evo-new">🥚 새 알 받기</button>' +
+        '<button class="modal-btn sub" data-act="evo-dex">🐾 도감 보기</button>';
+
+    m.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeEvo() {
+    var m = document.getElementById('evoModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('evoModal')) document.body.style.overflow = '';
+  }
+
+  /* ---- 친구 그림 바꾸기 (편집 모드) ---- */
+  var artEdit = { sp: '', stage: '1' };
+
+  function petArtEditorHtml() {
+    var p = petState();
+    if (!artEdit.sp) { artEdit.sp = p.currentEgg; artEdit.stage = String(p.stage); }
+    var sp = petSpecies(artEdit.sp);
+    var cur = petArtUrl(sp.id, artEdit.stage);
+    var spOpts = '';
+    for (var i = 0; i < PET_SPECIES.length; i++) {
+      var s = PET_SPECIES[i];
+      spOpts += '<option value="' + esc(s.id) + '"' + (s.id === sp.id ? ' selected' : '') + '>' +
+        esc(s.names[0]) + ' (' + esc(s.kind) + ')</option>';
+    }
+    var stOpts = '';
+    for (var j = 0; j < 4; j++) {
+      stOpts += '<option value="' + j + '"' + (String(j) === String(artEdit.stage) ? ' selected' : '') + '>' +
+        PET_STAGE_LABEL[j] + '</option>';
+    }
+    return '<div class="art-edit">' +
+      '<select class="inp inp-sm" data-field="petArtSp" aria-label="바꿀 친구">' + spOpts + '</select>' +
+      '<select class="inp inp-sm" data-field="petArtStage" aria-label="바꿀 단계">' + stOpts + '</select>' +
+      '<span class="art-preview">' + petArt(sp, Number(artEdit.stage), 0) + '</span>' +
+      '<input class="inp inp-sm" id="petArtUrl" placeholder="https://… 그림 주소" value="' + esc(cur) + '">' +
+      '<button type="button" class="pill-btn" data-act="pet-art-apply">주소로 바꾸기</button>' +
+      '<label class="art-file">🖼 사진 올리기<input type="file" id="petArtFile" accept="image/*" hidden></label>' +
+      '<button type="button" class="ghost-btn" data-act="pet-art-reset">기본 그림</button>' +
+      '</div>';
+  }
+
+  function applyPetArtUrl() {
+    var u = fieldVal('petArtUrl').trim();
+    if (!u) { showToast('그림 주소를 붙여 넣어 주세요'); return; }
+    if (!petArtOk(u)) { showToast('http(s) 주소나 올린 사진만 쓸 수 있어요'); return; }
+    petArtSet(artEdit.sp, artEdit.stage, u);
+    saveState();
+    renderPet();
+    renderEditPanel();
+    showToast('그림을 바꿨어요! 🖼');
+  }
+
+  function resetPetArt() {
+    petArtSet(artEdit.sp, artEdit.stage, '');
+    saveState();
+    renderPet();
+    renderEditPanel();
+    showToast('기본 그림으로 돌아갔어요');
+  }
+
+  function readPetArtFile(file) {
+    if (!file) return;
+    if (!/^image\//.test(file.type || '')) { showToast('그림 파일만 올릴 수 있어요'); return; }
+    if (file.size > 4 * 1024 * 1024) { showToast('4MB 이하 그림을 골라 주세요'); return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var max = 320;
+          var k = Math.min(1, max / Math.max(img.width || 1, img.height || 1));
+          var cv = document.createElement('canvas');
+          cv.width = Math.max(1, Math.round((img.width || 1) * k));
+          cv.height = Math.max(1, Math.round((img.height || 1) * k));
+          var ctx = cv.getContext('2d');
+          ctx.clearRect(0, 0, cv.width, cv.height);
+          ctx.drawImage(img, 0, 0, cv.width, cv.height);
+          var url = cv.toDataURL('image/png');
+          if (url.length > 280000) { showToast('그림이 너무 커요. 더 작은 사진으로 해 주세요.'); return; }
+          petArtSet(artEdit.sp, artEdit.stage, url);
+          saveState();
+          renderPet();
+          renderEditPanel();
+          showToast('그림을 바꿨어요! 🖼');
+        } catch (e) {
+          showToast('그림을 바꾸지 못했어요.');
+        }
+      };
+      img.onerror = function () { showToast('그림을 읽지 못했어요.'); };
+      img.src = String(reader.result || '');
+    };
+    reader.onerror = function () { showToast('파일을 읽지 못했어요.'); };
+    reader.readAsDataURL(file);
   }
 
   /* ============ 오늘의 학원 / 주간 시간표 ============ */
@@ -2712,6 +3651,11 @@
         '<div class="wb-edit">' + wbEditHtml() + '</div>' +
         '<button class="ghost-btn" data-act="wb-add" style="margin-top:8px">+ 문제지 추가</button>' +
       '</div>' +
+      '<div class="ep-sub">' +
+        '<h3>🐾 친구 그림 바꾸기 (선택)</h3>' +
+        petArtEditorHtml() +
+        '<p class="ep-hint" style="margin-top:7px">기본은 직접 그린 몬스터 그림이에요. 아이 사진이나 원하는 그림으로 바꾸면 카드·도감·진화 팝업에 바로 보여요.</p>' +
+      '</div>' +
       '<div class="ep-actions">' +
         '<button class="ghost-btn" data-act="sticker-clear">스티커 보드 비우기</button>' +
         '<button class="ghost-btn danger" data-act="reset-all">모두 처음 상태로</button>' +
@@ -2726,6 +3670,7 @@
     renderSectionTitles();
     renderRoutine();
     renderStickers();
+    renderPet();
     renderTodayAcademy();
     renderWeek();
     renderEditPanel();
@@ -3329,7 +4274,7 @@
   }
 
   function isOnlyModal(id) {
-    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal'];
+    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal'];
     for (var i = 0; i < ids.length; i++) {
       if (ids[i] === id) continue;
       var el = document.getElementById(ids[i]);
@@ -3659,10 +4604,42 @@
 
   /* ---- 섹션 순서 ---- */
   function applyLayoutOrder() {
-    var order = (state.layoutOrder && state.layoutOrder.length) ? state.layoutOrder : SEC_IDS;
+    var order = (state.layoutOrder && state.layoutOrder.length) ? state.layoutOrder.slice(0) : SEC_IDS.slice(0);
+    for (var k = 0; k < SEC_IDS.length; k++) if (order.indexOf(SEC_IDS[k]) < 0) order.push(SEC_IDS[k]);
+    var FULL = { routine: 1, week: 1 };
+    var wide = window.innerWidth >= 768;
+
+    /* 스티커·오늘의 학원(일정)은 항상 한 줄을 반반 나눠 써서 오른쪽이 비지 않게 해요 */
+    var pair = [];
+    for (var pi = 0; pi < order.length; pi++) if (!FULL[order[pi]]) pair.push(order[pi]);
+
+    var rows = [];
+    var paired = false;
     for (var i = 0; i < order.length; i++) {
-      var el = document.getElementById(SEC_EL[order[i]]);
-      if (el) el.style.order = String(i + 1);
+      var id = order[i];
+      if (FULL[id]) rows.push([id]);
+      else if (!paired) { paired = true; rows.push(wide ? pair : pair); }
+    }
+
+    var r = 1;
+    for (var ri = 0; ri < rows.length; ri++) {
+      var list = rows[ri];
+      for (var ci = 0; ci < list.length; ci++) {
+        var el = document.getElementById(SEC_EL[list[ci]]);
+        if (!el) continue;
+        el.style.order = '';
+        el.style.gridRow = String(r);
+        if (list.length > 1 && wide) {
+          el.style.gridColumn = String(ci + 1);
+          el.classList.add('sec-pair');
+        } else {
+          el.style.gridColumn = '1 / -1';
+          el.classList.remove('sec-pair');
+          /* 좁은 화면에서는 반반 칸도 위아래로 쌓아요 */
+          if (!wide && ci < list.length - 1) r++;
+        }
+      }
+      r++;
     }
   }
 
@@ -3971,7 +4948,8 @@
       sc: state.schedule,
       st: { slots: state.sticker.slots, goal: state.sticker.goal, unit: state.sticker.unit, reasons: state.sticker.reasons },
       wb: state.workbooks,
-      lo: state.layoutOrder
+      lo: state.layoutOrder,
+      pt: state.pet
     });
   }
 
@@ -3995,6 +4973,7 @@
       sticker: { slots: state.sticker.slots, goal: state.sticker.goal, unit: state.sticker.unit, reasons: state.sticker.reasons },
       workbooks: state.workbooks,
       layoutOrder: state.layoutOrder,
+      pet: state.pet,
       stats: { stickersTotal: stickerTotal() }
     };
   }
@@ -4106,6 +5085,7 @@
     state.sticker.reasons = probe.sticker.reasons;
     if (Object.prototype.toString.call(d.workbooks) === '[object Array]') state.workbooks = probe.workbooks;
     if (Object.prototype.toString.call(d.layoutOrder) === '[object Array]') state.layoutOrder = probe.layoutOrder;
+    if (d.pet && typeof d.pet === 'object') petMergeFrom(d.pet);
     if (d.stats && !isNaN(parseInt(d.stats.stickersTotal, 10))) {
       state.stats.stickersTotal = Math.max(stickerTotal(), parseInt(d.stats.stickersTotal, 10));
     }
@@ -5083,6 +6063,16 @@
       return;
     }
     if (act === 'sticker-clear') { clearBoard(); return; }
+    if (act === 'sticker-slot-add') { openReason(); return; }
+    if (act === 'pet-art-apply') { applyPetArtUrl(); return; }
+    if (act === 'pet-art-reset') { resetPetArt(); return; }
+    if (act === 'pet-open') { openPet(); return; }
+    if (act === 'pet-filter') { petFilter = el.getAttribute('data-t') || ''; renderPetDex(); return; }
+    if (act === 'pet-close') { closePet(); return; }
+    if (act === 'pet-new-egg') { petNewEgg(); return; }
+    if (act === 'evo-close') { closeEvo(); return; }
+    if (act === 'evo-dex') { closeEvo(); openPet(); return; }
+    if (act === 'evo-new') { closeEvo(); petNewEgg(); return; }
     if (act === 'edit-toggle') { toggleEdit(); return; }
     if (act === 'sound-toggle') { toggleSound(); return; }
     if (act === 'weather-refresh') { loadWeather(); return; }
@@ -5173,10 +6163,18 @@
     if (st && !st.hidden && e.target === st) closeStats();
     var wb = document.getElementById('wbModal');
     if (wb && !wb.hidden && e.target === wb) closeWb();
+    var pm = document.getElementById('petModal');
+    if (pm && !pm.hidden && e.target === pm) closePet();
+    var em = document.getElementById('evoModal');
+    if (em && !em.hidden && e.target === em) closeEvo();
   });
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape' && e.key !== 'Esc') return;
+    var e1 = document.getElementById('evoModal');
+    if (e1 && !e1.hidden) { closeEvo(); return; }
+    var p1 = document.getElementById('petModal');
+    if (p1 && !p1.hidden) { closePet(); return; }
     var w2 = document.getElementById('winModal');
     if (w2 && !w2.hidden) { closeWin(); return; }
     var s2 = document.getElementById('statsModal');
@@ -5216,6 +6214,11 @@
 
   document.addEventListener('change', function (e) {
     var el = e.target;
+    if (el && el.id === 'petArtFile') {
+      if (el.files && el.files.length) readPetArtFile(el.files[0]);
+      el.value = '';
+      return;
+    }
     if (!el || el.id !== 'histFile' || !el.files || !el.files.length) return;
     var file = el.files[0];
     if (file.size > 8 * 1024 * 1024) {
@@ -5365,6 +6368,9 @@
     }
     var field = el.getAttribute('data-field');
 
+    if (field === 'petArtSp') { artEdit.sp = el.value; renderEditPanel(); return; }
+    if (field === 'petArtStage') { artEdit.stage = el.value; renderEditPanel(); return; }
+
     if (field === 'city') {
       state.settings.city = el.value;
       saveState();
@@ -5432,7 +6438,11 @@
   var routineResizeTimer = 0;
   window.addEventListener('resize', function () {
     if (routineResizeTimer) window.clearTimeout(routineResizeTimer);
-    routineResizeTimer = window.setTimeout(function () { routineResizeTimer = 0; applyRoutineView(); }, 180);
+    routineResizeTimer = window.setTimeout(function () {
+      routineResizeTimer = 0;
+      applyRoutineView();
+      applyLayoutOrder();
+    }, 180);
   });
 
   window.addEventListener('online', function () {
