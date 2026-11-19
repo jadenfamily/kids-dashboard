@@ -1145,10 +1145,11 @@
   /* ================= Phase 2: 코인 · 상점 · 마이룸 · 아바타 ================= */
   .modal{ z-index:160; }   /* 부화·진화 축하 팝업은 어느 창보다 위에 */
   .coin-badge{
-    display:inline-flex; align-items:center; gap:4px; position:relative;
-    background:linear-gradient(135deg,#fff2c9,#ffe08a); color:#7a5200;
+    display:inline-flex; align-items:center; gap:5px; position:relative;
+    background:linear-gradient(135deg,#fffdf6,#fff0cd); color:#7a5200;
+    border:1.5px solid #ffe0a3;
     border-radius:999px; padding:3px 10px; font-size:11.5px; font-weight:900;
-    box-shadow:0 2px 6px rgba(190,140,20,.18); white-space:nowrap;
+    box-shadow:0 2px 6px rgba(190,140,20,.16); white-space:nowrap;
   }
   .coin-badge b{ font-size:13px; letter-spacing:-.02em; }
   .coin-pop{
@@ -1195,7 +1196,8 @@
   }
   .shop-tabs .tab.on{ background:#2c2440; border-color:#2c2440; color:#fff; }
   .shop-coin{
-    display:inline-flex; align-items:center; gap:4px; background:linear-gradient(135deg,#fff2c9,#ffe08a);
+    display:inline-flex; align-items:center; gap:5px; background:linear-gradient(135deg,#fffdf6,#fff0cd);
+    border:1.5px solid #ffe0a3;
     color:#7a5200; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:900; white-space:nowrap;
   }
   .shop-coin b{ font-size:14px; }
@@ -1303,7 +1305,7 @@
   .room-title{ font-size:12px; font-weight:900; color:#a2937f; }
   .room-toolbar{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
   .room-hint{ flex:1 1 200px; font-size:11.5px; font-weight:800; color:#a2937f; }
-  .room-wrap{ border-radius:22px; overflow:hidden; background:linear-gradient(180deg,#fff8ec,#fffdf8); border:2px solid #f3e7d6; }
+  .room-wrap{ border-radius:22px; overflow:hidden; background:linear-gradient(180deg,#fff8ec,#fffdf8); border:2px solid #f3e7d6; flex:0 0 auto; }
   .room-svg{ display:block; width:100%; height:auto; touch-action:none; user-select:none; -webkit-user-select:none; }
   .room-hit{ cursor:pointer; }
   .room-hit.on{ filter:drop-shadow(0 0 6px rgba(255,159,28,.7)); }
@@ -1430,11 +1432,78 @@
   .av-side .shop-coin{ align-self:flex-start; }
   .av-thumb-fig{ background:#fff8ec; overflow:hidden; }
   .av-thumb-fig svg{ width:34px; height:56px; display:block; }
+  .av-thumb-fig.face{ background:radial-gradient(circle at 50% 40%,#fff8ec,#ffeede); }
+  .av-thumb-fig.face svg{ width:44px; height:44px; }
+  .av-thumb-fig.bust svg{ width:38px; height:46px; }
   .av-card{ min-height:112px; }
+
+  /* ============ Phase 3: 성별·미용실·모자/안경·금동전 아이콘 ============ */
+  .coin-defs{ position:absolute; width:0; height:0; overflow:hidden; }
+  svg.coin-ico{
+    width:1.06em; height:1.06em; display:inline-block; vertical-align:-.18em; flex:0 0 auto;
+    filter:drop-shadow(0 1px 1px rgba(170,110,0,.30));
+  }
+  svg.coin-ico.lg{ width:1.4em; height:1.4em; }
+  .toast svg.coin-ico{ width:1.2em; height:1.2em; vertical-align:-.2em; }
+  .coin-badge svg.coin-ico, .shop-coin svg.coin-ico{ width:1.15em; height:1.15em; }
+
+  .av-gender{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:900; color:#8a7f70; flex-wrap:wrap; }
+  .av-gender span{ min-width:40px; }
+  .gender-btn{
+    border:2px solid #eee2d2; background:#fff; color:#6d6484; border-radius:999px;
+    padding:6px 13px; font-size:12.5px; font-weight:900; cursor:pointer; touch-action:manipulation;
+    font-family:inherit; min-height:34px;
+  }
+  .gender-btn:active{ transform:scale(.97); }
+  .gender-btn.on{ background:#2c2440; border-color:#2c2440; color:#fff; box-shadow:0 4px 10px rgba(44,36,64,.18); }
+  .av-card.gend-other{ opacity:.74; }
+
+  .salon{
+    background:linear-gradient(160deg,#fff4f9,#fff7e7); border:2px dashed #ffc0d4; border-radius:18px;
+    padding:10px 12px; display:flex; flex-direction:column; gap:7px;
+  }
+  .salon-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:13.5px; font-weight:900; color:#b4436c; }
+  .salon-head small{
+    font-size:11.5px; font-weight:900; color:#8a5a00; background:#fff3d1; border-radius:999px;
+    padding:3px 9px; display:inline-flex; align-items:center; gap:3px;
+  }
+  .salon-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(94px,1fr)); gap:7px; }
+  .salon-sw{
+    display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 4px; font-family:inherit;
+    background:#fff; border:2px solid #f3e7d6; border-radius:14px; cursor:pointer; touch-action:manipulation;
+    color:var(--ink); min-height:80px;
+  }
+  .salon-sw b{ font-size:11px; font-weight:900; letter-spacing:-.02em; }
+  .salon-sw small{ font-size:9.5px; font-weight:800; color:#a2937f; display:inline-flex; align-items:center; gap:2px; }
+  .salon-sw.on{ border-color:#ff8fb0; background:#fff2f7; }
+  .salon-sw.on small{ color:#b4436c; }
+  .salon-sw .ssw-dot{
+    width:28px; height:28px; border-radius:50%; background:var(--sw,#6b4423);
+    box-shadow:inset 0 -3px 0 rgba(0,0,0,.14), 0 0 0 3px #fff, 0 0 0 4.5px #eee2d2;
+  }
+  .salon-sw.on .ssw-dot{ box-shadow:inset 0 -3px 0 rgba(0,0,0,.14), 0 0 0 3px #fff, 0 0 0 5px #ff8fb0; }
+
+  .room-ava{ pointer-events:none; }
+  .room-ava .room-ava-hop{ will-change:transform; }
+  .room-ava-target{ animation:roomTargetPulse 1.4s ease-in-out infinite; transform-box:fill-box; }
+  @keyframes roomTargetPulse{ 0%,100%{ opacity:.85 } 50%{ opacity:.35 } }
+
+  @media (max-width:560px){
+    .salon-grid{ grid-template-columns:repeat(auto-fill,minmax(80px,1fr)); }
+    .av-gender span{ min-width:32px; }
+  }
 
 </style>
 </head>
 <body>
+<svg class="coin-defs" aria-hidden="true" focusable="false"><defs>
+  <radialGradient id="coinGold" cx="34%" cy="26%" r="84%">
+    <stop offset="0" stop-color="#fffce0"/><stop offset="42%" stop-color="#ffd94f"/><stop offset="100%" stop-color="#e09a05"/>
+  </radialGradient>
+  <linearGradient id="coinRim" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffe98a"/><stop offset="52%" stop-color="#e6a400"/><stop offset="100%" stop-color="#b37600"/>
+  </linearGradient>
+</defs></svg>
 <div class="app" id="appRoot" hidden>
 
   <header class="topbar">
@@ -1445,7 +1514,7 @@
         <span class="dot">·</span>
         <span id="clockLine">오전 10:55</span>
         <span class="sync-pill" id="syncPill" title="저장 상태">☁️ 준비</span>
-        <span class="coin-badge" id="coinBadge" title="내 코인">🪙 <b>120</b></span>
+        <span class="coin-badge" id="coinBadge" title="내 코인"><svg class="coin-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11.4" fill="url(#coinRim)"/><circle cx="12" cy="12" r="9.3" fill="url(#coinGold)"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#c98b00" stroke-width="1" opacity=".45"/><text x="12" y="15.4" text-anchor="middle" font-size="8.6" font-weight="900" fill="#a8690a" font-family="inherit">C</text><ellipse cx="8.4" cy="7.2" rx="3.2" ry="1.8" fill="#fffbe8" opacity=".8" transform="rotate(-30 8.4 7.2)"/></svg> <b>120</b></span>
       </p>
     </div>
 
@@ -2936,7 +3005,7 @@
 
       if (cat.id === 'study') html += wbBoxHtml();
 
-      if (complete && !ui.editing) html += '<div class="rc-bonus">✨ 그룹 완료 보너스 <span>🪙 +20 코인</span></div>';
+      if (complete && !ui.editing) html += '<div class="rc-bonus">✨ 그룹 완료 보너스 <span>' + coinSvg() + ' +20 코인</span></div>';
 
       if (ui.editing) {
         html += '<button class="add-item" data-act="add-item" data-cat="' + esc(cat.id) + '">+ 할 일 추가</button>';
@@ -2979,7 +3048,7 @@
       if (!bonus) {
         bonus = document.createElement('div');
         bonus.className = 'rc-bonus';
-        bonus.innerHTML = '✨ 그룹 완료 보너스 <span>🪙 +20 코인</span>';
+        bonus.innerHTML = '✨ 그룹 완료 보너스 <span>' + coinSvg() + ' +20 코인</span>';
         card.appendChild(bonus);
       }
     } else if (bonus && bonus.parentNode) {
@@ -3052,14 +3121,14 @@
 
     if (on) {
       var gotCoin = awardCheckCoins(itemId);
-      if (gotCoin) showToast('🪙 +' + gotCoin + ' 코인!');
+      if (gotCoin) showToast(coinSvg() + ' +' + gotCoin + ' 코인!', true);
       var gcat = findCat(catId);
       if (gcat && gcat.items.length) {
         var allDone = true;
         for (var gi = 0; gi < gcat.items.length; gi++) if (!ck[gcat.items[gi].id]) allDone = false;
         if (allDone) {
           var gcoin = awardGroupCoins(catId);
-          if (gcoin) { showToast('🎉 ' + (gcat.title || '루틴') + ' 완료! 🪙 +' + gcoin); snd('win'); }
+          if (gcoin) { showToast('🎉 ' + esc(gcat.title || '루틴') + ' 완료! ' + coinSvg() + ' +' + gcoin, true); snd('win'); }
         }
       }
     } else {
@@ -3221,7 +3290,7 @@
     awardStickerCoins();
     saveState();
     renderCoinBadge();
-    showToast('⭐ 칭찬 스티커! 🪙 +' + COIN_STICKER);
+    showToast('⭐ 칭찬 스티커! ' + coinSvg() + ' +' + COIN_STICKER, true);
 
     if (st.stickers.length >= st.slots && !st.celebrated) {
       st.celebrated = true;
@@ -4152,25 +4221,35 @@
     { id: 'skin3', label: '구릿빛', color: '#dca576' },
     { id: 'skin4', label: '초콜릿', color: '#b47c55' }
   ];
+  /* 미용실에서 20코인으로 바꿀 수 있는 머리색 (id는 예전 프로필과 호환) */
   var AV_HAIR_COLORS = [
-    { id: 'brown', label: '갈색', color: '#6b4423' },
+    { id: 'brown', label: '밤색', color: '#6b4423' },
     { id: 'black', label: '흑발', color: '#2b2438' },
     { id: 'blonde', label: '금발', color: '#e6c069' },
-    { id: 'pink', label: '핑크', color: '#ef8fb0' },
-    { id: 'blue', label: '파랑', color: '#5a7fd6' }
+    { id: 'pink', label: '체리핑크', color: '#ef8fb0' },
+    { id: 'blue', label: '하늘블루', color: '#5a7fd6' },
+    { id: 'lavender', label: '라벤더퍼플', color: '#a98bec' },
+    { id: 'mint', label: '민트그린', color: '#5fd3ae' },
+    { id: 'silver', label: '실버애쉬', color: '#c3c8d6' }
   ];
+  var AV_GENDERS = [
+    { id: 'boy', label: '남아', icon: '👦' },
+    { id: 'girl', label: '여아', icon: '👧' }
+  ];
+  var HAIR_DYE_COST = 20;   /* 미용실 염색 1회 요금 */
   var AV_SLOTS = [
     { id: 'hair', label: '헤어', icon: '💇' },
+    { id: 'hat', label: '모자', icon: '🧢' },
     { id: 'top', label: '상의', icon: '👕' },
     { id: 'bottom', label: '하의', icon: '👖' },
     { id: 'shoes', label: '신발', icon: '👟' },
-    { id: 'acc', label: '액세서리', icon: '🎀' }
+    { id: 'acc', label: '안경·소품', icon: '🕶' }
   ];
 
   function defaultAvatar() {
     return {
-      skin: 'skin1', hairColor: 'brown',
-      hair: 'av_hair_basic', top: 'av_top_tee', bottom: 'av_bottom_jeans',
+      gender: 'boy', skin: 'skin1', hairColor: 'brown',
+      hair: 'av_hair_basic', hat: '', top: 'av_top_tee', bottom: 'av_bottom_jeans',
       shoes: 'av_shoes_sneaker', acc: ''
     };
   }
@@ -4182,7 +4261,8 @@
         { u: 'rm-rug', id: 'room_rug', x: 3, y: 2 },
         { u: 'rm-stool', id: 'room_stool', x: 2, y: 3 }
       ],
-      pets: []
+      pets: [],
+      avatarPos: { x: 3.1, y: 3.5 }
     };
   }
   function defaultProfile() {
@@ -4346,6 +4426,12 @@
       if (haveIt && rpets.indexOf(pid) < 0) rpets.push(pid);
     }
     room.pets = rpets;
+    var rawPos = (rr.avatarPos && typeof rr.avatarPos === 'object') ? rr.avatarPos : null;
+    var apx = rawPos ? Number(rawPos.x) : NaN, apy = rawPos ? Number(rawPos.y) : NaN;
+    room.avatarPos = {
+      x: isFinite(apx) ? Math.max(0.5, Math.min(ROOM.N - 0.5, Math.round(apx * 100) / 100)) : 3.1,
+      y: isFinite(apy) ? Math.max(0.5, Math.min(ROOM.N - 0.5, Math.round(apy * 100) / 100)) : 3.5
+    };
     out.room = room;
 
     /* ---- 아바타 ---- */
@@ -4356,7 +4442,8 @@
     for (var hi = 0; hi < AV_HAIR_COLORS.length; hi++) if (AV_HAIR_COLORS[hi].id === ra.hairColor) hcOk = true;
     if (skinOk) av.skin = ra.skin;
     if (hcOk) av.hairColor = ra.hairColor;
-    var slots = ['hair', 'top', 'bottom', 'shoes', 'acc'];
+    av.gender = (ra.gender === 'girl') ? 'girl' : 'boy';
+    var slots = ['hair', 'hat', 'top', 'bottom', 'shoes', 'acc'];
     for (var sl = 0; sl < slots.length; sl++) {
       var key = slots[sl];
       var val = ra[key];
@@ -4365,6 +4452,11 @@
       if (!item || item.kind !== 'cloth' || item.slot !== key) continue;
       if (!out.owned[val]) continue;
       av[key] = val;
+    }
+    /* 옛 프로필: 모자를 액세서리 칸에 쓰고 있었다면 모자 칸으로 옮겨요 */
+    if (!av.hat && typeof ra.acc === 'string' && ra.acc) {
+      var oldAcc = known[ra.acc];
+      if (oldAcc && oldAcc.kind === 'cloth' && oldAcc.slot === 'hat' && out.owned[ra.acc]) av.hat = ra.acc;
     }
     out.avatar = av;
 
@@ -4405,6 +4497,17 @@
   }
 
   /* ---------------- 코인 ---------------- */
+  /* 🪙 이모지는 아이폰·윈도우에서 돌멩이처럼 보여서, 반짝이는 금동전 SVG로 그려요. */
+  function coinSvg(cls) {
+    return '<svg class="coin-ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<circle cx="12" cy="12" r="11.4" fill="url(#coinRim)"/>' +
+      '<circle cx="12" cy="12" r="9.3" fill="url(#coinGold)"/>' +
+      '<circle cx="12" cy="12" r="6.5" fill="none" stroke="#c98b00" stroke-width="1" opacity=".45"/>' +
+      '<text x="12" y="15.4" text-anchor="middle" font-size="8.6" font-weight="900" fill="#a8690a" font-family="inherit">C</text>' +
+      '<ellipse cx="8.4" cy="7.2" rx="3.2" ry="1.8" fill="#fffbe8" opacity=".8" transform="rotate(-30 8.4 7.2)"/>' +
+      '</svg>';
+  }
+
   function coinBalance() { return prof().coins; }
 
   function coinAdd(n) {
@@ -4419,7 +4522,7 @@
     var el = document.getElementById('coinBadge');
     if (el) {
       var v = prof().coins;
-      el.innerHTML = '🪙 <b>' + fmtNum(v) + '</b>';
+      el.innerHTML = coinSvg() + ' <b>' + fmtNum(v) + '</b>';
       el.setAttribute('title', '내 코인 ' + fmtNum(v) + '개');
       if (pop) {
         var f = document.createElement('i');
@@ -4431,9 +4534,9 @@
       }
     }
     var rc = document.getElementById('roomCoins');
-    if (rc) rc.innerHTML = '🪙 ' + fmtNum(prof().coins);
+    if (rc) rc.innerHTML = coinSvg() + ' ' + fmtNum(prof().coins);
     var sc = document.getElementById('shopCoins');
-    if (sc) sc.innerHTML = '🪙 <b>' + fmtNum(prof().coins) + '</b>';
+    if (sc) sc.innerHTML = coinSvg() + ' <b>' + fmtNum(prof().coins) + '</b>';
   }
 
   function awardCheckCoins(itemId) {
@@ -4514,11 +4617,24 @@
       { id: 'wall_galaxy', cat: 'wall', kind: 'wall', name: '은하수 벽지', icon: '🌌', price: 160, color: '#2b2550', desc: '우주 한가운데' },
 
       /* 👕 아바타 */
-      { id: 'av_hair_basic', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'short', name: '기본 머리', icon: '💇', price: 0, color: '#6b4423', desc: '단정한 머리' },
-      { id: 'av_hair_bob', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bob', name: '뽀글 단발', icon: '💇', price: 30, color: '#8a5a2b', desc: '동글동글 단발' },
-      { id: 'av_hair_twin', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'twin', name: '양갈래', icon: '👧', price: 40, color: '#7a4a1f', desc: '깜찍 양갈래' },
-      { id: 'av_hair_curly', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'curly', name: '곱슬곱슬', icon: '🌀', price: 35, color: '#5f3a1c', desc: '곱슬곱슬' },
-      { id: 'av_hair_buzz', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'buzz', name: '스포츠 머리', icon: '⚽', price: 25, color: '#4a3018', desc: '짧고 시원하게' },
+      /* --- 헤어: 남아 --- */
+      { id: 'av_hair_basic', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'short', g: 'both', name: '기본 머리', icon: '💇', price: 0, color: '#6b4423', desc: '단정한 머리' },
+      { id: 'av_hair_short', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'short', g: 'boy', name: '단정 숏컷', icon: '👦', price: 0, color: '#4a3018', desc: '남아 기본 숏컷' },
+      { id: 'av_hair_bang', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bang', g: 'boy', name: '앞머리 내림', icon: '👦', price: 25, color: '#3f2a17', desc: '이마를 덮는 앞머리' },
+      { id: 'av_hair_spiky', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'spiky', g: 'boy', name: '뾰족 스포츠', icon: '⚽', price: 25, color: '#4a3018', desc: '뾰족뾰족 활동파' },
+      { id: 'av_hair_parted', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'parted', g: 'boy', name: '가르마 펌', icon: '👦', price: 35, color: '#5a3a1c', desc: '단정한 가르마' },
+      { id: 'av_hair_bowl', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bowl', g: 'boy', name: '바가지 컷', icon: '🍄', price: 30, color: '#33220f', desc: '동글동글 바가지' },
+      { id: 'av_hair_mohawk', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'mohawk', g: 'boy', name: '모히칸', icon: '🔥', price: 40, color: '#2b2438', desc: '가운데만 솟은 머리' },
+      { id: 'av_hair_buzz', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'buzz', g: 'boy', name: '스포츠 머리', icon: '⚽', price: 25, color: '#4a3018', desc: '짧고 시원하게' },
+      /* --- 헤어: 여아 --- */
+      { id: 'av_hair_long', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'long', g: 'girl', name: '긴 생머리', icon: '👧', price: 0, color: '#4a3018', desc: '여아 기본 생머리' },
+      { id: 'av_hair_bob', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bob', g: 'girl', name: '단발 컷', icon: '💇', price: 30, color: '#8a5a2b', desc: '가지런한 단발' },
+      { id: 'av_hair_pony', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'pony', g: 'girl', name: '포니테일', icon: '🎀', price: 30, color: '#5a3a1c', desc: '한쪽으로 묶은 꼬리' },
+      { id: 'av_hair_buns', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'buns', g: 'girl', name: '양갈래 만두', icon: '🍡', price: 40, color: '#3f2a17', desc: '머리 위 두 개의 만두' },
+      { id: 'av_hair_wave', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'wave', g: 'girl', name: '긴 웨이브', icon: '🌊', price: 35, color: '#6b4423', desc: '찰랑찰랑 웨이브' },
+      { id: 'av_hair_ribbon', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'ribbon', g: 'girl', name: '반묶음 리본', icon: '🎀', price: 30, color: '#5a3a1c', desc: '리본으로 반묶음' },
+      { id: 'av_hair_twin', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'twin', g: 'girl', name: '양갈래', icon: '👧', price: 40, color: '#7a4a1f', desc: '깜찍 양갈래' },
+      { id: 'av_hair_curly', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'curly', g: 'both', name: '곱슬곱슬', icon: '🌀', price: 35, color: '#5f3a1c', desc: '곱슬곱슬' },
 
       { id: 'av_top_tee', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'tee', name: '기본 티셔츠', icon: '👕', price: 0, color: '#ffffff', color2: '#7ec8f0', desc: '하얀 티셔츠' },
       { id: 'av_top_stripe', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'stripe', name: '줄무늬 티', icon: '👕', price: 25, color: '#ffffff', color2: '#ff8f8f', desc: '빨간 줄무늬' },
@@ -4534,11 +4650,26 @@
       { id: 'av_shoes_boots', cat: 'avatar', kind: 'cloth', slot: 'shoes', style: 'boots', name: '부츠', icon: '🥾', price: 30, color: '#a9744a', desc: '든든한 부츠' },
       { id: 'av_shoes_slipper', cat: 'avatar', kind: 'cloth', slot: 'shoes', style: 'slipper', name: '슬리퍼', icon: '🩴', price: 15, color: '#ffb3c7', desc: '집에서 편하게' },
 
-      { id: 'av_acc_glasses', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'glasses', name: '동글 안경', icon: '👓', price: 25, color: '#5a4a3a', desc: '공부할 때' },
-      { id: 'av_acc_cap', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'cap', name: '야구 모자', icon: '🧢', price: 35, color: '#6fb7ff', desc: '챙이 있는 모자' },
-      { id: 'av_acc_crown', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'crown', name: '반짝 왕관', icon: '👑', price: 60, color: '#ffd34d', desc: '오늘의 왕' },
+      /* --- 모자·머리장식 (모자 칸) --- */
+      { id: 'av_hat_cap', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'cap', name: '야구모자', icon: '🧢', price: 35, color: '#6fb7ff', desc: '챙이 있는 모자' },
+      { id: 'av_hat_beanie', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'beanie', name: '니트 비니', icon: '🧶', price: 30, color: '#ff9f6b', desc: '보들보들 비니' },
+      { id: 'av_hat_crown', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'crown', name: '반짝 왕관', icon: '👑', price: 60, color: '#ffd34d', desc: '오늘의 왕' },
+      { id: 'av_hat_bunny', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'bunnyband', name: '토끼귀 머리띠', icon: '🐰', price: 40, color: '#ffb3d1', desc: '길쭉 토끼귀' },
+      { id: 'av_hat_cat', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'catband', name: '고양이귀 머리띠', icon: '🐱', price: 40, color: '#b39aff', desc: '야옹 고양이귀' },
+      { id: 'av_hat_ribbon', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'ribbonpin', name: '별핀 리본', icon: '🎀', price: 25, color: '#ff8fb0', desc: '리본 + 별핀' },
+      { id: 'av_hat_explorer', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'explorer', name: '탐험가 모자', icon: '🤠', price: 45, color: '#c9a06a', desc: '넓은 챙 모자' },
+      { id: 'av_hat_beret', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'beret', name: '베레모', icon: '🎨', price: 35, color: '#e0647a', desc: '동글 베레모' },
+      /* --- 안경·얼굴·소품 (소품 칸) --- */
+      { id: 'av_acc_glasses', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'glasses', name: '동그란 안경', icon: '👓', price: 25, color: '#5a4a3a', desc: '공부할 때' },
+      { id: 'av_acc_heart', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'heartglasses', name: '하트 선글라스', icon: '😍', price: 35, color: '#ff6f9c', desc: '하트 모양 렌즈' },
+      { id: 'av_acc_star', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'starglasses', name: '별 선글라스', icon: '⭐', price: 35, color: '#3a3550', desc: '반짝이는 별 렌즈' },
       { id: 'av_acc_bag', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'bag', name: '크로스 가방', icon: '👜', price: 30, color: '#f28fa8', desc: '외출 필수' },
-      { id: 'av_acc_necklace', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'necklace', name: '목걸이', icon: '📿', price: 20, color: '#ffd34d', desc: '작은 펜던트' }
+      { id: 'av_acc_backpack', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'backpack', name: '미니 백팩', icon: '🎒', price: 30, color: '#7cc6f2', desc: '등에 메는 가방' },
+      { id: 'av_acc_wings', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'wings', name: '천사 날개', icon: '🪽', price: 50, color: '#fff6fb', desc: '등 뒤에 폴랑폴랑' },
+      { id: 'av_acc_necklace', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'necklace', name: '목걸이', icon: '📿', price: 20, color: '#ffd34d', desc: '작은 펜던트' },
+      /* --- 옛 프로필 호환(모자였던 액세서리) --- */
+      { id: 'av_acc_cap', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'cap', name: '야구 모자(옛)', icon: '🧢', price: 35, color: '#6fb7ff', desc: '옛 액세서리', hidden: true },
+      { id: 'av_acc_crown', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'crown', name: '반짝 왕관(옛)', icon: '👑', price: 60, color: '#ffd34d', desc: '옛 액세서리', hidden: true }
     ];
   }
 
@@ -4588,9 +4719,9 @@
     if (it.kind === 'furni' || it.kind === 'wall' || it.kind === 'cloth') {
       btn = own
         ? '<button type="button" class="shop-btn done" disabled>보유 중</button>'
-        : '<button type="button" class="shop-btn' + (canBuy ? '' : ' off') + '" data-act="shop-buy" data-id="' + esc(it.id) + '">🪙 ' + fmtNum(it.price) + '</button>';
+        : '<button type="button" class="shop-btn' + (canBuy ? '' : ' off') + '" data-act="shop-buy" data-id="' + esc(it.id) + '">' + coinSvg() + ' ' + fmtNum(it.price) + '</button>';
     } else {
-      btn = '<button type="button" class="shop-btn' + (canBuy ? '' : ' off') + '" data-act="shop-buy" data-id="' + esc(it.id) + '">🪙 ' + fmtNum(it.price) + '</button>';
+      btn = '<button type="button" class="shop-btn' + (canBuy ? '' : ' off') + '" data-act="shop-buy" data-id="' + esc(it.id) + '">' + coinSvg() + ' ' + fmtNum(it.price) + '</button>';
     }
     return '<article class="shop-card">' +
       '<div class="sc-icon" style="--ic:' + esc(it.color || '#ffd9a0') + '">' + (it.icon || '🎁') + '</div>' +
@@ -4612,7 +4743,7 @@
         '<span class="ar-icon" style="--ic:' + esc(it.color || '#ffd9a0') + '">' + (it.icon || '🎁') + '</span>' +
         '<span class="ar-name">' + esc(it.name) +
           '<small>' + esc({ pet: '펫 케어', room: '가구', wall: '벽지', avatar: '아바타' }[it.cat] || it.cat) + '</small></span>' +
-        '<label class="ar-price">🪙<input type="number" min="0" max="9999" step="1" value="' + (parseInt(it.price, 10) || 0) + '" data-field="shopPrice" data-id="' + esc(it.id) + '"></label>' +
+        '<label class="ar-price">' + coinSvg() + '<input type="number" min="0" max="9999" step="1" value="' + (parseInt(it.price, 10) || 0) + '" data-field="shopPrice" data-id="' + esc(it.id) + '"></label>' +
         '<button type="button" class="ghost-btn tiny" data-act="shop-hide" data-id="' + esc(it.id) + '">' + (it.hidden ? '보이기' : '숨기기') + '</button>' +
         '<button type="button" class="ghost-btn tiny danger" data-act="shop-del" data-id="' + esc(it.id) + '">삭제</button>' +
         '</div>';
@@ -4661,7 +4792,7 @@
         '<button type="button" class="tab' + (shopUi.tab === 'room' ? ' on' : '') + '" data-act="shop-tab" data-tab="room">🏠 방 가구·벽지</button>' +
         '<button type="button" class="tab' + (shopUi.tab === 'avatar' ? ' on' : '') + '" data-act="shop-tab" data-tab="avatar">👕 아바타 코디</button>' +
       '</div>' +
-      '<span class="shop-coin" id="shopCoins">🪙 <b>' + fmtNum(p.coins) + '</b></span>' +
+      '<span class="shop-coin" id="shopCoins">' + coinSvg() + ' <b>' + fmtNum(p.coins) + '</b></span>' +
       (can('edit') ? '<button type="button" class="ghost-btn" data-act="shop-admin">' + (shopUi.admin ? '✅ 관리 닫기' : '⚙️ 상점 관리') + '</button>' : '') +
     '</div>';
 
@@ -4703,7 +4834,7 @@
     }
     if (p.coins < it.price) {
       snd('uncheck');
-      showToast('🪙 코인이 부족해요. 루틴을 체크해서 모아 보세요!');
+      showToast(coinSvg() + ' 코인이 부족해요. 루틴을 체크해서 모아 보세요!', true);
       return;
     }
     p.coins -= it.price;
@@ -5334,7 +5465,7 @@
           ? 'EXP ' + p.exp + ' / 100 · 부화까지 ' + fmtLeft(petHatchLeft())
           : (p.stage >= 3 ? '2차 진화 완성! 🌟' : 'EXP ' + p.exp + ' / 100 · 다음 진화까지 ' + Math.max(0, 100 - p.exp))) + '</div>' +
       '</div>' +
-      '<span class="shop-coin">🪙 <b>' + fmtNum(prof().coins) + '</b></span>' +
+      '<span class="shop-coin">' + coinSvg() + ' <b>' + fmtNum(prof().coins) + '</b></span>' +
       '</div>';
 
     var items = careItems();
@@ -5422,16 +5553,33 @@
   function avatarInner(av) {
     av = av || prof().avatar;
     var skin = avSkin().color;
-    var hc = avHairColor().color;
-    var top = avItem(av.top), bottom = avItem(av.bottom), shoes = avItem(av.shoes), hair = avItem(av.hair), acc = avItem(av.acc);
+    var hairC = avHairColor().color;
+    var top = avItem(av.top), bottom = avItem(av.bottom), shoes = avItem(av.shoes);
+    var hair = avItem(av.hair), hatItem = avItem(av.hat), accItem = avItem(av.acc);
+    var girl = avGender(av) === 'girl';
     var topC = top ? top.color : '#ffffff';
     var topC2 = top ? (top.color2 || top.color) : '#7ec8f0';
     var botC = bottom ? bottom.color : '#5b8cc8';
     var shoeC = shoes ? shoes.color : '#ffffff';
     var shoeC2 = shoes ? (shoes.color2 || shoes.color) : '#7ec8f0';
-    var s = '<g class="av-fig">';
+    var hstyle = hair ? hair.style : 'short';
+    var ast = accItem ? accItem.style : '';
+    var hst = hatItem ? hatItem.style : '';
+    var accC = accItem ? (accItem.color || '#5a4a3a') : '#5a4a3a';
+    var hatC = hatItem ? (hatItem.color || '#6fb7ff') : '#6fb7ff';
+    var s = '<g class="av-fig ' + (girl ? 'girl' : 'boy') + '">';
 
     s += '<ellipse cx="60" cy="194" rx="31" ry="6" fill="#2c2440" opacity=".10"/>';
+
+    /* 천사 날개 · 미니 백팩은 몸 뒤에 */
+    if (ast === 'wings') {
+      s += '<path d="M50 112q-26-30-34-12-5 12 8 20-10 2-12 10 18 6 36-8z" fill="#fff8fd" stroke="#e6c8f2" stroke-width="2"/>';
+      s += '<path d="M70 112q26-30 34-12 5 12-8 20 10 2 12 10-18 6-36-8z" fill="#fff8fd" stroke="#e6c8f2" stroke-width="2"/>';
+    }
+    if (ast === 'backpack') {
+      s += '<rect x="33" y="102" width="54" height="42" rx="13" fill="' + accC + '"/>';
+      s += '<rect x="33" y="112" width="54" height="9" fill="#ffffff" opacity=".38"/>';
+    }
 
     /* 다리 */
     s += '<rect x="47" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
@@ -5458,16 +5606,24 @@
       s += '<path d="M40 142h40" stroke="#ffffff" stroke-width="2" opacity=".25"/>';
     }
 
-    /* 상의 */
+    /* 상의 — 여아는 어깨 폭이 조금 좁아요 */
+    var tw = girl ? 31 : 36;
+    var thh = girl ? 40 : 42;
+    var tx = 60 - tw / 2;
+    var swid = girl ? 12 : 14;
+    var slx = girl ? 33 : 30;
+    var srx = girl ? 75 : 76;
+    var handCx = girl ? 38.6 : 35;
+    var handR = girl ? 5.9 : 6.4;
+    s += '<path d="M' + tx + ' 100q' + (tw / 2) + ' -8 ' + tw + ' 0v' + thh + 'q-' + (tw / 2) + ' 7 -' + tw + ' 0z" fill="' + topC + '"/>';
+    s += '<rect x="' + slx + '" y="104" width="' + swid + '" height="22" rx="' + (swid / 2) + '" fill="' + topC + '"/>';
+    s += '<rect x="' + srx + '" y="104" width="' + swid + '" height="22" rx="' + (swid / 2) + '" fill="' + topC + '"/>';
+    s += '<circle cx="' + handCx + '" cy="130" r="' + handR + '" fill="' + skin + '"/>';
+    s += '<circle cx="' + (120 - handCx) + '" cy="130" r="' + handR + '" fill="' + skin + '"/>';
     var tstyle = top ? top.style : 'tee';
-    s += '<path d="M42 100q18-8 36 0v42q-18 7-36 0z" fill="' + topC + '"/>';
-    s += '<rect x="30" y="104" width="14" height="22" rx="7" fill="' + topC + '"/>';
-    s += '<rect x="76" y="104" width="14" height="22" rx="7" fill="' + topC + '"/>';
-    s += '<circle cx="35" cy="130" r="6.4" fill="' + skin + '"/>';
-    s += '<circle cx="85" cy="130" r="6.4" fill="' + skin + '"/>';
     if (tstyle === 'stripe') {
       for (var i = 0; i < 3; i++) {
-        s += '<path d="M42 ' + (108 + i * 10) + 'h36" stroke="' + topC2 + '" stroke-width="5" opacity=".95"/>';
+        s += '<path d="M' + tx + ' ' + (108 + i * 10) + 'h' + tw + '" stroke="' + topC2 + '" stroke-width="5" opacity=".95"/>';
       }
     } else if (tstyle === 'hood') {
       s += '<path d="M42 100q18 12 36 0q-4 12-18 12t-18-12z" fill="' + topC2 + '"/>';
@@ -5479,30 +5635,52 @@
       }
       s += '<path d="M42 100q18-8 36 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
     } else {
-      s += '<path d="M42 100q18-8 36 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
+      s += '<path d="M' + tx + ' 100q' + (tw / 2) + ' -8 ' + tw + ' 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
       s += '<circle cx="60" cy="118" r="5" fill="' + topC2 + '" opacity=".85"/>';
+    }
+    if (ast === 'backpack') {
+      s += '<path d="M50 100q-7 16-3 30M70 100q7 16 3 30" stroke="' + accC + '" stroke-width="4" fill="none" stroke-linecap="round"/>';
     }
 
     /* 목 */
     s += '<rect x="54" y="88" width="12" height="14" rx="5" fill="' + skin + '"/>';
 
+    /* 긴 머리는 얼굴 뒤로 어깨까지 내려와요 */
+    var bh = 0;
+    if (hstyle === 'long' || hstyle === 'wave') bh = 48;
+    else if (hstyle === 'pony' || hstyle === 'ribbon') bh = 28;
+    else if (hstyle === 'buns') bh = 22;
+    if (bh) {
+      s += '<path d="M27 62c0-22 15-34 33-34s33 12 33 34v' + bh + 'c-6 5-12 6-17 2V66H44v' + (bh - 4) + 'c-5 4-11 3-17-2z" fill="' + hairC + '"/>';
+    }
+    if (hstyle === 'wave') {
+      s += '<circle cx="32" cy="104" r="7.5" fill="' + hairC + '"/><circle cx="41" cy="112" r="6.5" fill="' + hairC + '"/>';
+      s += '<circle cx="88" cy="104" r="7.5" fill="' + hairC + '"/><circle cx="79" cy="112" r="6.5" fill="' + hairC + '"/>';
+    }
+    if (hstyle === 'pony') {
+      s += '<path d="M88 72c15 6 22 22 18 40-3 14-11 24-17 26-6 1-8-5-4-10 8-10 12-24 8-38-2-6-6-11-11-14z" fill="' + hairC + '"/>';
+      s += '<circle cx="90" cy="70" r="5.5" fill="#ff8fb0"/>';
+    }
+
     /* 얼굴 */
+    var headR = girl ? 33 : 33.5;
     s += '<circle cx="26" cy="64" r="6" fill="' + skin + '"/>';
     s += '<circle cx="94" cy="64" r="6" fill="' + skin + '"/>';
-    s += '<circle cx="60" cy="62" r="33" fill="' + skin + '"/>';
-    s += '<ellipse cx="48" cy="65" rx="3.6" ry="4.6" fill="#2c2440"/>';
-    s += '<ellipse cx="72" cy="65" rx="3.6" ry="4.6" fill="#2c2440"/>';
-    s += '<circle cx="49.2" cy="63.4" r="1.3" fill="#fff"/>';
-    s += '<circle cx="73.2" cy="63.4" r="1.3" fill="#fff"/>';
-    s += '<ellipse cx="40" cy="74" rx="4.4" ry="2.6" fill="#ff9db4" opacity=".65"/>';
-    s += '<ellipse cx="80" cy="74" rx="4.4" ry="2.6" fill="#ff9db4" opacity=".65"/>';
+    s += '<circle cx="60" cy="62" r="' + headR + '" fill="' + skin + '"/>';
+    var eyeRx = girl ? 3.9 : 3.5, eyeRy = girl ? 5.2 : 4.6;
+    s += '<ellipse cx="48" cy="65" rx="' + eyeRx + '" ry="' + eyeRy + '" fill="#2c2440"/>';
+    s += '<ellipse cx="72" cy="65" rx="' + eyeRx + '" ry="' + eyeRy + '" fill="#2c2440"/>';
+    s += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="63.2" r="' + (girl ? 1.45 : 1.3) + '" fill="#fff"/>';
+    s += '<circle cx="' + (girl ? 73.4 : 73.2) + '" cy="63.2" r="' + (girl ? 1.45 : 1.3) + '" fill="#fff"/>';
+    s += '<ellipse cx="40" cy="74" rx="' + (girl ? 5 : 4.4) + '" ry="2.8" fill="#ff9db4" opacity="' + (girl ? '.72' : '.5') + '"/>';
+    s += '<ellipse cx="80" cy="74" rx="' + (girl ? 5 : 4.4) + '" ry="2.8" fill="#ff9db4" opacity="' + (girl ? '.72' : '.5') + '"/>';
     s += '<path d="M55 75q5 5 10 0" fill="none" stroke="#b0603f" stroke-width="2.2" stroke-linecap="round"/>';
+    /* 여아는 눈이 조금 크고 볼터치가 진해요 (눈썹·속눈썹은 이 크기에서 화나 보여서 그리지 않아요) */
 
-    /* 헤어 */
-    var hstyle = hair ? hair.style : 'short';
-    var hairC = (hair && hair.color && hair.style !== 'basic') ? hc : hc;
+    /* 헤어 (앞머리) */
+    var cap = '<path d="M27 53c0-20 15-31 33-31s33 11 33 31z" fill="' + hairC + '"/>';
     if (hstyle === 'bob') {
-      s += '<path d="M26 62c0-23 15-36 34-36s34 13 34 36c-7-11-16-16-34-16s-27 5-34 16z" fill="' + hairC + '"/>';
+      s += '<path d="M26 56c0-21 15-34 34-34s34 13 34 34z" fill="' + hairC + '"/>';
       s += '<rect x="23" y="52" width="11" height="30" rx="5.5" fill="' + hairC + '"/>';
       s += '<rect x="86" y="52" width="11" height="30" rx="5.5" fill="' + hairC + '"/>';
     } else if (hstyle === 'twin') {
@@ -5510,7 +5688,7 @@
       s += '<circle cx="96" cy="42" r="12" fill="' + hairC + '"/>';
       s += '<circle cx="24" cy="42" r="4" fill="#ff8fb0"/>';
       s += '<circle cx="96" cy="42" r="4" fill="#ff8fb0"/>';
-      s += '<path d="M26 62c0-23 15-36 34-36s34 13 34 36c-7-11-16-16-34-16s-27 5-34 16z" fill="' + hairC + '"/>';
+      s += '<path d="M26 56c0-21 15-34 34-34s34 13 34 34z" fill="' + hairC + '"/>';
     } else if (hstyle === 'curly') {
       var curls = [[32, 34], [44, 26], [60, 23], [76, 26], [88, 34], [28, 48], [92, 48]];
       for (var ci = 0; ci < curls.length; ci++) s += '<circle cx="' + curls[ci][0] + '" cy="' + curls[ci][1] + '" r="9" fill="' + hairC + '"/>';
@@ -5518,31 +5696,104 @@
     } else if (hstyle === 'buzz') {
       s += '<path d="M28 60c0-20 14-31 32-31s32 11 32 31q-6-10-32-10t-32 10z" fill="' + hairC + '"/>';
       s += '<path d="M46 31l3 7 4-6 4 7 3-6 4 6" fill="none" stroke="' + hairC + '" stroke-width="3" stroke-linecap="round"/>';
+    } else if (hstyle === 'bang') {
+      s += '<path d="M27 64c0-23 14-37 33-37s33 14 33 37c-2-12-6-18-13-19-6 5-12 7-20 7s-14-2-20-7c-7 1-11 7-13 19z" fill="' + hairC + '"/>';
+      s += '<path d="M39 47h42" stroke="#ffffff" stroke-width="2.4" opacity=".16"/>';
+    } else if (hstyle === 'spiky') {
+      s += '<path d="M26 62c0-23 15-36 34-36s34 13 34 36l-7-9-6 6-4-12-7 10-6-14-6 14-7-10-4 12-6-6z" fill="' + hairC + '"/>';
+    } else if (hstyle === 'parted') {
+      s += '<path d="M26 62c0-23 15-36 34-36 18 0 30 10 33 27-6-6-12-9-19-9-9 0-16 4-21 10-4 5-6 12-6 20-6-14-11-15-21-12z" fill="' + hairC + '"/>';
+      s += '<path d="M62 30q-3 12 2 22" fill="none" stroke="#ffffff" stroke-width="2" opacity=".22"/>';
+    } else if (hstyle === 'bowl') {
+      s += '<path d="M25 66c0-25 16-39 35-39s35 14 35 39l-3 8c-2-16-6-22-14-23H42c-8 1-12 7-14 23z" fill="' + hairC + '"/>';
+      s += '<path d="M42 44h36" stroke="#ffffff" stroke-width="2.6" opacity=".2"/>';
+    } else if (hstyle === 'mohawk') {
+      s += '<path d="M52 38c2-14 14-14 16 0l5 24H47z" fill="' + hairC + '"/>';
+      s += '<path d="M30 50q8-8 16-6l-3 12H29z" fill="' + hairC + '" opacity=".55"/>';
+      s += '<path d="M74 44q8-2 16 6l1 6H77z" fill="' + hairC + '" opacity=".55"/>';
+    } else if (hstyle === 'long') {
+      s += cap;
+      s += '<path d="M60 30v15" stroke="#ffffff" stroke-width="1.8" opacity=".2"/>';
+    } else if (hstyle === 'wave') {
+      s += cap;
+      s += '<path d="M33 42q14-16 30-12" fill="none" stroke="#ffffff" stroke-width="2.6" opacity=".2"/>';
+    } else if (hstyle === 'pony') {
+      s += '<path d="M28 60c0-20 14-31 32-31s32 11 32 31c-9-11-18-15-32-15s-23 4-32 15z" fill="' + hairC + '"/>';
+      s += '<path d="M42 40q18-10 36 0" fill="none" stroke="#ffffff" stroke-width="2.4" opacity=".18"/>';
+    } else if (hstyle === 'buns') {
+      s += cap;
+      s += '<circle cx="40" cy="27" r="11.5" fill="' + hairC + '"/>';
+      s += '<circle cx="80" cy="27" r="11.5" fill="' + hairC + '"/>';
+      s += '<path d="M34 25q6-5 12 0M74 25q6-5 12 0" fill="none" stroke="#ffffff" stroke-width="2" opacity=".22"/>';
+    } else if (hstyle === 'ribbon') {
+      s += cap;
+      s += '<path d="M60 26l-14-9 2 17z" fill="#ff8fb0"/><path d="M60 26l14-9-2 17z" fill="#ff8fb0"/>';
+      s += '<circle cx="60" cy="26" r="4.2" fill="#ff6fa1"/>';
     } else {
-      s += '<path d="M26 62c0-23 15-36 34-36s34 13 34 36c-8-12-17-17-34-17s-26 5-34 17z" fill="' + hairC + '"/>';
-      s += '<path d="M40 44q20-12 40 0" fill="none" stroke="#ffffff" stroke-width="3" opacity=".22"/>';
+      s += cap;
+      s += '<path d="M40 40q20-12 40 0" fill="none" stroke="#ffffff" stroke-width="3" opacity=".22"/>';
     }
 
-    /* 액세서리 */
-    var ast = acc ? acc.style : '';
-    if (ast === 'glasses') {
-      s += '<circle cx="48" cy="65" r="10" fill="none" stroke="' + (acc.color || '#5a4a3a') + '" stroke-width="2.6"/>';
-      s += '<circle cx="72" cy="65" r="10" fill="none" stroke="' + (acc.color || '#5a4a3a') + '" stroke-width="2.6"/>';
-      s += '<path d="M58 65h4" stroke="' + (acc.color || '#5a4a3a') + '" stroke-width="2.6"/>';
-    } else if (ast === 'cap') {
-      s += '<path d="M28 52c0-20 14-30 32-30s32 10 32 30z" fill="' + (acc.color || '#6fb7ff') + '"/>';
-      s += '<path d="M28 52h44q10 0 14 5H26z" fill="' + (acc.color || '#6fb7ff') + '" opacity=".85"/>';
+    /* 모자 · 머리장식 */
+    if (hst === 'cap') {
+      s += '<path d="M28 52c0-20 14-30 32-30s32 10 32 30z" fill="' + hatC + '"/>';
+      s += '<path d="M28 52h44q10 0 14 5H26z" fill="' + hatC + '" opacity=".85"/>';
       s += '<circle cx="60" cy="24" r="3" fill="#ffffff" opacity=".7"/>';
-    } else if (ast === 'crown') {
-      s += '<path d="M38 32l4-14 8 9 10-13 10 13 8-9 4 14z" fill="' + (acc.color || '#ffd34d') + '" stroke="#e0a800" stroke-width="1.5"/>';
+    } else if (hst === 'beanie') {
+      s += '<path d="M27 52c0-22 15-32 33-32s33 10 33 32z" fill="' + hatC + '"/>';
+      s += '<rect x="24" y="47" width="72" height="12" rx="6" fill="' + lighten(hatC, .18) + '"/>';
+      s += '<circle cx="60" cy="15" r="7" fill="#ffffff" opacity=".9"/>';
+      s += '<path d="M40 30v14M60 24v22M80 30v14" stroke="#ffffff" stroke-width="1.6" opacity=".28"/>';
+    } else if (hst === 'crown') {
+      s += '<path d="M38 32l4-14 8 9 10-13 10 13 8-9 4 14z" fill="' + hatC + '" stroke="#e0a800" stroke-width="1.5"/>';
       s += '<circle cx="60" cy="24" r="2.6" fill="#ff6b8a"/>';
+    } else if (hst === 'bunnyband') {
+      s += '<path d="M30 54q30-22 60 0" fill="none" stroke="' + hatC + '" stroke-width="6" stroke-linecap="round"/>';
+      s += '<ellipse cx="43" cy="20" rx="7.5" ry="17" fill="#ffffff" stroke="#f3c6d8" stroke-width="2" transform="rotate(-12 43 20)"/>';
+      s += '<ellipse cx="43" cy="20" rx="3.6" ry="10" fill="#ffc2d6" transform="rotate(-12 43 20)"/>';
+      s += '<ellipse cx="77" cy="20" rx="7.5" ry="17" fill="#ffffff" stroke="#f3c6d8" stroke-width="2" transform="rotate(12 77 20)"/>';
+      s += '<ellipse cx="77" cy="20" rx="3.6" ry="10" fill="#ffc2d6" transform="rotate(12 77 20)"/>';
+    } else if (hst === 'catband') {
+      s += '<path d="M30 54q30-22 60 0" fill="none" stroke="' + hatC + '" stroke-width="6" stroke-linecap="round"/>';
+      s += '<path d="M34 44l2-18 16 10z" fill="' + hatC + '"/>';
+      s += '<path d="M86 44l-2-18-16 10z" fill="' + hatC + '"/>';
+      s += '<path d="M40 40l1-9 7 5z" fill="#ffd0e0"/><path d="M80 40l-1-9-7 5z" fill="#ffd0e0"/>';
+    } else if (hst === 'ribbonpin') {
+      s += '<path d="M66 26l-13-7 2 14z" fill="' + hatC + '"/><path d="M66 26l13-7-2 14z" fill="' + hatC + '"/>';
+      s += '<circle cx="66" cy="26" r="3.6" fill="#ffd34d"/>';
+      s += '<path d="M26 32l1.6 4.2 4.2 1.6-4.2 1.6L26 43.6l-1.6-4.2L20.2 37.8l4.2-1.6z" fill="#ffe066" stroke="#f0b400" stroke-width="1"/>';
+    } else if (hst === 'explorer') {
+      s += '<ellipse cx="60" cy="50" rx="44" ry="9" fill="' + hatC + '"/>';
+      s += '<path d="M32 50q0-24 28-24t28 24z" fill="' + lighten(hatC, .1) + '"/>';
+      s += '<rect x="30" y="42" width="60" height="7" rx="3.5" fill="#8a5a2b"/>';
+    } else if (hst === 'beret') {
+      s += '<ellipse cx="62" cy="34" rx="31" ry="15" fill="' + hatC + '" transform="rotate(-8 62 34)"/>';
+      s += '<ellipse cx="62" cy="30" rx="25" ry="10" fill="' + lighten(hatC, .2) + '" opacity=".55" transform="rotate(-8 62 30)"/>';
+      s += '<circle cx="89" cy="22" r="3.4" fill="' + darken(hatC, .12) + '"/>';
+    }
+
+    /* 안경 · 얼굴 소품 */
+    if (ast === 'glasses') {
+      s += '<circle cx="48" cy="65" r="10" fill="none" stroke="' + accC + '" stroke-width="2.6"/>';
+      s += '<circle cx="72" cy="65" r="10" fill="none" stroke="' + accC + '" stroke-width="2.6"/>';
+      s += '<path d="M58 65h4" stroke="' + accC + '" stroke-width="2.6"/>';
+      s += '<path d="M38 62l-8-3M82 62l8-3" stroke="' + accC + '" stroke-width="2.2" stroke-linecap="round"/>';
+    } else if (ast === 'heartglasses') {
+      s += '<path d="M48 58c-4-4-9-1-9 4 0 5 5 8 9 12 4-4 9-7 9-12 0-5-5-8-9-4z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
+      s += '<path d="M72 58c-4-4-9-1-9 4 0 5 5 8 9 12 4-4 9-7 9-12 0-5-5-8-9-4z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
+      s += '<path d="M57 64h6" stroke="' + accC + '" stroke-width="2.4"/>';
+    } else if (ast === 'starglasses') {
+      s += '<path d="M48 56.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
+      s += '<path d="M72 56.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
+      s += '<path d="M45 64.5l2-2.6M69 64.5l2-2.6" stroke="#ffffff" stroke-width="1.4" opacity=".8" stroke-linecap="round"/>';
+      s += '<path d="M58 64h4" stroke="' + accC + '" stroke-width="2"/>';
     } else if (ast === 'bag') {
-      s += '<path d="M44 102l24 44" stroke="' + (acc.color || '#f28fa8') + '" stroke-width="5" stroke-linecap="round"/>';
-      s += '<rect x="62" y="128" width="26" height="20" rx="6" fill="' + (acc.color || '#f28fa8') + '"/>';
+      s += '<path d="M44 102l24 44" stroke="' + accC + '" stroke-width="5" stroke-linecap="round"/>';
+      s += '<rect x="62" y="128" width="26" height="20" rx="6" fill="' + accC + '"/>';
       s += '<rect x="62" y="128" width="26" height="7" rx="3.5" fill="#ffffff" opacity=".45"/>';
     } else if (ast === 'necklace') {
-      s += '<path d="M48 92q12 12 24 0" fill="none" stroke="' + (acc.color || '#ffd34d') + '" stroke-width="2.4"/>';
-      s += '<circle cx="60" cy="99" r="3.4" fill="' + (acc.color || '#ffd34d') + '" stroke="#e0a800" stroke-width="1"/>';
+      s += '<path d="M48 92q12 12 24 0" fill="none" stroke="' + accC + '" stroke-width="2.4"/>';
+      s += '<circle cx="60" cy="99" r="3.4" fill="' + accC + '" stroke="#e0a800" stroke-width="1"/>';
     }
 
     /* 신발 */
@@ -5613,12 +5864,98 @@
     if (isOnlyModal('avatarModal')) unlockScroll();
   }
 
+  function avGender(av) {
+    var g = (av || prof().avatar || {}).gender;
+    return g === 'girl' ? 'girl' : 'boy';
+  }
+
+  function genderButtonsHtml(av) {
+    var h = '', cur = avGender(av);
+    for (var i = 0; i < AV_GENDERS.length; i++) {
+      var g = AV_GENDERS[i];
+      h += '<button type="button" class="gender-btn' + (cur === g.id ? ' on' : '') + '" data-act="av-gender" data-id="' + g.id + '"' +
+        (cur === g.id ? ' aria-pressed="true"' : '') + '>' + g.icon + ' ' + g.label + '</button>';
+    }
+    return h;
+  }
+
+  function setAvatarGender(id) {
+    if (id !== 'boy' && id !== 'girl') return;
+    var av = prof().avatar;
+    if (avGender(av) === id) return;
+    av.gender = id;
+    var cur = avItem(av.hair);
+    var cg = cur ? (cur.g || 'both') : 'both';
+    if (cg !== 'both' && cg !== id) {
+      av.hair = (id === 'girl') ? 'av_hair_long' : 'av_hair_short';
+      prof().owned[av.hair] = 1;
+    }
+    saveState();
+    snd('sticker');
+    showToast((id === 'girl' ? '👧 여아' : '👦 남아') + ' 아바타로 바꿨어요!');
+    renderAvatar();
+    if (!document.getElementById('roomModal').hidden) renderRoom();
+  }
+
+  /* 💇 미용실: 머리색을 바꾸면 코인이 나가요 */
+  function dyeHair(id) {
+    var c = null;
+    for (var i = 0; i < AV_HAIR_COLORS.length; i++) if (AV_HAIR_COLORS[i].id === id) c = AV_HAIR_COLORS[i];
+    if (!c) return;
+    var p = prof();
+    if (p.avatar.hairColor === id) { showToast('💇 지금 머리색이에요!'); return; }
+    if (p.coins < HAIR_DYE_COST) {
+      snd('uncheck');
+      showToast(coinSvg() + ' 코인이 부족해요. 미용실은 ' + HAIR_DYE_COST + '코인이에요!', true);
+      return;
+    }
+    p.coins -= HAIR_DYE_COST;
+    p.updatedAt = new Date().toISOString();
+    p.avatar.hairColor = id;
+    saveState();
+    renderCoinBadge();
+    snd('chime');
+    showToast('💇 머리를 ' + c.label + ' 색으로 염색했어요! ' + coinSvg() + ' -' + HAIR_DYE_COST, true);
+    renderAvatar();
+    if (!document.getElementById('roomModal').hidden) renderRoom();
+  }
+
+  function salonHtml(av, p) {
+    var can = p.coins >= HAIR_DYE_COST;
+    var h = '<div class="salon" id="hairSalon">' +
+      '<div class="salon-head"><b>💇 미용실 · 머리 염색</b><small>' + coinSvg() + ' ' + HAIR_DYE_COST + '코인</small></div>' +
+      '<p class="lf-note">마음에 드는 색을 고르면 ' + HAIR_DYE_COST + '코인을 내고 머리를 염색해요. 지금 머리색은 무료예요.</p>' +
+      '<div class="salon-grid">';
+    for (var i = 0; i < AV_HAIR_COLORS.length; i++) {
+      var c = AV_HAIR_COLORS[i];
+      var now = av.hairColor === c.id;
+      h += '<button type="button" class="salon-sw' + (now ? ' on' : '') + '" data-act="av-dye" data-id="' + c.id + '" style="--sw:' + c.color + '" title="' + esc(c.label) + ' 머리색"' +
+        (now ? ' aria-pressed="true"' : '') + '>' +
+        '<span class="ssw-dot"></span><b>' + esc(c.label) + '</b>' +
+        '<small>' + (now ? '현재 색' : (can ? coinSvg() + ' ' + HAIR_DYE_COST : '코인 부족')) + '</small>' +
+        '</button>';
+    }
+    h += '</div></div>';
+    return h;
+  }
+
   function avatarSlotItems(slot) {
     var list = shopAll(), out = [];
     for (var i = 0; i < list.length; i++) {
       var it = list[i];
       if (it.kind !== 'cloth' || it.slot !== slot || it.hidden) continue;
       out.push(it);
+    }
+    if (slot === 'hair') {
+      var g = avGender();
+      out.sort(function (a, b) {
+        function rank(o) {
+          var og = o.g || 'both';
+          if (og === 'both') return 1;
+          return og === g ? 0 : 2;
+        }
+        return rank(a) - rank(b);
+      });
     }
     return out;
   }
@@ -5631,16 +5968,13 @@
       '<div class="av-side">' +
         '<b>나의 아바타</b>' +
         '<p class="lf-note">옷을 고르면 바로 입어요. 마이룸에도 이 모습으로 서 있어요.</p>' +
+        '<div class="av-gender"><span>성별</span>' + genderButtonsHtml(av) + '</div>' +
         '<div class="av-swatches"><span>피부</span>';
     for (var i = 0; i < AV_SKINS.length; i++) {
       h += '<button type="button" class="sw' + (av.skin === AV_SKINS[i].id ? ' on' : '') + '" data-act="av-skin" data-id="' + AV_SKINS[i].id + '" style="--sw:' + AV_SKINS[i].color + '" title="' + esc(AV_SKINS[i].label) + '"></button>';
     }
-    h += '</div><div class="av-swatches"><span>머리색</span>';
-    for (var j = 0; j < AV_HAIR_COLORS.length; j++) {
-      h += '<button type="button" class="sw' + (av.hairColor === AV_HAIR_COLORS[j].id ? ' on' : '') + '" data-act="av-haircolor" data-id="' + AV_HAIR_COLORS[j].id + '" style="--sw:' + AV_HAIR_COLORS[j].color + '" title="' + esc(AV_HAIR_COLORS[j].label) + '"></button>';
-    }
     h += '</div>' +
-        '<div class="shop-coin">🪙 <b>' + fmtNum(p.coins) + '</b></div>' +
+        '<div class="shop-coin">' + coinSvg() + ' <b>' + fmtNum(p.coins) + '</b></div>' +
       '</div></div>';
 
     h += '<div class="tabs av-tabs">';
@@ -5652,25 +5986,45 @@
     }
     h += '</div>';
 
+    if (avatarUi.slot === 'hair') {
+      h += '<p class="lf-note">👦 남자 머리 · 👧 여자 머리 — 지금 고른 성별 머리가 먼저 나와요.</p>';
+    }
     h += '<div class="av-grid">';
-    if (avatarUi.slot === 'acc') {
-      h += '<button type="button" class="av-card' + (!av.acc ? ' on' : '') + '" data-act="av-off"><span class="av-thumb">🚫</span><b>안 쓰기</b><small>액세서리 없음</small></button>';
+    if (avatarUi.slot === 'acc' || avatarUi.slot === 'hat') {
+      h += '<button type="button" class="av-card' + (!av[avatarUi.slot] ? ' on' : '') + '" data-act="av-off" data-slot="' + avatarUi.slot + '">' +
+        '<span class="av-thumb">🚫</span><b>안 쓰기</b><small>' + (avatarUi.slot === 'hat' ? '모자 없음' : '소품 없음') + '</small></button>';
     }
     var list = avatarSlotItems(avatarUi.slot);
     for (var k = 0; k < list.length; k++) {
       var it = list[k];
       var ownIt = it.price <= 0 || p.owned[it.id];
       var on = av[avatarUi.slot] === it.id;
+      var ig = it.g || 'both';
+      var otherG = (avatarUi.slot === 'hair' && ig !== 'both' && ig !== avGender(av));
+      var gmark = (avatarUi.slot === 'hair' && ig !== 'both') ? (ig === 'boy' ? ' 👦' : ' 👧') : '';
       var tmpAv = {};
       for (var ak in av) if (Object.prototype.hasOwnProperty.call(av, ak)) tmpAv[ak] = av[ak];
       tmpAv[it.slot] = it.id;
-      h += '<button type="button" class="av-card' + (on ? ' on' : '') + (ownIt ? '' : ' locked') + '" data-act="av-wear" data-id="' + esc(it.id) + '">' +
-        '<span class="av-thumb av-thumb-fig">' + '<svg viewBox="0 0 120 200" aria-hidden="true">' + avatarInner(tmpAv) + '</svg></span>' +
-        '<b>' + esc(it.name) + '</b>' +
-        '<small>' + (ownIt ? (on ? '입는 중' : '입어 보기') : '🪙 ' + fmtNum(it.price)) + '</small>' +
+      /* 머리·모자는 얼굴을 크게, 안경·소품은 상반신을 보여 줘야 모양이 구분돼요 */
+      var thumbVB = '0 0 120 200', thumbCls = ' av-thumb-fig';
+      if (avatarUi.slot === 'hair') {
+        thumbVB = '4 0 112 124'; thumbCls = ' av-thumb-fig face';
+        tmpAv.hat = '';   /* 머리 모양이 잘 보이도록 미리보기에서는 모자를 벗겨요 */
+      } else if (avatarUi.slot === 'hat') {
+        thumbVB = '6 0 108 108'; thumbCls = ' av-thumb-fig face';
+      } else if (avatarUi.slot === 'acc') {
+        thumbVB = '8 8 104 124'; thumbCls = ' av-thumb-fig bust';
+      }
+      h += '<button type="button" class="av-card' + (on ? ' on' : '') + (ownIt ? '' : ' locked') + (otherG ? ' gend-other' : '') + '" data-act="av-wear" data-id="' + esc(it.id) + '">' +
+        '<span class="av-thumb' + thumbCls + '">' + '<svg viewBox="' + thumbVB + '" aria-hidden="true">' + avatarInner(tmpAv) + '</svg></span>' +
+        '<b>' + esc(it.name) + gmark + '</b>' +
+        '<small>' + (ownIt ? (on ? '입는 중' : '입어 보기') : coinSvg() + ' ' + fmtNum(it.price)) + '</small>' +
         '</button>';
     }
     h += '</div>';
+
+    h += salonHtml(av, p);
+
     h += '<div class="care-actions">' +
       '<button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="avatar">🛒 아바타 상점</button>' +
       '<button type="button" class="ghost-btn" data-act="avatar-close">닫기</button></div>';
@@ -5696,6 +6050,79 @@
 
   var roomUi = { panel: 'main', sel: '', moving: '', msg: '' };
   var roomAnim = { timer: 0 };
+
+  /* 마이룸 아바타: 예전보다 작게(58%) 줄이고, 바닥을 누르면 걸어가요 */
+  var AV_ROOM_SCALE = 0.58;
+  var AV_WALK_SPEED = 1.15;   /* 초당 타일 */
+  var roomAva = { x: 3.1, y: 3.5, tx: 3.1, ty: 3.5, idle: 3, walkPh: 0, moving: false, showTarget: false, ready: false };
+
+  function roomAvaSync() {
+    var pos = (prof().room && prof().room.avatarPos) || {};
+    var x = Number(pos.x), y = Number(pos.y);
+    roomAva.x = roomAva.tx = isFinite(x) ? Math.max(0.5, Math.min(ROOM.N - 0.5, x)) : 3.1;
+    roomAva.y = roomAva.ty = isFinite(y) ? Math.max(0.5, Math.min(ROOM.N - 0.5, y)) : 3.5;
+    roomAva.idle = 2.6 + Math.random() * 2;
+    roomAva.walkPh = 0;
+    roomAva.moving = false;
+    roomAva.showTarget = false;
+    roomAva.ready = true;
+  }
+
+  /* 가구가 있는 자리는 비켜서 걷어요 (러그·스케이트보드는 밟고 설 수 있음) */
+  function roomSpotFree(x, y) {
+    var items = (prof().room && prof().room.items) || [];
+    for (var i = 0; i < items.length; i++) {
+      var def = shopItem(items[i].id);
+      if (!def) continue;
+      if (def.fid === 'rug' || def.fid === 'skate') continue;
+      var sz = roomDefSize(items[i].id);
+      if (x > items[i].x - 0.34 && x < items[i].x + sz.w + 0.34 &&
+          y > items[i].y - 0.28 && y < items[i].y + sz.d + 0.55) return false;
+    }
+    return true;
+  }
+
+  function pickWanderTarget() {
+    var N = ROOM.N;
+    for (var i = 0; i < 10; i++) {
+      var nx = Math.max(0.55, Math.min(N - 0.55, roomAva.x + (Math.random() * 2 - 1) * 1.7));
+      var ny = Math.max(0.55, Math.min(N - 0.55, roomAva.y + (Math.random() * 2 - 1) * 1.7));
+      if (!roomSpotFree(nx, ny)) continue;
+      roomAva.tx = nx;
+      roomAva.ty = ny;
+      return true;
+    }
+    return false;
+  }
+
+  /* 바닥을 누르면 그 자리로 걸어가요 (가구 자리면 가장 가까운 빈 자리로) */
+  function roomAvaWalk(cx, cy) {
+    var N = ROOM.N;
+    var x = Math.max(0.55, Math.min(N - 0.55, cx));
+    var y = Math.max(0.55, Math.min(N - 0.55, cy));
+    if (!roomSpotFree(x, y)) {
+      var best = null, bd = 1e9;
+      for (var i = 0; i <= 12; i++) {
+        for (var j = 0; j <= 12; j++) {
+          var px = 0.55 + i * (N - 1.1) / 12, py = 0.55 + j * (N - 1.1) / 12;
+          if (!roomSpotFree(px, py)) continue;
+          var d = (px - x) * (px - x) + (py - y) * (py - y);
+          if (d < bd) { bd = d; best = [px, py]; }
+        }
+      }
+      if (!best) return false;
+      x = best[0];
+      y = best[1];
+    }
+    roomAva.tx = x;
+    roomAva.ty = y;
+    roomAva.idle = 4;
+    roomAva.showTarget = true;
+    prof().room.avatarPos = { x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100 };
+    saveState();
+    renderRoom();
+    return true;
+  }
 
   function iP(x, y) {
     return [ROOM.OX + (x - y) * ROOM.HW, ROOM.OY + (x + y) * ROOM.HH];
@@ -5928,13 +6355,24 @@
         draw.push({ k: 99, html: '<polygon points="' + pts(isoQuad(it.x + 0.02, it.y + 0.02, sz.w - 0.04, sz.d - 0.04, 1)) + '" fill="none" stroke="#ff9f1c" stroke-width="3" stroke-dasharray="7 5" pointer-events="none"/>' });
       }
     }
-    /* 아바타 */
+    /* 아바타 — 작고 귀엽게, 바닥을 누르면 그 자리로 걸어가요 */
     var av = prof().avatar;
-    var ap = iP(3.1, 3.5);
+    var ap = iP(roomAva.x, roomAva.y);
+    var avS = AV_ROOM_SCALE;
     draw.push({
-      k: 3.1 + 3.5,
-      html: '<g class="room-ava" transform="translate(' + ap[0].toFixed(1) + ',' + ap[1].toFixed(1) + ')" pointer-events="none"><g class="room-bob"><svg x="-62" y="-200" width="124" height="206" viewBox="0 0 120 200">' + avatarInner(av) + '</svg></g></g>'
+      k: roomAva.x + roomAva.y,
+      html: '<g class="room-ava" transform="translate(' + ap[0].toFixed(1) + ',' + ap[1].toFixed(1) + ')" pointer-events="none">' +
+        '<g class="room-bob"><g class="room-ava-hop">' +
+        '<svg x="' + (-60 * avS).toFixed(1) + '" y="' + (-194 * avS).toFixed(1) + '" width="' + (120 * avS).toFixed(1) + '" height="' + (200 * avS).toFixed(1) + '" viewBox="0 0 120 200" aria-hidden="true">' +
+        avatarInner(av) + '</svg></g></g></g>'
     });
+    if (roomAva.showTarget) {
+      var trp = iP(roomAva.tx, roomAva.ty);
+      draw.push({
+        k: 98.5,
+        html: '<g class="room-ava-target" pointer-events="none"><ellipse cx="' + trp[0].toFixed(1) + '" cy="' + trp[1].toFixed(1) + '" rx="20" ry="10" fill="none" stroke="#ff9f1c" stroke-width="3" stroke-dasharray="6 5"/></g>'
+      });
+    }
     /* 친구 */
     var pets = prof().room.pets;
     var curPet = petState();
@@ -5963,7 +6401,7 @@
       if (all[i].kind === 'furni' && prof().owned[all[i].id] && !all[i].hidden) ownedFurni++;
     }
     var h = '<div class="room-toolbar">' +
-      '<span class="room-hint">' + (roomUi.moving ? '✋ 옮길 자리를 눌러 주세요' : '가구를 끌거나 눌러서 옮기고, 골라서 치울 수 있어요') + '</span>' +
+      '<span class="room-hint">' + (roomUi.moving ? '✋ 옮길 자리를 눌러 주세요' : '바닥을 누르면 아바타가 걸어가요 · 가구는 끌어서 옮겨요') + '</span>' +
       '<button type="button" class="tool-pill' + (roomUi.panel === 'wall' ? ' on' : '') + '" data-act="room-wall">🎨 벽지</button>' +
       '<button type="button" class="tool-pill' + (roomUi.panel === 'storage' ? ' on' : '') + '" data-act="room-storage">🧺 보관함 ' + Math.max(0, ownedFurni - placed) + '</button>' +
       '<button type="button" class="tool-pill' + (roomUi.panel === 'pets' ? ' on' : '') + '" data-act="room-pets">🐾 친구 ' + room.pets.length + '/4</button>' +
@@ -5982,7 +6420,7 @@
         var th = wallInfo(w.id);
         h += '<button type="button" class="wall-card' + (prof().room.wall === w.id ? ' on' : '') + '" data-act="room-wall-set" data-id="' + esc(w.id) + '">' +
           '<span class="wc-prev" style="--w:' + th.wall + ';--f:' + th.floor + '"></span>' +
-          '<b>' + esc(w.name) + '</b><small>' + (ownIt ? (prof().room.wall === w.id ? '사용 중' : '바꾸기') : '🪙 ' + fmtNum(w.price)) + '</small>' +
+          '<b>' + esc(w.name) + '</b><small>' + (ownIt ? (prof().room.wall === w.id ? '사용 중' : '바꾸기') : coinSvg() + ' ' + fmtNum(w.price)) + '</small>' +
           '</button>';
       }
       h += '</div></div>';
@@ -6044,14 +6482,14 @@
   function roomHtml() {
     var h = '<div class="room-top">' +
       '<span class="room-title">' + wallInfo(prof().room.wall).name + '</span>' +
-      '<span class="shop-coin" id="roomCoins">🪙 ' + fmtNum(prof().coins) + '</span>' +
+      '<span class="shop-coin" id="roomCoins">' + coinSvg() + ' ' + fmtNum(prof().coins) + '</span>' +
       '</div>';
     h += roomToolsHtml();
     h += '<div class="room-wrap">' + roomSceneHtml() + '</div>';
     if (roomUi.msg) h += '<p class="shop-msg">' + esc(roomUi.msg) + '</p>';
     h += roomPanelHtml();
     h += roomSelHtml();
-    h += '<p class="lf-note">가구는 상점에서 사면 보관함에 들어와요. 새로 태어난 친구는 마이룸에 저절로 놀러 오고, 다 자란 친구도 불러올 수 있어요.</p>';
+    h += '<p class="lf-note">바닥을 누르면 아바타가 그 자리로 걸어가요. 가구는 상점에서 사면 보관함에 들어오고, 새로 태어난 친구는 마이룸에 저절로 놀러 와요.</p>';
     h += '<div class="care-actions"><button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="room">🛒 가구·벽지 상점</button>' +
       '<button type="button" class="ghost-btn" data-act="room-close">닫기</button></div>';
     return h;
@@ -6071,6 +6509,7 @@
     roomUi.sel = '';
     roomUi.moving = '';
     roomUi.msg = '';
+    roomAvaSync();
     renderRoom();
     var m = document.getElementById('roomModal');
     if (m) m.hidden = false;
@@ -6088,8 +6527,10 @@
     stopRoomAnim();
     var svg = document.getElementById('roomScene');
     if (!svg) return;
+    var avaEl = svg.querySelector('.room-ava');
+    var hopEl = avaEl ? avaEl.querySelector('.room-ava-hop') : null;
+    var ringEl = svg.querySelector('.room-ava-target');
     var nodes = svg.querySelectorAll('.room-pet');
-    if (!nodes.length) return;
     var pets = [];
     for (var i = 0; i < nodes.length; i++) {
       pets.push({
@@ -6102,9 +6543,12 @@
         ph: i * 1.7
       });
     }
-    var t0 = Date.now();
+    var t0 = Date.now(), tPrev = t0;
     roomAnim.timer = window.setInterval(function () {
-      var t = (Date.now() - t0) / 1000;
+      var now = Date.now();
+      var t = (now - t0) / 1000;
+      var dt = Math.min(0.3, (now - tPrev) / 1000);
+      tPrev = now;
       for (var k = 0; k < pets.length; k++) {
         var o = pets[k];
         var gx = o.bx + Math.sin(t * o.sp + o.ph) * o.rx;
@@ -6112,6 +6556,35 @@
         var p = iP(gx, gy);
         var hop = Math.abs(Math.sin(t * 3.4 + o.ph)) * 7;
         if (o.el && o.el.setAttribute) o.el.setAttribute('transform', 'translate(' + (p[0]).toFixed(1) + ',' + (p[1] - 60 - hop).toFixed(1) + ')');
+      }
+      /* 아바타 걷기: 목표 자리로 통통 걸어가고, 도착하면 잠깐 쉬었다가 근처를 산책해요 */
+      if (avaEl) {
+        var dx = roomAva.tx - roomAva.x, dy = roomAva.ty - roomAva.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 0.015) {
+          var step = Math.min(dist, AV_WALK_SPEED * dt);
+          roomAva.x += dx / dist * step;
+          roomAva.y += dy / dist * step;
+          roomAva.walkPh += dt * 8.5;
+          roomAva.moving = true;
+          if (hopEl) hopEl.setAttribute('transform', 'translate(0,' + (-Math.abs(Math.sin(roomAva.walkPh)) * 3.6).toFixed(2) + ')');
+        } else if (roomAva.moving) {
+          roomAva.x = roomAva.tx;
+          roomAva.y = roomAva.ty;
+          roomAva.moving = false;
+          roomAva.walkPh = 0;
+          roomAva.showTarget = false;
+          /* 산책한 자리는 메모리에만 남겨 두고, 다음 저장 때 함께 저장돼요 */
+          prof().room.avatarPos = { x: Math.round(roomAva.x * 100) / 100, y: Math.round(roomAva.y * 100) / 100 };
+          if (hopEl) hopEl.setAttribute('transform', 'translate(0,0)');
+          if (ringEl) ringEl.setAttribute('visibility', 'hidden');
+          roomAva.idle = 3 + Math.random() * 3;
+        } else {
+          roomAva.idle -= dt;
+          if (roomAva.idle <= 0 && !pickWanderTarget()) roomAva.idle = 4;
+        }
+        var ap2 = iP(roomAva.x, roomAva.y);
+        avaEl.setAttribute('transform', 'translate(' + ap2[0].toFixed(1) + ',' + ap2[1].toFixed(1) + ')');
       }
     }, 90);
   }
@@ -6158,14 +6631,18 @@
   }
 
   /* 가구 끌어서 옮기기 / 눌러서 고르기 */
-  var roomDrag = { u: '', x: 0, y: 0, moved: false };
+  var roomDrag = { u: '', x: 0, y: 0, moved: false, inScene: false };
   function installRoomDrag() {
     document.addEventListener('pointerdown', function (e) {
       var m = document.getElementById('roomModal');
       if (!m || m.hidden) return;
+      var svg = document.getElementById('roomScene');
       var el = (e.target && e.target.closest) ? e.target.closest('[data-room-drag]') : null;
-      if (!el) return;
-      roomDrag = { u: el.getAttribute('data-room-drag'), x: e.clientX, y: e.clientY, moved: false };
+      roomDrag = {
+        u: el ? el.getAttribute('data-room-drag') : '',
+        x: e.clientX, y: e.clientY, moved: false,
+        inScene: !!(svg && e.target && svg.contains(e.target))
+      };
     }, { passive: true });
     document.addEventListener('pointermove', function (e) {
       if (!roomDrag.u) return;
@@ -6173,19 +6650,26 @@
     }, { passive: true });
     document.addEventListener('pointerup', function (e) {
       var m = document.getElementById('roomModal');
-      if (!m || m.hidden) { roomDrag = { u: '', x: 0, y: 0, moved: false }; return; }
+      if (!m || m.hidden) { roomDrag = { u: '', x: 0, y: 0, moved: false, inScene: false }; return; }
       var svg = document.getElementById('roomScene');
+      var grab = roomDrag;
+      roomDrag = { u: '', x: 0, y: 0, moved: false, inScene: false };
       if (roomUi.moving) {
         var mv = cellFromEvent(svg, e);
         if (mv) moveRoomItem(roomUi.moving, mv.x, mv.y);
-        roomDrag = { u: '', x: 0, y: 0, moved: false };
         return;
       }
-      var u = roomDrag.u, moved = roomDrag.moved;
-      roomDrag = { u: '', x: 0, y: 0, moved: false };
-      if (!u || !moved) return;
-      var cell = cellFromEvent(svg, e);
-      if (cell) moveRoomItem(u, cell.x, cell.y);
+      if (grab.u) {
+        if (!grab.moved) return;
+        var cell = cellFromEvent(svg, e);
+        if (cell) moveRoomItem(grab.u, cell.x, cell.y);
+        return;
+      }
+      /* 빈 바닥을 톡 누르면 아바타가 그 자리로 걸어가요 */
+      if (!grab.inScene || !svg) return;
+      if (Math.abs(e.clientX - grab.x) + Math.abs(e.clientY - grab.y) > 18) return;
+      var at = cellFromEvent(svg, e);
+      if (at) roomAvaWalk(at.x, at.y);
     });
   }
 
@@ -8929,7 +9413,7 @@
     return homePortalUrl() + '#connect=' + b64urlEncodeUtf8(JSON.stringify(payload));
   }
 
-  function showToast(text) {
+  function showToast(text, asHtml) {
     var el = document.getElementById('dashToast');
     if (!el) {
       el = document.createElement('div');
@@ -8938,7 +9422,7 @@
       el.setAttribute('role', 'status');
       document.body.appendChild(el);
     }
-    el.textContent = text;
+    if (asHtml) el.innerHTML = text; else el.textContent = text;
     el.classList.add('show');
     if (showToast.timer) window.clearTimeout(showToast.timer);
     showToast.timer = window.setTimeout(function () { el.classList.remove('show'); }, 2800);
@@ -9300,7 +9784,16 @@
       equipAvatar(avIt.slot, avId);
       return;
     }
-    if (act === 'av-off') { prof().avatar.acc = ''; saveState(); renderAvatar(); return; }
+    if (act === 'av-off') {
+      var offSlot = el.getAttribute('data-slot') || 'acc';
+      prof().avatar[offSlot] = '';
+      saveState();
+      renderAvatar();
+      if (!document.getElementById('roomModal').hidden) renderRoom();
+      return;
+    }
+    if (act === 'av-gender') { setAvatarGender(el.getAttribute('data-id')); return; }
+    if (act === 'av-dye') { dyeHair(el.getAttribute('data-id')); return; }
     if (act === 'av-skin') { setAvatarSkin(el.getAttribute('data-id')); return; }
     if (act === 'av-haircolor') { setAvatarHairColor(el.getAttribute('data-id')); return; }
     if (act === 'close-goal') { closeGoal(); return; }
