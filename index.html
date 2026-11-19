@@ -1217,7 +1217,6 @@
   var LAST_ID_KEY = 'kidsDashboard.lastId';
   var LAST_REMEMBER_KEY = 'kidsDashboard.remember';
   var SESSION_KEY = 'kidsDashboard.session.v1';
-  var HUB_KEY = 'kidsDashboard.hub.v1';
   var HUB_LAST_KEY = 'kidsDashboard.hub.last';
   var SESSION_MS = 30 * 24 * 60 * 60 * 1000; /* 로그인 유지 30일 */
   var SEC_IDS = ['routine', 'sticker', 'academy', 'week'];
@@ -4530,19 +4529,6 @@
   }
 
   /* ============ 가족 허브 ============ */
-  function hubConfig() {
-    var c = null;
-    try { c = JSON.parse(lsGet(HUB_KEY) || '{}'); } catch (e) { c = null; }
-    if (!c || typeof c !== 'object') c = {};
-    return c;
-  }
-
-  function hubUrl(key, fallback) {
-    var c = hubConfig();
-    var v = (typeof c[key] === 'string') ? c[key].trim() : '';
-    return v || fallback;
-  }
-
   function renderHub() {
     var grid = document.getElementById('hubGrid');
     if (!grid) return;
@@ -4560,7 +4546,7 @@
         html += '<button type="button" class="hub-tile kids" data-act="hub-go-kids">' + badge + body +
           '<span class="ht-go">바로 열기 →</span></button>';
       } else if (d.kind === 'link') {
-        var u = hubUrl(d.urlKey, d.fallback);
+        var u = d.fallback;
         if (u) {
           html += '<a class="hub-tile fridge" href="' + esc(u) + '" data-act="hub-open-fridge">' + badge + body +
             '<span class="ht-go">열기 →</span></a>';
