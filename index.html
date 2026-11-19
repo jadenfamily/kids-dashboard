@@ -1136,6 +1136,251 @@
   @media (prefers-reduced-motion:reduce){
     *{ animation-duration:.001s !important; transition-duration:.001s !important; }
   }
+
+  /* ================= Phase 2: 코인 · 상점 · 마이룸 · 아바타 ================= */
+  .modal{ z-index:160; }   /* 부화·진화 축하 팝업은 어느 창보다 위에 */
+  .coin-badge{
+    display:inline-flex; align-items:center; gap:4px; position:relative;
+    background:linear-gradient(135deg,#fff2c9,#ffe08a); color:#7a5200;
+    border-radius:999px; padding:3px 10px; font-size:11.5px; font-weight:900;
+    box-shadow:0 2px 6px rgba(190,140,20,.18); white-space:nowrap;
+  }
+  .coin-badge b{ font-size:13px; letter-spacing:-.02em; }
+  .coin-pop{
+    position:absolute; right:2px; top:-4px; font-style:normal; font-size:12px; font-weight:900;
+    color:#0f9d58; animation:coinPop 1.05s ease-out forwards; pointer-events:none;
+  }
+  .coin-pop.minus{ color:#c6415a; }
+  @keyframes coinPop{ 0%{opacity:0; transform:translateY(6px) scale(.8);} 25%{opacity:1;} 100%{opacity:0; transform:translateY(-16px) scale(1.1);} }
+
+  .rarity-badge{
+    display:inline-flex; align-items:center; font-size:9.5px; font-weight:900; color:#fff;
+    background:var(--rc,#94a3b8); border-radius:999px; padding:2px 6px; letter-spacing:-.01em;
+  }
+  .pet-acts{ display:flex; align-items:center; gap:6px; flex:0 0 auto; margin-left:auto; }
+  .pet-acts .pet-go{ margin-left:0; }
+  .pet-tools{
+    flex:1 1 100%; display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap;
+    padding-top:6px; border-top:1px dashed #ffe2ae; margin-top:2px;
+  }
+  .tool-pill{
+    border:1.5px solid #ffe2ae; background:#fffdf7; color:#8a5a00;
+    border-radius:999px; padding:6px 12px; font-size:11.5px; font-weight:900;
+    cursor:pointer; min-height:32px; touch-action:manipulation; white-space:nowrap;
+  }
+  .tool-pill:active{ transform:scale(.96); }
+  .tool-pill.on{ background:#2c2440; border-color:#2c2440; color:#fff; }
+  .dex-sum{ display:flex; gap:5px; flex-wrap:wrap; margin-bottom:8px; }
+  .pet-card{ position:relative; }
+  .pc-no{ position:absolute; left:6px; top:5px; font-size:9px; font-weight:900; color:#c9b7a2; }
+  .nw-count{ margin-left:auto; font-size:12px; font-weight:900; color:#b4436c; background:#fff0f4; border-radius:999px; padding:3px 9px; }
+
+  /* 상점 */
+  .shop-top{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .shop-tabs{ display:flex; gap:6px; flex-wrap:wrap; flex:1 1 auto; }
+  .shop-tabs .tab{
+    border:1.5px solid #eee2d2; background:#fff; color:#6d6484; border-radius:999px;
+    padding:8px 13px; font-size:12.5px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .shop-tabs .tab.on{ background:#2c2440; border-color:#2c2440; color:#fff; }
+  .shop-coin{
+    display:inline-flex; align-items:center; gap:4px; background:linear-gradient(135deg,#fff2c9,#ffe08a);
+    color:#7a5200; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:900; white-space:nowrap;
+  }
+  .shop-coin b{ font-size:14px; }
+  .shop-sec{ margin:6px 0 2px; font-size:13.5px; font-weight:900; color:#8a7f70; }
+  .shop-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:8px; }
+  .shop-card{
+    display:flex; align-items:center; gap:9px; border:2px solid #f3e7d6; background:#fffdf8;
+    border-radius:16px; padding:9px 10px; min-width:0;
+  }
+  .sc-icon{
+    flex:0 0 auto; width:44px; height:44px; border-radius:14px; display:grid; place-items:center;
+    font-size:22px; background:var(--ic,#ffd9a0); box-shadow:inset 0 -3px 0 rgba(0,0,0,.06);
+  }
+  .sc-body{ flex:1 1 auto; min-width:0; }
+  .sc-name{ font-size:13px; font-weight:900; display:flex; align-items:center; gap:5px; }
+  .sc-bag{ font-size:10px; font-weight:900; color:#b4436c; background:#ffe8f0; border-radius:999px; padding:1px 6px; }
+  .sc-desc{ font-size:11px; font-weight:800; color:#a2937f; margin-top:1px; }
+  .shop-btn{
+    flex:0 0 auto; border:none; border-radius:12px; padding:0 10px; min-height:36px;
+    background:linear-gradient(135deg,#ffd43b,#ff9f1c); color:#5a3200; font-size:12px; font-weight:900;
+    cursor:pointer; touch-action:manipulation; white-space:nowrap;
+  }
+  .shop-btn.off{ opacity:.5; }
+  .shop-btn.done{ background:#eef7f1; color:#12805c; cursor:default; }
+  .shop-msg{ margin:0; font-size:12.5px; font-weight:900; color:#12805c; background:#eefaf3; border-radius:12px; padding:8px 11px; }
+  .shop-admin{ border-top:2px dashed #f0e3d2; padding-top:10px; display:flex; flex-direction:column; gap:9px; }
+  .admin-list{ display:flex; flex-direction:column; gap:5px; max-height:46vh; overflow-y:auto; }
+  .admin-row{ display:flex; align-items:center; gap:7px; background:#fff; border:1.5px solid #f1e6da; border-radius:12px; padding:6px 8px; }
+  .admin-row.off{ opacity:.5; }
+  .ar-icon{ flex:0 0 auto; width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:var(--ic,#ffd9a0); font-size:16px; }
+  .ar-name{ flex:1 1 auto; min-width:0; font-size:12px; font-weight:900; }
+  .ar-name small{ display:block; font-size:9.5px; font-weight:800; color:#b3a696; }
+  .ar-price{ display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:900; color:#8a5a00; }
+  .ar-price input{ width:58px; min-height:32px; border:1.5px solid #eee2d2; border-radius:8px; padding:2px 5px; font-size:12px; font-weight:900; }
+  .ghost-btn.tiny{ min-height:30px; padding:3px 8px; font-size:10.5px; border-radius:9px; }
+  .admin-add{ display:flex; flex-direction:column; gap:8px; }
+  .add-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:7px; }
+  .add-grid label{ display:flex; flex-direction:column; gap:3px; font-size:10.5px; font-weight:900; color:#8a7f70; }
+  .color-inp{ padding:2px; min-height:36px; }
+  .add-actions{ display:flex; gap:6px; }
+
+  /* 펫 케어 */
+  .care-top{ display:flex; align-items:center; gap:11px; background:#fffaf0; border:2px solid #ffe3b3; border-radius:18px; padding:10px 12px; flex-wrap:wrap; }
+  .care-art{ width:70px; height:70px; flex:0 0 auto; }
+  .care-art .mon-svg, .care-art .egg-svg{ width:100%; height:100%; }
+  .care-meta{ flex:1 1 160px; min-width:0; font-size:13px; font-weight:900; }
+  .care-meta .pet-gauge{ margin:5px 0 3px; }
+  .care-line{ font-size:11px; font-weight:800; color:#a2937f; }
+  .care-list{ display:flex; flex-direction:column; gap:6px; }
+  .care-row{ display:flex; align-items:center; gap:8px; background:#fff; border:1.5px solid #f3e7d6; border-radius:14px; padding:7px 9px; }
+  .care-ic{ flex:0 0 auto; width:38px; height:38px; border-radius:12px; display:grid; place-items:center; background:var(--ic,#ffd9a0); font-size:19px; }
+  .care-nm{ flex:1 1 auto; min-width:0; font-size:12.5px; }
+  .care-nm b{ font-weight:900; }
+  .care-nm small{ display:block; font-size:10.5px; font-weight:800; color:#a2937f; }
+  .care-actions{ display:flex; gap:7px; flex-wrap:wrap; }
+  .pill-btn[disabled]{ opacity:.45; cursor:default; }
+
+  /* 아바타 */
+  .av-top{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .av-preview{
+    flex:0 0 auto; width:150px; height:230px; border-radius:22px; display:grid; place-items:center;
+    background:radial-gradient(circle at 50% 30%,#fff8e6,#ffe9d1 70%); border:2px solid #ffe3b3;
+  }
+  .av-preview .av-svg{ width:140px; height:220px; }
+  .av-svg{ display:block; }
+  .av-side{ flex:1 1 190px; min-width:0; display:flex; flex-direction:column; gap:7px; font-size:14px; font-weight:900; }
+  .av-swatches{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:900; color:#8a7f70; flex-wrap:wrap; }
+  .av-swatches span{ min-width:40px; }
+  .sw{ width:26px; height:26px; border-radius:50%; border:2px solid #fff; background:var(--sw,#ffd9b0); box-shadow:0 0 0 2px #eee2d2; cursor:pointer; touch-action:manipulation; }
+  .sw.on{ box-shadow:0 0 0 2px #2c2440; transform:scale(1.06); }
+  .av-tabs{ display:flex; gap:5px; flex-wrap:wrap; }
+  .av-tabs .tab{
+    border:1.5px solid #eee2d2; background:#fff; color:#6d6484; border-radius:999px;
+    padding:7px 12px; font-size:12px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .av-tabs .tab.on{ background:#2c2440; border-color:#2c2440; color:#fff; }
+  .av-tabs .tab small{ font-size:9.5px; opacity:.7; }
+  .av-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(105px,1fr)); gap:8px; }
+  .av-card{
+    display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 6px;
+    background:#fffdf8; border:2px solid #f3e7d6; border-radius:16px; cursor:pointer; touch-action:manipulation;
+    font-family:inherit; color:var(--ink);
+  }
+  .av-card b{ font-size:11.5px; font-weight:900; }
+  .av-card small{ font-size:10px; font-weight:800; color:#a2937f; }
+  .av-card.on{ border-color:#ffc46b; background:#fff8e6; box-shadow:0 6px 14px rgba(255,180,60,.18); }
+  .av-card.locked{ opacity:.75; }
+  .av-thumb{
+    width:44px; height:44px; border-radius:14px; display:grid; place-items:center; font-size:21px;
+    background:var(--ic,#ffd9a0); box-shadow:inset 0 -3px 0 rgba(0,0,0,.06);
+  }
+
+  /* 마이룸 */
+  .room-card{ max-width:1040px; }
+  .room-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .room-title{ font-size:12px; font-weight:900; color:#a2937f; }
+  .room-toolbar{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .room-hint{ flex:1 1 200px; font-size:11.5px; font-weight:800; color:#a2937f; }
+  .room-wrap{ border-radius:22px; overflow:hidden; background:linear-gradient(180deg,#fff8ec,#fffdf8); border:2px solid #f3e7d6; }
+  .room-svg{ display:block; width:100%; height:auto; touch-action:none; user-select:none; -webkit-user-select:none; }
+  .room-hit{ cursor:pointer; }
+  .room-hit.on{ filter:drop-shadow(0 0 6px rgba(255,159,28,.7)); }
+  .room-floor{ cursor:crosshair; }
+  .room-bob{ animation:roomBob 3.2s ease-in-out infinite; transform-box:fill-box; }
+  @keyframes roomBob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+  .room-selbar{
+    display:flex; align-items:center; gap:7px; flex-wrap:wrap;
+    background:#fff7e6; border:2px solid #ffe3b3; border-radius:16px; padding:8px 10px;
+  }
+  .rs-name{ flex:1 1 auto; font-size:12.5px; font-weight:900; }
+  .room-panel{ background:#fffdf8; border:2px solid #f3e7d6; border-radius:18px; padding:10px 11px; display:flex; flex-direction:column; gap:8px; }
+  .rp-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:13px; font-weight:900; }
+  .rp-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:7px; }
+  .wall-card{
+    display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 5px;
+    background:#fff; border:2px solid #f3e7d6; border-radius:14px; cursor:pointer; touch-action:manipulation;
+    font-family:inherit; color:var(--ink);
+  }
+  .wall-card b{ font-size:11px; font-weight:900; }
+  .wall-card small{ font-size:9.5px; font-weight:800; color:#a2937f; }
+  .wall-card.on{ border-color:#ffc46b; background:#fff8e6; }
+  .wc-prev{
+    width:100%; height:42px; border-radius:9px;
+    background:linear-gradient(180deg,var(--w,#fdf1e0) 0 62%, var(--f,#f3ddc2) 62% 100%);
+    border:1px solid rgba(0,0,0,.06);
+  }
+  .storage-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:7px; }
+  .storage-card{
+    display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 6px;
+    background:#fff; border:2px solid #f3e7d6; border-radius:14px; text-align:center;
+  }
+  .storage-card b{ font-size:11.5px; font-weight:900; }
+  .storage-card small{ font-size:9.5px; font-weight:800; color:#a2937f; }
+  .st-ic{ width:38px; height:38px; border-radius:12px; display:grid; place-items:center; background:var(--ic,#ffd9a0); font-size:19px; }
+  .storage-card .pill-btn{ min-height:30px; padding:0 9px; font-size:11px; }
+  .pet-pick-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:7px; }
+  .pet-pick{
+    display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 6px;
+    background:#fff; border:2px solid #f3e7d6; border-radius:14px; cursor:pointer; touch-action:manipulation;
+    font-family:inherit; color:var(--ink);
+  }
+  .pet-pick.on{ border-color:#ffc46b; background:#fff8e6; }
+  .pp-art{ width:54px; height:54px; }
+  .pp-art svg{ width:100%; height:100%; }
+  .pet-pick b{ font-size:11.5px; font-weight:900; }
+  .pet-pick small{ font-size:9.5px; font-weight:800; color:#a2937f; }
+  .pp-check{ font-size:9.5px; font-weight:900; color:#b4436c; }
+  .shop-jump{ align-self:flex-start; }
+
+  @media (max-width:560px){
+    .shop-grid{ grid-template-columns:1fr 1fr; }
+    .shop-card{ flex-direction:column; text-align:center; padding:8px 6px; }
+    .sc-body{ flex:1 1 auto; }
+    .shop-btn{ width:100%; }
+    .av-preview{ width:120px; height:190px; }
+    .av-preview .av-svg{ width:112px; height:180px; }
+    .av-grid{ grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); }
+    .room-card .hist-body{ padding:10px 8px 14px; gap:9px; }
+    .admin-row{ flex-wrap:wrap; }
+    .ar-name{ flex:1 1 100%; }
+    .pet-acts{ width:100%; justify-content:flex-end; }
+    .pet-tools{ order:4; }
+  }
+
+  /* 루틴 그룹 완료 목표 시간 */
+  .rt-targets{ display:flex; flex-direction:column; gap:7px; margin:0 0 12px; }
+  .rt-target{
+    border:2px solid #ffe6c2; border-radius:16px; padding:8px 11px;
+    background:linear-gradient(120deg,#fffdf7,#fff7e6);
+  }
+  .rt-target.done{ border-color:#c9f0dc; background:#f2fbf6; }
+  .rt-target.late{ border-color:#ffd6dd; background:#fff7f8; }
+  .rtt-head{ display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:900; flex-wrap:wrap; }
+  .rtt-emoji{ font-size:17px; line-height:1; }
+  .rtt-text b{ color:#b4436c; }
+  .rt-target.late .rtt-text{ color:#c6415a; }
+  .rt-target.done .rtt-text{ color:#0f7a55; }
+  .rtt-goal{ margin-left:auto; font-size:11px; font-weight:800; color:#a2937f; background:#fff; border-radius:999px; padding:3px 9px; white-space:nowrap; }
+  .rtt-bar{ position:relative; height:12px; border-radius:999px; background:#fff; border:1.5px solid #ffe2ae; margin-top:6px; }
+  .rtt-bar i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#ffd93d,var(--c,#ff9f1c)); transition:width .6s cubic-bezier(.2,.8,.2,1); }
+  .rt-target.late .rtt-bar i{ background:linear-gradient(90deg,#ffc2c2,#ff7b8a); }
+  .rt-target.done .rtt-bar i{ background:linear-gradient(90deg,#9be6b9,#12b886); }
+  .rtt-pet{ position:absolute; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; display:grid; place-items:center; filter:drop-shadow(0 2px 3px rgba(120,80,20,.25)); }
+  .rtt-pet svg, .rtt-pet img{ width:24px; height:24px; display:block; }
+  .rc-target{ font-size:10px; font-weight:900; color:#8a5a00; background:#fff3d1; border-radius:999px; padding:2px 7px; white-space:nowrap; }
+  .rce-target{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:900; color:#8a7f70; flex-wrap:wrap; }
+  .rce-target .inp{ max-width:140px; }
+  @media (max-width:560px){
+    .rtt-goal{ margin-left:0; }
+  }
+
+  .av-side .shop-coin{ align-self:flex-start; }
+  .av-thumb-fig{ background:#fff8ec; overflow:hidden; }
+  .av-thumb-fig svg{ width:34px; height:56px; display:block; }
+  .av-card{ min-height:112px; }
+
 </style>
 </head>
 <body>
@@ -1149,6 +1394,7 @@
         <span class="dot">·</span>
         <span id="clockLine">오전 10:55</span>
         <span class="sync-pill" id="syncPill" title="저장 상태">☁️ 준비</span>
+        <span class="coin-badge" id="coinBadge" title="내 코인">🪙 <b>120</b></span>
       </p>
     </div>
 
@@ -1196,6 +1442,7 @@
         <button class="ghost-btn" id="resetTodayBtn" data-act="reset-today">오늘 체크 초기화</button>
       </div>
     </div>
+    <div class="rt-targets" id="routineTargets" hidden></div>
     <div class="rt-jump" id="routineJump" role="group" aria-label="루틴 그룹 바로가기"></div>
     <div class="routine-grid" id="routineGrid" data-view="grid"></div>
     <p class="routine-empty" id="routineEmpty" hidden>아직 루틴 그룹이 없어요. 편집(✏️)에서 그룹을 만들 수 있어요.</p>
@@ -1370,6 +1617,46 @@
   </div>
 </div>
 
+<div class="hist room-modal" id="roomModal" hidden role="dialog" aria-modal="true" aria-labelledby="roomTitle">
+  <div class="hist-card room-card">
+    <div class="hist-head">
+      <h2 id="roomTitle">🏠 마이룸</h2>
+      <button class="hist-close" data-act="room-close" aria-label="마이룸 닫기">✕</button>
+    </div>
+    <div class="hist-body" id="roomBody"></div>
+  </div>
+</div>
+
+<div class="hist" id="avatarModal" hidden role="dialog" aria-modal="true" aria-labelledby="avatarTitle">
+  <div class="hist-card" style="max-width:760px">
+    <div class="hist-head">
+      <h2 id="avatarTitle">👕 아바타</h2>
+      <button class="hist-close" data-act="avatar-close" aria-label="아바타 닫기">✕</button>
+    </div>
+    <div class="hist-body" id="avatarBody"></div>
+  </div>
+</div>
+
+<div class="hist" id="shopModal" hidden role="dialog" aria-modal="true" aria-labelledby="shopTitle">
+  <div class="hist-card" style="max-width:820px">
+    <div class="hist-head">
+      <h2 id="shopTitle">🛒 상점</h2>
+      <button class="hist-close" data-act="shop-close" aria-label="상점 닫기">✕</button>
+    </div>
+    <div class="hist-body" id="shopBody"></div>
+  </div>
+</div>
+
+<div class="hist" id="careModal" hidden role="dialog" aria-modal="true" aria-labelledby="careTitle">
+  <div class="hist-card" style="max-width:520px">
+    <div class="hist-head">
+      <h2 id="careTitle">🍖 펫 케어</h2>
+      <button class="hist-close" data-act="care-close" aria-label="케어 닫기">✕</button>
+    </div>
+    <div class="hist-body" id="careBody"></div>
+  </div>
+</div>
+
 <script>
 (function () {
   'use strict';
@@ -1407,7 +1694,8 @@
     conn: null, users: null, me: null, session: null,
     status: 'idle', statusAt: 0,
     sha: {}, months: {}, monthLoading: '',
-    dirty: { day: false, settings: false, stickers: false },
+    dirty: { day: false, settings: false, stickers: false, profile: false },
+    lastProfileSig: '',
     timer: 0, saving: false, again: false, lastSig: ''
   };
   var acct = { pwFor: '', msg: '', busy: false, link: '' };
@@ -1705,6 +1993,8 @@
       workbookPicks: {},
       layoutOrder: ['routine', 'sticker', 'academy', 'week'],
       pet: defaultPet(),
+      shop: { items: defaultShopItems() },
+      profile: null,
       stats: { stickersTotal: 0 }
     };
   }
@@ -1746,6 +2036,7 @@
           title: typeof rawCat.title === 'string' ? rawCat.title.slice(0, 16) : defCat.title,
           sub: typeof rawCat.sub === 'string' ? rawCat.sub.slice(0, 12) : '',
           emoji: typeof rawCat.emoji === 'string' && rawCat.emoji ? rawCat.emoji.slice(0, 8) : '✅',
+          targetTime: hhmmValid(rawCat.targetTime) ? rawCat.targetTime : '',
           color: typeof rawCat.color === 'string' && rawCat.color ? rawCat.color : defCat.color,
           tint: typeof rawCat.tint === 'string' && rawCat.tint ? rawCat.tint : defCat.tint,
           items: []
@@ -1916,62 +2207,14 @@
       if (!/^\d{4}-\d{2}-\d{2}$/.test(duKeys[dun]) || typeof s.dayUpdated[duKeys[dun]] !== 'string') delete s.dayUpdated[duKeys[dun]];
     }
 
-    /* 오늘의 친구 (몬스터 키우기) */
-    var dp = defaultPet();
-    if (!s.pet || typeof s.pet !== 'object') s.pet = dp;
-    var pet = s.pet;
-    var spIds = [];
-    for (var psi = 0; psi < PET_SPECIES.length; psi++) spIds.push(PET_SPECIES[psi].id);
-    if (spIds.indexOf(pet.currentEgg) < 0) pet.currentEgg = dp.currentEgg;
-    var pst = parseInt(pet.stage, 10);
-    pet.stage = (isNaN(pst) || pst < 0) ? 0 : Math.min(pst, 3);
-    var pex = parseInt(pet.exp, 10);
-    var pexMax = pet.stage < 3 ? PET_NEED[pet.stage] : 0;
-    pet.exp = (isNaN(pex) || pex < 0) ? 0 : Math.min(pex, pexMax);
-    var pcol = [];
-    var rawCol = (Object.prototype.toString.call(pet.collection) === '[object Array]') ? pet.collection : [];
-    for (var pci = 0; pci < rawCol.length && pcol.length < PET_SPECIES.length; pci++) {
-      var pc = rawCol[pci] || {};
-      if (typeof pc === 'string') pc = { id: pc };
-      if (spIds.indexOf(pc.id) < 0) continue;
-      var dup = false;
-      for (var pck = 0; pck < pcol.length; pck++) if (pcol[pck].id === pc.id) dup = true;
-      if (dup) continue;
-      var pat = Number(pc.at);
-      pcol.push({ id: pc.id, at: (pat && !isNaN(pat)) ? pat : Date.now() });
+    /* Phase 2: 펫·코인·방·아바타는 계정별 프로필(config/profiles/{id}.json)에 있어요.
+       예전 공용 펫 기록은 첫 프로필로 옮길 수 있게 보관만 합니다. */
+    if (s.pet && typeof s.pet === 'object') legacyPetSeed = s.pet;
+    delete s.pet;
+    s.profile = null;
+    if (!s.shop || typeof s.shop !== 'object' || Object.prototype.toString.call(s.shop.items) !== '[object Array]' || !s.shop.items.length) {
+      s.shop = { items: defaultShopItems() };
     }
-    pet.collection = pcol;
-    var phat = Number(pet.hatchedAt);
-    pet.hatchedAt = (phat && !isNaN(phat)) ? phat : 0;
-    var paw = {};
-    var rawAw = (pet.awarded && typeof pet.awarded === 'object') ? pet.awarded : {};
-    var awLimit = dateKey(new Date(new Date().getTime() - 7 * 86400000));
-    for (var awk in rawAw) {
-      if (!Object.prototype.hasOwnProperty.call(rawAw, awk)) continue;
-      var awDay = String(awk).split('|')[0];
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(awDay) || awDay < awLimit) continue;
-      paw[awk] = 1;
-    }
-    pet.awarded = paw;
-    /* 친구 그림(직접 올린 그림) */
-    var art = {};
-    if (pet.art && typeof pet.art === 'object') {
-      for (var asid in pet.art) {
-        if (!Object.prototype.hasOwnProperty.call(pet.art, asid) || spIds.indexOf(asid) < 0) continue;
-        var abox = pet.art[asid];
-        if (!abox || typeof abox !== 'object') continue;
-        var aclean = {};
-        for (var ast in abox) {
-          if (!Object.prototype.hasOwnProperty.call(abox, ast)) continue;
-          if (!/^[0-3]$/.test(ast)) continue;
-          var au = String(abox[ast] || '');
-          if (petArtOk(au)) aclean[ast] = au;
-        }
-        if (aclean['0'] || aclean['1'] || aclean['2'] || aclean['3']) art[asid] = aclean;
-      }
-    }
-    pet.art = art;
-    s.pet = pet;
 
     var totalSt = parseInt(s.stats && s.stats.stickersTotal, 10);
     if (isNaN(totalSt) || totalSt < 0) totalSt = stickLog.length || s.sticker.stickers.length;
@@ -2002,6 +2245,7 @@
   }
 
   function saveState() {
+    try { onProfileChanged(); } catch (e) { /* 프로필 저장 실패는 무시 */ }
     try { snapshotDay(currentKey); } catch (e) { /* 기록 갱신 실패는 무시 */ }
     try { pruneHistory(state); } catch (e) { /* 무시 */ }
     try { window.localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* 저장 공간 부족 등은 무시 */ }
@@ -2031,13 +2275,18 @@
       var AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
       if (!audioCtx) audioCtx = new AC();
-      if (audioCtx.state === 'suspended' && audioCtx.resume) audioCtx.resume();
+      if (audioCtx.state !== 'running') {
+        if (audioCtx.resume) audioCtx.resume();
+        if (!snd.retry) { snd.retry = 1; window.setTimeout(function () { snd.retry = 0; snd(kind); }, 140); }
+        return;
+      }
       var t0 = audioCtx.currentTime;
       var notes;
       if (kind === 'check') notes = [[660, 0], [880, 0.08]];
       else if (kind === 'uncheck') notes = [[400, 0]];
       else if (kind === 'sticker') notes = [[700, 0], [920, 0.07], [1180, 0.14]];
       else if (kind === 'win') notes = [[523, 0], [659, 0.1], [784, 0.2], [1046, 0.3]];
+      else if (kind === 'chime') notes = [[784, 0], [1046, 0.09], [1318, 0.18]];
       else notes = [[600, 0]];
 
       for (var i = 0; i < notes.length; i++) {
@@ -2128,6 +2377,7 @@
     /* 탭 제목은 항상 "jadenfamily" — 링크 미리보기(카카오톡 등)와 통일 */
 
     renderSoundBtn();
+    renderCoinBadge();
     updateClock(new Date());
   }
 
@@ -2493,6 +2743,10 @@
           esc(cat.title || '루틴 그룹') + ' 삭제">✕</button>' +
       '</div>' +
       '<div class="rce-colors" role="group" aria-label="색 테마">' + colorSwatchesHtml(cat) + '</div>' +
+'<div class="rce-target"><span>완료 목표 시간</span>' +
+        '<input class="inp inp-sm" type="time" data-field="catTarget" data-cat="' + esc(cat.id) + '" value="' + esc(cat.targetTime || '') + '" aria-label="완료 목표 시간">' +
+        (cat.targetTime ? '<button type="button" class="ghost-btn tiny" data-act="cat-target-clear" data-cat="' + esc(cat.id) + '">지우기</button>' : '') +
+        '</div>' +
       '<input class="inp inp-sm rce-sub" data-field="catSub" data-cat="' + esc(cat.id) + '" value="' + esc(cat.sub || '') +
         '" placeholder="설명 (예: 아침, 잠자기 전)" maxlength="12" aria-label="그룹 설명">' +
       '</div>';
@@ -2588,6 +2842,7 @@
         html += '<h3>' + esc(cat.title) + '</h3>';
       }
       html += '<span class="rc-sub">' + esc(cat.sub || '') + '</span>';
+      if (hhmmValid(cat.targetTime)) html += '<span class="rc-target">⏰ ' + hhmmLabel(cat.targetTime) + '</span>';
       html += '</div>';
       html += '<span class="rc-count' + (complete ? ' done' : '') + '">' +
         (complete ? '완료 🎉' : done + '/' + total) + '</span>';
@@ -2627,7 +2882,7 @@
 
       if (cat.id === 'study') html += wbBoxHtml();
 
-      if (complete && !ui.editing) html += '<div class="rc-bonus">✨ 그룹 완료 보너스 <span>+3 기운</span></div>';
+      if (complete && !ui.editing) html += '<div class="rc-bonus">✨ 그룹 완료 보너스 <span>🪙 +20 코인</span></div>';
 
       if (ui.editing) {
         html += '<button class="add-item" data-act="add-item" data-cat="' + esc(cat.id) + '">+ 할 일 추가</button>';
@@ -2640,6 +2895,7 @@
     renderRoutineJump();
     if (prevScroll && grid.scrollLeft !== prevScroll) grid.scrollLeft = prevScroll;
     updateOverall(true);
+    renderRoutineTargets();
   }
 
   function updateCardStats(catId) {
@@ -2669,7 +2925,7 @@
       if (!bonus) {
         bonus = document.createElement('div');
         bonus.className = 'rc-bonus';
-        bonus.innerHTML = '✨ 그룹 완료 보너스 <span>+3 기운</span>';
+        bonus.innerHTML = '✨ 그룹 완료 보너스 <span>🪙 +20 코인</span>';
         card.appendChild(bonus);
       }
     } else if (bonus && bonus.parentNode) {
@@ -2741,14 +2997,23 @@
     updateOverall(false);
 
     if (on) {
-      petAward('i:' + itemId, 1);
+      var gotCoin = awardCheckCoins(itemId);
+      if (gotCoin) showToast('🪙 +' + gotCoin + ' 코인!');
       var gcat = findCat(catId);
       if (gcat && gcat.items.length) {
         var allDone = true;
         for (var gi = 0; gi < gcat.items.length; gi++) if (!ck[gcat.items[gi].id]) allDone = false;
-        if (allDone) petAward('g:' + catId, 3, { label: (gcat.title || '루틴') + ' 그룹 완료 보너스' });
+        if (allDone) {
+          var gcoin = awardGroupCoins(catId);
+          if (gcoin) { showToast('🎉 ' + (gcat.title || '루틴') + ' 완료! 🪙 +' + gcoin); snd('win'); }
+        }
       }
+    } else {
+      revokeCheckCoins(itemId);
     }
+    saveState();
+    renderCoinBadge();
+    renderRoutineTargets();
   }
 
   function onAddItem(catId) {
@@ -2785,7 +3050,8 @@
   }
 
   function resetToday() {
-    if (!window.confirm('오늘 체크한 내용을 모두 지울까요?')) return;
+    if (!window.confirm('오늘 체크한 내용을 모두 지울까요?\n오늘 받은 코인도 함께 돌아가요.')) return;
+    revokeTodayCheckCoins();
     state.checks[currentKey] = {};
     state.routineCelebrated = '';
     saveState();
@@ -2898,7 +3164,10 @@
     var slot = document.querySelector('.slot[data-i="' + (st.stickers.length - 1) + '"]');
     confetti(12, slot || document.getElementById('stickerBoard'));
     snd('sticker');
-    petGainExp(3, { label: '칭찬 스티커' });
+    awardStickerCoins();
+    saveState();
+    renderCoinBadge();
+    showToast('⭐ 칭찬 스티커! 🪙 +' + COIN_STICKER);
 
     if (st.stickers.length >= st.slots && !st.celebrated) {
       st.celebrated = true;
@@ -2921,7 +3190,9 @@
     st.stickers.splice(i, 1);
     st.celebrated = false;
     dropStickerLog(emoji);
+    revokeStickerCoins();
     saveState();
+    renderCoinBadge();
     renderStickers();
     snd('uncheck');
   }
@@ -3720,6 +3991,2441 @@
       '</div>';
   }
 
+  /* ======================================================================
+     Phase 2 — 계정별 프로필 · 코인 · 펫 케어 · 54종 도감 · 2.5D 마이룸 ·
+                아바타 · 상점(관리자 편집)
+     ====================================================================== */
+  var PROFILE_PREFIX = 'kidsDashboard.profile.v1.';
+  var legacyPetSeed = null;   /* 예전 settings.json의 공용 펫 기록 (첫 프로필로 이사) */
+  var COIN_CHECK = 10;      /* 루틴 하나 체크 */
+  var COIN_GROUP = 20;      /* 루틴 그룹 완료 보너스 */
+  var COIN_STICKER = 15;    /* 칭찬 스티커 */
+  var COIN_START = 120;     /* 새 계정 시작 코인 */
+  var HATCH_MS = 24 * 60 * 60 * 1000;  /* 새 알 기본 부화 시간 24시간 */
+  var EXP_MAX = 100;        /* 단계마다 필요한 경험치 */
+
+  PET_NEED = [EXP_MAX, EXP_MAX, EXP_MAX];
+
+  var RARITY = [
+    { id: 'common', label: '일반', color: '#94a3b8' },
+    { id: 'rare', label: '희귀', color: '#3d9be9' },
+    { id: 'legend', label: '전설', color: '#f0a500' }
+  ];
+
+  function mixHex(a, b, t) {
+    t = Math.max(0, Math.min(1, t == null ? 0.5 : t));
+    var ha = String(a || '#999999').replace('#', '');
+    var hb = String(b || '#ffffff').replace('#', '');
+    var out = '#';
+    for (var i = 0; i < 3; i++) {
+      var va = parseInt(ha.substr(i * 2, 2), 16);
+      var vb = parseInt(hb.substr(i * 2, 2), 16);
+      if (isNaN(va)) va = 153;
+      if (isNaN(vb)) vb = 255;
+      var v = Math.round(va + (vb - va) * t);
+      out += ('0' + v.toString(16)).slice(-2);
+    }
+    return out;
+  }
+
+  /* 18속성 × 3종 = 54종 (각 3단계 진화 → 162가지 모습). 이름은 모두 우리가 지은 것. */
+  var SPECIES_SEED = {
+    normal: [['몽글', '몽글이', '몽글룡'], ['모찌햄찌', '황금볼햄찌', '왕관햄찌'], ['구름', '구름이', '구름제왕']],
+    fire: [['콩이', '불콩', '화르르'], ['숯돌', '숯돌이', '용암룡'], ['홍염', '홍염아', '불새왕']],
+    water: [['방울', '물방울', '파도링'], ['조개', '조개미', '진주룡'], ['심해', '심해룡', '해룡왕']],
+    grass: [['새싹', '잎새', '나무룡'], ['풀잎', '풀잎이', '덩굴룡'], ['꽃망', '꽃망울', '꽃제왕']],
+    electric: [['찌릿', '번쩍', '뇌룡'], ['건전지', '건전이', '발전룡'], ['번개', '번개날', '뇌전왕']],
+    ice: [['고드름', '얼음이', '빙룡'], ['눈송', '눈송이', '설인룡'], ['한파', '한파아', '빙하왕']],
+    fighting: [['주먹이', '힘센손', '투혼룡'], ['꼬마킥', '돌려차기', '격투왕'], ['장갑', '철권이', '무투룡']],
+    poison: [['방긋', '독방울', '맹독룡'], ['버섯', '버섯이', '포자룡'], ['독니', '독니아', '맹독왕']],
+    ground: [['흙돌이', '모래언덕', '대지룡'], ['두더지', '두더룡', '땅굴왕'], ['사막', '사막이', '황야룡']],
+    flying: [['솜깃', '날개콩', '천공룡'], ['참새', '참새콩', '하늘날개'], ['바람', '바람이', '폭풍룡']],
+    psychic: [['반짝', '눈빛이', '초능룡'], ['꿈돌', '꿈돌이', '몽환룡'], ['별눈', '별눈이', '초월룡']],
+    bug: [['꼬물', '꼬물이', '갑옷룡'], ['애벌', '애벌레', '나비룡'], ['딱정', '딱정이', '왕벌레']],
+    rock: [['돌멩', '바위콩', '암석룡'], ['자갈', '자갈이', '화강룡'], ['수정', '수정이', '보석룡']],
+    ghost: [['깜깜', '그림자', '유령룡'], ['촛불', '촛불이', '저승룡'], ['망령', '망령이', '사신룡']],
+    dragon: [['꼬리', '비늘콩', '용왕룡'], ['알룡', '날개룡', '비룡'], ['황금', '황금룡', '신룡왕']],
+    dark: [['심술', '까칠이', '암흑룡'], ['그늘', '그늘이', '밤그림자'], ['월식', '월식아', '암야왕']],
+    steel: [['나사', '철컥이', '강철룡'], ['톱니', '톱니바퀴', '기계룡'], ['합금', '합금이', '철갑왕']],
+    fairy: [['별사탕', '요정이', '페어룡'], ['솜사탕', '솜사탕이', '마법룡'], ['달빛', '달빛이', '여왕룡']]
+  };
+
+  PET_SPECIES = (function () {
+    var out = [];
+    for (var i = 0; i < PET_TYPES.length; i++) {
+      var t = PET_TYPES[i];
+      var seeds = SPECIES_SEED[t.id] || [];
+      for (var k = 0; k < 3; k++) {
+        var names = seeds[k] || [(t.label + (k + 1)), (t.label + (k + 1) + '이'), (t.label + '왕')];
+        var c = t.color;
+        if (k === 1) c = mixHex(t.color, '#ffffff', 0.24);
+        if (k === 2) c = mixHex(t.color, '#33254f', 0.18);
+        var isHamster = (t.id === 'normal' && k === 1);
+        if (isHamster) { c = '#f2c98f'; }   /* 모찌햄찌는 포근한 황금빛 */
+        out.push({
+          id: k === 0 ? t.id : (t.id + '_' + (k + 1)),
+          type: t.id, typeLabel: t.label, kind: t.label,
+          c: c,
+          d: isHamster ? '#c99a5e' : shadeColor(c, k === 2 ? -0.42 : -0.32),
+          l: isHamster ? '#fff0d6' : shadeColor(c, k === 2 ? 0.56 : 0.78),
+          accent: isHamster ? '#ffd166' : (k === 2 ? mixHex(t.color, '#ffd93d', 0.62) : shadeColor(t.color, 0.3)),
+          face: isHamster ? 'hamster' : '',
+          names: names,
+          rarity: k,
+          rarityLabel: RARITY[k].label,
+          rarityColor: RARITY[k].color,
+          shape: (i + k) % 3,     /* 둥근 · 길쭉 · 넓적 */
+          pat: (i + k * 2) % 3,   /* 점 · 줄무늬 · 배 무늬 */
+          no: i * 3 + k + 1,      /* 도감 번호 */
+          desc: t.label + ' 친구'
+        });
+      }
+    }
+    return out;
+  })();
+
+  function speciesById(id) {
+    for (var i = 0; i < PET_SPECIES.length; i++) if (PET_SPECIES[i].id === id) return PET_SPECIES[i];
+    return PET_SPECIES[0];
+  }
+  var SPECIES_MAX = PET_SPECIES.length;
+
+  /* ---------------- 아바타 기본값 ---------------- */
+  var AV_SKINS = [
+    { id: 'skin1', label: '밝은 살색', color: '#ffdcbe' },
+    { id: 'skin2', label: '복숭아', color: '#f6c69f' },
+    { id: 'skin3', label: '구릿빛', color: '#dca576' },
+    { id: 'skin4', label: '초콜릿', color: '#b47c55' }
+  ];
+  var AV_HAIR_COLORS = [
+    { id: 'brown', label: '갈색', color: '#6b4423' },
+    { id: 'black', label: '흑발', color: '#2b2438' },
+    { id: 'blonde', label: '금발', color: '#e6c069' },
+    { id: 'pink', label: '핑크', color: '#ef8fb0' },
+    { id: 'blue', label: '파랑', color: '#5a7fd6' }
+  ];
+  var AV_SLOTS = [
+    { id: 'hair', label: '헤어', icon: '💇' },
+    { id: 'top', label: '상의', icon: '👕' },
+    { id: 'bottom', label: '하의', icon: '👖' },
+    { id: 'shoes', label: '신발', icon: '👟' },
+    { id: 'acc', label: '액세서리', icon: '🎀' }
+  ];
+
+  function defaultAvatar() {
+    return {
+      skin: 'skin1', hairColor: 'brown',
+      hair: 'av_hair_basic', top: 'av_top_tee', bottom: 'av_bottom_jeans',
+      shoes: 'av_shoes_sneaker', acc: ''
+    };
+  }
+  function defaultRoom() {
+    return {
+      wall: 'wall_cream',
+      items: [
+        { u: 'rm-bed', id: 'room_bed', x: 0, y: 1 },
+        { u: 'rm-rug', id: 'room_rug', x: 3, y: 2 },
+        { u: 'rm-stool', id: 'room_stool', x: 2, y: 3 }
+      ],
+      pets: []
+    };
+  }
+  function defaultProfile() {
+    return {
+      v: 1,
+      coins: COIN_START,
+      pet: {
+        currentEgg: 'normal', stage: 0, exp: 0,
+        hatchAt: Date.now() + HATCH_MS, hatchedAt: 0,
+        collection: [], art: {}
+      },
+      bag: {},
+      owned: {
+        room_bed: 1, room_stool: 1, room_rug: 1, wall_cream: 1,
+        av_hair_basic: 1, av_top_tee: 1, av_bottom_jeans: 1, av_shoes_sneaker: 1
+      },
+      room: defaultRoom(),
+      avatar: defaultAvatar(),
+      award: { day: '', checks: {}, groups: {}, stickers: 0 },
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  function own(obj, key) { return Object.prototype.hasOwnProperty.call(obj, key); }
+
+  /* 받침에 맞춰 조사를 붙여요 (예: 침대를 / 쿠션을) */
+  function josa(word, withJong, noJong) {
+    var s = String(word == null ? '' : word);
+    if (!s) return '';
+    var code = s.charCodeAt(s.length - 1);
+    var has = (code >= 0xAC00 && code <= 0xD7A3) ? (((code - 0xAC00) % 28) !== 0) : false;
+    return s + (has ? withJong : noJong);
+  }
+
+  /* ---------------- 프로필 접근 ---------------- */
+  function prof() {
+    if (!state.profile || typeof state.profile !== 'object') state.profile = defaultProfile();
+    var p = state.profile;
+    if (!p.award || typeof p.award !== 'object') p.award = { day: '', checks: {}, groups: {}, stickers: 0 };
+    if (p.award.day !== currentKey) p.award = { day: currentKey, checks: {}, groups: {}, stickers: 0 };
+    return p;
+  }
+
+  function normalizeProfile(raw, userId) {
+    var d = defaultProfile();
+    var p = (raw && typeof raw === 'object') ? clone(raw) : {};
+    var out = {
+      v: 1,
+      coins: (p.coins == null) ? d.coins : Math.max(0, Math.min(999999, parseInt(p.coins, 10) || 0)),
+      pet: d.pet,
+      bag: {},
+      owned: {},
+      room: defaultRoom(),
+      avatar: defaultAvatar(),
+      award: { day: '', checks: {}, groups: {}, stickers: 0 },
+      updatedAt: (typeof p.updatedAt === 'string' && p.updatedAt) ? p.updatedAt : new Date().toISOString(),
+      userId: userId || ''
+    };
+
+    /* ---- 펫 ---- */
+    var rp = (p.pet && typeof p.pet === 'object') ? p.pet : {};
+    var pet = d.pet;
+    if (typeof rp.currentEgg === 'string' && speciesById(rp.currentEgg).id === rp.currentEgg) pet.currentEgg = rp.currentEgg;
+    var st = parseInt(rp.stage, 10);
+    pet.stage = (isNaN(st) || st < 0) ? 0 : Math.min(st, 3);
+    var ex = parseInt(rp.exp, 10);
+    pet.exp = (isNaN(ex) || ex < 0) ? 0 : Math.min(ex, EXP_MAX);
+    if (pet.stage >= 3) pet.exp = 0;
+    var ha = Number(rp.hatchAt);
+    pet.hatchAt = (ha && !isNaN(ha)) ? ha : 0;
+    var hat = Number(rp.hatchedAt);
+    pet.hatchedAt = (hat && !isNaN(hat)) ? hat : 0;
+    if (pet.stage === 0 && !pet.hatchAt) pet.hatchAt = Date.now() + HATCH_MS;
+    if (pet.stage > 0) pet.hatchAt = 0;
+    var col = [];
+    var rawCol = (Object.prototype.toString.call(rp.collection) === '[object Array]') ? rp.collection : [];
+    for (var i = 0; i < rawCol.length && col.length < SPECIES_MAX; i++) {
+      var cc = rawCol[i];
+      var cid = (typeof cc === 'string') ? cc : (cc && cc.id);
+      if (typeof cid !== 'string' || speciesById(cid).id !== cid) continue;
+      var dup = false;
+      for (var j = 0; j < col.length; j++) if (col[j].id === cid) dup = true;
+      if (dup) continue;
+      col.push({ id: cid, at: (cc && Number(cc.at)) || Date.now() });
+    }
+    pet.collection = col;
+    var art = {};
+    if (rp.art && typeof rp.art === 'object') {
+      for (var sid in rp.art) {
+        if (!own(rp.art, sid) || speciesById(sid).id !== sid) continue;
+        var box = rp.art[sid];
+        if (!box || typeof box !== 'object') continue;
+        var clean = {};
+        for (var stg in box) {
+          if (!own(box, stg) || !/^[0-3]$/.test(stg)) continue;
+          var u = String(box[stg] || '');
+          if (petArtOk(u)) clean[stg] = u;
+        }
+        if (clean['0'] || clean['1'] || clean['2'] || clean['3']) art[sid] = clean;
+      }
+    }
+    pet.art = art;
+    out.pet = pet;
+
+    /* ---- 가방(먹이·부화권) ---- */
+    if (p.bag && typeof p.bag === 'object') {
+      for (var bid in p.bag) {
+        if (!own(p.bag, bid)) continue;
+        var n = parseInt(p.bag[bid], 10);
+        if (isNaN(n) || n <= 0) continue;
+        out.bag[bid] = Math.min(99, n);
+      }
+    }
+
+    /* ---- 보유 아이템(가구·벽지·옷) ---- */
+    var all = shopAll();
+    var known = {};
+    for (var ai = 0; ai < all.length; ai++) known[all[ai].id] = all[ai];
+    for (var did in d.owned) if (own(d.owned, did)) out.owned[did] = 1;
+    if (p.owned && typeof p.owned === 'object') {
+      for (var oid in p.owned) {
+        if (!own(p.owned, oid) || !p.owned[oid]) continue;
+        var it = known[oid];
+        if (!it) continue;
+        if (it.kind === 'exp' || it.kind === 'egg' || it.kind === 'hatch') continue;
+        out.owned[oid] = 1;
+      }
+    }
+
+    /* ---- 마이룸 ---- */
+    var rr = (p.room && typeof p.room === 'object') ? p.room : {};
+    var room = defaultRoom();
+    if (typeof rr.wall === 'string' && known[rr.wall] && known[rr.wall].kind === 'wall') room.wall = rr.wall;
+    if (!out.owned[room.wall]) room.wall = 'wall_cream';
+    var items = [];
+    var rawItems = (Object.prototype.toString.call(rr.items) === '[object Array]') ? rr.items : [];
+    for (var ri = 0; ri < rawItems.length && items.length < 24; ri++) {
+      var rIt = rawItems[ri] || {};
+      var def = known[rIt.id];
+      if (!def || def.kind !== 'furni' || !out.owned[rIt.id]) continue;
+      var fx = parseInt(rIt.x, 10), fy = parseInt(rIt.y, 10);
+      if (isNaN(fx) || isNaN(fy)) continue;
+      fx = Math.max(0, Math.min(ROOM.N - def.w, fx));
+      fy = Math.max(0, Math.min(ROOM.N - def.d, fy));
+      items.push({ u: (typeof rIt.u === 'string' && rIt.u) ? rIt.u : uid('rm'), id: rIt.id, x: fx, y: fy });
+    }
+    room.items = items;
+    var rpets = [];
+    var rawPets = (Object.prototype.toString.call(rr.pets) === '[object Array]') ? rr.pets : [];
+    for (var pi = 0; pi < rawPets.length && rpets.length < 4; pi++) {
+      var pid = rawPets[pi];
+      if (typeof pid !== 'string') continue;
+      var haveIt = false;
+      for (var pk = 0; pk < col.length; pk++) if (col[pk].id === pid) haveIt = true;
+      if (haveIt && rpets.indexOf(pid) < 0) rpets.push(pid);
+    }
+    room.pets = rpets;
+    out.room = room;
+
+    /* ---- 아바타 ---- */
+    var ra = (p.avatar && typeof p.avatar === 'object') ? p.avatar : {};
+    var av = defaultAvatar();
+    var skinOk = false, hcOk = false;
+    for (var si = 0; si < AV_SKINS.length; si++) if (AV_SKINS[si].id === ra.skin) skinOk = true;
+    for (var hi = 0; hi < AV_HAIR_COLORS.length; hi++) if (AV_HAIR_COLORS[hi].id === ra.hairColor) hcOk = true;
+    if (skinOk) av.skin = ra.skin;
+    if (hcOk) av.hairColor = ra.hairColor;
+    var slots = ['hair', 'top', 'bottom', 'shoes', 'acc'];
+    for (var sl = 0; sl < slots.length; sl++) {
+      var key = slots[sl];
+      var val = ra[key];
+      if (typeof val !== 'string' || !val) continue;
+      var item = known[val];
+      if (!item || item.kind !== 'cloth' || item.slot !== key) continue;
+      if (!out.owned[val]) continue;
+      av[key] = val;
+    }
+    out.avatar = av;
+
+    /* ---- 오늘의 코인 기록 ---- */
+    if (p.award && typeof p.award === 'object') {
+      var day = (typeof p.award.day === 'string') ? p.award.day : '';
+      if (day === currentKey) {
+        out.award.day = day;
+        if (p.award.checks && typeof p.award.checks === 'object') {
+          for (var ck in p.award.checks) if (own(p.award.checks, ck) && p.award.checks[ck]) out.award.checks[ck] = 1;
+        }
+        if (p.award.groups && typeof p.award.groups === 'object') {
+          for (var gk in p.award.groups) if (own(p.award.groups, gk) && p.award.groups[gk]) out.award.groups[gk] = 1;
+        }
+        out.award.stickers = Math.max(0, parseInt(p.award.stickers, 10) || 0);
+      }
+    }
+    return out;
+  }
+
+  function profilePath(userId) {
+    return 'config/profiles/' + String(userId || '').replace(/[^A-Za-z0-9_-]/g, '') + '.json';
+  }
+  function profileCacheKey(userId) {
+    return PROFILE_PREFIX + String(userId || '').replace(/[^A-Za-z0-9_-]/g, '');
+  }
+  function readProfileCache(userId) {
+    try {
+      var raw = window.localStorage.getItem(profileCacheKey(userId));
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      return (o && typeof o === 'object') ? o : null;
+    } catch (e) { return null; }
+  }
+  function writeProfileCache(userId, profile) {
+    if (!userId || !profile) return;
+    try { window.localStorage.setItem(profileCacheKey(userId), JSON.stringify(profile)); } catch (e) { /* 무시 */ }
+  }
+
+  /* ---------------- 코인 ---------------- */
+  function coinBalance() { return prof().coins; }
+
+  function coinAdd(n) {
+    if (!n) return;
+    var p = prof();
+    p.coins = Math.max(0, Math.min(999999, p.coins + n));
+    p.updatedAt = new Date().toISOString();
+    renderCoinBadge(n);
+  }
+
+  function renderCoinBadge(pop) {
+    var el = document.getElementById('coinBadge');
+    if (el) {
+      var v = prof().coins;
+      el.innerHTML = '🪙 <b>' + fmtNum(v) + '</b>';
+      el.setAttribute('title', '내 코인 ' + fmtNum(v) + '개');
+      if (pop) {
+        var f = document.createElement('i');
+        f.className = 'coin-pop' + (pop < 0 ? ' minus' : '');
+        f.setAttribute('aria-hidden', 'true');
+        f.textContent = (pop > 0 ? '+' : '') + pop;
+        el.appendChild(f);
+        window.setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); }, 1100);
+      }
+    }
+    var rc = document.getElementById('roomCoins');
+    if (rc) rc.innerHTML = '🪙 ' + fmtNum(prof().coins);
+    var sc = document.getElementById('shopCoins');
+    if (sc) sc.innerHTML = '🪙 <b>' + fmtNum(prof().coins) + '</b>';
+  }
+
+  function awardCheckCoins(itemId) {
+    var a = prof().award;
+    if (a.checks[itemId]) return 0;
+    a.checks[itemId] = 1;
+    coinAdd(COIN_CHECK);
+    return COIN_CHECK;
+  }
+  function revokeCheckCoins(itemId) {
+    var a = prof().award;
+    if (!a.checks[itemId]) return 0;
+    delete a.checks[itemId];
+    coinAdd(-COIN_CHECK);
+    return -COIN_CHECK;
+  }
+  function awardGroupCoins(catId) {
+    var a = prof().award;
+    if (a.groups[catId]) return 0;
+    a.groups[catId] = 1;
+    coinAdd(COIN_GROUP);
+    return COIN_GROUP;
+  }
+  function awardStickerCoins() {
+    prof().award.stickers += 1;
+    coinAdd(COIN_STICKER);
+  }
+  function revokeStickerCoins() {
+    var a = prof().award;
+    if (a.stickers <= 0) return;
+    a.stickers -= 1;
+    coinAdd(-COIN_STICKER);
+  }
+  function revokeTodayCheckCoins() {
+    var a = prof().award;
+    var back = 0, k;
+    for (k in a.checks) if (own(a.checks, k)) back += COIN_CHECK;
+    for (k in a.groups) if (own(a.groups, k)) back += COIN_GROUP;
+    a.checks = {};
+    a.groups = {};
+    if (back) coinAdd(-back);
+  }
+
+
+  /* ---------------- 상점 기본 목록 ---------------- */
+  function defaultShopItems() {
+    return [
+      /* 🐾 펫 케어 */
+      { id: 'food_basic', cat: 'pet', kind: 'exp', n: 10, name: '맛있는 사료', icon: '🍖', price: 15, color: '#ffb26b', desc: '+10 EXP' },
+      { id: 'food_snack', cat: 'pet', kind: 'exp', n: 25, name: '특제 간식', icon: '🍪', price: 35, color: '#f0a35e', desc: '+25 EXP' },
+      { id: 'food_super', cat: 'pet', kind: 'exp', n: 50, name: '슈퍼 진화 열매', icon: '🍎', price: 65, color: '#ff6b6b', desc: '+50 EXP' },
+      { id: 'egg_vit', cat: 'pet', kind: 'egg', n: 10, name: '알 영양제', icon: '🥚', price: 15, color: '#ffd9a0', desc: '알에 +10 EXP' },
+      { id: 'hatch_blanket', cat: 'pet', kind: 'hatch', ms: 6 * 3600 * 1000, name: '따뜻한 이불', icon: '🛌', price: 30, color: '#9ed6ff', desc: '부화 -6시간' },
+      { id: 'hatch_incubator', cat: 'pet', kind: 'hatch', ms: 12 * 3600 * 1000, name: '마법 인큐베이터', icon: '🔮', price: 55, color: '#b49bff', desc: '부화 -12시간' },
+      { id: 'hatch_potion', cat: 'pet', kind: 'hatch', ms: -1, name: '즉시 부화 물약', icon: '🧪', price: 100, color: '#7ce0c0', desc: '바로 부화' },
+
+      /* 🏠 방 가구 */
+      { id: 'room_bed', cat: 'room', kind: 'furni', fid: 'bed', w: 2, d: 1, name: '포근한 침대', icon: '🛏', price: 120, color: '#8fb8ff', desc: '2×1 · 눕고 싶은 침대' },
+      { id: 'room_stool', cat: 'room', kind: 'furni', fid: 'stool', w: 1, d: 1, name: '동글 스툴', icon: '🪑', price: 40, color: '#ffc97a', desc: '1×1 · 앉는 의자' },
+      { id: 'room_desk', cat: 'room', kind: 'furni', fid: 'desk', w: 2, d: 1, name: '나무 책상', icon: '📖', price: 90, color: '#c99b6a', desc: '2×1 · 공부하는 책상' },
+      { id: 'room_sofa', cat: 'room', kind: 'furni', fid: 'sofa', w: 2, d: 1, name: '몽글 소파', icon: '🛋', price: 110, color: '#f6a5b8', desc: '2×1 · 폭신 소파' },
+      { id: 'room_shelf', cat: 'room', kind: 'furni', fid: 'shelf', w: 1, d: 1, name: '책꽂이', icon: '📚', price: 80, color: '#b98a5c', desc: '1×1 · 책이 가득' },
+      { id: 'room_rug', cat: 'room', kind: 'furni', fid: 'rug', w: 2, d: 2, name: '별무늬 러그', icon: '🟣', price: 50, color: '#b9a6ff', desc: '2×2 · 바닥 러그' },
+      { id: 'room_plant', cat: 'room', kind: 'furni', fid: 'plant', w: 1, d: 1, name: '초록 화분', icon: '🪴', price: 35, color: '#79c98a', desc: '1×1 · 싱그러운 화분' },
+      { id: 'room_wallshelf', cat: 'room', kind: 'furni', fid: 'wallshelf', w: 1, d: 2, name: '벽선반', icon: '🧺', price: 60, color: '#d8b48c', desc: '1×2 · 소품 선반' },
+      { id: 'room_guitar', cat: 'room', kind: 'furni', fid: 'guitar', w: 1, d: 1, name: '기타', icon: '🎸', price: 70, color: '#e08a4a', desc: '1×1 · 띵가띵가' },
+      { id: 'room_skate', cat: 'room', kind: 'furni', fid: 'skate', w: 2, d: 1, name: '스케이트보드', icon: '🛹', price: 45, color: '#7fd0e8', desc: '2×1 · 바닥 보드' },
+      { id: 'room_lamp', cat: 'room', kind: 'furni', fid: 'lamp', w: 1, d: 1, name: '무드 전등', icon: '💡', price: 55, color: '#ffd97a', desc: '1×1 · 은은한 불빛' },
+      { id: 'room_tent', cat: 'room', kind: 'furni', fid: 'tent', w: 2, d: 2, name: '비밀 텐트', icon: '⛺', price: 130, color: '#f2b46a', desc: '2×2 · 나만의 아지트' },
+      { id: 'room_tv', cat: 'room', kind: 'furni', fid: 'tv', w: 2, d: 1, name: '작은 TV', icon: '📺', price: 140, color: '#8e9db5', desc: '2×1 · 만화 보는 TV' },
+
+      /* 🎨 벽지 */
+      { id: 'wall_cream', cat: 'wall', kind: 'wall', name: '크림 벽지', icon: '🧁', price: 0, color: '#fdf1e0', desc: '기본 벽지' },
+      { id: 'wall_sky', cat: 'wall', kind: 'wall', name: '하늘 벽지', icon: '☁️', price: 60, color: '#cfe9ff', desc: '구름이 흘러요' },
+      { id: 'wall_night', cat: 'wall', kind: 'wall', name: '별밤 벽지', icon: '🌙', price: 90, color: '#3a3f6b', desc: '별이 반짝' },
+      { id: 'wall_forest', cat: 'wall', kind: 'wall', name: '숲속 벽지', icon: '🌳', price: 90, color: '#d8efd4', desc: '나무가 우거진' },
+      { id: 'wall_cherry', cat: 'wall', kind: 'wall', name: '벚꽃 벽지', icon: '🌸', price: 120, color: '#ffe4ee', desc: '꽃잎이 팔랑' },
+      { id: 'wall_galaxy', cat: 'wall', kind: 'wall', name: '은하수 벽지', icon: '🌌', price: 160, color: '#2b2550', desc: '우주 한가운데' },
+
+      /* 👕 아바타 */
+      { id: 'av_hair_basic', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'short', name: '기본 머리', icon: '💇', price: 0, color: '#6b4423', desc: '단정한 머리' },
+      { id: 'av_hair_bob', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bob', name: '뽀글 단발', icon: '💇', price: 30, color: '#8a5a2b', desc: '동글동글 단발' },
+      { id: 'av_hair_twin', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'twin', name: '양갈래', icon: '👧', price: 40, color: '#7a4a1f', desc: '깜찍 양갈래' },
+      { id: 'av_hair_curly', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'curly', name: '곱슬곱슬', icon: '🌀', price: 35, color: '#5f3a1c', desc: '곱슬곱슬' },
+      { id: 'av_hair_buzz', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'buzz', name: '스포츠 머리', icon: '⚽', price: 25, color: '#4a3018', desc: '짧고 시원하게' },
+
+      { id: 'av_top_tee', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'tee', name: '기본 티셔츠', icon: '👕', price: 0, color: '#ffffff', color2: '#7ec8f0', desc: '하얀 티셔츠' },
+      { id: 'av_top_stripe', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'stripe', name: '줄무늬 티', icon: '👕', price: 25, color: '#ffffff', color2: '#ff8f8f', desc: '빨간 줄무늬' },
+      { id: 'av_top_hood', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'hood', name: '후드티', icon: '🧥', price: 40, color: '#7c9cf5', color2: '#5a7ce0', desc: '후드 + 주머니' },
+      { id: 'av_top_knit', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'knit', name: '포근 니트', icon: '🧶', price: 35, color: '#ffc46b', color2: '#ffa53d', desc: '보들보들 니트' },
+
+      { id: 'av_bottom_jeans', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'jeans', name: '청바지', icon: '👖', price: 0, color: '#5b8cc8', desc: '파란 청바지' },
+      { id: 'av_bottom_shorts', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'shorts', name: '반바지', icon: '🩳', price: 25, color: '#7fd6a8', desc: '시원한 반바지' },
+      { id: 'av_bottom_skirt', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'skirt', name: '주름 치마', icon: '👗', price: 35, color: '#f7a1c4', desc: '팔랑팔랑' },
+      { id: 'av_bottom_train', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'train', name: '트레이닝', icon: '🏃', price: 30, color: '#9aa4b8', desc: '편한 운동복' },
+
+      { id: 'av_shoes_sneaker', cat: 'avatar', kind: 'cloth', slot: 'shoes', style: 'sneaker', name: '운동화', icon: '👟', price: 0, color: '#ffffff', color2: '#7ec8f0', desc: '깔끔한 운동화' },
+      { id: 'av_shoes_boots', cat: 'avatar', kind: 'cloth', slot: 'shoes', style: 'boots', name: '부츠', icon: '🥾', price: 30, color: '#a9744a', desc: '든든한 부츠' },
+      { id: 'av_shoes_slipper', cat: 'avatar', kind: 'cloth', slot: 'shoes', style: 'slipper', name: '슬리퍼', icon: '🩴', price: 15, color: '#ffb3c7', desc: '집에서 편하게' },
+
+      { id: 'av_acc_glasses', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'glasses', name: '동글 안경', icon: '👓', price: 25, color: '#5a4a3a', desc: '공부할 때' },
+      { id: 'av_acc_cap', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'cap', name: '야구 모자', icon: '🧢', price: 35, color: '#6fb7ff', desc: '챙이 있는 모자' },
+      { id: 'av_acc_crown', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'crown', name: '반짝 왕관', icon: '👑', price: 60, color: '#ffd34d', desc: '오늘의 왕' },
+      { id: 'av_acc_bag', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'bag', name: '크로스 가방', icon: '👜', price: 30, color: '#f28fa8', desc: '외출 필수' },
+      { id: 'av_acc_necklace', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'necklace', name: '목걸이', icon: '📿', price: 20, color: '#ffd34d', desc: '작은 펜던트' }
+    ];
+  }
+
+  function shopAll() {
+    if (!state.shop || typeof state.shop !== 'object' || Object.prototype.toString.call(state.shop.items) !== '[object Array]' || !state.shop.items.length) {
+      state.shop = { items: defaultShopItems() };
+    }
+    return state.shop.items;
+  }
+  function shopItem(id) {
+    var list = shopAll();
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+  function shopCat(cat) {
+    var list = shopAll(), out = [];
+    for (var i = 0; i < list.length; i++) if (list[i].cat === cat && !list[i].hidden) out.push(list[i]);
+    return out;
+  }
+  function isOwned(id) { return !!prof().owned[id]; }
+  function bagCount(id) { return prof().bag[id] || 0; }
+  function itemOwnedOrFree(it) { return it.price <= 0 || isOwned(it.id); }
+
+  /* ---------------- 상점 화면 ---------------- */
+  var shopUi = { tab: 'pet', admin: false, addOpen: false, msg: '', draft: {} };
+
+  function openShop(tab) {
+    shopUi.tab = tab || shopUi.tab || 'pet';
+    var m = document.getElementById('shopModal');
+    renderShop();
+    if (m) m.hidden = false;
+    raiseModal('shopModal');
+    lockScroll();
+  }
+  function closeShop() {
+    var m = document.getElementById('shopModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('shopModal')) unlockScroll();
+  }
+
+  function shopCardHtml(it) {
+    var p = prof();
+    var own = p.owned[it.id];
+    var inBag = p.bag[it.id] || 0;
+    var canBuy = p.coins >= it.price;
+    var btn;
+    if (it.kind === 'furni' || it.kind === 'wall' || it.kind === 'cloth') {
+      btn = own
+        ? '<button type="button" class="shop-btn done" disabled>보유 중</button>'
+        : '<button type="button" class="shop-btn' + (canBuy ? '' : ' off') + '" data-act="shop-buy" data-id="' + esc(it.id) + '">🪙 ' + fmtNum(it.price) + '</button>';
+    } else {
+      btn = '<button type="button" class="shop-btn' + (canBuy ? '' : ' off') + '" data-act="shop-buy" data-id="' + esc(it.id) + '">🪙 ' + fmtNum(it.price) + '</button>';
+    }
+    return '<article class="shop-card">' +
+      '<div class="sc-icon" style="--ic:' + esc(it.color || '#ffd9a0') + '">' + (it.icon || '🎁') + '</div>' +
+      '<div class="sc-body">' +
+        '<div class="sc-name">' + esc(it.name) + (inBag ? '<span class="sc-bag">×' + inBag + '</span>' : '') + '</div>' +
+        '<div class="sc-desc">' + esc(it.desc || '') + '</div>' +
+      '</div>' + btn + '</article>';
+  }
+
+  function shopAdminHtml() {
+    var list = shopAll();
+    var h = '<div class="shop-admin">' +
+      '<p class="lf-note">가격을 바꾸면 바로 저장돼요. 아이템을 숨기거나 지울 수도 있어요. (config/settings.json)</p>';
+    if (shopUi.msg) h += '<p class="shop-msg">' + esc(shopUi.msg) + '</p>';
+    h += '<div class="admin-list">';
+    for (var i = 0; i < list.length; i++) {
+      var it = list[i];
+      h += '<div class="admin-row' + (it.hidden ? ' off' : '') + '">' +
+        '<span class="ar-icon" style="--ic:' + esc(it.color || '#ffd9a0') + '">' + (it.icon || '🎁') + '</span>' +
+        '<span class="ar-name">' + esc(it.name) +
+          '<small>' + esc({ pet: '펫 케어', room: '가구', wall: '벽지', avatar: '아바타' }[it.cat] || it.cat) + '</small></span>' +
+        '<label class="ar-price">🪙<input type="number" min="0" max="9999" step="1" value="' + (parseInt(it.price, 10) || 0) + '" data-field="shopPrice" data-id="' + esc(it.id) + '"></label>' +
+        '<button type="button" class="ghost-btn tiny" data-act="shop-hide" data-id="' + esc(it.id) + '">' + (it.hidden ? '보이기' : '숨기기') + '</button>' +
+        '<button type="button" class="ghost-btn tiny danger" data-act="shop-del" data-id="' + esc(it.id) + '">삭제</button>' +
+        '</div>';
+    }
+    h += '</div>';
+
+    h += '<div class="admin-add">';
+    if (!shopUi.addOpen) {
+      h += '<button type="button" class="pill-btn warm" data-act="shop-add-open">+ 새 아이템 만들기</button>';
+    } else {
+      var d = shopUi.draft || {};
+      h += '<div class="add-grid">' +
+        '<label>이름<input class="inp inp-sm" data-field="newShopName" value="' + esc(d.name || '') + '" maxlength="16" placeholder="예: 무지개 쿠션"></label>' +
+        '<label>이모지<input class="inp inp-sm" data-field="newShopIcon" value="' + esc(d.icon || '🎁') + '" maxlength="4"></label>' +
+        '<label>종류<select class="inp inp-sm" data-field="newShopCat">' +
+          '<option value="pet"' + (d.cat === 'pet' ? ' selected' : '') + '>🐾 펫 케어</option>' +
+          '<option value="room"' + (d.cat === 'room' ? ' selected' : '') + '>🏠 가구</option>' +
+          '<option value="wall"' + (d.cat === 'wall' ? ' selected' : '') + '>🎨 벽지</option>' +
+          '<option value="avatar"' + (d.cat === 'avatar' ? ' selected' : '') + '>👕 아바타</option>' +
+        '</select></label>' +
+        '<label>가격(코인)<input class="inp inp-sm" type="number" min="0" max="9999" data-field="newShopPrice" value="' + esc(d.price == null ? '30' : String(d.price)) + '"></label>' +
+        '<label>효과<select class="inp inp-sm" data-field="newShopEffect">' +
+          '<option value="exp">먹이 (+EXP)</option>' +
+          '<option value="hatch">부화 단축</option>' +
+          '<option value="furni"' + (d.cat === 'room' ? ' selected' : '') + '>가구로 놓기</option>' +
+          '<option value="wall">벽지로 쓰기</option>' +
+          '<option value="cloth"' + (d.cat === 'avatar' ? ' selected' : '') + '>아바타 옷</option>' +
+        '</select></label>' +
+        '<label>색<input class="inp inp-sm color-inp" type="color" data-field="newShopColor" value="' + esc(d.color || '#ffd9a0') + '"></label>' +
+        '</div>' +
+        '<div class="add-actions">' +
+          '<button type="button" class="pill-btn warm" data-act="shop-add">추가하기</button>' +
+          '<button type="button" class="ghost-btn" data-act="shop-add-cancel">취소</button>' +
+        '</div>' +
+        '<p class="lf-note">가구·아바타 옷은 1×1 크기로 만들어져요. 만든 뒤 방에서 옮길 수 있어요.</p>';
+    }
+    h += '</div></div>';
+    return h;
+  }
+
+  function shopHtml() {
+    var p = prof();
+    var h = '<div class="shop-top">' +
+      '<div class="tabs shop-tabs">' +
+        '<button type="button" class="tab' + (shopUi.tab === 'pet' ? ' on' : '') + '" data-act="shop-tab" data-tab="pet">🐾 펫 케어</button>' +
+        '<button type="button" class="tab' + (shopUi.tab === 'room' ? ' on' : '') + '" data-act="shop-tab" data-tab="room">🏠 방 가구·벽지</button>' +
+        '<button type="button" class="tab' + (shopUi.tab === 'avatar' ? ' on' : '') + '" data-act="shop-tab" data-tab="avatar">👕 아바타 코디</button>' +
+      '</div>' +
+      '<span class="shop-coin" id="shopCoins">🪙 <b>' + fmtNum(p.coins) + '</b></span>' +
+      (can('edit') ? '<button type="button" class="ghost-btn" data-act="shop-admin">' + (shopUi.admin ? '✅ 관리 닫기' : '⚙️ 상점 관리') + '</button>' : '') +
+    '</div>';
+
+    h += '<p class="lf-note">루틴 체크 +' + COIN_CHECK + ' · 그룹 완료 +' + COIN_GROUP + ' · 칭찬 스티커 +' + COIN_STICKER + ' 코인! 모은 코인으로 먹이를 주고 방을 꾸며요.</p>';
+
+    var cats = [];
+    if (shopUi.tab === 'pet') cats = ['pet'];
+    else if (shopUi.tab === 'room') cats = ['room', 'wall'];
+    else cats = ['avatar'];
+
+    for (var ci = 0; ci < cats.length; ci++) {
+      var cat = cats[ci];
+      if (cat === 'wall') h += '<h3 class="shop-sec">🎨 벽지</h3>';
+      else if (cat === 'room') h += '<h3 class="shop-sec">🏠 가구</h3>';
+      else if (cat === 'avatar') h += '<h3 class="shop-sec">👕 코디</h3>';
+      var list = shopCat(cat);
+      h += '<div class="shop-grid">';
+      if (!list.length) h += '<p class="spend-empty">이 종류에는 아이템이 없어요.</p>';
+      for (var i = 0; i < list.length; i++) h += shopCardHtml(list[i]);
+      h += '</div>';
+    }
+
+    if (shopUi.admin && can('edit')) h += shopAdminHtml();
+    return h;
+  }
+
+  function renderShop() {
+    var b = document.getElementById('shopBody');
+    if (b) b.innerHTML = shopHtml();
+  }
+
+  function buyItem(id) {
+    var it = shopItem(id);
+    if (!it || it.hidden) return;
+    var p = prof();
+    if ((it.kind === 'furni' || it.kind === 'wall' || it.kind === 'cloth') && p.owned[id]) {
+      showToast('이미 가지고 있어요!');
+      return;
+    }
+    if (p.coins < it.price) {
+      snd('uncheck');
+      showToast('🪙 코인이 부족해요. 루틴을 체크해서 모아 보세요!');
+      return;
+    }
+    p.coins -= it.price;
+    p.updatedAt = new Date().toISOString();
+    var msg = '';
+    if (it.kind === 'exp' || it.kind === 'egg' || it.kind === 'hatch') {
+      p.bag[id] = Math.min(99, (p.bag[id] || 0) + 1);
+      msg = (it.icon || '🎁') + ' ' + josa(it.name, '을', '를') + ' 가방에 넣었어요!';
+    } else {
+      p.owned[id] = 1;
+      if (it.kind === 'wall') {
+        p.room.wall = id;
+        msg = '🎨 ' + it.name + '으로 벽을 바꿨어요!';
+      } else if (it.kind === 'cloth') {
+        equipAvatar(it.slot, id, true);
+        msg = '👕 ' + josa(it.name, '을', '를') + ' 입었어요!';
+      } else {
+        msg = '🛋 ' + josa(it.name, '을', '를') + ' 샀어요! 마이룸 보관함에서 놓을 수 있어요.';
+      }
+    }
+    snd('sticker');
+    saveState();
+    renderCoinBadge(-it.price);
+    showToast(msg);
+    renderShop();
+    renderPet();
+    if (!document.getElementById('careModal').hidden) renderCare();
+    if (!document.getElementById('roomModal').hidden) { renderRoom(); }
+    if (!document.getElementById('avatarModal').hidden) { renderAvatar(); }
+  }
+
+  function setShopPrice(id, price) {
+    var it = shopItem(id);
+    if (!it) return;
+    var n = parseInt(price, 10);
+    if (isNaN(n) || n < 0) n = 0;
+    it.price = Math.min(9999, n);
+    state.shop.updatedAt = new Date().toISOString();
+    saveState();
+    if (!document.getElementById('shopModal').hidden) {
+      /* 입력 중 포커스가 튀지 않게 가격만 다시 그립니다 */
+      renderCoinBadge();
+    }
+  }
+
+  function toggleShopHidden(id) {
+    var it = shopItem(id);
+    if (!it) return;
+    it.hidden = it.hidden ? 0 : 1;
+    saveState();
+    renderShop();
+  }
+
+  function deleteShopItem(id) {
+    var it = shopItem(id);
+    if (!it) return;
+    if (!window.confirm('"' + it.name + '" ' + josa(it.name, '을', '를') + ' 상점에서 지울까요?\n이미 산 사람의 보관함에는 그대로 남아요.')) return;
+    var list = shopAll();
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === id) { list.splice(i, 1); break; }
+    }
+    state.shop.updatedAt = new Date().toISOString();
+    saveState();
+    renderShop();
+    renderPet();
+  }
+
+  function addShopItem() {
+    var d = shopUi.draft || {};
+    var name = String(d.name || '').trim();
+    if (!name) { shopUi.msg = '아이템 이름을 적어 주세요.'; renderShop(); return; }
+    var cat = ['pet', 'room', 'wall', 'avatar'].indexOf(d.cat) >= 0 ? d.cat : 'pet';
+    var eff = String(d.effect || '');
+    var price = Math.max(0, Math.min(9999, parseInt(d.price, 10) || 0));
+    var icon = String(d.icon || '🎁').slice(0, 4) || '🎁';
+    var color = String(d.color || '#ffd9a0');
+    var it = { id: 'custom-' + Date.now().toString(36), cat: cat, name: name.slice(0, 16), icon: icon, price: price, color: color, desc: '' };
+    if (eff === 'hatch') {
+      it.kind = 'hatch'; it.ms = 6 * 3600 * 1000; it.desc = '부화 -6시간';
+    } else if (eff === 'furni') {
+      it.kind = 'furni'; it.fid = 'custom'; it.w = 1; it.d = 1; it.desc = '1×1 · 내가 만든 가구';
+    } else if (eff === 'wall') {
+      it.kind = 'wall'; it.desc = '내가 만든 벽지';
+    } else if (eff === 'cloth') {
+      it.kind = 'cloth'; it.slot = 'top'; it.style = 'tee'; it.desc = '내가 만든 옷';
+    } else {
+      it.kind = 'exp'; it.n = 10; it.desc = '+10 EXP';
+    }
+    shopAll().push(it);
+    state.shop.updatedAt = new Date().toISOString();
+    shopUi.addOpen = false;
+    shopUi.draft = {};
+    shopUi.msg = '"' + it.name + '" 을(를) 추가했어요!';
+    saveState();
+    renderShop();
+  }
+
+
+  /* ---------------- 펫 (계정 프로필 기반) ---------------- */
+  function petState() {
+    var p = prof();
+    if (!p.pet || typeof p.pet !== 'object') p.pet = defaultProfile().pet;
+    return p.pet;
+  }
+  function petNeed(stage) { return stage >= 0 && stage < 3 ? EXP_MAX : 0; }
+
+  function petHatchLeft() {
+    var p = petState();
+    if (p.stage !== 0) return 0;
+    return Math.max(0, (p.hatchAt || 0) - Date.now());
+  }
+
+  function fmtLeft(ms) {
+    if (ms <= 0) return '0분';
+    var m = Math.ceil(ms / 60000);
+    var h = Math.floor(m / 60);
+    var mm = m % 60;
+    if (h >= 24) {
+      var dd = Math.floor(h / 24);
+      var hh = h % 24;
+      return dd + '일' + (hh ? ' ' + hh + '시간' : '');
+    }
+    if (h > 0) return h + '시간 ' + (mm ? mm + '분' : '');
+    return mm + '분';
+  }
+
+  function petPop(n, unit) {
+    var vis = document.getElementById('petVisual');
+    if (!vis || !n) return;
+    var el = document.createElement('span');
+    el.className = 'pet-pop';
+    el.textContent = (n > 0 ? '+' + n : String(n)) + ' ' + (unit || 'EXP');
+    vis.appendChild(el);
+    window.setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1100);
+  }
+
+  function petCollectNow(p) {
+    var sp = speciesById(p.currentEgg);
+    for (var i = 0; i < p.collection.length; i++) if (p.collection[i].id === sp.id) return;
+    p.collection.push({ id: sp.id, at: Date.now() });
+  }
+
+  /* 알 부화: 100 EXP를 채우거나 24시간 타이머가 끝나면 부화 */
+  function petTryHatch(loud) {
+    var p = petState();
+    if (p.stage !== 0) return false;
+    var byExp = p.exp >= EXP_MAX;
+    var byTime = p.hatchAt && Date.now() >= p.hatchAt;
+    if (!byExp && !byTime) return false;
+    p.stage = 1;
+    p.exp = 0;
+    p.hatchAt = 0;
+    p.hatchedAt = Date.now();
+    if (loud) {
+      renderPet();
+      var vis = document.getElementById('petVisual');
+      if (vis) { vis.classList.remove('wiggle'); void vis.offsetWidth; vis.classList.add('wiggle'); }
+      confetti(52, vis || document.getElementById('petBar'));
+      snd('win');
+      window.setTimeout(function () { showEvo(1); }, 320);
+    }
+    return true;
+  }
+
+  function petAddExp(n, opts) {
+    opts = opts || {};
+    var p = petState();
+    if (!n) return p.exp;
+    if (p.stage >= 3) {
+      showToast('🌟 2차 진화를 완성했어요. 새 알을 받으면 다시 키울 수 있어요!');
+      return p.exp;
+    }
+    if (!opts.quiet) petPop(n, 'EXP');
+    var reached = -1;
+    if (p.stage === 0) {
+      p.exp = Math.min(EXP_MAX, p.exp + n);
+      if (p.exp >= EXP_MAX) {
+        p.exp = 0;
+        p.stage = 1;
+        p.hatchAt = 0;
+        p.hatchedAt = Date.now();
+        reached = 1;
+      }
+    } else {
+      p.exp += n;
+      while (p.stage < 3 && p.exp >= EXP_MAX) {
+        p.exp -= EXP_MAX;
+        p.stage += 1;
+        reached = p.stage;
+        if (p.stage >= 3) { p.exp = 0; petCollectNow(p); }
+      }
+    }
+    p.updatedAt = new Date().toISOString();
+    saveState();
+    renderPet();
+    if (!document.getElementById('roomModal').hidden) renderRoom();
+    if (!document.getElementById('careModal').hidden) renderCare();
+
+    if (reached >= 0 && !opts.quiet) {
+      var vis = document.getElementById('petVisual');
+      if (vis) { vis.classList.remove('wiggle'); void vis.offsetWidth; vis.classList.add('wiggle'); }
+      confetti(reached >= 3 ? 80 : 46, vis || document.getElementById('petBar'));
+      snd('win');
+      window.setTimeout(function () { showEvo(reached); }, 320);
+    }
+    return p.exp;
+  }
+
+  /* 예전 코드 호환 — 이제 체크로는 EXP가 오르지 않고 코인만 올라요 */
+  function petGainExp(n, opts) { return petAddExp(n, opts); }
+  function petAward() { return false; }
+  function petEnsure() {
+    var p = petState();
+    if (p.stage >= 3) petCollectNow(p);
+  }
+
+  /* 다른 기기의 프로필을 처음 받을 때만 쓰는 병합 */
+  function petMergeFrom(d) {
+    if (!d || typeof d !== 'object') return;
+    var p = petState();
+    var rawCol = (Object.prototype.toString.call(d.collection) === '[object Array]') ? d.collection : [];
+    for (var j = 0; j < rawCol.length; j++) {
+      var cc = rawCol[j] || {};
+      var cid = (typeof cc === 'string') ? cc : cc.id;
+      if (typeof cid !== 'string' || speciesById(cid).id !== cid) continue;
+      var has = false;
+      for (var k = 0; k < p.collection.length; k++) if (p.collection[k].id === cid) has = true;
+      if (!has) p.collection.push({ id: cid, at: Number(cc.at) || Date.now() });
+    }
+    var rs = parseInt(d.stage, 10);
+    if (!isNaN(rs) && rs > p.stage && rs <= 3) { p.stage = rs; p.exp = 0; p.hatchAt = 0; }
+    if (typeof d.currentEgg === 'string' && speciesById(d.currentEgg).id === d.currentEgg) p.currentEgg = d.currentEgg;
+    saveLocalOnly();
+    renderPet();
+  }
+
+  function petNewEgg() {
+    var p = petState();
+    if (p.stage < 3) { showToast('2차 진화를 완성하면 새 알을 받을 수 있어요!'); return; }
+    p.currentEgg = petNextEgg(p);
+    p.stage = 0;
+    p.exp = 0;
+    p.hatchAt = Date.now() + HATCH_MS;
+    p.hatchedAt = 0;
+    p.updatedAt = new Date().toISOString();
+    saveState();
+    renderPet();
+    snd('win');
+    showToast('🥚 새 알이 도착했어요! 24시간 뒤에 부화해요.');
+  }
+
+  /* ---------------- 그림 ---------------- */
+
+  /* 모찌햄찌 라인 — 동글볼 볼주머니 햄스터 */
+  function hamsterSvg(sp, stage) {
+    stage = Math.max(1, Math.min(3, stage || 1));
+    var c = sp.c, d = sp.d, l = sp.l, a = sp.accent;
+    var rx = 21 + stage * 3;
+    var ry = 18 + stage * 3;
+    var cy = 68 - stage;
+    var earR = 6.5 + stage * 1.4;
+    var s = '<svg viewBox="0 0 100 100" class="mon-svg" aria-hidden="true">';
+    s += '<ellipse cx="50" cy="93" rx="' + (rx - 2) + '" ry="4.5" fill="#000" opacity=".08"/>';
+    if (stage === 3) {
+      s += '<circle cx="50" cy="' + cy + '" r="45" fill="' + a + '" opacity=".14"/>';
+      s += '<path d="M14 22l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="#ffd93d" opacity=".9"/>';
+      s += '<path d="M86 30l1.6 4.8 4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8-4.8-1.6 4.8-1.6Z" fill="#fff3b0"/>';
+    }
+    /* 발 */
+    s += '<ellipse cx="' + (50 - rx * 0.4) + '" cy="' + (cy + ry - 1) + '" rx="8" ry="4.4" fill="' + d + '"/>';
+    s += '<ellipse cx="' + (50 + rx * 0.4) + '" cy="' + (cy + ry - 1) + '" rx="8" ry="4.4" fill="' + d + '"/>';
+    /* 귀 */
+    s += '<circle cx="' + (50 - rx * 0.62) + '" cy="' + (cy - ry * 0.86) + '" r="' + earR + '" fill="' + c + '" stroke="' + d + '" stroke-width="2"/>';
+    s += '<circle cx="' + (50 + rx * 0.62) + '" cy="' + (cy - ry * 0.86) + '" r="' + earR + '" fill="' + c + '" stroke="' + d + '" stroke-width="2"/>';
+    s += '<circle cx="' + (50 - rx * 0.62) + '" cy="' + (cy - ry * 0.86) + '" r="' + (earR * 0.52) + '" fill="#ffc2d1"/>';
+    s += '<circle cx="' + (50 + rx * 0.62) + '" cy="' + (cy - ry * 0.86) + '" r="' + (earR * 0.52) + '" fill="#ffc2d1"/>';
+    /* 몸통 */
+    s += '<ellipse cx="50" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + c + '" stroke="' + d + '" stroke-width="2.6"/>';
+    s += '<ellipse cx="50" cy="' + (cy + ry * 0.4) + '" rx="' + (rx * 0.62) + '" ry="' + (ry * 0.44) + '" fill="' + l + '"/>';
+    /* 볼주머니 */
+    s += '<ellipse cx="' + (50 - rx * 0.72) + '" cy="' + (cy + ry * 0.18) + '" rx="' + (rx * 0.34) + '" ry="' + (ry * 0.3) + '" fill="#ffe0c2" opacity=".95"/>';
+    s += '<ellipse cx="' + (50 + rx * 0.72) + '" cy="' + (cy + ry * 0.18) + '" rx="' + (rx * 0.34) + '" ry="' + (ry * 0.3) + '" fill="#ffe0c2" opacity=".95"/>';
+    /* 눈 */
+    var ey = cy - 2;
+    var ex = rx * 0.32;
+    s += '<circle cx="' + (50 - ex) + '" cy="' + ey + '" r="4.6" fill="#2c2440"/>';
+    s += '<circle cx="' + (50 + ex) + '" cy="' + ey + '" r="4.6" fill="#2c2440"/>';
+    s += '<circle cx="' + (50 - ex + 1.5) + '" cy="' + (ey - 1.6) + '" r="1.7" fill="#fff"/>';
+    s += '<circle cx="' + (50 + ex + 1.5) + '" cy="' + (ey - 1.6) + '" r="1.7" fill="#fff"/>';
+    /* 주둥이 · 코 · 앞니 */
+    s += '<ellipse cx="50" cy="' + (cy + ry * 0.3) + '" rx="' + (rx * 0.36) + '" ry="' + (ry * 0.26) + '" fill="#fff7ec"/>';
+    s += '<ellipse cx="50" cy="' + (cy + ry * 0.16) + '" rx="3.2" ry="2.4" fill="#e08a8a"/>';
+    if (stage >= 2) {
+      s += '<rect x="47.4" y="' + (cy + ry * 0.2) + '" width="2.4" height="4" rx="1" fill="#fff" stroke="#e2c9a8" stroke-width=".6"/>';
+      s += '<rect x="50.2" y="' + (cy + ry * 0.2) + '" width="2.4" height="4" rx="1" fill="#fff" stroke="#e2c9a8" stroke-width=".6"/>';
+    }
+    /* 수염 */
+    s += '<path d="M' + (50 - rx * 0.95) + ' ' + (cy + ry * 0.2) + 'l-8-3M' + (50 - rx * 0.95) + ' ' + (cy + ry * 0.24) + 'l-8 1M' + (50 + rx * 0.95) + ' ' + (cy + ry * 0.2) + 'l8-3M' + (50 + rx * 0.95) + ' ' + (cy + ry * 0.24) + 'l8 1" stroke="' + d + '" stroke-width="1.2" stroke-linecap="round" opacity=".55"/>';
+    /* 볼터치 */
+    s += '<ellipse cx="' + (50 - rx * 0.52) + '" cy="' + (cy + ry * 0.5) + '" rx="4" ry="2.6" fill="#ff9db4" opacity=".55"/>';
+    s += '<ellipse cx="' + (50 + rx * 0.52) + '" cy="' + (cy + ry * 0.5) + '" rx="4" ry="2.6" fill="#ff9db4" opacity=".55"/>';
+    /* 머리 장식 */
+    if (stage === 3) {
+      s += '<path d="M38 ' + (cy - ry - 3) + 'l4-12 8 7 8-7 4 12Z" fill="#ffd34d" stroke="#e0a800" stroke-width="1.6"/>';
+      s += '<circle cx="50" cy="' + (cy - ry - 12) + '" r="2.6" fill="#ff6b8a"/>';
+    } else if (stage === 2) {
+      s += '<path d="M' + (50 - 7) + ' ' + (cy - ry - 2) + 'q7-9 14 0q-7-3-14 0Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>';
+    } else {
+      s += '<circle cx="50" cy="' + (cy - ry * 0.46) + '" r="2.6" fill="' + a + '" opacity=".8"/>';
+    }
+    s += '</svg>';
+    return s;
+  }
+
+  function monSvg(sp, stage) {
+    if (sp.face === 'hamster') return hamsterSvg(sp, stage);
+    var c = sp.c, d = sp.d, l = sp.l, a = sp.accent;
+    stage = Math.max(1, Math.min(3, stage || 1));
+    var shape = sp.shape || 0;
+    var baseRx = shape === 1 ? 19 : (shape === 2 ? 26 : 22);
+    var baseRy = shape === 1 ? 23 : (shape === 2 ? 17 : 20);
+    var rx = baseRx + (stage - 1) * (shape === 1 ? 2 : 3);
+    var ry = baseRy + (stage - 1) * (shape === 1 ? 2 : 2.5);
+    var cy = 66 - (stage - 1) * 3;
+    var s = '<svg viewBox="0 0 100 100" class="mon-svg" aria-hidden="true">';
+    s += '<ellipse cx="50" cy="92" rx="' + Math.round(rx * 0.9) + '" ry="4.5" fill="#000" opacity=".08"/>';
+    if (stage === 3) {
+      s += '<circle cx="50" cy="' + cy + '" r="43" fill="' + a + '" opacity=".13"/>';
+      s += '<path d="M16 20l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="#ffd93d" opacity=".9"/>';
+      s += '<path d="M86 32l1.6 4.8 4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8-4.8-1.6 4.8-1.6Z" fill="#fff3b0"/>';
+    }
+    if (stage >= 2) {
+      s += '<ellipse cx="' + (50 - rx - 4) + '" cy="' + (cy - 2) + '" rx="12" ry="7" fill="' + l + '" stroke="' + d + '" stroke-width="1.6" transform="rotate(-24 ' + (50 - rx - 4) + ' ' + (cy - 2) + ')"/>';
+      s += '<ellipse cx="' + (50 + rx + 4) + '" cy="' + (cy - 2) + '" rx="12" ry="7" fill="' + l + '" stroke="' + d + '" stroke-width="1.6" transform="rotate(24 ' + (50 + rx + 4) + ' ' + (cy - 2) + ')"/>';
+      s += '<path d="M' + (50 + rx - 6) + ' ' + (cy + ry - 8) + 'q16 6 10 16q-3 5-8 1" fill="none" stroke="' + d + '" stroke-width="4" stroke-linecap="round"/>';
+    }
+    /* 발 */
+    s += '<ellipse cx="' + (50 - rx * 0.42) + '" cy="' + (cy + ry - 1) + '" rx="7.5" ry="4.2" fill="' + d + '"/>';
+    s += '<ellipse cx="' + (50 + rx * 0.42) + '" cy="' + (cy + ry - 1) + '" rx="7.5" ry="4.2" fill="' + d + '"/>';
+    /* 몸통 */
+    s += '<ellipse cx="50" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + c + '" stroke="' + d + '" stroke-width="2.6"/>';
+    s += '<ellipse cx="50" cy="' + (cy + ry * 0.44) + '" rx="' + (rx * 0.58) + '" ry="' + (ry * 0.38) + '" fill="' + l + '" opacity=".9"/>';
+    /* 무늬 */
+    if (sp.pat === 0) {
+      s += '<circle cx="' + (50 - rx * 0.62) + '" cy="' + (cy - ry * 0.52) + '" r="3.4" fill="' + d + '" opacity=".35"/>';
+      s += '<circle cx="' + (50 + rx * 0.56) + '" cy="' + (cy - ry * 0.22) + '" r="2.6" fill="' + d + '" opacity=".3"/>';
+      s += '<circle cx="' + (50 - rx * 0.2) + '" cy="' + (cy - ry * 0.68) + '" r="2.2" fill="' + d + '" opacity=".28"/>';
+    } else if (sp.pat === 1) {
+      s += '<path d="M' + (50 - rx * 0.5) + ' ' + (cy - ry * 0.55) + 'q' + (rx * 0.25) + ' ' + (ry * 0.4) + ' 0 ' + (ry * 0.8) + '" fill="none" stroke="' + d + '" stroke-width="3" opacity=".28"/>';
+      s += '<path d="M' + (50 + rx * 0.18) + ' ' + (cy - ry * 0.6) + 'q' + (rx * 0.25) + ' ' + (ry * 0.4) + ' 0 ' + (ry * 0.8) + '" fill="none" stroke="' + d + '" stroke-width="3" opacity=".28"/>';
+    } else {
+      s += '<ellipse cx="50" cy="' + (cy + ry * 0.28) + '" rx="' + (rx * 0.34) + '" ry="' + (ry * 0.42) + '" fill="#ffffff" opacity=".35"/>';
+    }
+    /* 얼굴 */
+    var ey = cy - 2;
+    var ex = rx * 0.36;
+    s += '<ellipse cx="' + (50 - ex) + '" cy="' + ey + '" rx="4.3" ry="5" fill="#2c2440"/>';
+    s += '<ellipse cx="' + (50 + ex) + '" cy="' + ey + '" rx="4.3" ry="5" fill="#2c2440"/>';
+    s += '<circle cx="' + (50 - ex + 1.5) + '" cy="' + (ey - 1.8) + '" r="1.6" fill="#fff"/>';
+    s += '<circle cx="' + (50 + ex + 1.5) + '" cy="' + (ey - 1.8) + '" r="1.6" fill="#fff"/>';
+    s += '<ellipse cx="' + (50 - rx * 0.72) + '" cy="' + (ey + 6) + '" rx="4" ry="2.5" fill="#ff9db4" opacity=".7"/>';
+    s += '<ellipse cx="' + (50 + rx * 0.72) + '" cy="' + (ey + 6) + '" rx="4" ry="2.5" fill="#ff9db4" opacity=".7"/>';
+    if (stage === 3) s += '<path d="M44 ' + (ey + 6) + 'q6 8 12 0q-6 4-12 0Z" fill="#7a3b2e"/>';
+    else s += '<path d="M45 ' + (ey + 7) + 'q5 5 10 0" fill="none" stroke="#7a3b2e" stroke-width="2.2" stroke-linecap="round"/>';
+    if (stage === 3) {
+      s += '<path d="M40 ' + (cy - ry - 1) + 'l4-10 6 7 6-7 4 10Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>';
+    } else if (stage === 2) {
+      s += '<path d="M' + (50 - rx * 0.62) + ' ' + (cy - ry + 2) + 'l-5-11 9 5Z" fill="' + a + '"/>';
+      s += '<path d="M' + (50 + rx * 0.62) + ' ' + (cy - ry + 2) + 'l5-11-9 5Z" fill="' + a + '"/>';
+    }
+    s += '<g transform="translate(0,10)">' + petGlyph(sp) + '</g>';
+    /* 전설 반짝임 */
+    if (sp.rarity >= 2) {
+      s += '<circle cx="24" cy="34" r="1.8" fill="#fff" opacity=".85"/>';
+      s += '<circle cx="78" cy="46" r="1.4" fill="#fff" opacity=".7"/>';
+    }
+    s += '</svg>';
+    return s;
+  }
+
+  /* ---------------- 오늘의 친구 카드 ---------------- */
+  function renderPet() {
+    var p = petState();
+    var sp = speciesById(p.currentEgg);
+    var stage = p.stage;
+    var need = petNeed(stage);
+    var pct = need ? Math.min(100, Math.round(p.exp / need * 100)) : 100;
+    var art = petArt(sp, stage, p.exp / Math.max(1, need));
+
+    var runner = document.getElementById('overallRocket');
+    if (runner) runner.innerHTML = petArt(sp, stage, p.exp / Math.max(1, need));
+
+    var bar = document.getElementById('petBar');
+    if (!bar) return;
+
+    var title = stage === 0 ? '수수께끼 알' : sp.names[stage - 1];
+    var sub;
+    if (stage === 0) {
+      sub = '⏳ 부화까지 <b id="petTimer">' + fmtLeft(petHatchLeft()) + '</b> · 알 영양제로 100 EXP를 채워도 돼요';
+    } else if (stage === 1 || stage === 2) {
+      sub = sp.kind + ' · 다음 진화까지 <b>' + Math.max(0, need - p.exp) + ' EXP</b> · 먹이를 주세요';
+    } else {
+      sub = '🎉 2차 진화 완성! 도감 ' + p.collection.length + '/' + SPECIES_MAX + ' · 새 알을 받아 보세요';
+    }
+
+    var nextMini = '';
+    if (stage < 3) nextMini = '<span class="pet-next">다음' + petArt(sp, stage + 1, 0) + '</span>';
+
+    var acts = stage >= 3
+      ? '<button class="pet-go warm" data-act="pet-new-egg">🥚 새 알 받기</button>'
+      : '<button class="pet-go warm" data-act="care-open">🍖 먹이 주기</button>';
+
+    bar.style.setProperty('--pet-c', sp.c);
+    bar.style.setProperty('--pet-t', sp.l);
+    bar.innerHTML =
+      '<div class="pet-visual" id="petVisual">' + art + '</div>' +
+      '<div class="pet-meta">' +
+        '<div class="pet-name">' + esc(stage === 0 ? title : title) + '<span class="pet-stage">' + PET_STAGE_LABEL[stage] + '</span>' + typeBadgeHtml(sp) + rarityBadgeHtml(sp) + '</div>' +
+        '<div class="pet-sub">' + sub + '</div>' +
+      '</div>' +
+      '<div class="pet-grow">' +
+        '<div class="pet-gauge"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="pet-growline"><span>EXP <b>' + p.exp + '</b> / ' + (need || 'MAX') + '</span>' + (nextMini || '<span>✨ MAX</span>') + '</div>' +
+      '</div>' +
+      '<div class="pet-acts">' + acts +
+        '<button class="pet-go" data-act="pet-open" aria-haspopup="dialog">🐾 <b>' + p.collection.length + '</b>/' + SPECIES_MAX + '</button>' +
+      '</div>' +
+      '<div class="pet-tools">' +
+        '<button type="button" class="tool-pill" data-act="room-open">🏠 마이룸</button>' +
+        '<button type="button" class="tool-pill" data-act="avatar-open">👕 아바타</button>' +
+        '<button type="button" class="tool-pill" data-act="shop-open">🛒 상점</button>' +
+      '</div>';
+
+    var modal = document.getElementById('petModal');
+    if (modal && !modal.hidden) renderPetDex();
+  }
+
+  function rarityBadgeHtml(sp) {
+    return '<span class="rarity-badge" style="--rc:' + sp.rarityColor + '">' + sp.rarityLabel + '</span>';
+  }
+
+  /* ---------------- 도감 (54종) ---------------- */
+  function petDexHtml() {
+    var p = petState();
+    var stage = p.stage;
+    var spNow = speciesById(p.currentEgg);
+    var have = {};
+    for (var i = 0; i < p.collection.length; i++) have[p.collection[i].id] = p.collection[i];
+
+    var need = petNeed(stage);
+    var pct = need ? Math.min(100, Math.round(p.exp / need * 100)) : 100;
+    var nowArt = petArt(spNow, stage, p.exp / Math.max(1, need));
+    var nowSub;
+    if (stage === 0) nowSub = 'EXP ' + p.exp + ' / 100 · 부화까지 ' + fmtLeft(petHatchLeft());
+    else if (stage < 3) nowSub = 'EXP ' + p.exp + ' / 100 · ' + Math.max(0, need - p.exp) + ' EXP 더 모으면 ' + PET_STAGE_LABEL[stage + 1] + '!';
+    else nowSub = '2차 진화 완성! 새 알을 받으면 다시 키울 수 있어요.';
+
+    var h = '<div class="pet-nowbox">' +
+      '<div class="nw-head"><span class="nw-art">' + nowArt + '</span><span>' +
+        (stage === 0 ? '지금 키우는 알' : '지금 키우는 ' + esc(spNow.names[stage - 1])) + '</span>' +
+        '<span class="nw-count">' + p.collection.length + ' / ' + SPECIES_MAX + '</span></div>' +
+      '<div class="nw-sub">' + nowSub + '</div>' +
+      '<div class="pet-gauge"><i style="width:' + pct + '%"></i></div>' +
+      '</div>';
+
+    h += '<h3 class="pet-sec-title">🐾 몬스터 도감 <b>' + p.collection.length + '</b> / ' + SPECIES_MAX + '</h3>';
+    h += '<div class="dex-sum">';
+    for (var r = 0; r < RARITY.length; r++) {
+      var cnt = 0;
+      for (var q = 0; q < PET_SPECIES.length; q++) if (PET_SPECIES[q].rarity === r && have[PET_SPECIES[q].id]) cnt++;
+      h += '<span class="rarity-badge" style="--rc:' + RARITY[r].color + '">' + RARITY[r].label + ' ' + cnt + '</span>';
+    }
+    h += '</div>';
+    h += '<div class="type-filter">' +
+      '<button type="button" class="tchip' + (petFilter === '' ? ' on' : '') + '" data-act="pet-filter" data-t="">전체</button>';
+    for (var ti = 0; ti < PET_TYPES.length; ti++) {
+      var tt = PET_TYPES[ti];
+      h += '<button type="button" class="tchip' + (petFilter === tt.id ? ' on' : '') + '" data-act="pet-filter" data-t="' + esc(tt.id) + '">' +
+        '<i style="background:' + tt.color + '"></i>' + esc(tt.label) + '</button>';
+    }
+    h += '</div>';
+    h += '<div class="pet-dex">';
+    var shown = 0;
+    for (var k = 0; k < PET_SPECIES.length; k++) {
+      var sp = PET_SPECIES[k];
+      if (petFilter && sp.type !== petFilter) continue;
+      shown++;
+      var got = have[sp.id];
+      var isNow = p.currentEgg === sp.id;
+      var chain = '';
+      if (got) {
+        chain = '<div class="pc-chain">';
+        for (var csi = 1; csi <= 3; csi++) chain += '<span class="pcs">' + petArt(sp, csi, 0) + '</span>';
+        chain += '</div>';
+      } else if (isNow) {
+        chain = '<div class="pc-chain"><span class="pcs">' + petArt(sp, Math.max(1, stage), 0) + '</span></div>';
+      }
+      h += '<div class="pet-card' + (got ? '' : ' locked') + (isNow ? ' now' : '') + '" style="--tc:' + petTypeInfo(sp.type).color + '">' +
+        '<div class="pc-no">#' + pad2(sp.no) + '</div>' +
+        '<div class="pc-face">' + (got || isNow ? petArt(sp, got ? 3 : Math.max(1, stage)) : '❓') + '</div>' +
+        '<div class="pc-name">' + (got || isNow ? esc(sp.names[0]) : '???') + '</div>' +
+        '<div class="pc-type">' + typeBadgeHtml(sp) + rarityBadgeHtml(sp) + '</div>' +
+        chain +
+        '<div class="pc-when">' + (got ? fmtShort(got.at) + ' 완성' : (isNow ? '키우는 중' : '아직 못 만났어요')) + '</div>' +
+        '</div>';
+    }
+    if (!shown) h += '<p class="spend-empty">이 속성 친구는 아직 없어요.</p>';
+    h += '</div>';
+
+    h += '<p class="lf-note" style="margin-top:10px">루틴 체크로 코인을 모아 먹이를 주면 EXP가 올라요. 알 → 아기 → 1차 진화 → 2차 진화, 단계마다 100 EXP! 다 자란 친구는 도감에 저장되고 마이룸에서 뛰어놀 수 있어요.</p>';
+    return h;
+  }
+
+  function showEvo(stage) {
+    var p = petState();
+    var sp = speciesById(p.currentEgg);
+    var m = document.getElementById('evoModal');
+    if (!m) return;
+    var badge = document.getElementById('evoBadge');
+    var title = document.getElementById('evoTitle');
+    var art = document.getElementById('evoArt');
+    var nameEl = document.getElementById('evoName');
+    var line = document.getElementById('evoLine');
+    var next = document.getElementById('evoNext');
+    var actions = document.getElementById('evoActions');
+
+    if (stage === 1) {
+      badge.textContent = '🎉';
+      title.textContent = '알이 부화했어요!';
+      nameEl.textContent = sp.names[0] + ' 등장!';
+      line.textContent = '이제 먹이를 줘서 1차 진화에 도전해요!';
+    } else if (stage === 2) {
+      badge.textContent = '✨';
+      title.textContent = '1차 진화!';
+      nameEl.textContent = sp.names[0] + ' → ' + sp.names[1];
+      line.textContent = '더 크고 멋져졌어요! 2차 진화까지 100 EXP!';
+    } else {
+      badge.textContent = '🌟';
+      title.textContent = '2차 진화 완성!';
+      nameEl.textContent = sp.names[0] + ' → ' + sp.names[1] + ' → ' + sp.names[2];
+      line.textContent = '도감에 저장했어요! 마이룸에서 함께 놀 수 있어요.';
+    }
+    nameEl.innerHTML = esc(nameEl.textContent) + ' ' + typeBadgeHtml(sp) + rarityBadgeHtml(sp);
+
+    art.innerHTML = petArt(sp, Math.max(1, stage), 1);
+    next.innerHTML = stage < 3
+      ? '<span>다음 모습</span>' + petArt(sp, stage + 1, 0) + '<b>???</b>'
+      : '<span>🐾 몬스터 도감에 저장됐어요!</span>';
+    actions.innerHTML = stage < 3
+      ? '<button class="modal-btn" data-act="evo-close">좋아, 더 키울래!</button>' +
+        '<button class="modal-btn sub" data-act="evo-dex">🐾 도감 보기</button>'
+      : '<button class="modal-btn" data-act="evo-new">🥚 새 알 받기</button>' +
+        '<button class="modal-btn sub" data-act="evo-dex">🐾 도감 보기</button>';
+
+    m.hidden = false;
+    lockScroll();
+  }
+
+  /* ---------------- 펫 케어 (먹이·부화 아이템) ---------------- */
+  function openCare() {
+    renderCare();
+    var m = document.getElementById('careModal');
+    if (m) m.hidden = false;
+    raiseModal('careModal');
+    lockScroll();
+  }
+  function closeCare() {
+    var m = document.getElementById('careModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('careModal')) unlockScroll();
+  }
+
+  function careItems() {
+    var out = [];
+    var list = shopAll();
+    for (var i = 0; i < list.length; i++) {
+      var it = list[i];
+      if (it.cat !== 'pet' || it.hidden) continue;
+      if (bagCount(it.id) > 0) out.push(it);
+    }
+    return out;
+  }
+
+  function careHtml() {
+    var p = petState();
+    var sp = speciesById(p.currentEgg);
+    var need = petNeed(p.stage);
+    var h = '<div class="care-top">' +
+      '<div class="care-art">' + petArt(sp, p.stage, p.exp / Math.max(1, need)) + '</div>' +
+      '<div class="care-meta">' +
+        '<b>' + (p.stage === 0 ? '수수께끼 알' : esc(sp.names[p.stage - 1])) + '</b> ' + rarityBadgeHtml(sp) +
+        '<div class="pet-gauge"><i style="width:' + (need ? Math.round(p.exp / need * 100) : 100) + '%"></i></div>' +
+        '<div class="care-line">' + (p.stage === 0
+          ? 'EXP ' + p.exp + ' / 100 · 부화까지 ' + fmtLeft(petHatchLeft())
+          : (p.stage >= 3 ? '2차 진화 완성! 🌟' : 'EXP ' + p.exp + ' / 100 · 다음 진화까지 ' + Math.max(0, 100 - p.exp))) + '</div>' +
+      '</div>' +
+      '<span class="shop-coin">🪙 <b>' + fmtNum(prof().coins) + '</b></span>' +
+      '</div>';
+
+    var items = careItems();
+    h += '<h3 class="pet-sec-title">🎒 먹이 가방</h3>';
+    if (!items.length) {
+      h += '<p class="spend-empty">가방이 비었어요. 상점에서 먹이를 사면 여기서 먹일 수 있어요.</p>';
+    } else {
+      h += '<div class="care-list">';
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        var dis = '';
+        if (it.kind === 'hatch' && p.stage !== 0) dis = 'disabled';
+        if (p.stage >= 3) dis = 'disabled';
+        h += '<div class="care-row">' +
+          '<span class="care-ic" style="--ic:' + esc(it.color || '#ffd9a0') + '">' + (it.icon || '🍖') + '</span>' +
+          '<span class="care-nm"><b>' + esc(it.name) + '</b><small>' + esc(it.desc || '') + ' · ' + bagCount(it.id) + '개</small></span>' +
+          '<button type="button" class="pill-btn warm" data-act="feed" data-id="' + esc(it.id) + '" ' + dis + '>먹이기</button>' +
+          '</div>';
+      }
+      h += '</div>';
+    }
+    h += '<div class="care-actions">' +
+      '<button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="pet">🛒 상점에서 먹이 사기</button>' +
+      '<button type="button" class="ghost-btn" data-act="care-close">닫기</button>' +
+      '</div>';
+    h += '<p class="lf-note">루틴 체크 +' + COIN_CHECK + '코인, 그룹 완료 +' + COIN_GROUP + '코인, 칭찬 스티커 +' + COIN_STICKER + '코인. 하루를 다 채우면 먹이 10개 = 100 EXP!</p>';
+    return h;
+  }
+
+  function renderCare() {
+    var b = document.getElementById('careBody');
+    if (b) b.innerHTML = careHtml();
+  }
+
+  function feedItem(id) {
+    var it = shopItem(id);
+    if (!it) return;
+    var p = prof();
+    if (bagCount(id) <= 0) { showToast('가방에 없어요.'); return; }
+    var pet = petState();
+    if (pet.stage >= 3) { showToast('이미 다 자랐어요! 새 알을 받아 주세요.'); return; }
+    if (it.kind === 'hatch') {
+      if (pet.stage !== 0) { showToast('부화 아이템은 알일 때만 쓸 수 있어요.'); return; }
+      var now = Date.now();
+      if (it.ms < 0) pet.hatchAt = now;
+      else pet.hatchAt = Math.max(now, (pet.hatchAt || now) - it.ms);
+      p.bag[id] = bagCount(id) - 1;
+      snd('sticker');
+      saveState();
+      if (!petTryHatch(true)) {
+        showToast('⏳ 부화가 ' + it.desc + ' 만큼 빨라졌어요!');
+        renderPet();
+        renderCare();
+      }
+    } else {
+      var gain = parseInt(it.n, 10) || 10;
+      if (it.kind === 'egg' && pet.stage !== 0) { showToast('알 영양제는 알일 때만 먹여요.'); return; }
+      p.bag[id] = bagCount(id) - 1;
+      snd('check');
+      saveState();
+      renderCare();
+      petAddExp(gain, {});
+      if (!document.getElementById('careModal').hidden) renderCare();
+    }
+    renderCoinBadge();
+  }
+
+
+  /* ---------------- 아바타 ---------------- */
+  function avSkin() {
+    var id = prof().avatar.skin;
+    for (var i = 0; i < AV_SKINS.length; i++) if (AV_SKINS[i].id === id) return AV_SKINS[i];
+    return AV_SKINS[0];
+  }
+  function avHairColor() {
+    var id = prof().avatar.hairColor;
+    for (var i = 0; i < AV_HAIR_COLORS.length; i++) if (AV_HAIR_COLORS[i].id === id) return AV_HAIR_COLORS[i];
+    return AV_HAIR_COLORS[0];
+  }
+  function avItem(id) {
+    var it = id ? shopItem(id) : null;
+    return (it && it.kind === 'cloth') ? it : null;
+  }
+
+  function avatarInner(av) {
+    av = av || prof().avatar;
+    var skin = avSkin().color;
+    var hc = avHairColor().color;
+    var top = avItem(av.top), bottom = avItem(av.bottom), shoes = avItem(av.shoes), hair = avItem(av.hair), acc = avItem(av.acc);
+    var topC = top ? top.color : '#ffffff';
+    var topC2 = top ? (top.color2 || top.color) : '#7ec8f0';
+    var botC = bottom ? bottom.color : '#5b8cc8';
+    var shoeC = shoes ? shoes.color : '#ffffff';
+    var shoeC2 = shoes ? (shoes.color2 || shoes.color) : '#7ec8f0';
+    var s = '<g class="av-fig">';
+
+    s += '<ellipse cx="60" cy="194" rx="31" ry="6" fill="#2c2440" opacity=".10"/>';
+
+    /* 다리 */
+    s += '<rect x="47" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
+    s += '<rect x="60" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
+
+    /* 하의 */
+    var bstyle = bottom ? bottom.style : 'jeans';
+    if (bstyle === 'skirt') {
+      s += '<path d="M40 136h40l11 30H29z" fill="' + botC + '"/>';
+      s += '<path d="M42 144h36l3 8H39z" fill="#ffffff" opacity=".22"/>';
+    } else if (bstyle === 'shorts') {
+      s += '<rect x="39" y="136" width="42" height="18" rx="6" fill="' + botC + '"/>';
+      s += '<rect x="42" y="150" width="15" height="10" rx="5" fill="' + botC + '"/>';
+      s += '<rect x="63" y="150" width="15" height="10" rx="5" fill="' + botC + '"/>';
+    } else if (bstyle === 'train') {
+      s += '<rect x="39" y="136" width="42" height="24" rx="7" fill="' + botC + '"/>';
+      s += '<rect x="43" y="156" width="14" height="16" rx="6" fill="' + botC + '"/>';
+      s += '<rect x="63" y="156" width="14" height="16" rx="6" fill="' + botC + '"/>';
+      s += '<path d="M39 146h42" stroke="#ffffff" stroke-width="2" opacity=".35"/>';
+    } else {
+      s += '<rect x="39" y="136" width="42" height="26" rx="6" fill="' + botC + '"/>';
+      s += '<rect x="42" y="158" width="15" height="16" rx="6" fill="' + botC + '"/>';
+      s += '<rect x="63" y="158" width="15" height="16" rx="6" fill="' + botC + '"/>';
+      s += '<path d="M40 142h40" stroke="#ffffff" stroke-width="2" opacity=".25"/>';
+    }
+
+    /* 상의 */
+    var tstyle = top ? top.style : 'tee';
+    s += '<path d="M42 100q18-8 36 0v42q-18 7-36 0z" fill="' + topC + '"/>';
+    s += '<rect x="30" y="104" width="14" height="22" rx="7" fill="' + topC + '"/>';
+    s += '<rect x="76" y="104" width="14" height="22" rx="7" fill="' + topC + '"/>';
+    s += '<circle cx="35" cy="130" r="6.4" fill="' + skin + '"/>';
+    s += '<circle cx="85" cy="130" r="6.4" fill="' + skin + '"/>';
+    if (tstyle === 'stripe') {
+      for (var i = 0; i < 3; i++) {
+        s += '<path d="M42 ' + (108 + i * 10) + 'h36" stroke="' + topC2 + '" stroke-width="5" opacity=".95"/>';
+      }
+    } else if (tstyle === 'hood') {
+      s += '<path d="M42 100q18 12 36 0q-4 12-18 12t-18-12z" fill="' + topC2 + '"/>';
+      s += '<rect x="50" y="124" width="20" height="12" rx="5" fill="' + topC2 + '" opacity=".85"/>';
+      s += '<path d="M56 104v6M64 104v6" stroke="#ffffff" stroke-width="2" opacity=".7"/>';
+    } else if (tstyle === 'knit') {
+      for (var k = 0; k < 4; k++) {
+        s += '<path d="M' + (45 + k * 9) + ' 104v34" stroke="#ffffff" stroke-width="2" opacity=".35"/>';
+      }
+      s += '<path d="M42 100q18-8 36 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
+    } else {
+      s += '<path d="M42 100q18-8 36 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
+      s += '<circle cx="60" cy="118" r="5" fill="' + topC2 + '" opacity=".85"/>';
+    }
+
+    /* 목 */
+    s += '<rect x="54" y="88" width="12" height="14" rx="5" fill="' + skin + '"/>';
+
+    /* 얼굴 */
+    s += '<circle cx="26" cy="64" r="6" fill="' + skin + '"/>';
+    s += '<circle cx="94" cy="64" r="6" fill="' + skin + '"/>';
+    s += '<circle cx="60" cy="62" r="33" fill="' + skin + '"/>';
+    s += '<ellipse cx="48" cy="65" rx="3.6" ry="4.6" fill="#2c2440"/>';
+    s += '<ellipse cx="72" cy="65" rx="3.6" ry="4.6" fill="#2c2440"/>';
+    s += '<circle cx="49.2" cy="63.4" r="1.3" fill="#fff"/>';
+    s += '<circle cx="73.2" cy="63.4" r="1.3" fill="#fff"/>';
+    s += '<ellipse cx="40" cy="74" rx="4.4" ry="2.6" fill="#ff9db4" opacity=".65"/>';
+    s += '<ellipse cx="80" cy="74" rx="4.4" ry="2.6" fill="#ff9db4" opacity=".65"/>';
+    s += '<path d="M55 75q5 5 10 0" fill="none" stroke="#b0603f" stroke-width="2.2" stroke-linecap="round"/>';
+
+    /* 헤어 */
+    var hstyle = hair ? hair.style : 'short';
+    var hairC = (hair && hair.color && hair.style !== 'basic') ? hc : hc;
+    if (hstyle === 'bob') {
+      s += '<path d="M26 62c0-23 15-36 34-36s34 13 34 36c-7-11-16-16-34-16s-27 5-34 16z" fill="' + hairC + '"/>';
+      s += '<rect x="23" y="52" width="11" height="30" rx="5.5" fill="' + hairC + '"/>';
+      s += '<rect x="86" y="52" width="11" height="30" rx="5.5" fill="' + hairC + '"/>';
+    } else if (hstyle === 'twin') {
+      s += '<circle cx="24" cy="42" r="12" fill="' + hairC + '"/>';
+      s += '<circle cx="96" cy="42" r="12" fill="' + hairC + '"/>';
+      s += '<circle cx="24" cy="42" r="4" fill="#ff8fb0"/>';
+      s += '<circle cx="96" cy="42" r="4" fill="#ff8fb0"/>';
+      s += '<path d="M26 62c0-23 15-36 34-36s34 13 34 36c-7-11-16-16-34-16s-27 5-34 16z" fill="' + hairC + '"/>';
+    } else if (hstyle === 'curly') {
+      var curls = [[32, 34], [44, 26], [60, 23], [76, 26], [88, 34], [28, 48], [92, 48]];
+      for (var ci = 0; ci < curls.length; ci++) s += '<circle cx="' + curls[ci][0] + '" cy="' + curls[ci][1] + '" r="9" fill="' + hairC + '"/>';
+      s += '<path d="M27 62c0-16 14-26 33-26s33 10 33 26c-8-8-17-12-33-12s-25 4-33 12z" fill="' + hairC + '"/>';
+    } else if (hstyle === 'buzz') {
+      s += '<path d="M28 60c0-20 14-31 32-31s32 11 32 31q-6-10-32-10t-32 10z" fill="' + hairC + '"/>';
+      s += '<path d="M46 31l3 7 4-6 4 7 3-6 4 6" fill="none" stroke="' + hairC + '" stroke-width="3" stroke-linecap="round"/>';
+    } else {
+      s += '<path d="M26 62c0-23 15-36 34-36s34 13 34 36c-8-12-17-17-34-17s-26 5-34 17z" fill="' + hairC + '"/>';
+      s += '<path d="M40 44q20-12 40 0" fill="none" stroke="#ffffff" stroke-width="3" opacity=".22"/>';
+    }
+
+    /* 액세서리 */
+    var ast = acc ? acc.style : '';
+    if (ast === 'glasses') {
+      s += '<circle cx="48" cy="65" r="10" fill="none" stroke="' + (acc.color || '#5a4a3a') + '" stroke-width="2.6"/>';
+      s += '<circle cx="72" cy="65" r="10" fill="none" stroke="' + (acc.color || '#5a4a3a') + '" stroke-width="2.6"/>';
+      s += '<path d="M58 65h4" stroke="' + (acc.color || '#5a4a3a') + '" stroke-width="2.6"/>';
+    } else if (ast === 'cap') {
+      s += '<path d="M28 52c0-20 14-30 32-30s32 10 32 30z" fill="' + (acc.color || '#6fb7ff') + '"/>';
+      s += '<path d="M28 52h44q10 0 14 5H26z" fill="' + (acc.color || '#6fb7ff') + '" opacity=".85"/>';
+      s += '<circle cx="60" cy="24" r="3" fill="#ffffff" opacity=".7"/>';
+    } else if (ast === 'crown') {
+      s += '<path d="M38 32l4-14 8 9 10-13 10 13 8-9 4 14z" fill="' + (acc.color || '#ffd34d') + '" stroke="#e0a800" stroke-width="1.5"/>';
+      s += '<circle cx="60" cy="24" r="2.6" fill="#ff6b8a"/>';
+    } else if (ast === 'bag') {
+      s += '<path d="M44 102l24 44" stroke="' + (acc.color || '#f28fa8') + '" stroke-width="5" stroke-linecap="round"/>';
+      s += '<rect x="62" y="128" width="26" height="20" rx="6" fill="' + (acc.color || '#f28fa8') + '"/>';
+      s += '<rect x="62" y="128" width="26" height="7" rx="3.5" fill="#ffffff" opacity=".45"/>';
+    } else if (ast === 'necklace') {
+      s += '<path d="M48 92q12 12 24 0" fill="none" stroke="' + (acc.color || '#ffd34d') + '" stroke-width="2.4"/>';
+      s += '<circle cx="60" cy="99" r="3.4" fill="' + (acc.color || '#ffd34d') + '" stroke="#e0a800" stroke-width="1"/>';
+    }
+
+    /* 신발 */
+    var sstyle = shoes ? shoes.style : 'sneaker';
+    if (sstyle === 'boots') {
+      s += '<rect x="44" y="168" width="16" height="24" rx="5" fill="' + shoeC + '"/>';
+      s += '<rect x="60" y="168" width="16" height="24" rx="5" fill="' + shoeC + '"/>';
+      s += '<rect x="42" y="186" width="20" height="8" rx="4" fill="' + shoeC + '"/>';
+      s += '<rect x="58" y="186" width="20" height="8" rx="4" fill="' + shoeC + '"/>';
+    } else if (sstyle === 'slipper') {
+      s += '<ellipse cx="51" cy="188" rx="11" ry="6" fill="' + shoeC + '"/>';
+      s += '<ellipse cx="69" cy="188" rx="11" ry="6" fill="' + shoeC + '"/>';
+      s += '<path d="M44 185q7-6 14 0" fill="none" stroke="#ffffff" stroke-width="2"/>';
+      s += '<path d="M62 185q7-6 14 0" fill="none" stroke="#ffffff" stroke-width="2"/>';
+    } else {
+      s += '<ellipse cx="51" cy="187" rx="11" ry="7" fill="' + shoeC + '"/>';
+      s += '<ellipse cx="69" cy="187" rx="11" ry="7" fill="' + shoeC + '"/>';
+      s += '<path d="M42 190h18M60 190h18" stroke="' + shoeC2 + '" stroke-width="3" stroke-linecap="round"/>';
+    }
+
+    s += '</g>';
+    return s;
+  }
+
+  function avatarSvg(av, cls) {
+    return '<svg viewBox="0 0 120 200" class="' + (cls || 'av-svg') + '" aria-hidden="true">' + avatarInner(av) + '</svg>';
+  }
+
+  function equipAvatar(slot, id, silent) {
+    var av = prof().avatar;
+    var it = avItem(id);
+    if (!it || it.slot !== slot) return;
+    if (!isOwned(id) && it.price > 0) return;
+    av[slot] = id;
+    prof().owned[id] = 1;
+    if (!silent) { snd('sticker'); showToast('👕 ' + josa(it.name, '을', '를') + ' 입었어요!'); }
+    saveState();
+    renderAvatar();
+    renderPet();
+    if (!document.getElementById('roomModal').hidden) renderRoom();
+  }
+
+  function setAvatarSkin(id) {
+    prof().avatar.skin = id;
+    saveState();
+    renderAvatar();
+    if (!document.getElementById('roomModal').hidden) renderRoom();
+  }
+  function setAvatarHairColor(id) {
+    prof().avatar.hairColor = id;
+    saveState();
+    renderAvatar();
+    if (!document.getElementById('roomModal').hidden) renderRoom();
+  }
+
+  var avatarUi = { slot: 'hair' };
+
+  function openAvatar() {
+    renderAvatar();
+    var m = document.getElementById('avatarModal');
+    if (m) m.hidden = false;
+    raiseModal('avatarModal');
+    lockScroll();
+  }
+  function closeAvatar() {
+    var m = document.getElementById('avatarModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('avatarModal')) unlockScroll();
+  }
+
+  function avatarSlotItems(slot) {
+    var list = shopAll(), out = [];
+    for (var i = 0; i < list.length; i++) {
+      var it = list[i];
+      if (it.kind !== 'cloth' || it.slot !== slot || it.hidden) continue;
+      out.push(it);
+    }
+    return out;
+  }
+
+  function avatarHtml() {
+    var av = prof().avatar;
+    var p = prof();
+    var h = '<div class="av-top">' +
+      '<div class="av-preview">' + avatarSvg(av) + '</div>' +
+      '<div class="av-side">' +
+        '<b>나의 아바타</b>' +
+        '<p class="lf-note">옷을 고르면 바로 입어요. 마이룸에도 이 모습으로 서 있어요.</p>' +
+        '<div class="av-swatches"><span>피부</span>';
+    for (var i = 0; i < AV_SKINS.length; i++) {
+      h += '<button type="button" class="sw' + (av.skin === AV_SKINS[i].id ? ' on' : '') + '" data-act="av-skin" data-id="' + AV_SKINS[i].id + '" style="--sw:' + AV_SKINS[i].color + '" title="' + esc(AV_SKINS[i].label) + '"></button>';
+    }
+    h += '</div><div class="av-swatches"><span>머리색</span>';
+    for (var j = 0; j < AV_HAIR_COLORS.length; j++) {
+      h += '<button type="button" class="sw' + (av.hairColor === AV_HAIR_COLORS[j].id ? ' on' : '') + '" data-act="av-haircolor" data-id="' + AV_HAIR_COLORS[j].id + '" style="--sw:' + AV_HAIR_COLORS[j].color + '" title="' + esc(AV_HAIR_COLORS[j].label) + '"></button>';
+    }
+    h += '</div>' +
+        '<div class="shop-coin">🪙 <b>' + fmtNum(p.coins) + '</b></div>' +
+      '</div></div>';
+
+    h += '<div class="tabs av-tabs">';
+    for (var s = 0; s < AV_SLOTS.length; s++) {
+      var slot = AV_SLOTS[s];
+      var wearing = avItem(av[slot.id]);
+      h += '<button type="button" class="tab' + (avatarUi.slot === slot.id ? ' on' : '') + '" data-act="av-slot" data-slot="' + slot.id + '">' +
+        slot.icon + ' ' + slot.label + (wearing ? '' : ' <small>없음</small>') + '</button>';
+    }
+    h += '</div>';
+
+    h += '<div class="av-grid">';
+    if (avatarUi.slot === 'acc') {
+      h += '<button type="button" class="av-card' + (!av.acc ? ' on' : '') + '" data-act="av-off"><span class="av-thumb">🚫</span><b>안 쓰기</b><small>액세서리 없음</small></button>';
+    }
+    var list = avatarSlotItems(avatarUi.slot);
+    for (var k = 0; k < list.length; k++) {
+      var it = list[k];
+      var ownIt = it.price <= 0 || p.owned[it.id];
+      var on = av[avatarUi.slot] === it.id;
+      var tmpAv = {};
+      for (var ak in av) if (Object.prototype.hasOwnProperty.call(av, ak)) tmpAv[ak] = av[ak];
+      tmpAv[it.slot] = it.id;
+      h += '<button type="button" class="av-card' + (on ? ' on' : '') + (ownIt ? '' : ' locked') + '" data-act="av-wear" data-id="' + esc(it.id) + '">' +
+        '<span class="av-thumb av-thumb-fig">' + '<svg viewBox="0 0 120 200" aria-hidden="true">' + avatarInner(tmpAv) + '</svg></span>' +
+        '<b>' + esc(it.name) + '</b>' +
+        '<small>' + (ownIt ? (on ? '입는 중' : '입어 보기') : '🪙 ' + fmtNum(it.price)) + '</small>' +
+        '</button>';
+    }
+    h += '</div>';
+    h += '<div class="care-actions">' +
+      '<button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="avatar">🛒 아바타 상점</button>' +
+      '<button type="button" class="ghost-btn" data-act="avatar-close">닫기</button></div>';
+    return h;
+  }
+
+  function renderAvatar() {
+    var b = document.getElementById('avatarBody');
+    if (b) b.innerHTML = avatarHtml();
+  }
+
+  /* ---------------- 2.5D 마이룸 ---------------- */
+  var ROOM = { N: 6, OX: 360, OY: 170, HW: 44, HH: 22, WALL_H: 130, VW: 720, VH: 520 };
+  var WALLS = {
+    wall_cream: { name: '크림 벽지', wall: '#fdf2e2', wall2: '#f7e6d0', floor: '#f3ddc2', floor2: '#ebd1b0', pat: 'dot', patC: '#f0dcc0' },
+    wall_sky: { name: '하늘 벽지', wall: '#e8f5ff', wall2: '#d5ebff', floor: '#f7e9d5', floor2: '#efdfc7', pat: 'cloud', patC: '#ffffff' },
+    wall_night: { name: '별밤 벽지', wall: '#3b3f6d', wall2: '#2f3358', floor: '#565073', floor2: '#4b4568', pat: 'star', patC: '#fff2b8', dark: true },
+    wall_forest: { name: '숲속 벽지', wall: '#e2f4de', wall2: '#d0e9ca', floor: '#e9dcc2', floor2: '#dfd0b3', pat: 'leaf', patC: '#b6ddad' },
+    wall_cherry: { name: '벚꽃 벽지', wall: '#ffe8f0', wall2: '#ffd8e5', floor: '#f6e3d3', floor2: '#efd8c5', pat: 'petal', patC: '#ffc4d8' },
+    wall_galaxy: { name: '은하수 벽지', wall: '#2c2554', wall2: '#241e45', floor: '#4a4270', floor2: '#413a63', pat: 'star', patC: '#c9c0ff', dark: true }
+  };
+  function wallInfo(id) { return WALLS[id] || WALLS.wall_cream; }
+
+  var roomUi = { panel: 'main', sel: '', moving: '', msg: '' };
+  var roomAnim = { timer: 0 };
+
+  function iP(x, y) {
+    return [ROOM.OX + (x - y) * ROOM.HW, ROOM.OY + (x + y) * ROOM.HH];
+  }
+  function pts(arr) {
+    var out = [];
+    for (var i = 0; i < arr.length; i++) out.push(arr[i][0].toFixed(1) + ',' + arr[i][1].toFixed(1));
+    return out.join(' ');
+  }
+  function isoQuad(x, y, w, d, lift) {
+    lift = lift || 0;
+    var a = iP(x, y), b = iP(x + w, y), c = iP(x + w, y + d), e = iP(x, y + d);
+    return [[a[0], a[1] - lift], [b[0], b[1] - lift], [c[0], c[1] - lift], [e[0], e[1] - lift]];
+  }
+  function isoBox(x, y, w, d, h, top, left, front, lift) {
+    lift = lift || 0;
+    var base = isoQuad(x, y, w, d, lift);
+    var tp = isoQuad(x, y, w, d, lift + h);
+    var lf = [base[1], base[2], tp[2], tp[1]];
+    var rf = [base[3], base[2], tp[2], tp[3]];
+    return '<polygon points="' + pts(lf) + '" fill="' + left + '"/>' +
+      '<polygon points="' + pts(rf) + '" fill="' + front + '"/>' +
+      '<polygon points="' + pts(tp) + '" fill="' + top + '" stroke="rgba(60,40,25,.10)" stroke-width="1"/>';
+  }
+  function darken(hex, t) { return shadeColor(hex, -t); }
+  function lighten(hex, t) { return shadeColor(hex, t); }
+
+  function furniSvg(it, x, y) {
+    var w = it.w || 1, d = it.d || 1;
+    var c = it.color || '#c99b6a';
+    var fid = it.fid || 'custom';
+    var s = '';
+    if (fid === 'bed') {
+      s += isoBox(x, y, w, d, 12, '#c99a6b', '#a97c50', '#b98a5e');
+      s += isoBox(x + 0.05, y + 0.05, w - 0.1, d - 0.1, 22, '#93b9ff', '#6f96e0', '#7fa6ee', 10);
+      s += isoBox(x + 0.08, y + 0.1, 0.5, d - 0.2, 7, '#ffffff', '#e6ebf5', '#f4f7ff', 30);
+      s += isoBox(x + 0.62, y + 0.06, w - 0.68, d - 0.12, 6, '#ffc2d1', '#e39db1', '#f2aec0', 29);
+      s += isoBox(x + 0.09, y + 0.12, 0.48, d - 0.24, 2, '#ffe9f0', '#dfd3e6', '#f0e2ea', 29);
+    } else if (fid === 'stool') {
+      s += isoBox(x + 0.12, y + 0.12, w - 0.24, d - 0.24, 18, c, darken(c, .18), darken(c, .08));
+      var cc = iP(x + w / 2, y + d / 2);
+      s += '<ellipse cx="' + cc[0] + '" cy="' + (cc[1] - 18) + '" rx="' + (ROOM.HW * 0.68) + '" ry="' + (ROOM.HH * 0.68) + '" fill="' + lighten(c, .25) + '" stroke="rgba(0,0,0,.08)"/>';
+    } else if (fid === 'desk') {
+      s += isoBox(x + 0.08, y + 0.3, 0.12, 0.12, 24, darken(c, .1), darken(c, .25), darken(c, .18));
+      s += isoBox(x + w - 0.2, y + 0.3, 0.12, 0.12, 24, darken(c, .1), darken(c, .25), darken(c, .18));
+      s += isoBox(x + 0.08, y + d - 0.42, 0.12, 0.12, 24, darken(c, .1), darken(c, .25), darken(c, .18));
+      s += isoBox(x + w - 0.2, y + d - 0.42, 0.12, 0.12, 24, darken(c, .1), darken(c, .25), darken(c, .18));
+      s += isoBox(x, y, w, d, 7, lighten(c, .12), darken(c, .2), darken(c, .1), 24);
+      s += isoBox(x + 0.2, y + 0.22, 0.5, 0.4, 6, '#ff9da8', '#d97b86', '#ef8e99', 31);
+      s += isoBox(x + w - 0.8, y + 0.2, 0.35, 0.45, 5, '#8fd6ff', '#63b4e6', '#7cc6f2', 31);
+    } else if (fid === 'sofa') {
+      s += isoBox(x, y, w, d, 16, c, darken(c, .2), darken(c, .1));
+      s += isoBox(x + 0.08, y + 0.06, w - 0.16, 0.34, 40, lighten(c, .1), darken(c, .22), darken(c, .12), 12);
+      s += isoBox(x + 0.05, y + 0.34, 0.26, d - 0.42, 28, darken(c, .05), darken(c, .22), darken(c, .12), 12);
+      s += isoBox(x + w - 0.31, y + 0.34, 0.26, d - 0.42, 28, darken(c, .05), darken(c, .22), darken(c, .12), 12);
+      s += isoBox(x + 0.34, y + 0.38, w - 0.68, d - 0.46, 22, lighten(c, .22), darken(c, .12), darken(c, .04), 14);
+    } else if (fid === 'shelf') {
+      s += isoBox(x + 0.08, y + 0.14, w - 0.16, d - 0.28, 78, c, darken(c, .22), darken(c, .12));
+      for (var sh = 0; sh < 3; sh++) {
+        var lv = 22 + sh * 22;
+        s += isoBox(x + 0.12, y + 0.18, w - 0.24, d - 0.36, 3, lighten(c, .2), darken(c, .18), darken(c, .08), lv);
+        s += isoBox(x + 0.2, y + 0.22, 0.14, d - 0.44, 14, ['#ff8f8f', '#7cc6f2', '#ffd166'][sh], darken('#dddddd', .1), '#cccccc', lv + 3);
+        s += isoBox(x + 0.42, y + 0.22, 0.13, d - 0.44, 12, ['#9ee6a8', '#c9a6ff', '#ffb3c7'][sh], '#bbbbbb', '#cccccc', lv + 3);
+      }
+    } else if (fid === 'rug') {
+      var outer = isoQuad(x + 0.06, y + 0.06, w - 0.12, d - 0.12, 1);
+      var inner = isoQuad(x + 0.2, y + 0.2, w - 0.4, d - 0.4, 1);
+      s += '<polygon points="' + pts(outer) + '" fill="' + c + '" opacity=".95"/>';
+      s += '<polygon points="' + pts(inner) + '" fill="' + lighten(c, .35) + '" opacity=".9"/>';
+      var st = iP(x + w / 2, y + d / 2);
+      s += '<path d="M' + st[0] + ' ' + (st[1] - 10) + 'l2.6 7 7 .6-5.4 4.4 1.8 7-6-4-6 4 1.8-7-5.4-4.4 7-.6z" fill="#ffffff" opacity=".85"/>';
+    } else if (fid === 'plant') {
+      s += isoBox(x + 0.26, y + 0.26, 0.48, 0.48, 18, '#e08a5a', '#b96b3f', '#cc7a4c');
+      var pc = iP(x + 0.5, y + 0.5);
+      s += '<circle cx="' + pc[0] + '" cy="' + (pc[1] - 34) + '" r="16" fill="#6ec27f"/>';
+      s += '<circle cx="' + (pc[0] - 13) + '" cy="' + (pc[1] - 52) + '" r="12" fill="#8ad79a"/>';
+      s += '<circle cx="' + (pc[0] + 12) + '" cy="' + (pc[1] - 56) + '" r="13" fill="#5cb56e"/>';
+      s += '<circle cx="' + (pc[0] + 2) + '" cy="' + (pc[1] - 70) + '" r="10" fill="#8ad79a"/>';
+    } else if (fid === 'wallshelf') {
+      s += isoBox(x + 0.1, y + 0.1, w - 0.2, d - 0.2, 66, c, darken(c, .24), darken(c, .14));
+      for (var wl = 0; wl < 2; wl++) {
+        s += isoBox(x + 0.16, y + 0.16, w - 0.32, d - 0.32, 3, lighten(c, .25), darken(c, .2), darken(c, .1), 20 + wl * 24);
+      }
+      s += isoBox(x + 0.3, y + 0.3, 0.4, 0.4, 12, '#ffd79a', '#d9b075', '#e8bf85', 26);
+    } else if (fid === 'guitar') {
+      var gp = iP(x + 0.5, y + 0.55);
+      s += '<g transform="translate(' + gp[0] + ',' + gp[1] + ')">' +
+        '<ellipse cx="0" cy="-24" rx="17" ry="21" fill="' + c + '" stroke="' + darken(c, .35) + '" stroke-width="2"/>' +
+        '<ellipse cx="0" cy="-46" rx="12" ry="14" fill="' + lighten(c, .2) + '" stroke="' + darken(c, .35) + '" stroke-width="2"/>' +
+        '<circle cx="0" cy="-32" r="6" fill="#4a3018"/>' +
+        '<rect x="-2.5" y="-104" width="5" height="52" rx="2" fill="#8a5a2b"/>' +
+        '<rect x="-6" y="-112" width="12" height="10" rx="3" fill="#5a3a1a"/>' +
+        '<path d="M-2 -100v46M0 -100v46M2 -100v46" stroke="#ffe9b0" stroke-width=".8" opacity=".8"/>' +
+        '</g>';
+    } else if (fid === 'skate') {
+      var sp0 = iP(x + 0.1, y + 0.35), sp1 = iP(x + w - 0.1, y + 0.35), sp2 = iP(x + w - 0.1, y + 0.62), sp3 = iP(x + 0.1, y + 0.62);
+      s += '<polygon points="' + pts([sp0, sp1, sp2, sp3]) + '" fill="' + c + '" stroke="' + darken(c, .35) + '" stroke-width="1.6" transform="translate(0,-6)"/>';
+      s += '<circle cx="' + sp0[0] + '" cy="' + (sp0[1] + 2) + '" r="3.4" fill="#4a4458"/>';
+      s += '<circle cx="' + sp1[0] + '" cy="' + (sp1[1] + 2) + '" r="3.4" fill="#4a4458"/>';
+    } else if (fid === 'lamp') {
+      s += isoBox(x + 0.3, y + 0.3, 0.4, 0.4, 5, '#d9d0c4', '#b8ae9f', '#c8beae');
+      var lp = iP(x + 0.5, y + 0.5);
+      s += '<rect x="' + (lp[0] - 2) + '" y="' + (lp[1] - 64) + '" width="4" height="60" fill="#b9ab98"/>';
+      s += '<path d="M' + (lp[0] - 17) + ' ' + (lp[1] - 62) + 'h34l-7-20h-20z" fill="#ffe08a" stroke="#e0b955" stroke-width="1.4"/>';
+      s += '<circle cx="' + lp[0] + '" cy="' + (lp[1] - 62) + '" r="24" fill="#fff3b8" opacity=".35"/>';
+    } else if (fid === 'tent') {
+      var a0 = iP(x + 0.1, y + 0.1), a1 = iP(x + w - 0.1, y + 0.1), a2 = iP(x + w / 2, y + d - 0.05);
+      s += '<polygon points="' + pts([a0, a1, a2]) + '" fill="' + c + '" stroke="' + darken(c, .3) + '" stroke-width="1.6"/>';
+      var t0 = iP(x + 0.1, y + 0.1), t1 = iP(x + w - 0.1, y + 0.1);
+      s += '<polygon points="' + pts([[t0[0], t0[1] - 78], [t1[0], t1[1] - 78], [a2[0], a2[1] - 8]]) + '" fill="' + lighten(c, .18) + '" opacity=".92"/>';
+      var dc = iP(x + w / 2, y + d - 0.2);
+      s += '<path d="M' + (dc[0] - 18) + ' ' + dc[1] + 'q18-30 36 0z" fill="' + darken(c, .35) + '" opacity=".8"/>';
+    } else if (fid === 'tv') {
+      s += isoBox(x + 0.1, y + 0.25, w - 0.2, d - 0.5, 16, '#b9a894', '#8f8172', '#a2917f');
+      s += isoBox(x + 0.12, y + 0.3, w - 0.24, 0.28, 34, '#5b6478', '#3e4554', '#4b5364', 16);
+      s += isoBox(x + 0.18, y + 0.34, w - 0.36, 0.1, 26, '#9fd8ff', '#6fa8d8', '#7fb8e8', 22);
+    } else {
+      /* 사용자가 만든 가구: 색 상자 + 이모지 */
+      s += isoBox(x + 0.12, y + 0.12, w - 0.24, d - 0.24, 22, lighten(c, .2), darken(c, .2), darken(c, .08));
+      var cp = iP(x + w / 2, y + d / 2);
+      s += '<text x="' + cp[0] + '" y="' + (cp[1] - 30) + '" font-size="24" text-anchor="middle">' + (it.icon || '🎁') + '</text>';
+    }
+    return s;
+  }
+
+  function roomItemDef(uidStr) {
+    var room = prof().room;
+    for (var i = 0; i < room.items.length; i++) if (room.items[i].u === uidStr) return room.items[i];
+    return null;
+  }
+  function roomDefSize(id) {
+    var it = shopItem(id);
+    if (!it) return { w: 1, d: 1 };
+    return { w: it.w || 1, d: it.d || 1 };
+  }
+  function roomOverlap(x, y, w, d, exceptU) {
+    var items = prof().room.items;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (it.u === exceptU) continue;
+      var sz = roomDefSize(it.id);
+      if (!(x + w <= it.x || it.x + sz.w <= x || y + d <= it.y || it.y + sz.d <= y)) return true;
+    }
+    return false;
+  }
+
+  function roomSceneHtml() {
+    var room = prof().room;
+    var th = wallInfo(room.wall);
+    var N = ROOM.N;
+    var s = '<svg id="roomScene" viewBox="0 28 ' + ROOM.VW + ' ' + (ROOM.VH - 34) + '" class="room-svg" role="img" aria-label="2.5D 마이룸">';
+
+    s += '<defs>';
+    s += '<linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + lighten(th.wall, .16) + '"/><stop offset="1" stop-color="' + th.wall + '"/></linearGradient>';
+    s += '<pattern id="wallPat" width="46" height="46" patternUnits="userSpaceOnUse">';
+    if (th.pat === 'star') {
+      s += '<path d="M12 10l1.8 4.6 4.6 1.8-4.6 1.8L12 23l-1.8-4.6L5.6 16.4l4.6-1.8z" fill="' + th.patC + '" opacity=".7"/>';
+      s += '<circle cx="33" cy="30" r="1.6" fill="' + th.patC + '" opacity=".6"/>';
+    } else if (th.pat === 'cloud') {
+      s += '<ellipse cx="14" cy="16" rx="11" ry="5.5" fill="' + th.patC + '" opacity=".9"/><ellipse cx="9" cy="13" rx="6" ry="5" fill="' + th.patC + '" opacity=".9"/>';
+    } else if (th.pat === 'leaf') {
+      s += '<path d="M12 26q0-12 12-12q0 12-12 12z" fill="' + th.patC + '" opacity=".8"/>';
+    } else if (th.pat === 'petal') {
+      s += '<ellipse cx="14" cy="16" rx="4" ry="6" fill="' + th.patC + '" opacity=".85" transform="rotate(24 14 16)"/>';
+      s += '<circle cx="34" cy="32" r="2.6" fill="' + th.patC + '" opacity=".7"/>';
+    } else {
+      s += '<circle cx="12" cy="14" r="2.4" fill="' + th.patC + '" opacity=".8"/><circle cx="34" cy="34" r="1.8" fill="' + th.patC + '" opacity=".6"/>';
+    }
+    s += '</pattern>';
+    s += '</defs>';
+
+    /* 벽 */
+    var a = iP(0, 0), b = iP(0, N), c = iP(N, 0);
+    s += '<polygon points="' + pts([[a[0], a[1]], [b[0], b[1]], [b[0], b[1] - ROOM.WALL_H], [a[0], a[1] - ROOM.WALL_H]]) + '" fill="url(#wallGrad)"/>';
+    s += '<polygon points="' + pts([[a[0], a[1]], [c[0], c[1]], [c[0], c[1] - ROOM.WALL_H], [a[0], a[1] - ROOM.WALL_H]]) + '" fill="' + th.wall2 + '"/>';
+    s += '<polygon points="' + pts([[a[0], a[1]], [b[0], b[1]], [b[0], b[1] - ROOM.WALL_H], [a[0], a[1] - ROOM.WALL_H]]) + '" fill="url(#wallPat)" opacity=".55"/>';
+    s += '<polygon points="' + pts([[a[0], a[1]], [c[0], c[1]], [c[0], c[1] - ROOM.WALL_H], [a[0], a[1] - ROOM.WALL_H]]) + '" fill="url(#wallPat)" opacity=".3"/>';
+    /* 창문 (왼쪽 벽) */
+    function wallPt(from, to, t, up) { return [from[0] + (to[0] - from[0]) * t, from[1] + (to[1] - from[1]) * t - (up || 0)]; }
+    var g1 = wallPt(a, b, 0.16, 92), g2 = wallPt(a, b, 0.46, 92), g3 = wallPt(a, b, 0.46, 34), g4 = wallPt(a, b, 0.16, 34);
+    var wA = wallPt(a, b, 0.17, 90), wB = wallPt(a, b, 0.45, 90), wC = wallPt(a, b, 0.45, 36), wD = wallPt(a, b, 0.17, 36);
+    var pA = wallPt(a, b, 0.2, 84), pB = wallPt(a, b, 0.42, 84), pC = wallPt(a, b, 0.42, 42), pD = wallPt(a, b, 0.2, 42);
+    var mA = wallPt(a, b, 0.31, 84), mB = wallPt(a, b, 0.31, 42);
+    var hA = wallPt(a, b, 0.2, 63), hB = wallPt(a, b, 0.42, 63);
+    s += '<g class="room-window">' +
+      '<polygon points="' + pts([wD, wC, wB, wA]) + '" fill="#ffffff" stroke="#e8dccb" stroke-width="1.5"/>' +
+      '<polygon points="' + pts([pD, pC, pB, pA]) + '" fill="#cfe9ff"/>' +
+      '<path d="M' + mA[0].toFixed(1) + ' ' + mA[1].toFixed(1) + 'L' + mB[0].toFixed(1) + ' ' + mB[1].toFixed(1) + '" stroke="#ffffff" stroke-width="3"/>' +
+      '<path d="M' + hA[0].toFixed(1) + ' ' + hA[1].toFixed(1) + 'L' + hB[0].toFixed(1) + ' ' + hB[1].toFixed(1) + '" stroke="#ffffff" stroke-width="3"/>' +
+      '<polygon points="' + pts([wallPt(a, b, 0.15, 34), wallPt(a, b, 0.47, 34), wallPt(a, b, 0.47, 28), wallPt(a, b, 0.15, 28)]) + '" fill="#f3e6d4"/>' +
+      '<circle cx="' + wallPt(a, b, 0.58, 58)[0].toFixed(1) + '" cy="' + wallPt(a, b, 0.58, 58)[1].toFixed(1) + '" r="15" fill="#ffe9a8" opacity=".9"/>' +
+      '</g>';
+    /* 액자 (오른쪽 벽) */
+    var f1 = wallPt(a, c, 0.46, 96), f2 = wallPt(a, c, 0.7, 96), f3 = wallPt(a, c, 0.7, 40), f4 = wallPt(a, c, 0.46, 40);
+    s += '<g class="room-frame">' +
+      '<polygon points="' + pts([f4, f3, f2, f1]) + '" fill="#ffffff" stroke="#e6d0b4" stroke-width="4"/>' +
+      '<circle cx="' + wallPt(a, c, 0.62, 74)[0] + '" cy="' + wallPt(a, c, 0.62, 74)[1] + '" r="11" fill="#ffd6a5"/>' +
+      '<path d="M' + wallPt(a, c, 0.51, 50)[0] + ' ' + wallPt(a, c, 0.51, 50)[1] + 'l13-16 13 16z" fill="#a8d8a0"/>' +
+      '</g>';
+
+    /* 바닥 */
+    s += '<polygon points="' + pts([a, c, iP(N, N), b]) + '" fill="' + th.floor + '"/>';
+    for (var gx = 0; gx < N; gx++) {
+      for (var gy = 0; gy < N; gy++) {
+        if ((gx + gy) % 2 === 0) continue;
+        s += '<polygon points="' + pts(isoQuad(gx, gy, 1, 1)) + '" fill="' + th.floor2 + '"/>';
+      }
+    }
+    /* 벽걸이 몰딩 */
+    s += '<polyline points="' + pts([b, a, c]) + '" fill="none" stroke="' + darken(th.floor, .18) + '" stroke-width="5" stroke-linejoin="round"/>';
+    /* 바닥 테두리 */
+    s += '<polygon points="' + pts([a, c, iP(N, N), b]) + '" fill="none" stroke="' + darken(th.floor, .14) + '" stroke-width="3"/>';
+    /* 바닥 클릭 영역 (가구보다 먼저 그려서 가구 클릭을 막지 않게) */
+    s += '<polygon points="' + pts([a, c, iP(N, N), b]) + '" fill="transparent" class="room-floor" data-act="room-floor"/>';
+
+    /* 가구 + 아바타 + 친구: 뒤에서 앞으로 */
+    var draw = [];
+    var items = prof().room.items;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      var def = shopItem(it.id);
+      if (!def) continue;
+      var sz = roomDefSize(it.id);
+      draw.push({
+        k: it.x + it.y + (sz.w + sz.d) * 0.01 + (def.fid === 'rug' || def.fid === 'skate' ? -3 : 0),
+        u: it.u,
+        html: '<g class="room-hit' + (roomUi.sel === it.u ? ' on' : '') + '" data-room-drag="' + esc(it.u) + '" data-act="room-item" data-u="' + esc(it.u) + '">' + furniSvg(def, it.x, it.y) + '</g>'
+      });
+      if (roomUi.sel === it.u) {
+        draw.push({ k: 99, html: '<polygon points="' + pts(isoQuad(it.x + 0.02, it.y + 0.02, sz.w - 0.04, sz.d - 0.04, 1)) + '" fill="none" stroke="#ff9f1c" stroke-width="3" stroke-dasharray="7 5" pointer-events="none"/>' });
+      }
+    }
+    /* 아바타 */
+    var av = prof().avatar;
+    var ap = iP(3.1, 3.5);
+    draw.push({
+      k: 3.1 + 3.5,
+      html: '<g class="room-ava" transform="translate(' + ap[0].toFixed(1) + ',' + ap[1].toFixed(1) + ')" pointer-events="none"><g class="room-bob"><svg x="-62" y="-200" width="124" height="206" viewBox="0 0 120 200">' + avatarInner(av) + '</svg></g></g>'
+    });
+    /* 친구 */
+    var pets = prof().room.pets;
+    for (var pi = 0; pi < pets.length; pi++) {
+      var sp = speciesById(pets[pi]);
+      var pp = iP(1.6 + (pi % 3) * 1.4, 3.2 + Math.floor(pi / 3) * 1.2);
+      draw.push({
+        k: 6.5,
+        html: '<g class="room-pet" data-sp="' + esc(sp.id) + '" transform="translate(' + pp[0].toFixed(1) + ',' + pp[1].toFixed(1) + ')" pointer-events="none"><svg x="-34" y="-62" width="68" height="68" viewBox="0 0 100 100">' + monSvg(sp, 3) + '</svg></g>'
+      });
+    }
+    draw.sort(function (x, y) { return x.k - y.k; });
+    for (var di = 0; di < draw.length; di++) s += draw[di].html;
+
+    s += '</svg>';
+    return s;
+  }
+
+  function roomToolsHtml() {
+    var room = prof().room;
+    var placed = room.items.length;
+    var ownedFurni = 0, all = shopAll();
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].kind === 'furni' && prof().owned[all[i].id] && !all[i].hidden) ownedFurni++;
+    }
+    var h = '<div class="room-toolbar">' +
+      '<span class="room-hint">' + (roomUi.moving ? '✋ 옮길 자리를 눌러 주세요' : '가구를 끌거나 눌러서 옮기고, 골라서 치울 수 있어요') + '</span>' +
+      '<button type="button" class="tool-pill' + (roomUi.panel === 'wall' ? ' on' : '') + '" data-act="room-wall">🎨 벽지</button>' +
+      '<button type="button" class="tool-pill' + (roomUi.panel === 'storage' ? ' on' : '') + '" data-act="room-storage">🧺 보관함 ' + Math.max(0, ownedFurni - placed) + '</button>' +
+      '<button type="button" class="tool-pill' + (roomUi.panel === 'pets' ? ' on' : '') + '" data-act="room-pets">🐾 친구 ' + room.pets.length + '/4</button>' +
+      '</div>';
+    return h;
+  }
+
+  function roomPanelHtml() {
+    var h = '';
+    if (roomUi.panel === 'wall') {
+      h += '<div class="room-panel"><div class="rp-head"><b>🎨 벽지 고르기</b><button type="button" class="ghost-btn tiny" data-act="room-back">닫기</button></div><div class="rp-grid">';
+      var walls = shopCat('wall');
+      for (var i = 0; i < walls.length; i++) {
+        var w = walls[i];
+        var ownIt = w.price <= 0 || prof().owned[w.id];
+        var th = wallInfo(w.id);
+        h += '<button type="button" class="wall-card' + (prof().room.wall === w.id ? ' on' : '') + '" data-act="room-wall-set" data-id="' + esc(w.id) + '">' +
+          '<span class="wc-prev" style="--w:' + th.wall + ';--f:' + th.floor + '"></span>' +
+          '<b>' + esc(w.name) + '</b><small>' + (ownIt ? (prof().room.wall === w.id ? '사용 중' : '바꾸기') : '🪙 ' + fmtNum(w.price)) + '</small>' +
+          '</button>';
+      }
+      h += '</div></div>';
+    } else if (roomUi.panel === 'storage') {
+      h += '<div class="room-panel"><div class="rp-head"><b>🧺 가구 보관함</b><button type="button" class="ghost-btn tiny" data-act="room-back">닫기</button></div>';
+      var placedIds = {};
+      for (var pi = 0; pi < prof().room.items.length; pi++) placedIds[prof().room.items[pi].id] = (placedIds[prof().room.items[pi].id] || 0) + 1;
+      var list = shopAll(), any = false;
+      h += '<div class="storage-grid">';
+      for (var k = 0; k < list.length; k++) {
+        var it = list[k];
+        if (it.kind !== 'furni' || it.hidden || !prof().owned[it.id]) continue;
+        any = true;
+        var used = placedIds[it.id] || 0;
+        h += '<div class="storage-card">' +
+          '<span class="st-ic" style="--ic:' + esc(it.color) + '">' + (it.icon || '🪑') + '</span>' +
+          '<b>' + esc(it.name) + '</b><small>방에 ' + used + '개</small>' +
+          '<button type="button" class="pill-btn" data-act="room-place" data-id="' + esc(it.id) + '">놓기</button></div>';
+      }
+      if (!any) h += '<p class="spend-empty">가구가 없어요. 상점에서 사 보세요!</p>';
+      h += '</div><button type="button" class="pill-btn warm shop-jump" data-act="shop-open" data-shop-tab="room">🛒 가구 상점 가기</button></div>';
+    } else if (roomUi.panel === 'pets') {
+      h += '<div class="room-panel"><div class="rp-head"><b>🐾 함께 놀 친구</b><button type="button" class="ghost-btn tiny" data-act="room-back">닫기</button></div>';
+      if (!prof().pet.collection.length) {
+        h += '<p class="spend-empty">아직 다 자란 친구가 없어요. 알을 키워 2차 진화를 완성하면 방에서 놀 수 있어요!</p>';
+      } else {
+        h += '<div class="pet-pick-grid">';
+        for (var c = 0; c < prof().pet.collection.length; c++) {
+          var sp = speciesById(prof().pet.collection[c].id);
+          var on = prof().room.pets.indexOf(sp.id) >= 0;
+          h += '<button type="button" class="pet-pick' + (on ? ' on' : '') + '" data-act="room-pet-toggle" data-id="' + esc(sp.id) + '">' +
+            '<span class="pp-art">' + petArt(sp, 3, 0) + '</span><b>' + esc(sp.names[2]) + '</b><small>' + esc(sp.rarityLabel) + '</small>' +
+            '<span class="pp-check">' + (on ? '방에 있음' : '불러오기') + '</span></button>';
+        }
+        h += '</div><p class="lf-note">방에는 친구를 4명까지 부를 수 있어요.</p>';
+      }
+      h += '</div>';
+    }
+    return h;
+  }
+
+  function roomSelHtml() {
+    if (!roomUi.sel) return '';
+    var it = roomItemDef(roomUi.sel);
+    if (!it) return '';
+    var def = shopItem(it.id);
+    return '<div class="room-selbar">' +
+      '<span class="rs-name">' + (def ? (def.icon + ' ' + esc(def.name)) : '가구') + '</span>' +
+      '<button type="button" class="pill-btn' + (roomUi.moving ? ' warm' : '') + '" data-act="room-move">' + (roomUi.moving ? '✋ 자리 고르는 중' : '↔️ 옮기기') + '</button>' +
+      '<button type="button" class="ghost-btn" data-act="room-remove">🗑 치우기</button>' +
+      '<button type="button" class="ghost-btn" data-act="room-deselect">✕</button>' +
+      '</div>';
+  }
+
+  function roomHtml() {
+    var h = '<div class="room-top">' +
+      '<span class="room-title">' + wallInfo(prof().room.wall).name + '</span>' +
+      '<span class="shop-coin" id="roomCoins">🪙 ' + fmtNum(prof().coins) + '</span>' +
+      '</div>';
+    h += roomToolsHtml();
+    h += '<div class="room-wrap">' + roomSceneHtml() + '</div>';
+    if (roomUi.msg) h += '<p class="shop-msg">' + esc(roomUi.msg) + '</p>';
+    h += roomPanelHtml();
+    h += roomSelHtml();
+    h += '<p class="lf-note">가구는 상점에서 사면 보관함에 들어와요. 친구들은 다 자라면 마이룸에서 뛰어놀 수 있어요.</p>';
+    h += '<div class="care-actions"><button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="room">🛒 가구·벽지 상점</button>' +
+      '<button type="button" class="ghost-btn" data-act="room-close">닫기</button></div>';
+    return h;
+  }
+
+  function renderRoom() {
+    var b = document.getElementById('roomBody');
+    if (!b) return;
+    var keep = roomUi.panel;
+    b.innerHTML = roomHtml();
+    roomUi.panel = keep;
+    startRoomAnim();
+  }
+
+  function openRoom() {
+    roomUi.panel = 'main';
+    roomUi.sel = '';
+    roomUi.moving = '';
+    roomUi.msg = '';
+    renderRoom();
+    var m = document.getElementById('roomModal');
+    if (m) m.hidden = false;
+    raiseModal('roomModal');
+    lockScroll();
+  }
+  function closeRoom() {
+    stopRoomAnim();
+    var m = document.getElementById('roomModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('roomModal')) unlockScroll();
+  }
+
+  function startRoomAnim() {
+    stopRoomAnim();
+    var svg = document.getElementById('roomScene');
+    if (!svg) return;
+    var nodes = svg.querySelectorAll('.room-pet');
+    if (!nodes.length) return;
+    var pets = [];
+    for (var i = 0; i < nodes.length; i++) {
+      pets.push({
+        el: nodes[i],
+        bx: 1.5 + (i % 3) * 1.3,
+        by: 3.0 + Math.floor(i / 3) * 1.1,
+        rx: 0.55 + (i % 2) * 0.25,
+        ry: 0.45 + (i % 3) * 0.12,
+        sp: 0.5 + i * 0.13,
+        ph: i * 1.7
+      });
+    }
+    var t0 = Date.now();
+    roomAnim.timer = window.setInterval(function () {
+      var t = (Date.now() - t0) / 1000;
+      for (var k = 0; k < pets.length; k++) {
+        var o = pets[k];
+        var gx = o.bx + Math.sin(t * o.sp + o.ph) * o.rx;
+        var gy = o.by + Math.cos(t * o.sp * 0.8 + o.ph) * o.ry;
+        var p = iP(gx, gy);
+        var hop = Math.abs(Math.sin(t * 3.4 + o.ph)) * 7;
+        if (o.el && o.el.setAttribute) o.el.setAttribute('transform', 'translate(' + (p[0]).toFixed(1) + ',' + (p[1] - 60 - hop).toFixed(1) + ')');
+      }
+    }, 90);
+  }
+  function stopRoomAnim() {
+    if (roomAnim.timer) { window.clearInterval(roomAnim.timer); roomAnim.timer = 0; }
+  }
+
+  function cellFromEvent(svg, e) {
+    if (!svg || !svg.getScreenCTM) return null;
+    try {
+      var pt = svg.createSVGPoint();
+      pt.x = e.clientX; pt.y = e.clientY;
+      var p = pt.matrixTransform(svg.getScreenCTM().inverse());
+      var u = (p.x - ROOM.OX) / ROOM.HW;
+      var v = (p.y - ROOM.OY) / ROOM.HH;
+      return { x: (u + v) / 2, y: (v - u) / 2 };
+    } catch (err) { return null; }
+  }
+
+  function moveRoomItem(u, cx, cy) {
+    var it = roomItemDef(u);
+    if (!it) return;
+    var sz = roomDefSize(it.id);
+    var nx = Math.round(cx - sz.w / 2);
+    var ny = Math.round(cy - sz.d / 2);
+    nx = Math.max(0, Math.min(ROOM.N - sz.w, nx));
+    ny = Math.max(0, Math.min(ROOM.N - sz.d, ny));
+    var spots = [[nx, ny], [nx + 1, ny], [nx - 1, ny], [nx, ny + 1], [nx, ny - 1], [nx + 1, ny + 1], [nx - 1, ny - 1], [nx + 1, ny - 1], [nx - 1, ny + 1]];
+    for (var i = 0; i < spots.length; i++) {
+      var x = spots[i][0], y = spots[i][1];
+      if (x < 0 || y < 0 || x + sz.w > ROOM.N || y + sz.d > ROOM.N) continue;
+      if (roomOverlap(x, y, sz.w, sz.d, u)) continue;
+      it.x = x; it.y = y;
+      roomUi.moving = '';
+      roomUi.msg = '';
+      saveState();
+      renderRoom();
+      snd('check');
+      return;
+    }
+    roomUi.moving = '';
+    roomUi.msg = '그 자리에는 다른 가구가 있어요. 다른 곳을 눌러 주세요.';
+    renderRoom();
+  }
+
+  /* 가구 끌어서 옮기기 / 눌러서 고르기 */
+  var roomDrag = { u: '', x: 0, y: 0, moved: false };
+  function installRoomDrag() {
+    document.addEventListener('pointerdown', function (e) {
+      var m = document.getElementById('roomModal');
+      if (!m || m.hidden) return;
+      var el = (e.target && e.target.closest) ? e.target.closest('[data-room-drag]') : null;
+      if (!el) return;
+      roomDrag = { u: el.getAttribute('data-room-drag'), x: e.clientX, y: e.clientY, moved: false };
+    }, { passive: true });
+    document.addEventListener('pointermove', function (e) {
+      if (!roomDrag.u) return;
+      if (Math.abs(e.clientX - roomDrag.x) + Math.abs(e.clientY - roomDrag.y) > 12) roomDrag.moved = true;
+    }, { passive: true });
+    document.addEventListener('pointerup', function (e) {
+      var m = document.getElementById('roomModal');
+      if (!m || m.hidden) { roomDrag = { u: '', x: 0, y: 0, moved: false }; return; }
+      var svg = document.getElementById('roomScene');
+      if (roomUi.moving) {
+        var mv = cellFromEvent(svg, e);
+        if (mv) moveRoomItem(roomUi.moving, mv.x, mv.y);
+        roomDrag = { u: '', x: 0, y: 0, moved: false };
+        return;
+      }
+      var u = roomDrag.u, moved = roomDrag.moved;
+      roomDrag = { u: '', x: 0, y: 0, moved: false };
+      if (!u || !moved) return;
+      var cell = cellFromEvent(svg, e);
+      if (cell) moveRoomItem(u, cell.x, cell.y);
+    });
+  }
+
+  function roomAddFromStorage(id) {
+    var def = shopItem(id);
+    if (!def || def.kind !== 'furni') return;
+    var sz = { w: def.w || 1, d: def.d || 1 };
+    for (var y = 0; y <= ROOM.N - sz.d; y++) {
+      for (var x = 0; x <= ROOM.N - sz.w; x++) {
+        if (roomOverlap(x, y, sz.w, sz.d, '')) continue;
+        prof().room.items.push({ u: uid('rm'), id: id, x: x, y: y });
+        roomUi.msg = josa(def.name, '을', '를') + ' 방에 놓았어요!';
+        saveState();
+        renderRoom();
+        snd('check');
+        return;
+      }
+    }
+    roomUi.msg = '방이 꽉 찼어요. 가구를 치우고 다시 시도해 주세요.';
+    renderRoom();
+  }
+
+  function roomRemoveSel() {
+    var u = roomUi.sel;
+    var room = prof().room;
+    for (var i = 0; i < room.items.length; i++) {
+      if (room.items[i].u === u) {
+        var def = shopItem(room.items[i].id);
+        room.items.splice(i, 1);
+        roomUi.sel = '';
+        roomUi.moving = '';
+        roomUi.msg = josa(def ? def.name : '가구', '을', '를') + ' 보관함에 넣었어요.';
+        saveState();
+        renderRoom();
+        return;
+      }
+    }
+  }
+
+  function setRoomWall(id) {
+    var it = shopItem(id);
+    if (!it || it.kind !== 'wall') return;
+    if (it.price > 0 && !prof().owned[id]) {
+      buyItem(id);
+      if (!prof().owned[id]) return;
+    }
+    prof().owned[id] = 1;
+    prof().room.wall = id;
+    saveState();
+    snd('check');
+    showToast('🎨 ' + it.name + '으로 벽을 바꿨어요!');
+    renderRoom();
+  }
+
+  function toggleRoomPet(id) {
+    var room = prof().room;
+    var at = room.pets.indexOf(id);
+    if (at >= 0) room.pets.splice(at, 1);
+    else {
+      if (room.pets.length >= 4) { showToast('친구는 4명까지 부를 수 있어요.'); return; }
+      var have = false;
+      for (var i = 0; i < prof().pet.collection.length; i++) if (prof().pet.collection[i].id === id) have = true;
+      if (!have) { showToast('아직 다 자라지 않은 친구예요.'); return; }
+      room.pets.push(id);
+      snd('sticker');
+    }
+    saveState();
+    renderRoom();
+  }
+
+
+  /* ---------------- 프로필 저장 / 클라우드 ---------------- */
+  var legacyPet = null;
+  var lastProfileSig = '';
+
+  function profileSignature() {
+    var p = prof();
+    return JSON.stringify({
+      c: p.coins, pt: p.pet, b: p.bag, o: p.owned, r: p.room, a: p.avatar
+    });
+  }
+
+  function profilePayload() {
+    var p = prof();
+    return {
+      version: 1,
+      userId: (cloud.me && cloud.me.id) || '',
+      name: (cloud.me && cloud.me.name) || '',
+      updatedAt: p.updatedAt || new Date().toISOString(),
+      coins: p.coins,
+      pet: p.pet,
+      bag: p.bag,
+      owned: p.owned,
+      room: p.room,
+      avatar: p.avatar,
+      award: p.award
+    };
+  }
+
+  function saveProfileLocal() {
+    if (!cloud.me) return;
+    writeProfileCache(cloud.me.id, prof());
+  }
+
+  function applyLegacyPet(raw) {
+    if (!raw || typeof raw !== 'object') return;
+    var p = petState();
+    var rawCol = (Object.prototype.toString.call(raw.collection) === '[object Array]') ? raw.collection : [];
+    for (var i = 0; i < rawCol.length; i++) {
+      var cc = rawCol[i];
+      var id = (typeof cc === 'string') ? cc : (cc && cc.id);
+      if (typeof id !== 'string' || speciesById(id).id !== id) continue;
+      var has = false;
+      for (var j = 0; j < p.collection.length; j++) if (p.collection[j].id === id) has = true;
+      if (!has) p.collection.push({ id: id, at: (cc && Number(cc.at)) || Date.now() });
+    }
+    var st = parseInt(raw.stage, 10);
+    if (!isNaN(st) && st > p.stage && st <= 3) {
+      p.stage = st;
+      p.exp = 0;
+      p.hatchAt = 0;
+      if (typeof raw.currentEgg === 'string' && speciesById(raw.currentEgg).id === raw.currentEgg) p.currentEgg = raw.currentEgg;
+    } else if (!isNaN(st) && st === p.stage) {
+      var ex = parseInt(raw.exp, 10);
+      if (!isNaN(ex) && ex > p.exp) p.exp = Math.min(EXP_MAX, ex * 10);
+    }
+    if (raw.art && typeof raw.art === 'object' && (!p.art || !Object.keys(p.art).length)) p.art = raw.art;
+  }
+
+  async function loadProfile() {
+    if (!cloud.me) return;
+    var id = cloud.me.id;
+    var local = readProfileCache(id);
+    var res = await ghGet(profilePath(id));
+    var remote = (res.ok && res.data && typeof res.data === 'object' && res.data.pet) ? res.data : null;
+    var pick = null;
+    var needPush = false;
+    if (remote) {
+      var rt = Date.parse(remote.updatedAt || '') || 0;
+      var lt = local ? (Date.parse(local.updatedAt || '') || 0) : 0;
+      if (local && lt > rt) { pick = local; needPush = true; }
+      else pick = remote;
+      if (local && remote) {
+        /* 도감은 합집합으로 (다른 기기에서 모은 친구를 잃지 않게) */
+        var a = (pick.pet && pick.pet.collection) || [];
+        var bcol = (local.pet && local.pet.collection) || [];
+        for (var i = 0; i < bcol.length; i++) {
+          var bid = bcol[i] && bcol[i].id;
+          var has = false;
+          for (var j = 0; j < a.length; j++) if (a[j] && a[j].id === bid) has = true;
+          if (bid && !has) a.push(bcol[i]);
+        }
+        if (pick.pet) pick.pet.collection = a;
+      }
+    } else if (local) {
+      pick = local;
+      needPush = true;
+    } else {
+      needPush = true;
+    }
+    state.profile = normalizeProfile(pick || defaultProfile(), id);
+    if (!pick) applyLegacyPet(legacyPet || legacyPetSeed);
+    if (!pick) state.profile.updatedAt = new Date().toISOString();
+    writeProfileCache(id, state.profile);
+    cloud.dirty.profile = needPush;
+    lastProfileSig = profileSignature();
+    cloud.lastProfileSig = lastProfileSig;
+    renderCoinBadge();
+    renderPet();
+    if (needPush) scheduleSync('profile');
+  }
+
+  function onProfileChanged() {
+    var p = prof();
+    var sig = profileSignature();
+    if (sig === lastProfileSig) return;
+    lastProfileSig = sig;
+    cloud.lastProfileSig = sig;
+    p.updatedAt = new Date().toISOString();
+    if (cloud.me) {
+      writeProfileCache(cloud.me.id, p);
+      scheduleSync('profile');
+    }
+  }
+
+  /* 여러 창을 겹쳐 열 때 나중에 연 창이 위로 오게 */
+  var modalZ = 85;
+  function raiseModal(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    modalZ += 1;
+    if (modalZ > 150) modalZ = 86;
+    el.style.zIndex = String(modalZ);
+  }
+
+  /* ---------------- 사운드 (iOS Safari) ---------------- */
+  function unlockAudio() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === 'suspended' && audioCtx.resume) {
+        var pr = audioCtx.resume();
+        if (pr && pr.then) pr.then(function () { playSilent(); }, function () {});
+      } else {
+        playSilent();
+      }
+    } catch (e) { /* 무시 */ }
+  }
+  function playSilent() {
+    try {
+      if (!audioCtx || audioCtx.state !== 'running') return;
+      var b = audioCtx.createBuffer(1, 1, 22050);
+      var src = audioCtx.createBufferSource();
+      src.buffer = b;
+      src.connect(audioCtx.destination);
+      src.start(0);
+    } catch (e) { /* 무시 */ }
+  }
+
+  function installAudioUnlock() {
+    var opts = { capture: true, passive: true };
+    document.addEventListener('pointerdown', unlockAudio, opts);
+    document.addEventListener('touchstart', unlockAudio, opts);
+    document.addEventListener('mousedown', unlockAudio, opts);
+    document.addEventListener('keydown', unlockAudio, { capture: true });
+  }
+
+  /* ---------------- 주기 작업 ---------------- */
+  function phaseTick() {
+    if (!cloud.me) return;
+    var p = petState();
+    if (p.stage === 0 && p.hatchAt && Date.now() >= p.hatchAt) {
+      if (petTryHatch(true)) { saveState(); return; }
+    }
+    var timer = document.getElementById('petTimer');
+    if (timer && p.stage === 0) timer.textContent = fmtLeft(petHatchLeft());
+  }
+
+
+  /* ---------------- 루틴 그룹 완료 목표 시간 (Phase 2) ---------------- */
+  var TARGET_WINDOW_MIN = 180;   /* 목표 3시간 전부터 바가 줄어들어요 */
+  var lastTargetMinute = -1;
+
+  function hhmmValid(v) {
+    return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(v || ''));
+  }
+  function hhmmMinutes(v) {
+    if (!hhmmValid(v)) return -1;
+    var p = String(v).split(':');
+    return parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
+  }
+  function hhmmLabel(v) {
+    if (!hhmmValid(v)) return '';
+    var p = String(v).split(':');
+    var h = parseInt(p[0], 10);
+    var m = p[1];
+    var ampm = h < 12 ? '오전' : '오후';
+    var h12 = h % 12;
+    if (h12 === 0) h12 = 12;
+    return ampm + ' ' + h12 + ':' + m;
+  }
+  function nowMinuteFloat() {
+    var d = new Date();
+    return d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+  }
+  function leftText(mins) {
+    var m = Math.ceil(mins);
+    if (m <= 0) return '';
+    if (m >= 60) {
+      var h = Math.floor(m / 60);
+      var mm = m % 60;
+      return h + '시간' + (mm ? ' ' + mm + '분' : '') + ' 남았어요';
+    }
+    return m + '분 남았어요';
+  }
+
+  function setCatTarget(id, val) {
+    var c = findCat(id);
+    if (!c) return;
+    if (!val) { c.targetTime = ''; }
+    else if (hhmmValid(val)) { c.targetTime = val; }
+    else return;
+    saveState();
+    renderRoutine();
+    updateOverall(true);
+  }
+  function clearCatTarget(id) {
+    var c = findCat(id);
+    if (!c) return;
+    c.targetTime = '';
+    saveState();
+    renderRoutine();
+    showToast('목표 시간을 지웠어요.');
+  }
+
+  function renderRoutineTargets() {
+    var box = document.getElementById('routineTargets');
+    if (!box) return;
+    var ck = checksFor(currentKey);
+    var now = nowMinuteFloat();
+    var html = '';
+    for (var i = 0; i < state.categories.length; i++) {
+      var cat = state.categories[i];
+      if (!hhmmValid(cat.targetTime)) continue;
+      var target = hhmmMinutes(cat.targetTime);
+      var total = cat.items.length;
+      var done = 0;
+      for (var k = 0; k < total; k++) if (ck[cat.items[k].id]) done++;
+      var complete = total > 0 && done === total;
+      var left = target - now;
+      var late = left <= 0 && !complete;
+      var pct = complete ? 100 : Math.max(0, Math.min(100, left / TARGET_WINDOW_MIN * 100));
+      var iconPct = Math.max(4, Math.min(96, pct));
+      var status;
+      if (complete) status = '✓ ' + esc(cat.title) + ' 제시간에 완료! 🎉';
+      else if (left > 0) status = esc(cat.title) + ' 완료까지 <b>' + leftText(left) + '</b>';
+      else status = esc(cat.title) + ' 목표 시간이 지났어요! 서두르자 💪';
+      var who = complete ? '🎉' : (late ? '🏃' : cat.emoji);
+      html += '<div class="rt-target' + (complete ? ' done' : '') + (late ? ' late' : '') + '" style="--c:' + esc(cat.color) + '">' +
+        '<div class="rtt-head">' +
+          '<span class="rtt-emoji" aria-hidden="true">' + who + '</span>' +
+          '<span class="rtt-text">' + status + '</span>' +
+          '<span class="rtt-goal">목표 ' + hhmmLabel(cat.targetTime) + '</span>' +
+        '</div>' +
+        '<div class="rtt-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(pct) + '" aria-label="' + esc(cat.title) + ' 남은 시간">' +
+          '<i style="width:' + pct.toFixed(1) + '%"></i>' +
+          '<span class="rtt-pet" style="left:' + iconPct.toFixed(1) + '%">' + petArt(speciesById(petState().currentEgg), petState().stage, 0) + '</span>' +
+        '</div>' +
+        '</div>';
+    }
+    box.innerHTML = html;
+    box.hidden = !html;
+  }
+
+  function tickTargets() {
+    var m = new Date().getMinutes();
+    if (m === lastTargetMinute) return;
+    lastTargetMinute = m;
+    renderRoutineTargets();
+  }
+
   /* ============ 전체 렌더 ============ */
   function renderAll() {
     renderHeader();
@@ -3758,12 +6464,15 @@
     state.settings.soundOn = !state.settings.soundOn;
     saveState();
     renderSoundBtn();
-    if (state.settings.soundOn) snd('check');
+    if (state.settings.soundOn) { unlockAudio(); snd('chime'); }
+    else showToast('🔕 소리를 껐어요');
   }
 
   function resetAll() {
-    if (!window.confirm('정말 처음 상태로 돌아갈까요?\n체크 기록, 스티커, 시간표, 이름이 모두 초기화돼요.')) return;
+    if (!window.confirm('정말 처음 상태로 돌아갈까요?\n체크 기록, 스티커, 시간표, 이름이 모두 초기화돼요.\n(코인·펫·마이룸은 그대로 남아요.)')) return;
+    var keepProfile = state.profile;
     state = defaultState();
+    state.profile = keepProfile;
     ui.editing = false;
     var btn = document.getElementById('editBtn');
     if (btn) {
@@ -4379,7 +7088,7 @@
   }
 
   function isOnlyModal(id) {
-    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal'];
+    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal', 'roomModal', 'avatarModal', 'shopModal', 'careModal'];
     for (var i = 0; i < ids.length; i++) {
       if (ids[i] === id) continue;
       var el = document.getElementById(ids[i]);
@@ -5036,7 +7745,7 @@
     if (!el) return;
     if (!cloud.conn) { el.className = 'sync-pill'; el.textContent = '☁️ 연결 전'; return; }
     if (!cloud.me) { el.className = 'sync-pill'; el.textContent = '🔐 로그인 전'; return; }
-    if (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers) {
+    if (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers || cloud.dirty.profile) {
       el.className = 'sync-pill sync';
       el.textContent = cloud.saving ? '☁️ 저장 중…' : '☁️ 저장 대기';
       return;
@@ -5062,7 +7771,7 @@
       st: { slots: state.sticker.slots, goal: state.sticker.goal, unit: state.sticker.unit, reasons: state.sticker.reasons },
       wb: state.workbooks,
       lo: state.layoutOrder,
-      pt: state.pet
+      sh: state.shop
     });
   }
 
@@ -5071,6 +7780,7 @@
     if (kind === 'settings') cloud.dirty.settings = true;
     if (kind === 'day') cloud.dirty.day = true;
     if (kind === 'stickers') cloud.dirty.stickers = true;
+    if (kind === 'profile') cloud.dirty.profile = true;
     if (cloud.timer) window.clearTimeout(cloud.timer);
     cloud.timer = window.setTimeout(function () { cloud.timer = 0; flushSync(); }, 900);
     renderSyncPill();
@@ -5087,7 +7797,7 @@
       workbooks: state.workbooks,
       layoutOrder: state.layoutOrder,
       clearedAt: state.sticker.clearedAt || 0,
-      pet: state.pet,
+      shop: state.shop,
       stats: { stickersTotal: stickerTotal() }
     };
   }
@@ -5149,7 +7859,7 @@
   async function flushSync() {
     if (!cloud.conn || !cloud.me) return;
     if (cloud.saving) { cloud.again = true; return; }
-    if (!cloud.dirty.day && !cloud.dirty.settings && !cloud.dirty.stickers) { renderSyncPill(); return; }
+    if (!cloud.dirty.day && !cloud.dirty.settings && !cloud.dirty.stickers && !cloud.dirty.profile) { renderSyncPill(); return; }
     if (typeof navigator !== 'undefined' && navigator.onLine === false) { setSync('offline'); return; }
     cloud.saving = true;
     setSync('syncing');
@@ -5162,6 +7872,10 @@
       if (cloud.dirty.stickers) {
         var kres = await ghPut('config/stickers.json', stickersPayload(), '스티커 원장 업데이트');
         if (kres.ok) cloud.dirty.stickers = false; else { ok = false; cloud.lastError = kres.error || ''; }
+      }
+      if (cloud.dirty.profile && cloud.me) {
+        var pres = await ghPut(profilePath(cloud.me.id), profilePayload(), '내 프로필 저장 (' + cloud.me.id + ')');
+        if (pres.ok) cloud.dirty.profile = false; else { ok = false; cloud.lastError = pres.error || ''; }
       }
       if (cloud.dirty.day) {
         var dres = await ghPut(dayPath(currentKey), dayPayload(currentKey), '기록 ' + currentKey);
@@ -5189,6 +7903,7 @@
       boardLog: state.boardLog,
       workbooks: d.workbooks,
       layoutOrder: d.layoutOrder,
+      shop: d.shop,
       stats: state.stats
     });
     state.settings = probe.settings;
@@ -5200,7 +7915,8 @@
     state.sticker.reasons = probe.sticker.reasons;
     if (Object.prototype.toString.call(d.workbooks) === '[object Array]') state.workbooks = probe.workbooks;
     if (Object.prototype.toString.call(d.layoutOrder) === '[object Array]') state.layoutOrder = probe.layoutOrder;
-    if (d.pet && typeof d.pet === 'object') petMergeFrom(d.pet);
+    if (d.shop && typeof d.shop === 'object' && Object.prototype.toString.call(d.shop.items) === '[object Array]' && d.shop.items.length) state.shop = probe.shop;
+    if (d.pet && typeof d.pet === 'object') legacyPet = d.pet;
     var wipedBySettings = stickerWipeBefore(d.clearedAt);
     if (!wipedBySettings && d.stats && !isNaN(parseInt(d.stats.stickersTotal, 10))) {
       state.stats.stickersTotal = Math.max(stickerTotal(), parseInt(d.stats.stickersTotal, 10));
@@ -5582,6 +8298,8 @@
       lsSet(LAST_ID_KEY, u.id);
       lsSet(LAST_REMEMBER_KEY, remember ? '1' : '0');
       cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer', dashboards: dashboardsFor(u) };
+      state.profile = defaultProfile();
+      lastProfileSig = '';
       saveSession(cloud.me, remember, null);
       if (!dashAllowed(cloud.me)) { showLock(); return; }
       await enterDashboard();
@@ -5629,6 +8347,7 @@
       cloud.dirty.day = true;
     }
 
+    await loadProfile();
     saveLocalOnly();
     renderAll();
     applyPermissions();
@@ -5639,12 +8358,17 @@
   async function doLogout(silent) {
     clearSession(); /* 새로고침해도 자동 로그인되지 않도록 즉시 세션 삭제 */
     try {
-      if (!silent && cloud.conn && cloud.me && (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers)) await flushSync();
+      if (!silent && cloud.conn && cloud.me && (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers || cloud.dirty.profile)) await flushSync();
     } catch (e) { /* 무시 */ }
+    saveProfileLocal();
     cloud.me = null;
     cloud.dirty.day = false;
     cloud.dirty.settings = false;
     cloud.dirty.stickers = false;
+    cloud.dirty.profile = false;
+    state.profile = defaultProfile();
+    lastProfileSig = '';
+    cloud.lastProfileSig = '';
     if (cloud.timer) { window.clearTimeout(cloud.timer); cloud.timer = 0; }
     ui.editing = false;
     closeHistory();
@@ -6221,7 +8945,7 @@
     if ((act === 'sticker-add' || act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-new-direct' || act === 'sticker-clear') && !can('sticker')) return;
     if ((act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-clear') && !can('stickerManage')) return;
     if ((act === 'edit-toggle' || act === 'add-item' || act === 'del-item' || act === 'add-event' || act === 'del-event' ||
-         act === 'cat-add' || act === 'cat-del' || act === 'cat-left' || act === 'cat-right' || act === 'cat-color') && !can('edit')) return;
+         act === 'cat-add' || act === 'cat-del' || act === 'cat-left' || act === 'cat-right' || act === 'cat-color' || act === 'cat-target-clear') && !can('edit')) return;
     if ((act === 'reset-today' || act === 'reset-all') && !can('reset')) return;
     if (act === 'stickers-reset-logs' && !isAdmin()) return;
 
@@ -6291,6 +9015,7 @@
     if (act === 'cat-del') { delCategory(el.getAttribute('data-cat')); return; }
     if (act === 'cat-left') { moveCategory(el.getAttribute('data-cat'), -1); return; }
     if (act === 'cat-right') { moveCategory(el.getAttribute('data-cat'), 1); return; }
+    if (act === 'cat-target-clear') { clearCatTarget(el.getAttribute('data-cat')); return; }
     if (act === 'cat-color') {
       setCategoryColor(el.getAttribute('data-cat'), el.getAttribute('data-c'), el.getAttribute('data-t'));
       return;
@@ -6325,6 +9050,53 @@
     if (act === 'hist-backup') { saveBackup(); return; }
     if (act === 'hist-import') { pickBackup(); return; }
     if (act === 'reset-all') { resetAll(); return; }
+
+    /* ---------- Phase 2: 상점 · 케어 · 마이룸 · 아바타 ---------- */
+    if (act === 'shop-open') { openShop(el.getAttribute('data-shop-tab') || undefined); return; }
+    if (act === 'shop-close') { closeShop(); return; }
+    if (act === 'shop-tab') { shopUi.tab = el.getAttribute('data-tab') || 'pet'; shopUi.msg = ''; renderShop(); return; }
+    if (act === 'shop-buy') { buyItem(el.getAttribute('data-id')); return; }
+    if (act === 'shop-admin') { if (!can('edit')) return; shopUi.admin = !shopUi.admin; renderShop(); return; }
+    if (act === 'shop-hide') { if (!can('edit')) return; toggleShopHidden(el.getAttribute('data-id')); return; }
+    if (act === 'shop-del') { if (!can('edit')) return; deleteShopItem(el.getAttribute('data-id')); return; }
+    if (act === 'shop-add-open') { shopUi.addOpen = true; shopUi.draft = { cat: 'pet' }; renderShop(); return; }
+    if (act === 'shop-add-cancel') { shopUi.addOpen = false; shopUi.draft = {}; renderShop(); return; }
+    if (act === 'shop-add') { if (!can('edit')) return; addShopItem(); return; }
+    if (act === 'care-open') { openCare(); return; }
+    if (act === 'care-close') { closeCare(); return; }
+    if (act === 'feed') { feedItem(el.getAttribute('data-id')); return; }
+    if (act === 'room-open') { openRoom(); return; }
+    if (act === 'room-close') { closeRoom(); return; }
+    if (act === 'room-back') { roomUi.panel = 'main'; roomUi.msg = ''; renderRoom(); return; }
+    if (act === 'room-wall') { roomUi.panel = (roomUi.panel === 'wall' ? 'main' : 'wall'); renderRoom(); return; }
+    if (act === 'room-storage') { roomUi.panel = (roomUi.panel === 'storage' ? 'main' : 'storage'); renderRoom(); return; }
+    if (act === 'room-pets') { roomUi.panel = (roomUi.panel === 'pets' ? 'main' : 'pets'); renderRoom(); return; }
+    if (act === 'room-place') { roomAddFromStorage(el.getAttribute('data-id')); return; }
+    if (act === 'room-move') { roomUi.moving = roomUi.moving ? '' : roomUi.sel; renderRoom(); return; }
+    if (act === 'room-remove') { roomRemoveSel(); return; }
+    if (act === 'room-deselect') { roomUi.sel = ''; roomUi.moving = ''; renderRoom(); return; }
+    if (act === 'room-item') {
+      var ru = el.getAttribute('data-u');
+      roomUi.sel = (roomUi.sel === ru && !roomUi.moving) ? '' : ru;
+      renderRoom();
+      return;
+    }
+    if (act === 'room-wall-set') { setRoomWall(el.getAttribute('data-id')); return; }
+    if (act === 'room-pet-toggle') { toggleRoomPet(el.getAttribute('data-id')); return; }
+    if (act === 'avatar-open') { openAvatar(); return; }
+    if (act === 'avatar-close') { closeAvatar(); return; }
+    if (act === 'av-slot') { avatarUi.slot = el.getAttribute('data-slot') || 'hair'; renderAvatar(); return; }
+    if (act === 'av-wear') {
+      var avId = el.getAttribute('data-id');
+      var avIt = shopItem(avId);
+      if (!avIt) return;
+      if (!isOwned(avId) && avIt.price > 0) { buyItem(avId); return; }
+      equipAvatar(avIt.slot, avId);
+      return;
+    }
+    if (act === 'av-off') { prof().avatar.acc = ''; saveState(); renderAvatar(); return; }
+    if (act === 'av-skin') { setAvatarSkin(el.getAttribute('data-id')); return; }
+    if (act === 'av-haircolor') { setAvatarHairColor(el.getAttribute('data-id')); return; }
     if (act === 'close-goal') { closeGoal(); return; }
   });
 
@@ -6345,12 +9117,28 @@
     if (pm && !pm.hidden && e.target === pm) closePet();
     var em = document.getElementById('evoModal');
     if (em && !em.hidden && e.target === em) closeEvo();
+    var rm = document.getElementById('roomModal');
+    if (rm && !rm.hidden && e.target === rm) closeRoom();
+    var avm = document.getElementById('avatarModal');
+    if (avm && !avm.hidden && e.target === avm) closeAvatar();
+    var shm = document.getElementById('shopModal');
+    if (shm && !shm.hidden && e.target === shm) closeShop();
+    var cm = document.getElementById('careModal');
+    if (cm && !cm.hidden && e.target === cm) closeCare();
   });
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape' && e.key !== 'Esc') return;
     var e1 = document.getElementById('evoModal');
     if (e1 && !e1.hidden) { closeEvo(); return; }
+    var rm1 = document.getElementById('roomModal');
+    if (rm1 && !rm1.hidden) { closeRoom(); return; }
+    var av1 = document.getElementById('avatarModal');
+    if (av1 && !av1.hidden) { closeAvatar(); return; }
+    var sh1 = document.getElementById('shopModal');
+    if (sh1 && !sh1.hidden) { closeShop(); return; }
+    var ca1 = document.getElementById('careModal');
+    if (ca1 && !ca1.hidden) { closeCare(); return; }
     var p1 = document.getElementById('petModal');
     if (p1 && !p1.hidden) { closePet(); return; }
     var w2 = document.getElementById('winModal');
@@ -6498,6 +9286,7 @@
       }
       return;
     }
+    if (field === 'catTarget') { setCatTarget(el.getAttribute('data-cat'), el.value); return; }
     if (field === 'catSub') {
       var cs = findCat(el.getAttribute('data-cat'));
       if (cs) {
@@ -6518,6 +9307,16 @@
         }
         saveState();
       }
+      return;
+    }
+
+    if (field === 'shopPrice') {
+      setShopPrice(el.getAttribute('data-id'), el.value);
+      return;
+    }
+    if (field === 'newShopName' || field === 'newShopIcon' || field === 'newShopPrice' || field === 'newShopColor') {
+      shopUi.draft = shopUi.draft || {};
+      shopUi.draft[field.replace('newShop', '').toLowerCase()] = el.value;
       return;
     }
     if (field === 'evName' || field === 'evTime') {
@@ -6546,6 +9345,13 @@
     }
     var field = el.getAttribute('data-field');
 
+
+    if (field === 'newShopCat' || field === 'newShopEffect') {
+      shopUi.draft = shopUi.draft || {};
+      if (field === 'newShopCat') shopUi.draft.cat = el.value;
+      else shopUi.draft.effect = el.value;
+      return;
+    }
     if (field === 'petArtSp') { artEdit.sp = el.value; renderEditPanel(); return; }
     if (field === 'petArtStage') { artEdit.stage = el.value; renderEditPanel(); return; }
 
@@ -6587,6 +9393,8 @@
   function tick() {
     var now = new Date();
     updateClock(now);
+    try { phaseTick(); } catch (e) { /* 무시 */ }
+    try { tickTargets(); } catch (e) { /* 무시 */ }
     var k = dateKey(now);
     if (k !== currentKey) {
       currentKey = k;
@@ -6608,6 +9416,8 @@
   }
 
   /* ============ 시작 ============ */
+  installAudioUnlock();
+  installRoomDrag();
   loadWeatherCache();
   renderAll();
   loadWeather();
@@ -6624,7 +9434,7 @@
   });
 
   window.addEventListener('online', function () {
-    if (cloud.me && (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers)) flushSync();
+    if (cloud.me && (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers || cloud.dirty.profile)) flushSync();
   });
   window.setInterval(function () {
     if (cloud.me && (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers) && navigator.onLine !== false) flushSync();
