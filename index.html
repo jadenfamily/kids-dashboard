@@ -299,6 +299,13 @@
   }
   .inp:focus{ outline:none; border-color:#ffb703; box-shadow:0 0 0 4px rgba(255,183,3,.16); }
   .inp-sm{ min-height:36px; padding:5px 7px; font-size:12.5px; border-width:1.5px; border-radius:9px; }
+  .sec-title-inp{
+    font:inherit; font-weight:900; letter-spacing:inherit; color:inherit;
+    width:100%; max-width:240px; min-height:0; padding:4px 9px; border-radius:10px;
+    border:2px dashed #ffc46b; background:#fffdf7;
+  }
+  .rt-left .sec-title-inp{ max-width:270px; }
+  .sec-order-row .so-title{ flex:1 1 auto; min-width:0; max-width:none; }
 
   /* ---------- 편집 패널 ---------- */
   .edit-panel{ background:linear-gradient(135deg,#eef7ff 0%,#f7f0ff 100%); border:2px dashed #c9d9f0; }
@@ -452,6 +459,14 @@
   .lf-note{ margin:0; font-size:12px; font-weight:700; color:#8a93a8; line-height:1.55; }
   .lf-hint{ margin:0; font-size:11.5px; font-weight:700; color:#a99c8c; line-height:1.5; }
   .lf-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .lf label.lf-check{
+    flex-direction:row; align-items:center; gap:9px; font-size:12.5px; font-weight:900;
+    color:#6d6484; cursor:pointer; touch-action:manipulation; padding:2px 0;
+  }
+  .lf label.lf-check input[type="checkbox"]{
+    width:20px; height:20px; min-height:0; padding:0; flex:0 0 auto; margin:0;
+    accent-color:#ff9f1c; cursor:pointer;
+  }
   .lf-btn{
     width:100%; min-height:54px; border:none; border-radius:17px; cursor:pointer; touch-action:manipulation;
     background:linear-gradient(135deg,#ffd43b,#ff9f1c); color:#5a3200;
@@ -816,7 +831,7 @@
   <section class="card routine sec sec-routine" id="secRoutine" data-sec="routine">
     <div class="routine-top">
       <div class="rt-left">
-        <h2>하루 루틴</h2>
+        <h2 id="secTitleRoutine">하루 루틴</h2>
         <p id="routineHint">오늘 할 일을 하나씩 체크해 보자!</p>
       </div>
       <div class="rt-right">
@@ -834,7 +849,7 @@
 
     <section class="card sticker sec" id="secSticker" data-sec="sticker">
       <div class="card-head">
-        <h2>칭찬 스티커</h2>
+        <h2 id="secTitleSticker">칭찬 스티커</h2>
         <span class="rt-percent"><strong id="stickerCount">0</strong> / <span id="stickerSlots">10</span></span>
       </div>
       <p class="goal">스티커 <b id="goalSlots">10</b>개 모으면 <strong id="goalText">주말 피자 파티 🍕</strong></p>
@@ -849,7 +864,7 @@
 
     <section class="card today-academy sec" id="secAcademy" data-sec="academy">
       <div class="card-head">
-        <h2>오늘의 학원</h2>
+        <h2 id="secTitleAcademy">오늘의 학원</h2>
         <span class="head-note">잊지 말고 챙겨요 🎒</span>
       </div>
       <div id="todayBox"></div>
@@ -857,7 +872,7 @@
 
   <section class="card week sec sec-week" id="secWeek" data-sec="week">
     <div class="card-head">
-      <h2>학원 시간표</h2>
+      <h2 id="secTitleWeek">학원 시간표</h2>
       <span class="head-note">오늘 칸이 노란색이에요</span>
     </div>
     <div class="week-grid" id="weekGrid"></div>
@@ -980,9 +995,13 @@
   var USERS_CACHE_KEY = 'kidsDashboard.users.v1';
   var SHA_KEY = 'kidsDashboard.sha.v1';
   var LAST_ID_KEY = 'kidsDashboard.lastId';
+  var LAST_REMEMBER_KEY = 'kidsDashboard.remember';
+  var SESSION_KEY = 'kidsDashboard.session.v1';
+  var SESSION_MS = 30 * 24 * 60 * 60 * 1000; /* 로그인 유지 30일 */
   var SEC_IDS = ['routine', 'sticker', 'academy', 'week'];
   var SEC_NAMES = { routine: '하루 루틴', sticker: '칭찬 스티커', academy: '오늘의 학원', week: '학원 시간표' };
   var SEC_EL = { routine: 'secRoutine', sticker: 'secSticker', academy: 'secAcademy', week: 'secWeek' };
+  var SEC_TITLE_EL = { routine: 'secTitleRoutine', sticker: 'secTitleSticker', academy: 'secTitleAcademy', week: 'secTitleWeek' };
 
   var ROLES = {
     admin: { label: '관리자', perms: { check: 1, sticker: 1, stickerManage: 1, edit: 1, reset: 1, history: 1, accounts: 1 } },
@@ -992,7 +1011,7 @@
   };
 
   var cloud = {
-    conn: null, users: null, me: null,
+    conn: null, users: null, me: null, session: null,
     status: 'idle', statusAt: 0,
     sha: {}, months: {}, monthLoading: '',
     dirty: { day: false, settings: false, stickers: false },
@@ -1093,7 +1112,10 @@
   function defaultState() {
     return {
       version: 1,
-      settings: { childName: '지우', greeting: GREETING_DEFAULT, city: 'seoul', soundOn: true },
+      settings: {
+        childName: '지우', greeting: GREETING_DEFAULT, city: 'seoul', soundOn: true,
+        sectionTitles: { routine: '하루 루틴', sticker: '칭찬 스티커', academy: '오늘의 학원', week: '학원 시간표' }
+      },
       categories: [
         {
           id: 'morning', title: '등교 준비', sub: '아침', emoji: '🌅',
@@ -1185,6 +1207,16 @@
     var knownCity = false;
     for (var c = 0; c < CITIES.length; c++) if (CITIES[c].id === s.settings.city) knownCity = true;
     if (!knownCity) s.settings.city = d.settings.city;
+
+    /* 섹션 이름 (편집 모드에서 바꿀 수 있음) */
+    var rawTitles = (s.settings.sectionTitles && typeof s.settings.sectionTitles === 'object') ? s.settings.sectionTitles : {};
+    var titles = {};
+    for (var ti = 0; ti < SEC_IDS.length; ti++) {
+      var tid = SEC_IDS[ti];
+      var tv = rawTitles[tid];
+      titles[tid] = (typeof tv === 'string' && tv.trim()) ? tv.trim().slice(0, 16) : d.settings.sectionTitles[tid];
+    }
+    s.settings.sectionTitles = titles;
 
     var cats = [];
     if (Object.prototype.toString.call(s.categories) === '[object Array]' && s.categories.length) {
@@ -2274,9 +2306,9 @@
         fieldWrap('스티커 이유 (콤마로 구분)', '<input class="inp" data-field="stickerReasons" value="' + esc((state.sticker.reasons || []).join(', ')) + '" placeholder="루틴 완료, 독서, 심부름">') +
       '</div>' +
       '<div class="ep-sub">' +
-        '<h3>🧩 섹션 순서</h3>' +
+        '<h3>🧩 섹션 이름·순서</h3>' +
         '<div class="sec-order">' + secOrderHtml() + '</div>' +
-        '<p class="ep-hint" style="margin-top:7px">⬆️ ⬇️ 로 순서를 바꾸면 바로 저장돼요.</p>' +
+        '<p class="ep-hint" style="margin-top:7px">이름을 고치면 카드 안 제목도 바로 바뀌고, ⬆️ ⬇️ 로 순서도 바꿀 수 있어요. (카드 제목을 직접 눌러 고쳐도 돼요)</p>' +
       '</div>' +
       '<div class="ep-sub">' +
         '<h3>📚 저녁 공부 문제지</h3>' +
@@ -2294,6 +2326,7 @@
   function renderAll() {
     renderHeader();
     renderWeather();
+    renderSectionTitles();
     renderRoutine();
     renderStickers();
     renderTodayAcademy();
@@ -2313,6 +2346,7 @@
       else btn.classList.remove('on');
     }
     renderEditPanel();
+    renderSectionTitles();
     renderRoutine();
     renderWeek();
     renderStickers();
@@ -3240,12 +3274,61 @@
     renderEditPanel();
   }
 
+  /* ---- 섹션 이름 ---- */
+  function secTitleOf(id) {
+    var t = (state.settings && state.settings.sectionTitles) ? state.settings.sectionTitles[id] : '';
+    return (typeof t === 'string' && t.trim()) ? t.trim() : (SEC_NAMES[id] || id);
+  }
+
+  function secTitleInputHtml(id) {
+    return '<input class="inp title-inp sec-title-inp" data-field="secTitle" data-sec="' + esc(id) +
+      '" value="' + esc(secTitleOf(id)) + '" maxlength="16" placeholder="' + esc(SEC_NAMES[id] || '') +
+      '" aria-label="' + esc(SEC_NAMES[id] || id) + ' 섹션 이름">';
+  }
+
+  function renderSectionTitles() {
+    var editing = !!(ui.editing && can('edit'));
+    for (var i = 0; i < SEC_IDS.length; i++) {
+      var id = SEC_IDS[i];
+      var el = document.getElementById(SEC_TITLE_EL[id]);
+      if (!el) continue;
+      if (editing) el.innerHTML = secTitleInputHtml(id);
+      else el.textContent = secTitleOf(id);
+    }
+  }
+
+  function syncSectionTitle(id) {
+    var v = secTitleOf(id);
+    var el = document.getElementById(SEC_TITLE_EL[id]);
+    if (el) {
+      var inner = el.querySelector('input');
+      if (inner) { if (inner !== document.activeElement) inner.value = v; }
+      else el.textContent = v;
+    }
+    var nodes = document.querySelectorAll('[data-field="secTitle"][data-sec="' + id + '"]');
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i] !== document.activeElement) nodes[i].value = v;
+    }
+  }
+
+  function setSectionTitle(id, value) {
+    if (SEC_IDS.indexOf(id) < 0) return;
+    var v = String(value == null ? '' : value).replace(/\s+/g, ' ').trim().slice(0, 16);
+    if (!state.settings.sectionTitles) state.settings.sectionTitles = {};
+    if (v) state.settings.sectionTitles[id] = v;
+    else delete state.settings.sectionTitles[id];
+    saveState();
+    syncSectionTitle(id);
+  }
+
   function secOrderHtml() {
     var order = state.layoutOrder || SEC_IDS;
     var h = '';
     for (var i = 0; i < order.length; i++) {
       var id = order[i];
-      h += '<div class="sec-order-row"><span class="so-name">' + (i + 1) + '. ' + esc(SEC_NAMES[id] || id) + '</span>' +
+      h += '<div class="sec-order-row" data-sec="' + esc(id) + '"><span class="so-name">' + (i + 1) + '.</span>' +
+        '<input class="inp inp-sm so-title" data-field="secTitle" data-sec="' + esc(id) + '" value="' + esc(secTitleOf(id)) +
+          '" maxlength="16" placeholder="' + esc(SEC_NAMES[id] || '') + '" aria-label="' + esc(SEC_NAMES[id] || id) + ' 섹션 이름">' +
         '<button type="button" class="so-btn" data-act="sec-up" data-sec="' + esc(id) + '"' + (i === 0 ? ' disabled' : '') + ' aria-label="위로">▲</button>' +
         '<button type="button" class="so-btn" data-act="sec-down" data-sec="' + esc(id) + '"' + (i === order.length - 1 ? ' disabled' : '') + ' aria-label="아래로">▼</button>' +
         '</div>';
@@ -3314,6 +3397,57 @@
     return null;
   }
   function saveDevice(c) { if (c) lsSet(DEVICE_KEY, JSON.stringify(c)); else lsDel(DEVICE_KEY); }
+
+  /* ---- 로그인 유지 세션 (30일) ---- */
+  function ssGet(k) { try { return window.sessionStorage.getItem(k); } catch (e) { return null; } }
+  function ssSet(k, v) { try { window.sessionStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  function ssDel(k) { try { window.sessionStorage.removeItem(k); } catch (e) { /* 무시 */ } }
+
+  function clearSession() {
+    lsDel(SESSION_KEY);
+    ssDel(SESSION_KEY);
+    cloud.session = null;
+  }
+
+  function loadSession() {
+    var raw = lsGet(SESSION_KEY);
+    var store = 'local';
+    if (!raw) { raw = ssGet(SESSION_KEY); store = 'session'; }
+    if (!raw) return null;
+    var j = null;
+    try { j = JSON.parse(raw); } catch (e) { j = null; }
+    if (!j || !j.id) { clearSession(); return null; }
+    var exp = Number(j.expiresAt) || 0;
+    if (store === 'local' && (!exp || exp <= Date.now())) { clearSession(); return null; } /* 30일 만료 */
+    return {
+      id: String(j.id),
+      name: String(j.name || j.id),
+      role: ROLES[j.role] ? j.role : 'viewer',
+      store: store,
+      issuedAt: Number(j.issuedAt) || 0,
+      expiresAt: exp
+    };
+  }
+
+  function saveSession(me, remember, prev) {
+    if (!me || !me.id) return null;
+    var now = Date.now();
+    var keepExp = (prev && prev.store === 'local' && prev.expiresAt > now) ? prev.expiresAt : 0;
+    var s = {
+      version: 1,
+      id: me.id,
+      name: me.name || me.id,
+      role: ROLES[me.role] ? me.role : 'viewer',
+      store: remember ? 'local' : 'session',
+      issuedAt: (prev && prev.issuedAt) || now,
+      expiresAt: remember ? (keepExp || (now + SESSION_MS)) : 0
+    };
+    clearSession();
+    var ok = remember ? lsSet(SESSION_KEY, JSON.stringify(s)) : ssSet(SESSION_KEY, JSON.stringify(s));
+    if (!ok) return null;
+    cloud.session = s;
+    return s;
+  }
   function loadUsersCache() { try { return JSON.parse(lsGet(USERS_CACHE_KEY) || 'null'); } catch (e) { return null; } }
   function saveUsersCache(u) { if (u) lsSet(USERS_CACHE_KEY, JSON.stringify(u)); }
   function loadShaCache() { try { return JSON.parse(lsGet(SHA_KEY) || '{}') || {}; } catch (e) { return {}; } }
@@ -3786,6 +3920,7 @@
         (people ? ' · 계정 ' + people + '개' : '') + '</p>' +
       '<label>아이디<input id="loginId" name="username" autocomplete="username" value="' + esc(lastId) + '" maxlength="24" spellcheck="false"></label>' +
       '<label>비밀번호<input id="loginPw" name="password" type="password" autocomplete="current-password" maxlength="64"></label>' +
+      '<label class="lf-check"><input type="checkbox" id="loginRemember"' + (lsGet(LAST_REMEMBER_KEY) === '0' ? '' : ' checked') + '><span>로그인 유지 (30일)</span></label>' +
       '<button class="lf-btn" id="loginBtn" type="submit">로그인</button>' +
       '<p class="lf-msg" id="loginMsg"></p>' +
       '<button class="lf-link" type="button" data-act="relink">기기 연결 다시 하기</button>' +
@@ -3858,6 +3993,7 @@
       }
 
       saveDevice(cloud.conn);
+      clearSession(); /* 기기를 다시 연결했으면 다시 로그인 */
       cloud.lastSig = settingsSignature();
       setSync('ok');
       renderLoginBody('login');
@@ -3875,6 +4011,8 @@
   async function doLogin() {
     var id = fieldVal('loginId').trim().toLowerCase();
     var pw = fieldVal('loginPw');
+    var rememberEl = document.getElementById('loginRemember');
+    var remember = rememberEl ? !!rememberEl.checked : true;
     var msg = document.getElementById('loginMsg');
     function fail(t) { if (msg) { msg.className = 'lf-msg'; msg.textContent = t; } }
     if (!id || !pw) return fail('아이디와 비밀번호를 넣어 주세요.');
@@ -3905,7 +4043,9 @@
       }
       if (!ok) { setSync(navigator.onLine === false ? 'offline' : 'ok'); return fail('아이디 또는 비밀번호가 맞지 않아요.'); }
       lsSet(LAST_ID_KEY, u.id);
+      lsSet(LAST_REMEMBER_KEY, remember ? '1' : '0');
       cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer' };
+      saveSession(cloud.me, remember, null);
       await enterDashboard();
     } catch (e) {
       fail('로그인 중 문제가 생겼어요. ' + (e && e.message ? e.message : ''));
@@ -3955,9 +4095,10 @@
     if (cloud.dirty.day) scheduleSync('day');
   }
 
-  async function doLogout() {
+  async function doLogout(silent) {
+    clearSession(); /* 새로고침해도 자동 로그인되지 않도록 즉시 세션 삭제 */
     try {
-      if (cloud.conn && (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers)) await flushSync();
+      if (!silent && cloud.conn && cloud.me && (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers)) await flushSync();
     } catch (e) { /* 무시 */ }
     cloud.me = null;
     cloud.dirty.day = false;
@@ -3968,6 +4109,69 @@
     closeHistory();
     closeAccounts();
     showLogin('login');
+  }
+
+  /* ---- 저장된 세션으로 자동 로그인 ---- */
+  function findUserById(id) {
+    var users = (cloud.users && cloud.users.users) || [];
+    var key = String(id || '').toLowerCase();
+    for (var i = 0; i < users.length; i++) {
+      if (String(users[i].id).toLowerCase() === key) return users[i];
+    }
+    return null;
+  }
+
+  async function restoreSession(sess) {
+    var u = findUserById(sess.id);
+    if (!u) {
+      /* 캐시에 없으면 계정 파일을 한 번 확인 */
+      var res = await ghGet('config/users.json');
+      if (res.ok && res.data && Object.prototype.toString.call(res.data.users) === '[object Array]') {
+        cloud.users = res.data;
+        saveUsersCache(res.data);
+        u = findUserById(sess.id);
+      }
+      if (!u) {
+        clearSession();
+        showLogin('login');
+        setLoginMsg('계정을 찾을 수 없어 다시 로그인해야 해요.');
+        return;
+      }
+    }
+    cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer' };
+    saveSession(cloud.me, sess.store === 'local', sess);
+    await enterDashboard();
+    verifySession();
+  }
+
+  async function verifySession() {
+    if (!cloud.conn || !cloud.me) return;
+    var res = await ghGet('config/users.json');
+    if (!res.ok || !res.data || Object.prototype.toString.call(res.data.users) !== '[object Array]') return;
+    cloud.users = res.data;
+    saveUsersCache(res.data);
+    var u = findUserById(cloud.me.id);
+    if (!u) {
+      await doLogout(true);
+      setLoginMsg('계정이 삭제되어 로그아웃했어요. 다시 로그인해 주세요.');
+      return;
+    }
+    var role = ROLES[u.role] ? u.role : 'viewer';
+    var name = u.name || u.id;
+    if (role !== cloud.me.role || name !== cloud.me.name) {
+      cloud.me = { id: u.id, name: name, role: role };
+      saveSession(cloud.me, !!(cloud.session && cloud.session.store === 'local'), cloud.session);
+      applyUserUi();
+      applyPermissions();
+    }
+  }
+
+  function setLoginMsg(text, ok) {
+    var body = document.getElementById('loginBody');
+    if (!body) return;
+    if (!body.querySelector('#loginForm') && !body.querySelector('#setupForm')) renderLoginBody(cloud.conn ? 'login' : 'setup');
+    var m = document.getElementById('loginMsg') || document.getElementById('setupMsg');
+    if (m) { m.className = 'lf-msg' + (ok ? ' ok' : ''); m.textContent = text; }
   }
 
   /* ---- 사용자 표시 / 권한 적용 ---- */
@@ -3997,6 +4201,7 @@
     if (soundBtn) soundBtn.hidden = !can('check');
     if (ui.editing && !can('edit')) ui.editing = false;
     renderEditPanel();
+    renderSectionTitles();
     renderRoutine();
     renderStickers();
     updateOverall(true);
@@ -4122,7 +4327,10 @@
       target.role = prev;
       return acctFail('권한을 바꾸지 못했어요. (' + (res.error || '오프라인') + ')');
     }
-    if (cloud.me && cloud.me.id === id) cloud.me.role = role;
+    if (cloud.me && cloud.me.id === id) {
+      cloud.me.role = role;
+      saveSession(cloud.me, !!(cloud.session && cloud.session.store === 'local'), cloud.session);
+    }
     acct.msg = id + ' 권한을 ' + roleLabel(role) + '(으)로 바꿨어요.';
     renderAccounts();
     applyUserUi();
@@ -4137,7 +4345,7 @@
     for (var i = 0; i < users.length; i++) if (users[i].id === id) { idx = i; break; }
     if (idx < 0) return;
     if (users[idx].role === 'admin' && acctCountAdmins() <= 1) return acctFail('관리자는 최소 한 명이 있어야 해요.');
-    if (!window.confirm('"' + (users[idx].name || id) + '" 계정을 지울까요? 이 기기에서는 바로 로그아웃되지 않지만, 다음 로그인부터는 쓸 수 없어요.')) return;
+    if (!window.confirm('"' + (users[idx].name || id) + '" 계정을 지울까요? 지금 화면은 그대로지만, 다음에 그 계정으로는 로그인할 수 없게 돼요.')) return;
     var removed = users.splice(idx, 1)[0];
     var res = await persistUsers('계정 삭제: ' + id);
     if (!res.ok) {
@@ -4180,7 +4388,18 @@
     cloud.sha = loadShaCache() || {};
     cloud.lastSig = settingsSignature();
     renderSyncPill();
-    showLogin(cloud.conn ? 'login' : 'setup');
+    var sess = cloud.conn ? loadSession() : null;
+    if (!cloud.conn) {
+      clearSession();
+      showLogin('setup');
+      return;
+    }
+    if (!sess) {
+      showLogin('login');
+      return;
+    }
+    /* 유효한 세션이 있으면 로그인 화면 없이 바로 이어서 사용 */
+    restoreSession(sess);
   }
 
   /* ============ 이벤트 ============ */
@@ -4421,6 +4640,10 @@
         if (state.workbooks[ww].id === wbId) { state.workbooks[ww].name = el.value.slice(0, 24); break; }
       }
       saveState();
+      return;
+    }
+    if (field === 'secTitle') {
+      setSectionTitle(el.getAttribute('data-sec'), el.value);
       return;
     }
     if (field === 'catTitle') {
