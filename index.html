@@ -591,6 +591,22 @@
   .acct-add input, .acct-add select{ min-height:44px; padding:8px 11px; border-radius:12px; border:2px solid #e6dccf; font-size:14px; font-weight:800; background:#fffdf9; color:var(--ink); }
   .acct-add .full{ grid-column:1 / -1; }
   .acct-note{ margin:0; font-size:11.5px; font-weight:700; color:#a2937f; line-height:1.55; }
+  .acct-connect{ display:flex; flex-direction:column; gap:9px; background:linear-gradient(135deg,#fff6e6 0%,#f1f6ff 100%); border:2px solid #ffe7c2; border-radius:18px; padding:12px 13px 13px; }
+  .acct-connect-head{ display:flex; flex-direction:column; gap:3px; }
+  .acct-connect-head b{ font-size:14px; font-weight:900; letter-spacing:-.01em; }
+  .acct-connect-head span{ font-size:11.5px; font-weight:700; color:#8a7f70; line-height:1.5; }
+  .acct-connect .lf-btn{ min-height:48px; font-size:15px; border-radius:14px; }
+  .acct-linkbox{ display:flex; flex-direction:column; gap:5px; }
+  .acct-linkbox p{ margin:0; font-size:11.5px; font-weight:800; color:#b0610b; line-height:1.5; }
+  .acct-linkbox input{ width:100%; min-height:42px; padding:8px 11px; border-radius:11px; border:2px solid #e6dccf; background:#fff; color:#4b3f7a; font-size:12px; font-weight:700; }
+  .toast{
+    position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom,0px)); transform:translate(-50%,14px);
+    opacity:0; pointer-events:none; z-index:200; max-width:min(92vw,460px);
+    background:#3a3228; color:#fffdf9; font-size:13.5px; font-weight:800; line-height:1.45; text-align:center;
+    padding:12px 16px; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.3);
+    transition:opacity .22s ease, transform .22s ease;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
   .acct-role-note{ font-size:11.5px; font-weight:700; color:#8a93a8; line-height:1.6; }
   .check-row.locked{ cursor:default; }
   .check-row.locked .box{ border-style:dashed; opacity:.75; }
@@ -1179,7 +1195,7 @@
     dirty: { day: false, settings: false, stickers: false },
     timer: 0, saving: false, again: false, lastSig: ''
   };
-  var acct = { pwFor: '', msg: '', busy: false };
+  var acct = { pwFor: '', msg: '', busy: false, link: '' };
 
   function can(perm) {
     if (!cloud || !cloud.me) return false;
@@ -4092,7 +4108,7 @@
   }
 
   function setupHtml() {
-    var c = cloud.conn || {};
+    var c = cloud.conn || connectPrefill || {};
     return '<form class="lf" id="setupForm" autocomplete="off">' +
       '<p class="lf-note">처음 한 번만: 이 기기를 <b>비공개 GitHub 저장소</b>에 연결해요. 토큰은 이 기기 브라우저에만 저장되고 대시보드 파일에는 들어가지 않아요.</p>' +
       '<label>GitHub 아이디<input id="setupOwner" value="' + esc(c.owner || DEFAULT_OWNER) + '" maxlength="39" spellcheck="false"></label>' +
@@ -4110,7 +4126,8 @@
 
   function loginHtml() {
     var c = cloud.conn || { owner: '', repo: '' };
-    var lastId = lsGet(LAST_ID_KEY) || 'admin';
+    var lastId = lsGet(LAST_ID_KEY);
+    if (lastId === null || lastId === '') lastId = connectJustDone ? '' : 'admin';
     var people = (cloud.users && cloud.users.users) ? cloud.users.users.length : 0;
     return '<form class="lf" id="loginForm" autocomplete="on">' +
       '<p class="lf-note">📚 연결된 저장소: <b>' + esc(c.owner + '/' + c.repo) + '</b>' +
@@ -4502,6 +4519,7 @@
     if (!can('accounts')) return;
     acct.pwFor = '';
     acct.msg = '';
+    acct.link = '';
     renderAccounts();
     var m = document.getElementById('acctModal');
     if (m) m.hidden = false;
@@ -4524,6 +4542,11 @@
   function accountsHtml() {
     var users = (cloud.users && cloud.users.users) || [];
     var h = '<p class="acct-note">계정과 권한은 비공개 저장소의 <b>config/users.json</b>에 저장돼요. 비밀번호는 솔트가 붙은 SHA-256 해시로만 보관합니다.</p>';
+    h += '<div class="acct-connect">' +
+      '<div class="acct-connect-head"><b>🔗 새 기기 연결</b><span>가족 기기에서 토큰 입력 없이 바로 로그인 화면만 열리게 하는 링크예요.</span></div>' +
+      '<button class="lf-btn" type="button" data-act="acct-connect-link">🔗 새 기기 연결 링크 복사</button>' +
+      (acct.link ? '<div class="acct-linkbox"><p>자동 복사가 막혀 있어요. 아래 링크를 길게 눌러 복사해 주세요.</p><input type="text" id="acctLinkInput" readonly data-act="acct-link-select" value="' + esc(acct.link) + '"></div>' : '') +
+      '</div>';
     h += '<div class="acct-list">';
     for (var i = 0; i < users.length; i++) {
       var u = users[i];
@@ -4671,12 +4694,214 @@
     renderAccounts();
   }
 
+  /* ---- 새 기기 연결 링크 (#connect=…) ---- */
+  var connectPrefill = null;
+  var connectJustDone = false;
+
+  function b64urlEncodeUtf8(str) {
+    return b64encodeUtf8(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlDecodeUtf8(s) {
+    var t = String(s || '').replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+    while (t.length % 4) t += '=';
+    return b64decodeUtf8(t);
+  }
+  function buildConnectLink() {
+    var c = cloud.conn;
+    if (!c || !c.owner || !c.repo || !c.token) return '';
+    var payload = { owner: c.owner, repo: c.repo, token: c.token, branch: c.branch || 'main' };
+    var base = String(window.location.href || '').split('#')[0];
+    return base + '#connect=' + b64urlEncodeUtf8(JSON.stringify(payload));
+  }
+
+  function showToast(text) {
+    var el = document.getElementById('dashToast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'dashToast';
+      el.className = 'toast';
+      el.setAttribute('role', 'status');
+      document.body.appendChild(el);
+    }
+    el.textContent = text;
+    el.classList.add('show');
+    if (showToast.timer) window.clearTimeout(showToast.timer);
+    showToast.timer = window.setTimeout(function () { el.classList.remove('show'); }, 2800);
+  }
+
+  function copyText(text) {
+    return new Promise(function (resolve) {
+      function legacy() {
+        var ok = false;
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.top = '0';
+          ta.style.left = '0';
+          ta.style.width = '1px';
+          ta.style.height = '1px';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          try { ta.setSelectionRange(0, text.length); } catch (e) { /* 무시 */ }
+          try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+          document.body.removeChild(ta);
+        } catch (e) { ok = false; }
+        resolve(!!ok);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          navigator.clipboard.writeText(text).then(function () { resolve(true); }, legacy);
+          return;
+        } catch (e) { /* 아래 fallback */ }
+      }
+      legacy();
+    });
+  }
+
+  async function copyConnectLink() {
+    if (!can('accounts')) return;
+    var link = buildConnectLink();
+    if (!link) {
+      acct.link = '';
+      acct.msg = '이 기기의 연결 정보가 없어 링크를 만들 수 없어요. 기기를 다시 연결한 뒤 시도해 주세요.';
+      renderAccounts();
+      return;
+    }
+    var ok = await copyText(link);
+    acct.msg = '';
+    acct.link = ok ? '' : link;
+    renderAccounts();
+    if (ok) showToast('연결 링크를 복사했어요! 가족에게 보내주세요.');
+    else showToast('자동 복사가 안 돼요. 아래 링크를 길게 눌러 복사해 주세요.');
+  }
+
+  function takeConnectHash() {
+    var hash = String(window.location.hash || '');
+    if (hash.indexOf('#connect=') !== 0) return null;
+    var encoded = hash.slice(9);
+    /* 주소창에서 토큰이 보이지 않도록 바로 지워요 */
+    try {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    } catch (e) {
+      try { window.location.hash = ''; } catch (e2) { /* 무시 */ }
+    }
+    return encoded;
+  }
+
+  function parseConnectPayload(encoded) {
+    var tries = [String(encoded || '')];
+    try {
+      var dec = decodeURIComponent(tries[0]);
+      if (dec !== tries[0]) tries.push(dec);
+    } catch (e) { /* 무시 */ }
+    for (var i = 0; i < tries.length; i++) {
+      try {
+        var obj = JSON.parse(b64urlDecodeUtf8(tries[i]));
+        if (obj && typeof obj === 'object' && !Array.isArray(obj)) return obj;
+      } catch (e) { /* 다음 시도 */ }
+    }
+    return null;
+  }
+
+  function showConnectProgress(text) {
+    var login = document.getElementById('loginScreen');
+    var app = document.getElementById('appRoot');
+    var hb = document.getElementById('hubScreen');
+    if (hb) hb.hidden = true;
+    if (login) login.hidden = false;
+    if (app) app.hidden = true;
+    document.body.style.overflow = '';
+    var body = document.getElementById('loginBody');
+    if (body) {
+      body.innerHTML = '<div class="lf">' +
+        '<p class="lf-note">🔗 새 기기를 연결하는 중이에요. 잠시만 기다려 주세요…</p>' +
+        '<p class="lf-msg" id="connectMsg">' + esc(text || '') + '</p>' +
+        '</div>';
+    }
+    renderSyncPill();
+  }
+
+  function connectFail(msg) {
+    showLogin('setup');
+    var m = document.getElementById('setupMsg');
+    if (m) { m.className = 'lf-msg'; m.textContent = msg; }
+  }
+
+  async function applyConnectLink(encoded) {
+    showConnectProgress();
+    var data = parseConnectPayload(encoded);
+    if (!data) return connectFail('연결 링크가 올바르지 않아요. 관리자 기기에서 링크를 다시 복사해 열어 주세요.');
+
+    var owner = String(data.owner == null ? '' : data.owner).trim();
+    var repo = String(data.repo == null ? '' : data.repo).trim();
+    var token = String(data.token == null ? '' : data.token).trim();
+    var branch = String(data.branch == null ? '' : data.branch).trim() || 'main';
+    connectPrefill = { owner: owner, repo: repo };
+
+    if (!owner || !repo || !token) return connectFail('연결 링크에 필요한 정보가 빠져 있어요. 관리자 기기에서 링크를 다시 복사해 주세요.');
+    if (!/^[A-Za-z0-9-]{1,39}$/.test(owner)) return connectFail('연결 링크의 GitHub 아이디 형식이 올바르지 않아요. 링크를 다시 복사해 주세요.');
+    if (!/^[A-Za-z0-9._-]{1,100}$/.test(repo)) return connectFail('연결 링크의 저장소 이름 형식이 올바르지 않아요. 링크를 다시 복사해 주세요.');
+    if (!/^(gh[pousr]_|github_pat_)/.test(token)) return connectFail('연결 링크의 토큰 형식이 올바르지 않아요. 관리자 기기에서 링크를 다시 복사해 주세요.');
+    if (!/^[A-Za-z0-9._\/-]{1,120}$/.test(branch)) branch = 'main';
+
+    if (navigator.onLine === false) return connectFail('인터넷에 연결되어 있지 않아요. 연결한 뒤 링크를 다시 열어 주세요.');
+
+    var prev = cloud.conn;
+    cloud.conn = { owner: owner, repo: repo, token: token, branch: branch, at: Date.now() };
+    try {
+      var res = await window.fetch(API_BASE + '/repos/' + encodeURIComponent(owner) + '/' + encodeURIComponent(repo), { headers: ghHeaders(token), cache: 'no-store' });
+      if (res.status === 401) { cloud.conn = prev; return connectFail('연결 링크의 토큰이 올바르지 않아요. 관리자에게 새 링크를 받아 주세요.'); }
+      if (res.status === 404) { cloud.conn = prev; return connectFail('연결 링크의 저장소를 찾을 수 없어요. 관리자에게 새 링크를 받아 주세요.'); }
+      if (res.status === 403) { cloud.conn = prev; return connectFail('연결 링크의 토큰에 저장소 접근 권한이 없어요. 관리자에게 새 링크를 받아 주세요.'); }
+      if (!res.ok) { cloud.conn = prev; return connectFail('저장소를 확인하지 못했어요. (HTTP ' + res.status + ') 관리자에게 새 링크를 받아 주세요.'); }
+      var info = await res.json();
+      if (info && info.private === false) { cloud.conn = prev; return connectFail('연결 링크가 가리키는 저장소가 비공개가 아니에요. 관리자에게 새 링크를 받아 주세요.'); }
+      if (info && info.permissions && info.permissions.push === false) { cloud.conn = prev; return connectFail('연결 링크의 토큰에 쓰기 권한이 없어요. 관리자에게 새 링크를 받아 주세요.'); }
+
+      cloud.sha = loadShaCache() || {};
+      cloud.months = {};
+      var cur = await ghGet('config/users.json');
+      if (!cur.ok) { cloud.conn = prev; return connectFail('계정 정보를 불러오지 못했어요. (' + (cur.error || '') + ') 관리자에게 새 링크를 받아 주세요.'); }
+      if (!(cur.data && Object.prototype.toString.call(cur.data.users) === '[object Array]')) {
+        cloud.conn = prev;
+        return connectFail('이 저장소에는 아직 계정이 없어요. 관리자 기기에서 계정을 먼저 만든 뒤 새 링크를 받아 주세요.');
+      }
+
+      cloud.users = cur.data;
+      saveUsersCache(cur.data);
+      cloud.conn.at = Date.now();
+      saveDevice(cloud.conn);
+      clearSession(); /* 새로 연결했으면 이전 로그인은 지우고 아이디·비밀번호로 다시 받아요 */
+      cloud.lastSig = settingsSignature();
+      connectJustDone = true;
+      setSync('ok');
+      renderLoginBody('login');
+      var lm = document.getElementById('loginMsg');
+      if (lm) { lm.className = 'lf-msg ok'; lm.textContent = '기기가 자동으로 연결됐어요! 아이디와 비밀번호로 로그인해 주세요.'; }
+    } catch (e) {
+      cloud.conn = prev;
+      connectFail('연결하지 못했어요. 인터넷 연결을 확인한 뒤 링크를 다시 열어 주세요.');
+    }
+  }
+
   function initAuth() {
     cloud.conn = loadDevice();
     cloud.users = loadUsersCache();
     cloud.sha = loadShaCache() || {};
     cloud.lastSig = settingsSignature();
     renderSyncPill();
+
+    /* 새 기기 연결 링크(#connect=…)로 들어왔으면 토큰 입력 없이 바로 연결해요 */
+    var connectPayload = takeConnectHash();
+    if (connectPayload !== null) {
+      applyConnectLink(connectPayload);
+      return;
+    }
+
     var sess = cloud.conn ? loadSession() : null;
     if (!cloud.conn) {
       clearSession();
@@ -4710,6 +4935,8 @@
     if (act === 'acct-pw') { acct.pwFor = el.getAttribute('data-id') || ''; acct.msg = ''; renderAccounts(); return; }
     if (act === 'acct-pw-cancel') { acct.pwFor = ''; renderAccounts(); return; }
     if (act === 'acct-del') { deleteAccount(el.getAttribute('data-id')); return; }
+    if (act === 'acct-connect-link') { copyConnectLink(); return; }
+    if (act === 'acct-link-select') { try { el.focus(); el.select(); } catch (e) { /* 무시 */ } return; }
     if (act === 'relink') { renderLoginBody('setup'); return; }
     if (act === 'relink-cancel') { renderLoginBody(cloud.conn ? 'login' : 'setup'); return; }
 
