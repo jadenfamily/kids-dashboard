@@ -660,6 +660,11 @@
   }
   .login-brand h1{ margin:0; font-size:21px; font-weight:900; letter-spacing:-.02em; }
   .login-brand p{ margin:3px 0 0; font-size:12.5px; font-weight:800; color:var(--ink-2); }
+  .lock-card{ text-align:center; }
+  .lock-icon{ font-size:40px; line-height:1; margin-bottom:12px; }
+  .lock-card h1{ margin:0 0 8px; font-size:19px; font-weight:900; letter-spacing:-.02em; }
+  .lock-card .lf-note{ margin:0 0 16px; }
+  .lock-who{ margin:12px 0 0; font-size:11.5px; font-weight:800; color:#a2937f; line-height:1.6; }
   .lf{ display:flex; flex-direction:column; gap:11px; }
   .lf label{ display:flex; flex-direction:column; gap:5px; font-size:12.5px; font-weight:900; color:#6d6484; }
   .lf input, .lf select{
@@ -1268,6 +1273,16 @@
       </div>
     </div>
     <div id="loginBody"></div>
+  </div>
+</div>
+
+<div class="login" id="lockScreen" hidden>
+  <div class="login-card lock-card">
+    <div class="lock-icon" aria-hidden="true">🔒</div>
+    <h1>접근 권한이 없는 대시보드예요</h1>
+    <p class="lf-note">가족 허브에서 허용된 대시보드를 열어 주세요.</p>
+    <a class="lf-btn gate-go" href="../home/">🏠 가족 허브로 가기</a>
+    <p class="lock-who" id="lockWho"></p>
   </div>
 </div>
 
@@ -5377,6 +5392,8 @@
   function showLogin(mode) {
     var login = document.getElementById('loginScreen');
     var app = document.getElementById('appRoot');
+    var lock = document.getElementById('lockScreen');
+    if (lock) lock.hidden = true;
     if (login) login.hidden = false;
     if (app) app.hidden = true;
     unlockScroll();
@@ -5564,8 +5581,9 @@
       if (!ok) { setSync(navigator.onLine === false ? 'offline' : 'ok'); return fail('아이디 또는 비밀번호가 맞지 않아요.'); }
       lsSet(LAST_ID_KEY, u.id);
       lsSet(LAST_REMEMBER_KEY, remember ? '1' : '0');
-      cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer' };
+      cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer', dashboards: dashboardsFor(u) };
       saveSession(cloud.me, remember, null);
+      if (!dashAllowed(cloud.me)) { showLock(); return; }
       await enterDashboard();
     } catch (e) {
       fail('로그인 중 문제가 생겼어요. ' + (e && e.message ? e.message : ''));
@@ -5578,6 +5596,8 @@
     lsSet(HUB_LAST_KEY, 'kids'); /* 가족 허브(/home/)의 '최근 사용' 표시용 */
     var login = document.getElementById('loginScreen');
     var app = document.getElementById('appRoot');
+    var lock = document.getElementById('lockScreen');
+    if (lock) lock.hidden = true;
     if (login) login.hidden = true;
     if (app) app.hidden = false;
     renderSyncPill();
@@ -5642,25 +5662,64 @@
     return null;
   }
 
+  /* ============ 계정별 대시보드 접근 권한 (가족 허브의 👥 계정 설정과 같은 규칙) ============ */
+  var DASH_ID = 'kids';
+  var DASH_IDS = ['kids', 'fridge', 'ledger'];
+  var DASH_DEFAULTS = {
+    admin: ['kids', 'fridge', 'ledger'],
+    parent: ['kids', 'fridge', 'ledger'],
+    viewer: ['kids', 'fridge', 'ledger'],
+    child: ['kids']
+  };
+  function dashboardsFor(u) {
+    if (!u) return [];
+    if (u.role === 'admin') return DASH_IDS.slice();
+    if (Object.prototype.toString.call(u.dashboards) === '[object Array]') {
+      var out = [];
+      for (var i = 0; i < u.dashboards.length; i++) {
+        var id = String(u.dashboards[i] == null ? '' : u.dashboards[i]);
+        if (DASH_IDS.indexOf(id) >= 0 && out.indexOf(id) < 0) out.push(id);
+      }
+      return out;
+    }
+    var def = DASH_DEFAULTS[u.role] || DASH_IDS;
+    return def.slice();
+  }
+  function dashAllowed(u) { return dashboardsFor(u).indexOf(DASH_ID) >= 0; }
+
+  function showLock() {
+    var login = document.getElementById('loginScreen');
+    var app = document.getElementById('appRoot');
+    var lock = document.getElementById('lockScreen');
+    if (login) login.hidden = true;
+    if (app) app.hidden = true;
+    if (lock) lock.hidden = false;
+    var who = document.getElementById('lockWho');
+    if (who) {
+      who.textContent = (cloud.me ? ((cloud.me.name || cloud.me.id) + ' 계정은 이 대시보드를 열 수 없어요.') : '') +
+        ' 허브에서 관리자에게 요청해 주세요.';
+    }
+    renderSyncPill();
+  }
+
   async function restoreSession(sess) {
     var u = findUserById(sess.id);
-    if (!u) {
-      /* 캐시에 없으면 계정 파일을 한 번 확인 */
-      var res = await ghGet('config/users.json');
-      if (res.ok && res.data && Object.prototype.toString.call(res.data.users) === '[object Array]') {
-        cloud.users = res.data;
-        saveUsersCache(res.data);
-        u = findUserById(sess.id);
-      }
-      if (!u) {
-        clearSession();
-        showLogin('login');
-        setLoginMsg('계정을 찾을 수 없어 다시 로그인해야 해요.');
-        return;
-      }
+    /* 갈 수 있는 대시보드 권한은 저장소의 최신 계정 파일로 확인해요 (관리자가 방금 바꿨을 수 있어요) */
+    var fresh = await ghGet('config/users.json');
+    if (fresh && fresh.ok && fresh.data && Object.prototype.toString.call(fresh.data.users) === '[object Array]') {
+      cloud.users = fresh.data;
+      saveUsersCache(fresh.data);
+      u = findUserById(sess.id);
     }
-    cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer' };
+    if (!u) {
+      clearSession();
+      showLogin('login');
+      setLoginMsg('계정을 찾을 수 없어 다시 로그인해야 해요.');
+      return;
+    }
+    cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer', dashboards: dashboardsFor(u) };
     saveSession(cloud.me, sess.store === 'local', sess);
+    if (!dashAllowed(cloud.me)) { showLock(); return; }
     await enterDashboard();
     verifySession();
   }
@@ -5679,8 +5738,14 @@
     }
     var role = ROLES[u.role] ? u.role : 'viewer';
     var name = u.name || u.id;
-    if (role !== cloud.me.role || name !== cloud.me.name) {
-      cloud.me = { id: u.id, name: name, role: role };
+    if (!dashAllowed(u)) {
+      cloud.me = { id: u.id, name: name, role: role, dashboards: dashboardsFor(u) };
+      saveSession(cloud.me, !!(cloud.session && cloud.session.store === 'local'), cloud.session);
+      showLock();
+      return;
+    }
+    if (role !== cloud.me.role || name !== cloud.me.name || dashboardsFor(u).join(',') !== dashboardsFor(cloud.me).join(',')) {
+      cloud.me = { id: u.id, name: name, role: role, dashboards: dashboardsFor(u) };
       saveSession(cloud.me, !!(cloud.session && cloud.session.store === 'local'), cloud.session);
       applyUserUi();
       applyPermissions();
