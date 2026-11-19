@@ -190,7 +190,7 @@
   .edit-btn.on{ background:#2c2440; color:#fff; }
 
   /* ---------- 공용 카드 ---------- */
-  .card{ background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:clamp(15px,1.7vw,20px); }
+  .card{ background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:clamp(15px,1.7vw,20px); min-width:0; }
   .card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
   .card-head h2{ margin:0; font-size:19px; font-weight:900; letter-spacing:-.02em; }
   .card-head .head-note{ font-size:12.5px; font-weight:800; color:#b3a696; }
@@ -229,7 +229,63 @@
     pointer-events:none;
   }
 
-  .routine-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+  .routine-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; }
+  /* 가로(스와이프) 보기: 태블릿·휴대폰에서 옆으로 넘겨 봐요 */
+  .routine-grid[data-view="row"]{
+    grid-template-columns:none;
+    grid-auto-flow:column;
+    grid-auto-columns:minmax(250px,84%);
+    gap:12px;
+    overflow-x:auto;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    scroll-padding-left:2px;
+    -webkit-overflow-scrolling:touch;
+    padding:2px 2px 8px;
+    scrollbar-width:thin;
+  }
+  .routine-grid[data-view="row"] > .routine-card{ scroll-snap-align:start; }
+  @media (min-width:640px){ .routine-grid[data-view="row"]{ grid-auto-columns:minmax(240px,45%); } }
+  @media (min-width:1024px){ .routine-grid[data-view="row"]{ grid-auto-columns:minmax(230px,31%); } }
+  .rt-jump{ display:none; gap:6px; overflow-x:auto; margin:0 0 10px; padding:2px 1px 4px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .rt-jump::-webkit-scrollbar{ display:none; }
+  .rt-jump:empty{ display:none !important; margin:0; }
+  .routine[data-routine-view="row"] .rt-jump{ display:flex; }
+  .rt-pill{
+    flex:0 0 auto; display:inline-flex; align-items:center; gap:5px; border:1.5px solid #eee2d2;
+    background:#fff; color:#6d6484; border-radius:999px; padding:6px 10px; font-size:12px; font-weight:900;
+    cursor:pointer; white-space:nowrap; touch-action:manipulation; max-width:150px;
+  }
+  .rt-pill span:last-child{ overflow:hidden; text-overflow:ellipsis; }
+  .rt-pill .pp{ width:8px; height:8px; border-radius:50%; background:var(--c); flex:0 0 auto; }
+  .rt-pill:active{ transform:scale(.96); }
+  .rt-view-btn{
+    border:1.5px solid #f0e3d2; background:#fffdf9; color:#8a7f70; border-radius:999px;
+    padding:8px 12px; font-size:12.5px; font-weight:800; cursor:pointer; min-height:38px;
+    white-space:nowrap; touch-action:manipulation;
+  }
+  .rt-view-btn:active{ transform:scale(.97); }
+  .add-group{ display:block; width:100%; margin-top:12px; min-height:50px; }
+  .routine-empty{
+    margin:0; padding:22px 16px; border-radius:18px; border:2px dashed #e6dccd; background:#fffdf9;
+    text-align:center; font-size:13.5px; font-weight:800; color:#b2a798;
+  }
+  .rc-editbar{
+    display:flex; flex-direction:column; gap:7px; background:rgba(255,255,255,.72);
+    border:1.5px dashed #e6dccd; border-radius:14px; padding:8px;
+  }
+  .rce-row{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .rce-row .so-btn{ width:34px; height:34px; flex:0 0 auto; }
+  .rce-row .rce-emoji{ flex:1 1 66px; width:auto; min-width:62px; max-width:90px; min-height:36px; font-size:16px; text-align:center; padding:4px 2px; }
+  .rce-del{ margin-left:auto; }
+  .rce-colors{ display:flex; gap:5px; flex-wrap:wrap; }
+  .rce-sw{
+    width:22px; height:22px; border-radius:50%; border:2px solid #fff; background:var(--sc);
+    box-shadow:0 0 0 1.5px #e9dfd2; cursor:pointer; touch-action:manipulation; padding:0;
+  }
+  .rce-sw.on{ box-shadow:0 0 0 2.5px var(--sc); }
+  .rce-sub{ min-height:34px; font-size:12px; }
   .routine-card{
     border-radius:22px; background:var(--ct); padding:13px 13px 12px;
     border:2px solid transparent; display:flex; flex-direction:column; gap:9px; min-width:0;
@@ -745,7 +801,7 @@
   }
   .sec-routine, .sec-week{ grid-column:1 / -1; }
   @media (max-width:980px){
-    .sections{ grid-template-columns:1fr; }
+    .sections{ grid-template-columns:minmax(0,1fr); }
     .sec-routine, .sec-week{ grid-column:auto; }
   }
   .ledger{ display:flex; flex-wrap:wrap; gap:6px; margin:0 0 11px; font-size:12px; font-weight:900; color:#8a7f70; }
@@ -995,10 +1051,14 @@
           <div class="rt-fill" id="overallFill"></div>
           <span class="rt-rocket" id="overallRocket">🚀</span>
         </div>
+        <button class="rt-view-btn" id="routineViewBtn" data-act="routine-view-toggle" aria-label="루틴 가로로 보기">↔️ 가로 보기</button>
         <button class="ghost-btn" id="resetTodayBtn" data-act="reset-today">오늘 체크 초기화</button>
       </div>
     </div>
-    <div class="routine-grid" id="routineGrid"></div>
+    <div class="rt-jump" id="routineJump" role="group" aria-label="루틴 그룹 바로가기"></div>
+    <div class="routine-grid" id="routineGrid" data-view="grid"></div>
+    <p class="routine-empty" id="routineEmpty" hidden>아직 루틴 그룹이 없어요. 편집(✏️)에서 그룹을 만들 수 있어요.</p>
+    <button class="add-item add-group" id="routineAddBtn" data-act="cat-add" hidden>+ 루틴 그룹 추가</button>
   </section>
 
     <section class="card sticker sec" id="secSticker" data-sec="sticker">
@@ -1408,15 +1468,16 @@
     s.settings.sectionTitles = titles;
 
     var cats = [];
-    if (Object.prototype.toString.call(s.categories) === '[object Array]' && s.categories.length) {
-      for (var i = 0; i < s.categories.length; i++) {
+    if (Object.prototype.toString.call(s.categories) === '[object Array]') {
+      /* 사용자가 만든 그룹과 지운 그룹을 그대로 살려요. 빈 배열이면 기본 4개를 되살리지 않음. */
+      for (var i = 0; i < s.categories.length && cats.length < 16; i++) {
         var rawCat = s.categories[i] || {};
         var defCat = d.categories[i % d.categories.length];
         var cat = {
           id: typeof rawCat.id === 'string' && rawCat.id ? rawCat.id : ('cat-' + i),
-          title: typeof rawCat.title === 'string' ? rawCat.title : defCat.title,
-          sub: typeof rawCat.sub === 'string' ? rawCat.sub : '',
-          emoji: typeof rawCat.emoji === 'string' && rawCat.emoji ? rawCat.emoji : '✅',
+          title: typeof rawCat.title === 'string' ? rawCat.title.slice(0, 16) : defCat.title,
+          sub: typeof rawCat.sub === 'string' ? rawCat.sub.slice(0, 12) : '',
+          emoji: typeof rawCat.emoji === 'string' && rawCat.emoji ? rawCat.emoji.slice(0, 8) : '✅',
           color: typeof rawCat.color === 'string' && rawCat.color ? rawCat.color : defCat.color,
           tint: typeof rawCat.tint === 'string' && rawCat.tint ? rawCat.tint : defCat.tint,
           items: []
@@ -2010,11 +2071,173 @@
   }
 
   /* ============ 루틴 ============ */
+  var ROUTINE_VIEW_KEY = 'kidsDashboard.routineView.v1';
+  var CAT_COLORS = [
+    { c: '#ff9f1c', t: '#fff5e8' }, { c: '#12b886', t: '#e8fbf2' },
+    { c: '#7c5cfc', t: '#f1edff' }, { c: '#ff5c8a', t: '#ffedf3' },
+    { c: '#2f80ed', t: '#eaf3ff' }, { c: '#f2a900', t: '#fff8e3' },
+    { c: '#00a8a8', t: '#e6fbfb' }, { c: '#8e6b3d', t: '#f7efe4' }
+  ];
+  var CAT_EMOJIS = ['🌅', '🎒', '📚', '🌙', '⭐️', '🧸', '🍎', '🛁', '🧹', '🎹', '⚽️', '🎨', '🌱', '🐶', '🦷', '💤', '🚿', '🍽️', '📖', '🎵'];
+
+  /* 보기 방식: 이 기기에서만 기억해요 (가로 = 옆으로 넘기기, 세로 = 여러 줄) */
+  function routineView() {
+    var v = lsGet(ROUTINE_VIEW_KEY);
+    if (v === 'row' || v === 'grid') return v;
+    return window.innerWidth < 1024 ? 'row' : 'grid';
+  }
+
+  function applyRoutineView() {
+    var v = routineView();
+    var grid = document.getElementById('routineGrid');
+    if (grid && grid.getAttribute('data-view') !== v) grid.setAttribute('data-view', v);
+    var sec = document.getElementById('secRoutine');
+    if (sec) sec.setAttribute('data-routine-view', v);
+    var btn = document.getElementById('routineViewBtn');
+    if (btn) {
+      btn.textContent = v === 'row' ? '↕️ 세로 보기' : '↔️ 가로 보기';
+      btn.setAttribute('aria-label', v === 'row' ? '루틴 세로로 보기' : '루틴 가로로 보기');
+    }
+    var addBtn = document.getElementById('routineAddBtn');
+    if (addBtn) addBtn.hidden = !(ui.editing && can('edit'));
+    var empty = document.getElementById('routineEmpty');
+    if (empty) empty.hidden = state.categories.length > 0;
+  }
+
+  function toggleRoutineView() {
+    var next = routineView() === 'row' ? 'grid' : 'row';
+    lsSet(ROUTINE_VIEW_KEY, next);
+    applyRoutineView();
+  }
+
+  function renderRoutineJump() {
+    var box = document.getElementById('routineJump');
+    if (!box) return;
+    var h = '';
+    for (var i = 0; i < state.categories.length; i++) {
+      var cat = state.categories[i];
+      var nm = cat.title || '루틴';
+      h += '<button type="button" class="rt-pill" data-act="routine-jump" data-cat="' + esc(cat.id) +
+        '" style="--c:' + esc(cat.color) + '" aria-label="' + esc(nm) + '로 이동">' +
+        '<span class="pp" aria-hidden="true"></span><span>' + esc(cat.emoji) + ' ' + esc(nm) + '</span></button>';
+    }
+    box.innerHTML = h;
+  }
+
+  function jumpToCategory(id) {
+    var card = document.querySelector('.routine-card[data-cat="' + id + '"]');
+    if (!card) return;
+    if (card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+  }
+
+  function emojiOptions(cur) {
+    var list = CAT_EMOJIS.slice(0);
+    if (cur && list.indexOf(cur) < 0) list.unshift(cur);
+    var h = '';
+    for (var i = 0; i < list.length; i++) {
+      h += '<option value="' + esc(list[i]) + '"' + (list[i] === cur ? ' selected' : '') + '>' + list[i] + '</option>';
+    }
+    return h;
+  }
+
+  function colorSwatchesHtml(cat) {
+    var h = '';
+    var cur = String(cat.color || '').toLowerCase();
+    for (var i = 0; i < CAT_COLORS.length; i++) {
+      var p = CAT_COLORS[i];
+      var on = cur === p.c.toLowerCase();
+      h += '<button type="button" class="rce-sw' + (on ? ' on' : '') + '" data-act="cat-color" data-cat="' + esc(cat.id) +
+        '" data-c="' + esc(p.c) + '" data-t="' + esc(p.t) + '" style="--sc:' + esc(p.c) + '"' +
+        ' aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="색 테마 ' + (i + 1) + '"></button>';
+    }
+    return h;
+  }
+
+  function catEditBarHtml(cat, idx, last) {
+    return '<div class="rc-editbar">' +
+      '<div class="rce-row">' +
+        '<button type="button" class="so-btn cat-move" data-act="cat-left" data-cat="' + esc(cat.id) + '"' +
+          (idx === 0 ? ' disabled' : '') + ' aria-label="앞으로 이동">◀</button>' +
+        '<button type="button" class="so-btn cat-move" data-act="cat-right" data-cat="' + esc(cat.id) + '"' +
+          (idx === last ? ' disabled' : '') + ' aria-label="뒤로 이동">▶</button>' +
+        '<select class="inp inp-sm rce-emoji" data-field="catEmoji" data-cat="' + esc(cat.id) + '" aria-label="아이콘">' +
+          emojiOptions(cat.emoji) + '</select>' +
+        '<button type="button" class="del-btn rce-del" data-act="cat-del" data-cat="' + esc(cat.id) + '" aria-label="' +
+          esc(cat.title || '루틴 그룹') + ' 삭제">✕</button>' +
+      '</div>' +
+      '<div class="rce-colors" role="group" aria-label="색 테마">' + colorSwatchesHtml(cat) + '</div>' +
+      '<input class="inp inp-sm rce-sub" data-field="catSub" data-cat="' + esc(cat.id) + '" value="' + esc(cat.sub || '') +
+        '" placeholder="설명 (예: 아침, 잠자기 전)" maxlength="12" aria-label="그룹 설명">' +
+      '</div>';
+  }
+
+  function moveCategory(id, dir) {
+    if (!can('edit')) return;
+    var cats = state.categories;
+    var idx = -1;
+    for (var i = 0; i < cats.length; i++) if (cats[i].id === id) { idx = i; break; }
+    if (idx < 0) return;
+    var to = idx + dir;
+    if (to < 0 || to >= cats.length) return;
+    var moved = cats.splice(idx, 1)[0];
+    cats.splice(to, 0, moved);
+    saveState();
+    renderRoutine();
+    var keep = document.querySelector('.routine-card[data-cat="' + id + '"] [data-act="cat-' + (dir < 0 ? 'left' : 'right') + '"]');
+    if (keep && !keep.disabled) keep.focus();
+    else {
+      var other = document.querySelector('.routine-card[data-cat="' + id + '"] [data-act="cat-' + (dir < 0 ? 'right' : 'left') + '"]');
+      if (other) other.focus();
+    }
+  }
+
+  function addCategory() {
+    if (!can('edit')) return;
+    if (state.categories.length >= 16) { window.alert('루틴 그룹은 16개까지 만들 수 있어요.'); return; }
+    var pal = CAT_COLORS[state.categories.length % CAT_COLORS.length];
+    var cat = {
+      id: uid('cat'), title: '새 루틴', sub: '내가 만든 루틴', emoji: '⭐️',
+      color: pal.c, tint: pal.t, items: []
+    };
+    state.categories.push(cat);
+    saveState();
+    renderRoutine();
+    var card = document.querySelector('.routine-card[data-cat="' + cat.id + '"]');
+    if (card && card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    var inp = document.querySelector('input[data-field="catTitle"][data-cat="' + cat.id + '"]');
+    if (inp) { inp.focus(); try { inp.select(); } catch (e) { /* 무시 */ } }
+  }
+
+  function delCategory(id) {
+    if (!can('edit')) return;
+    var cat = findCat(id);
+    if (!cat) return;
+    var nm = cat.title || '루틴 그룹';
+    if (!window.confirm('"' + nm + '" 그룹을 지울까요?\n그룹 안의 할 일도 함께 사라져요.')) return;
+    for (var i = 0; i < state.categories.length; i++) {
+      if (state.categories[i].id === id) { state.categories.splice(i, 1); break; }
+    }
+    saveState();
+    renderRoutine();
+  }
+
+  function setCategoryColor(id, c, t) {
+    if (!can('edit')) return;
+    var cat = findCat(id);
+    if (!cat) return;
+    cat.color = c;
+    cat.tint = t;
+    saveState();
+    renderRoutine();
+  }
+
   function renderRoutine() {
     var grid = document.getElementById('routineGrid');
     if (!grid) return;
+    var prevScroll = grid.scrollLeft || 0;
     var ck = checksFor(currentKey);
     var html = '';
+    var last = state.categories.length - 1;
 
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
@@ -2042,6 +2265,8 @@
       html += '<span class="rc-count' + (complete ? ' done' : '') + '">' +
         (complete ? '완료 🎉' : done + '/' + total) + '</span>';
       html += '</div>';
+
+      if (ui.editing) html += catEditBarHtml(cat, i, last);
 
       html += '<div class="rc-bar"><i style="width:' + pct + '%"></i></div>';
       html += '<ul class="rc-list">';
@@ -2082,6 +2307,9 @@
     }
 
     grid.innerHTML = html;
+    applyRoutineView();
+    renderRoutineJump();
+    if (prevScroll && grid.scrollLeft !== prevScroll) grid.scrollLeft = prevScroll;
     updateOverall(true);
   }
 
@@ -3913,7 +4141,7 @@
       stats: state.stats
     });
     state.settings = probe.settings;
-    if (Object.prototype.toString.call(d.categories) === '[object Array]' && d.categories.length) state.categories = probe.categories;
+    if (Object.prototype.toString.call(d.categories) === '[object Array]') state.categories = probe.categories;
     state.schedule = probe.schedule;
     state.sticker.slots = Math.max(probe.sticker.slots, state.sticker.stickers.length);
     state.sticker.goal = probe.sticker.goal;
@@ -4954,7 +5182,8 @@
     if (act === 'toggle-check' && !can('check')) return;
     if ((act === 'sticker-add' || act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-new-direct' || act === 'sticker-clear') && !can('sticker')) return;
     if ((act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-clear') && !can('stickerManage')) return;
-    if ((act === 'edit-toggle' || act === 'add-item' || act === 'del-item' || act === 'add-event' || act === 'del-event') && !can('edit')) return;
+    if ((act === 'edit-toggle' || act === 'add-item' || act === 'del-item' || act === 'add-event' || act === 'del-event' ||
+         act === 'cat-add' || act === 'cat-del' || act === 'cat-left' || act === 'cat-right' || act === 'cat-color') && !can('edit')) return;
     if ((act === 'reset-today' || act === 'reset-all') && !can('reset')) return;
 
     if (act === 'toggle-check') { onToggleCheck(el); return; }
@@ -5006,6 +5235,16 @@
     if (act === 'win-close') { closeWin(); return; }
     if (act === 'sec-up') { moveSection(el.getAttribute('data-sec'), -1); return; }
     if (act === 'sec-down') { moveSection(el.getAttribute('data-sec'), 1); return; }
+    if (act === 'routine-view-toggle') { toggleRoutineView(); return; }
+    if (act === 'routine-jump') { jumpToCategory(el.getAttribute('data-cat')); return; }
+    if (act === 'cat-add') { addCategory(); return; }
+    if (act === 'cat-del') { delCategory(el.getAttribute('data-cat')); return; }
+    if (act === 'cat-left') { moveCategory(el.getAttribute('data-cat'), -1); return; }
+    if (act === 'cat-right') { moveCategory(el.getAttribute('data-cat'), 1); return; }
+    if (act === 'cat-color') {
+      setCategoryColor(el.getAttribute('data-cat'), el.getAttribute('data-c'), el.getAttribute('data-t'));
+      return;
+    }
     if (act === 'wb-add') {
       if (!can('edit')) return;
       state.workbooks.push({ id: uid('wb'), name: '새 문제지' });
@@ -5194,7 +5433,16 @@
     if (field === 'catTitle') {
       var c = findCat(el.getAttribute('data-cat'));
       if (c) {
-        c.title = el.value;
+        c.title = el.value.slice(0, 16);
+        saveState();
+        renderRoutineJump();
+      }
+      return;
+    }
+    if (field === 'catSub') {
+      var cs = findCat(el.getAttribute('data-cat'));
+      if (cs) {
+        cs.sub = el.value.slice(0, 12);
         saveState();
       }
       return;
@@ -5251,6 +5499,15 @@
       return;
     }
 
+    if (field === 'catEmoji') {
+      var ce = findCat(el.getAttribute('data-cat'));
+      if (ce) {
+        ce.emoji = String(el.value || '✅');
+        saveState();
+        renderRoutine();
+      }
+      return;
+    }
     if (field === 'stickerSlots') {
       var n = parseInt(el.value, 10);
       if (isNaN(n) || n < 3) n = 10;
@@ -5293,6 +5550,12 @@
   renderAll();
   loadWeather();
   initAuth();
+
+  var routineResizeTimer = 0;
+  window.addEventListener('resize', function () {
+    if (routineResizeTimer) window.clearTimeout(routineResizeTimer);
+    routineResizeTimer = window.setTimeout(function () { routineResizeTimer = 0; applyRoutineView(); }, 180);
+  });
 
   window.addEventListener('online', function () {
     if (cloud.me && (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers)) flushSync();
