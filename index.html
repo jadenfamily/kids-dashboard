@@ -8854,20 +8854,16 @@
   }
 
   function loginHtml() {
-    var c = cloud.conn || { owner: '', repo: '' };
     var lastId = lsGet(LAST_ID_KEY);
     if (lastId === null || lastId === '') lastId = connectJustDone ? '' : 'admin';
-    var people = (cloud.users && cloud.users.users) ? cloud.users.users.length : 0;
     return '<form class="lf" id="loginForm" autocomplete="on">' +
-      '<p class="lf-note">📚 연결된 저장소: <b>' + esc(c.owner + '/' + c.repo) + '</b>' +
-        (people ? ' · 계정 ' + people + '개' : '') + '</p>' +
       '<label>아이디<input id="loginId" name="username" autocomplete="username" value="' + esc(lastId) + '" maxlength="24" spellcheck="false"></label>' +
       '<label>비밀번호<input id="loginPw" name="password" type="password" autocomplete="current-password" maxlength="64"></label>' +
       '<label class="lf-check"><input type="checkbox" id="loginRemember"' + (lsGet(LAST_REMEMBER_KEY) === '0' ? '' : ' checked') + '><span>로그인 유지 (30일)</span></label>' +
       '<button class="lf-btn" id="loginBtn" type="submit">로그인</button>' +
       '<p class="lf-msg" id="loginMsg"></p>' +
       '<button class="lf-link" type="button" data-act="relink">기기 연결 다시 하기</button>' +
-      '<p class="lf-foot">기록은 이 기기와 비공개 GitHub 저장소에만 저장돼요. 비밀번호를 잊었다면 관리자에게 물어봐 주세요.</p>' +
+      '<p class="lf-foot">비밀번호를 잊었다면 관리자에게 물어봐 주세요.</p>' +
       '</form>';
   }
 
