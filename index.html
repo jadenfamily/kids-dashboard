@@ -1737,7 +1737,7 @@
 
     var el = document.getElementById('helloTitle');
     if (el) el.textContent = title;
-    document.title = (name || '우리 아이') + '의 오늘';
+    /* 탭 제목은 항상 "jadenfamily" — 링크 미리보기(카카오톡 등)와 통일 */
 
     renderSoundBtn();
     updateClock(new Date());
