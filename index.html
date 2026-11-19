@@ -2007,6 +2007,7 @@
     try { s = JSON.parse(JSON.stringify(raw)); } catch (e) { return d; }
 
     s.version = 1;
+    s.settingsClearedAt = Number(s.settingsClearedAt) || 0;
     if (!s.settings || typeof s.settings !== 'object') s.settings = {};
     s.settings.childName = (typeof s.settings.childName === 'string') ? s.settings.childName : d.settings.childName;
     s.settings.greeting = (typeof s.settings.greeting === 'string') ? s.settings.greeting : d.settings.greeting;
@@ -4133,6 +4134,7 @@
   function defaultProfile() {
     return {
       v: 1,
+      clearedAt: 0,   /* /home/ 초기화 시각 — 이 시각보다 오래된 로컬 기록은 버려요 */
       coins: COIN_START,
       pet: {
         currentEgg: 'normal', stage: 0, exp: 0,
@@ -4176,6 +4178,7 @@
     var p = (raw && typeof raw === 'object') ? clone(raw) : {};
     var out = {
       v: 1,
+      clearedAt: Number(p.clearedAt) || 0,
       coins: (p.coins == null) ? d.coins : Math.max(0, Math.min(999999, parseInt(p.coins, 10) || 0)),
       pet: d.pet,
       bag: {},
@@ -4274,7 +4277,9 @@
       fy = Math.max(0, Math.min(ROOM.N - def.d, fy));
       items.push({ u: (typeof rIt.u === 'string' && rIt.u) ? rIt.u : uid('rm'), id: rIt.id, x: fx, y: fy });
     }
-    room.items = items;
+    /* 방 기록이 아예 없으면(새 계정·초기화) 기본 가구를 놓아 둔 상태로 시작해요.
+       빈 배열이면 아이가 일부러 다 치운 것으로 보고 그대로 둡니다. */
+    if (Object.prototype.toString.call(rr.items) === '[object Array]') room.items = items;
     var rpets = [];
     var rawPets = (Object.prototype.toString.call(rr.pets) === '[object Array]') ? rr.pets : [];
     for (var pi = 0; pi < rawPets.length && rpets.length < 4; pi++) {
@@ -6158,6 +6163,7 @@
   /* ---------------- 프로필 저장 / 클라우드 ---------------- */
   var legacyPet = null;
   var lastProfileSig = '';
+  var cloudClearedAt = 0;   /* 구름(설정/프로필)에서 온 초기화 시각 */
 
   function profileSignature() {
     var p = prof();
@@ -6172,6 +6178,7 @@
       version: 1,
       userId: (cloud.me && cloud.me.id) || '',
       name: (cloud.me && cloud.me.name) || '',
+      clearedAt: Number(p.clearedAt) || 0,
       updatedAt: p.updatedAt || new Date().toISOString(),
       coins: p.coins,
       pet: p.pet,
@@ -6219,34 +6226,75 @@
     var local = readProfileCache(id);
     var res = await ghGet(profilePath(id));
     var remote = (res.ok && res.data && typeof res.data === 'object' && res.data.pet) ? res.data : null;
+    var remoteClear = Math.max(Number(remote && remote.clearedAt) || 0, Number(cloudClearedAt) || 0);
+    var localClear = Number(local && local.clearedAt) || 0;
+    var localUpd = local ? (Date.parse(local.updatedAt || '') || 0) : 0;
+    var remoteUpd = remote ? (Date.parse(remote.updatedAt || '') || 0) : 0;
+
+    /* 구름에서 초기화했으면(clearedAt) 이 기기의 옛 기록은 절대 되살리지 않아요 */
+    var wiped = !!remoteClear && (remoteClear > localClear || (localUpd && localUpd < remoteClear));
+
     var pick = null;
     var needPush = false;
     if (remote) {
-      var rt = Date.parse(remote.updatedAt || '') || 0;
-      var lt = local ? (Date.parse(local.updatedAt || '') || 0) : 0;
-      if (local && lt > rt) { pick = local; needPush = true; }
-      else pick = remote;
-      if (local && remote) {
-        /* 도감은 합집합으로 (다른 기기에서 모은 친구를 잃지 않게) */
-        var a = (pick.pet && pick.pet.collection) || [];
-        var bcol = (local.pet && local.pet.collection) || [];
+      if (wiped) {
+        pick = remote;
+        needPush = true;
+      } else if (local && localUpd > remoteUpd) {
+        pick = local;
+        needPush = true;
+      } else {
+        pick = remote;
+      }
+      if (local && !wiped && pick && pick.pet) {
+        /* 초기화가 아니면 도감은 합집합으로 (다른 기기에서 모은 친구를 잃지 않게) */
+        var other = (pick === remote) ? local : remote;
+        var a = pick.pet.collection || [];
+        var bcol = (other && other.pet && other.pet.collection) || [];
         for (var i = 0; i < bcol.length; i++) {
           var bid = bcol[i] && bcol[i].id;
+          if (!bid) continue;
           var has = false;
           for (var j = 0; j < a.length; j++) if (a[j] && a[j].id === bid) has = true;
-          if (bid && !has) a.push(bcol[i]);
+          if (!has) a.push(bcol[i]);
         }
-        if (pick.pet) pick.pet.collection = a;
+        pick.pet.collection = a;
       }
-    } else if (local) {
+    } else if (local && !wiped) {
       pick = local;
+      needPush = true;
+    } else if (local && wiped) {
+      pick = null;      /* 구름이 초기화됨 · 이 기기 캐시는 버림 */
       needPush = true;
     } else {
       needPush = true;
     }
+
     state.profile = normalizeProfile(pick || defaultProfile(), id);
-    if (!pick) applyLegacyPet(legacyPet || legacyPetSeed);
-    if (!pick) state.profile.updatedAt = new Date().toISOString();
+    if (!pick) {
+      if (wiped) {
+        var fresh = defaultProfile();
+        fresh.coins = 0;
+        fresh.pet.hatchAt = Date.now() + HATCH_MS;
+        fresh.clearedAt = remoteClear;
+        state.profile = normalizeProfile(fresh, id);
+      } else {
+        applyLegacyPet(legacyPet || legacyPetSeed);
+      }
+    }
+    if (wiped) {
+      state.profile.clearedAt = Math.max(Number(state.profile.clearedAt) || 0, remoteClear);
+      if (!remote) {
+        /* 프로필 파일이 없는데 초기화 표시만 있으면 깨끗한 상태로 시작 */
+        state.profile.coins = 0;
+        state.profile.bag = {};
+        state.profile.pet.collection = [];
+        state.profile.pet.stage = 0;
+        state.profile.pet.exp = 0;
+        state.profile.pet.hatchedAt = 0;
+      }
+    }
+    if (!pick && !wiped) state.profile.updatedAt = new Date().toISOString();
     writeProfileCache(id, state.profile);
     cloud.dirty.profile = needPush;
     lastProfileSig = profileSignature();
@@ -6254,6 +6302,26 @@
     renderCoinBadge();
     renderPet();
     if (needPush) scheduleSync('profile');
+  }
+
+  /* 저장 직전에 구름의 초기화 표시를 한 번 더 확인해요 (다른 기기에서 초기화한 경우 대비) */
+  var lastProfileCheck = 0;
+  async function guardProfileReset() {
+    if (!cloud.me) return false;
+    var now = Date.now();
+    if (now - lastProfileCheck < 45000) return false;
+    lastProfileCheck = now;
+    var res = await ghGet(profilePath(cloud.me.id));
+    if (!res.ok || !res.data || typeof res.data !== 'object') return false;
+    var rc = Math.max(Number(res.data.clearedAt) || 0, Number(cloudClearedAt) || 0);
+    var pc = Number(prof().clearedAt) || 0;
+    if (rc > pc) {
+      cloud.dirty.profile = false;
+      await loadProfile();
+      renderAll();
+      return true;
+    }
+    return false;
   }
 
   function onProfileChanged() {
@@ -7789,6 +7857,7 @@
   function settingsPayload() {
     return {
       version: 1,
+      clearedAt: Number(state.settingsClearedAt) || 0,
       updatedAt: new Date().toISOString(),
       settings: state.settings,
       categories: state.categories,
@@ -7874,8 +7943,12 @@
         if (kres.ok) cloud.dirty.stickers = false; else { ok = false; cloud.lastError = kres.error || ''; }
       }
       if (cloud.dirty.profile && cloud.me) {
-        var pres = await ghPut(profilePath(cloud.me.id), profilePayload(), '내 프로필 저장 (' + cloud.me.id + ')');
-        if (pres.ok) cloud.dirty.profile = false; else { ok = false; cloud.lastError = pres.error || ''; }
+        var blocked = false;
+        try { blocked = await guardProfileReset(); } catch (e) { blocked = false; }
+        if (!blocked) {
+          var pres = await ghPut(profilePath(cloud.me.id), profilePayload(), '내 프로필 저장 (' + cloud.me.id + ')');
+          if (pres.ok) cloud.dirty.profile = false; else { ok = false; cloud.lastError = pres.error || ''; }
+        }
       }
       if (cloud.dirty.day) {
         var dres = await ghPut(dayPath(currentKey), dayPayload(currentKey), '기록 ' + currentKey);
@@ -7891,6 +7964,11 @@
   /* ---- 클라우드 데이터 적용 ---- */
   function applySettingsPayload(d) {
     if (!d || typeof d !== 'object') return false;
+    var cAt = Math.max(Number(d.clearedAt) || 0, (d.pet && Number(d.pet.clearedAt)) || 0);
+    if (cAt) {
+      state.settingsClearedAt = Math.max(Number(state.settingsClearedAt) || 0, cAt);
+      cloudClearedAt = Math.max(Number(cloudClearedAt) || 0, cAt);
+    }
     var probe = normalize({
       settings: d.settings,
       categories: d.categories,
