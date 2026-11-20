@@ -287,6 +287,37 @@
   }
   .rce-sw.on{ box-shadow:0 0 0 2.5px var(--sc); }
   .rce-sub{ min-height:34px; font-size:12px; }
+
+  /* 루틴 그룹 요일 지정 */
+  .dp-days{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+  .dp-top{ display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  .dp-pre{
+    flex:0 0 auto; border:1.5px solid #e9dfd2; background:#fff; color:#8a7f70; border-radius:999px;
+    height:27px; padding:0 9px; font-size:11px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .dp-pre.on{ background:#fff3d6; border-color:#ffcf6b; color:#a86b00; }
+  .dp-pre:active{ transform:scale(.96); }
+  .dp-badge{
+    margin-left:auto; flex:0 0 auto; font-size:10.5px; font-weight:900; color:#8a7f70;
+    background:#f4eee5; border-radius:999px; padding:2px 7px; white-space:nowrap;
+  }
+  .dp-pills{ display:flex; gap:3px; }
+  .dp-pill{
+    flex:1 1 0; min-width:0; height:27px; padding:0; border-radius:8px;
+    border:1.5px solid #e9dfd2; background:#fff; color:#a1978a;
+    font-size:11.5px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .dp-pill.on{ background:var(--c,#ffb703); border-color:var(--c,#ffb703); color:#fff; }
+  .dp-pill:active{ transform:scale(.94); }
+  .rc-days{
+    align-self:flex-start; margin-top:2px; font-size:10.5px; font-weight:900;
+    padding:1px 7px; border-radius:999px; background:rgba(255,255,255,.92);
+    color:var(--c); white-space:nowrap;
+  }
+  .rc-off{ font-size:10.5px; font-weight:900; color:#b2a798; background:#f6f1e9; border-radius:999px; padding:1px 7px; }
+  .routine-card.offday{ opacity:.76; }
+  .day-empty{ display:flex; flex-direction:column; align-items:center; gap:9px; }
+  .day-empty .rt-view-btn{ min-height:38px; }
   .routine-card{
     border-radius:22px; background:var(--ct); padding:13px 13px 12px;
     border:2px solid transparent; display:flex; flex-direction:column; gap:9px; min-width:0;
@@ -1565,6 +1596,10 @@
     <div class="rt-jump" id="routineJump" role="group" aria-label="루틴 그룹 바로가기"></div>
     <div class="routine-grid" id="routineGrid" data-view="grid"></div>
     <p class="routine-empty" id="routineEmpty" hidden>아직 루틴 그룹이 없어요. 편집(✏️)에서 그룹을 만들 수 있어요.</p>
+    <div class="routine-empty day-empty" id="routineDayEmpty" hidden>
+      <span>오늘 요일에는 하는 루틴이 없어요 🌤️</span>
+      <button class="rt-view-btn" id="routineDayEmptyEdit" data-act="edit-toggle" hidden>✏️ 편집에서 요일 바꾸기</button>
+    </div>
     <button class="add-item add-group" id="routineAddBtn" data-act="cat-add" hidden>+ 루틴 그룹 추가</button>
   </section>
 
@@ -1993,6 +2028,93 @@
     d = d || new Date();
     return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
   }
+
+  /* ============ 요일 지정 (0=일 … 6=토) ============
+     'YYYY-MM-DD'는 그 기기 시간대의 달력 날짜로 읽어요. UTC로 바꾸면 하루 밀릴 수 있어요. */
+  var WEEK_KO = ['일', '월', '화', '수', '목', '금', '토'];
+  var DAY_ALL = [0, 1, 2, 3, 4, 5, 6];
+  var DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];   /* 화면에는 월요일부터 보여 줘요 */
+
+  function keyDayIndex(key) {
+    var p = String(key || '').split('-');
+    var y = parseInt(p[0], 10), m = parseInt(p[1], 10), d = parseInt(p[2], 10);
+    if (!y || !m || !d) return new Date().getDay();
+    var dt = new Date(y, m - 1, d);
+    if (isNaN(dt.getTime())) return new Date().getDay();
+    return dt.getDay();
+  }
+
+  /* days가 없는 예전 그룹은 매일(7일)로 대한다 */
+  function normDays(days) {
+    if (Object.prototype.toString.call(days) !== '[object Array]') return DAY_ALL.slice(0);
+    var out = [];
+    for (var i = 0; i < DAY_ORDER.length; i++) {
+      for (var j = 0; j < days.length; j++) {
+        if (Number(days[j]) === DAY_ORDER[i]) { out.push(DAY_ORDER[i]); break; }
+      }
+    }
+    return out.length ? out : DAY_ALL.slice(0);
+  }
+  function activeDay(obj, dow) {
+    return normDays(obj && obj.days).indexOf(dow) >= 0;
+  }
+  function daysPresetKey(days) {
+    var j = normDays(days).slice(0).sort(function (a, b) { return a - b; }).join(',');
+    if (j === '0,1,2,3,4,5,6') return 'all';
+    if (j === '1,2,3,4,5') return 'weekday';
+    if (j === '0,6') return 'weekend';
+    return '';
+  }
+  function presetDays(p) {
+    if (p === 'weekday') return [1, 2, 3, 4, 5];
+    if (p === 'weekend') return [0, 6];
+    return DAY_ALL.slice(0);
+  }
+  /* '매일' · '평일' · '주말' · '월~금' · '월·수·금' 처럼 짧게 나타내요 */
+  function daysText(days) {
+    var ds = normDays(days);
+    if (ds.length === 7) return '매일';
+    if (daysPresetKey(ds) === 'weekday') return '평일';
+    if (daysPresetKey(ds) === 'weekend') return '주말';
+    var marks = [];
+    for (var i = 0; i < DAY_ORDER.length; i++) marks.push(ds.indexOf(DAY_ORDER[i]) >= 0 ? 1 : 0);
+    var parts = [];
+    var k = 0;
+    while (k < DAY_ORDER.length) {
+      if (!marks[k]) { k++; continue; }
+      var e = k;
+      while (e + 1 < DAY_ORDER.length && marks[e + 1]) e++;
+      if (e - k + 1 >= 3) parts.push(WEEK_KO[DAY_ORDER[k]] + '~' + WEEK_KO[DAY_ORDER[e]]);
+      else for (var q = k; q <= e; q++) parts.push(WEEK_KO[DAY_ORDER[q]]);
+      k = e + 1;
+    }
+    return parts.join('·');
+  }
+  /* 요일 7개 버튼 + 매일/평일/주말 빠른 선택 */
+  function daysSelectorHtml(catId, days) {
+    var ds = normDays(days);
+    var pre = daysPresetKey(ds);
+    var base = ' data-cat="' + esc(catId) + '"';
+    var h = '<div class="dp-days" role="group" aria-label="요일 선택">';
+    h += '<div class="dp-top">';
+    var presets = [['all', '매일'], ['weekday', '평일'], ['weekend', '주말']];
+    for (var i = 0; i < presets.length; i++) {
+      h += '<button type="button" class="dp-pre' + (pre === presets[i][0] ? ' on' : '') + '" data-act="cat-day-preset"' +
+        base + ' data-p="' + presets[i][0] + '" aria-pressed="' + (pre === presets[i][0] ? 'true' : 'false') + '">' +
+        presets[i][1] + '</button>';
+    }
+    h += '<span class="dp-badge" aria-hidden="true">' + esc(daysText(ds)) + '</span>';
+    h += '</div><div class="dp-pills">';
+    for (var d = 0; d < DAY_ORDER.length; d++) {
+      var w = DAY_ORDER[d];
+      var on = ds.indexOf(w) >= 0;
+      h += '<button type="button" class="dp-pill' + (on ? ' on' : '') + '" data-act="cat-day"' + base +
+        ' data-d="' + w + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + WEEK_KO[w] + '요일' + (on ? ' (켜짐)' : '') + '">' +
+        WEEK_KO[w] + '</button>';
+    }
+    h += '</div></div>';
+    return h;
+  }
   function fmtDate(d) {
     return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + DAY_NAMES[d.getDay()] + '요일';
   }
@@ -2043,7 +2165,7 @@
       },
       categories: [
         {
-          id: 'morning', title: '등교 준비', sub: '아침', emoji: '🌅',
+          id: 'morning', title: '등교 준비', sub: '아침', emoji: '🌅', days: DAY_ALL.slice(0),
           color: '#ff9f1c', tint: '#fff5e8',
           items: [
             makeItem('morning-1', '세수하고 양치하기'),
@@ -2054,7 +2176,7 @@
           ]
         },
         {
-          id: 'after', title: '하교 후 할 일', sub: '오후', emoji: '🎒',
+          id: 'after', title: '하교 후 할 일', sub: '오후', emoji: '🎒', days: DAY_ALL.slice(0),
           color: '#12b886', tint: '#e8fbf2',
           items: [
             makeItem('after-1', '손 씻고 간식 먹기'),
@@ -2064,7 +2186,7 @@
           ]
         },
         {
-          id: 'study', title: '저녁 공부 체크', sub: '저녁', emoji: '📚',
+          id: 'study', title: '저녁 공부 체크', sub: '저녁', emoji: '📚', days: DAY_ALL.slice(0),
           color: '#7c5cfc', tint: '#f1edff',
           items: [
             makeItem('study-1', '책 읽기 20분'),
@@ -2074,7 +2196,7 @@
           ]
         },
         {
-          id: 'habit', title: '매일 할 일 체크', sub: '습관', emoji: '🌙',
+          id: 'habit', title: '매일 할 일 체크', sub: '습관', emoji: '🌙', days: DAY_ALL.slice(0),
           color: '#ff5c8a', tint: '#ffedf3',
           items: [
             makeItem('habit-1', '이불 정리하기'),
@@ -2160,6 +2282,7 @@
           sub: typeof rawCat.sub === 'string' ? rawCat.sub.slice(0, 12) : '',
           emoji: typeof rawCat.emoji === 'string' && rawCat.emoji ? rawCat.emoji.slice(0, 8) : '✅',
           targetTime: hhmmValid(rawCat.targetTime) ? rawCat.targetTime : '',
+          days: normDays(rawCat.days),
           color: typeof rawCat.color === 'string' && rawCat.color ? rawCat.color : defCat.color,
           tint: typeof rawCat.tint === 'string' && rawCat.tint ? rawCat.tint : defCat.tint,
           items: []
@@ -2474,10 +2597,12 @@
   }
   function counts() {
     var ck = checksFor(currentKey);
+    var dow = keyDayIndex(currentKey);
     var total = 0;
     var done = 0;
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
+      if (!activeDay(cat, dow)) continue;
       for (var j = 0; j < cat.items.length; j++) {
         total++;
         if (ck[cat.items[j].id]) done++;
@@ -2813,9 +2938,11 @@
   function renderRoutineJump() {
     var box = document.getElementById('routineJump');
     if (!box) return;
+    var dow = keyDayIndex(currentKey);
     var h = '';
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
+      if (!ui.editing && !activeDay(cat, dow)) continue;
       var nm = cat.title || '루틴';
       h += '<button type="button" class="rt-pill" data-act="routine-jump" data-cat="' + esc(cat.id) +
         '" style="--c:' + esc(cat.color) + '" aria-label="' + esc(nm) + '로 이동">' +
@@ -2866,6 +2993,7 @@
           esc(cat.title || '루틴 그룹') + ' 삭제">✕</button>' +
       '</div>' +
       '<div class="rce-colors" role="group" aria-label="색 테마">' + colorSwatchesHtml(cat) + '</div>' +
+      daysSelectorHtml(cat.id, cat.days) +
 '<div class="rce-target"><span>완료 목표 시간</span>' +
         '<input class="inp inp-sm" type="time" data-field="catTarget" data-cat="' + esc(cat.id) + '" value="' + esc(cat.targetTime || '') + '" aria-label="완료 목표 시간">' +
         (cat.targetTime ? '<button type="button" class="ghost-btn tiny" data-act="cat-target-clear" data-cat="' + esc(cat.id) + '">지우기</button>' : '') +
@@ -2901,7 +3029,7 @@
     var pal = CAT_COLORS[state.categories.length % CAT_COLORS.length];
     var cat = {
       id: uid('cat'), title: '새 루틴', sub: '내가 만든 루틴', emoji: '⭐️',
-      color: pal.c, tint: pal.t, items: []
+      color: pal.c, tint: pal.t, items: [], days: DAY_ALL.slice(0)
     };
     state.categories.push(cat);
     saveState();
@@ -2935,16 +3063,45 @@
     renderRoutine();
   }
 
+  /* 루틴 그룹의 요일 바꾸기 (day: 0~6, preset: all|weekday|weekend) */
+  function setCatDays(catId, day, preset) {
+    if (!can('edit')) return;
+    var cat = findCat(catId);
+    if (!cat) return;
+    if (preset) {
+      cat.days = normDays(presetDays(preset));
+    } else {
+      if (!isFinite(day)) return;
+      var ds = normDays(cat.days);
+      var at = ds.indexOf(day);
+      if (at >= 0) {
+        if (ds.length <= 1) { showToast('요일은 하루 이상 골라 주세요.'); return; }
+        ds.splice(at, 1);
+      } else {
+        ds.push(day);
+      }
+      cat.days = normDays(ds);
+    }
+    saveState();
+    renderRoutine();
+  }
+
   function renderRoutine() {
     var grid = document.getElementById('routineGrid');
     if (!grid) return;
     var prevScroll = grid.scrollLeft || 0;
     var ck = checksFor(currentKey);
+    var dow = keyDayIndex(currentKey);
     var html = '';
     var last = state.categories.length - 1;
+    var shownCats = 0;
 
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
+      var catOn = activeDay(cat, dow);
+      /* 보기 화면에서는 오늘 요일의 그룹만, 편집 화면에서는 전부 보여 줘요 */
+      if (!catOn && !ui.editing) continue;
+      shownCats++;
       var done = 0;
       var k;
       for (k = 0; k < cat.items.length; k++) if (ck[cat.items[k].id]) done++;
@@ -2953,6 +3110,7 @@
       var complete = total > 0 && done === total;
 
       html += '<article class="routine-card' + (complete ? ' complete' : '') + (ui.editing ? ' editing' : '') +
+        (ui.editing && !catOn ? ' offday' : '') +
         '" data-cat="' + esc(cat.id) + '" style="--c:' + esc(cat.color) + ';--ct:' + esc(cat.tint) + '">';
 
       html += '<div class="rc-head">';
@@ -2965,6 +3123,8 @@
         html += '<h3>' + esc(cat.title) + '</h3>';
       }
       html += '<span class="rc-sub">' + esc(cat.sub || '') + '</span>';
+      if (daysText(cat.days) !== '매일') html += '<span class="rc-days">📅 ' + esc(daysText(cat.days)) + '</span>';
+      if (ui.editing && !catOn) html += '<span class="rc-off">오늘은 쉬는 날</span>';
       if (hhmmValid(cat.targetTime)) html += '<span class="rc-target">⏰ ' + hhmmLabel(cat.targetTime) + '</span>';
       html += '</div>';
       html += '<span class="rc-count' + (complete ? ' done' : '') + '">' +
@@ -3016,6 +3176,13 @@
     grid.innerHTML = html;
     applyRoutineView();
     renderRoutineJump();
+    /* 오늘 요일에 하는 그룹이 하나도 없을 때 */
+    var dayEmpty = document.getElementById('routineDayEmpty');
+    if (dayEmpty) {
+      dayEmpty.hidden = ui.editing || state.categories.length === 0 || shownCats > 0;
+      var editBtn = document.getElementById('routineDayEmptyEdit');
+      if (editBtn) editBtn.hidden = !can('edit');
+    }
     if (prevScroll && grid.scrollLeft !== prevScroll) grid.scrollLeft = prevScroll;
     updateOverall(true);
     renderRoutineTargets();
@@ -7034,6 +7201,7 @@
     if (!box) return;
     var ck = checksFor(currentKey);
     var now = nowMinuteFloat();
+    var dow = keyDayIndex(currentKey);
     var p = petState();
     var sp = speciesById(p.currentEgg);
     var petStage = p.stage;
@@ -7042,6 +7210,7 @@
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
       if (!hhmmValid(cat.targetTime)) continue;
+      if (!activeDay(cat, dow)) continue;
       var target = hhmmMinutes(cat.targetTime);
       var total = cat.items.length;
       var done = 0;
@@ -7093,10 +7262,12 @@
   function tickTargets() {
     var nowMs = Date.now();
     var now = nowMinuteFloat();
+    var dow = keyDayIndex(currentKey);
     var inWindow = false;
     for (var i = 0; i < state.categories.length; i++) {
       var c = state.categories[i];
       if (!hhmmValid(c.targetTime)) continue;
+      if (!activeDay(c, dow)) continue;
       var l = hhmmMinutes(c.targetTime) - now;
       if (l > 0 && l <= TARGET_WINDOW_MIN) inWindow = true;
     }
@@ -7235,8 +7406,10 @@
     var cats = [];
     var done = 0;
     var total = 0;
+    var dow = keyDayIndex(key);
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
+      if (!activeDay(cat, dow)) continue;
       var items = [];
       var cd = 0;
       for (var j = 0; j < cat.items.length; j++) {
@@ -9631,7 +9804,8 @@
     if ((act === 'sticker-add' || act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-new-direct' || act === 'sticker-clear') && !can('sticker')) return;
     if ((act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-clear') && !can('stickerManage')) return;
     if ((act === 'edit-toggle' || act === 'add-item' || act === 'del-item' || act === 'add-event' || act === 'del-event' ||
-         act === 'cat-add' || act === 'cat-del' || act === 'cat-left' || act === 'cat-right' || act === 'cat-color' || act === 'cat-target-clear') && !can('edit')) return;
+         act === 'cat-add' || act === 'cat-del' || act === 'cat-left' || act === 'cat-right' || act === 'cat-color' || act === 'cat-target-clear' ||
+         act === 'cat-day' || act === 'cat-day-preset') && !can('edit')) return;
     if ((act === 'reset-today' || act === 'reset-all') && !can('reset')) return;
     if (act === 'stickers-reset-logs' && !isAdmin()) return;
 
@@ -9702,6 +9876,8 @@
     if (act === 'cat-left') { moveCategory(el.getAttribute('data-cat'), -1); return; }
     if (act === 'cat-right') { moveCategory(el.getAttribute('data-cat'), 1); return; }
     if (act === 'cat-target-clear') { clearCatTarget(el.getAttribute('data-cat')); return; }
+    if (act === 'cat-day') { setCatDays(el.getAttribute('data-cat'), parseInt(el.getAttribute('data-d'), 10), ''); return; }
+    if (act === 'cat-day-preset') { setCatDays(el.getAttribute('data-cat'), 0, el.getAttribute('data-p') || ''); return; }
     if (act === 'cat-color') {
       setCategoryColor(el.getAttribute('data-cat'), el.getAttribute('data-c'), el.getAttribute('data-t'));
       return;
