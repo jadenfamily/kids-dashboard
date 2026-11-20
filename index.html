@@ -309,6 +309,12 @@
   }
   .dp-pill.on{ background:var(--c,#ffb703); border-color:var(--c,#ffb703); color:#fff; }
   .dp-pill:active{ transform:scale(.94); }
+  /* 휴대폰에서는 손가락으로 누르기 좋게 두 줄로 나눠 크게 */
+  @media (max-width:520px){
+    .dp-pills{ flex-wrap:wrap; }
+    .dp-pill{ flex:1 1 22%; min-width:22%; height:32px; font-size:12px; }
+    .dp-pre{ height:30px; padding:0 10px; font-size:11.5px; }
+  }
   .rc-days{
     align-self:flex-start; margin-top:2px; font-size:10.5px; font-weight:900;
     padding:1px 7px; border-radius:999px; background:rgba(255,255,255,.92);
