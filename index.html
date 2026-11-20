@@ -1242,10 +1242,6 @@
   }
   .pet-acts{ display:flex; align-items:center; gap:6px; flex:0 0 auto; margin-left:auto; }
   .pet-acts .pet-go{ margin-left:0; }
-  .pet-tools{
-    flex:1 1 100%; display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap;
-    padding-top:6px; border-top:1px dashed #ffe2ae; margin-top:2px;
-  }
   .tool-pill{
     border:1.5px solid #ffe2ae; background:#fffdf7; color:#8a5a00;
     border-radius:999px; padding:6px 12px; font-size:11.5px; font-weight:900;
@@ -1369,20 +1365,49 @@
 
   /* 마이룸 */
   .room-card{ max-width:880px; }
+  /* 마이룸 헤더: 제목·닫기 한 줄 + 그 아래 아바타·내 펫·상점 바로가기 3개 */
+  .room-head{ display:block; padding:11px 12px 12px; }
+  .room-head-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .room-top-acts{
+    display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:7px;
+    margin:9px auto 0; max-width:560px;
+  }
+  .room-top-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:4px;
+    min-height:42px; padding:0 6px; border-radius:14px;
+    border:2px solid #ffe2ae; background:#fff; color:#7a4d00;
+    font-size:13px; font-weight:900; letter-spacing:-.02em; white-space:nowrap;
+    cursor:pointer; touch-action:manipulation;
+    box-shadow:0 3px 9px rgba(200,150,50,.14);
+  }
+  .room-top-btn:active{ transform:scale(.96); }
+  @media (max-width:420px){
+    .room-top-acts{ gap:6px; }
+    .room-top-btn{ min-height:40px; font-size:12.5px; }
+  }
   /* 방 그림(stage)은 위에 고정, 그 아래 서랍만 스크롤 — 꾸미는 동안 방이 늘 보여요 */
   .room-stage{ flex:0 0 auto; padding:8px 12px 0; background:#fffdf9; display:flex; flex-direction:column; gap:6px; }
   .room-stage > *{ width:100%; max-width:560px; margin-left:auto; margin-right:auto; }
   .room-stage .room-svg{ max-height:46vh; }
   .room-drawer{ overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
-  .room-head-acts{ flex:0 0 auto; display:flex; align-items:center; gap:6px; }
-  .pet-home-btn{ min-height:34px; padding:0 11px; font-size:12px; border-radius:12px; white-space:nowrap; }
+  .room-foot{ display:flex; justify-content:center; margin-top:2px; }
+  .room-foot .ghost-btn{ min-width:140px; }
+  .room-hint-list{
+    margin:0; padding:0; list-style:none;
+    display:flex; flex-direction:column; gap:3px;
+    font-size:12.5px; font-weight:700; color:#8a93a8; line-height:1.7;
+  }
+  .room-hint-list li{ position:relative; padding-left:14px; }
+  .room-hint-list li::before{
+    content:''; position:absolute; left:3px; top:.6em;
+    width:5px; height:5px; border-radius:50%; background:#ffb347;
+  }
   .petbar.in-room{ border-radius:20px; }
-  .petbar.in-room .pet-tools{ flex:0 0 auto; border-top:none; padding-top:0; margin-top:0; }
   /* 마이룸 안 펫바 — 방 그림을 가리지 않게 일반 흐름 + 한 줄짜리 압축 배치 */
   .petbar.in-room{
     position:static; top:auto; bottom:auto; z-index:auto;
     display:grid; grid-template-columns:46px minmax(0,1fr) auto;
-    grid-template-areas:"art meta acts" "sub sub sub" "grow grow grow" "tools tools tools";
+    grid-template-areas:"art meta acts" "sub sub sub" "grow grow grow";
     align-items:center; gap:4px 8px; padding:7px 10px; border-radius:18px;
     box-shadow:0 4px 12px rgba(255,190,90,.12);
   }
@@ -1401,11 +1426,6 @@
   .petbar.in-room .pet-growline{ margin-top:2px; font-size:10px; }
   .petbar.in-room .pet-next svg, .petbar.in-room .pet-next img{ width:17px; height:17px; }
   .petbar.in-room .pet-next .pn-q{ width:18px; height:18px; font-size:10px; border-radius:6px; }
-  .petbar.in-room .pet-tools{ grid-area:tools; flex:1 1 100%; gap:5px; justify-content:flex-end; padding-top:4px; border-top:1px dashed #ffe2ae; }
-  .petbar.in-room .pet-tools .tool-pill{ min-height:27px; padding:0 8px; font-size:10.5px; border-radius:9px; }
-  @media (max-width:760px){
-    .petbar.in-room .pet-tools{ flex:1 1 100%; padding-top:4px; border-top:1px dashed #ffe2ae; }
-  }
   @media (max-width:560px){
     .room-petdock{ padding:8px 8px 0; }
     .petbar.in-room .pet-sub{ font-size:10px; }
@@ -1552,7 +1572,6 @@
     .admin-row{ flex-wrap:wrap; }
     .ar-name{ flex:1 1 100%; }
     .pet-acts{ width:100%; justify-content:flex-end; }
-    .pet-tools{ order:4; }
   }
 
   /* 루틴 그룹 완료 목표 시간 — 목표 1시간 전부터 알이 왼쪽→오른쪽으로 */
@@ -1855,7 +1874,6 @@
           <span class="rt-rocket" id="overallRocket">🚀</span>
         </div>
         <button class="rt-view-btn" id="routineViewBtn" data-act="routine-view-toggle" aria-label="루틴 가로로 보기">↔️ 가로 보기</button>
-        <button class="ghost-btn" id="resetTodayBtn" data-act="reset-today">오늘 체크 초기화</button>
       </div>
     </div>
     <div class="rt-targets" id="routineTargets" hidden></div>
@@ -2043,11 +2061,15 @@
 
 <div class="hist room-modal" id="roomModal" hidden role="dialog" aria-modal="true" aria-labelledby="roomTitle">
   <div class="hist-card room-card">
-    <div class="hist-head">
-      <h2 id="roomTitle">🏡 마이룸</h2>
-      <div class="room-head-acts">
-        <button type="button" class="ghost-btn tiny pet-home-btn" data-act="pethome-open">🥚 내 펫</button>
+    <div class="hist-head room-head">
+      <div class="room-head-top">
+        <h2 id="roomTitle">🏡 마이룸</h2>
         <button class="hist-close" data-act="room-close" aria-label="마이룸 닫기">✕</button>
+      </div>
+      <div class="room-top-acts" role="group" aria-label="마이룸 바로가기">
+        <button type="button" class="room-top-btn" data-act="avatar-open">👕 아바타</button>
+        <button type="button" class="room-top-btn" data-act="pethome-open">🥚 내 펫</button>
+        <button type="button" class="room-top-btn" data-act="shop-open">🛒 상점</button>
       </div>
     </div>
     <div class="room-stage" id="roomStage"></div>
@@ -3677,14 +3699,31 @@
     renderRoutine();
   }
 
-  function resetToday() {
-    if (!window.confirm('오늘 체크한 내용을 모두 지울까요?\n오늘 받은 코인도 함께 돌아가요.')) return;
-    revokeTodayCheckCoins();
-    state.checks[currentKey] = {};
-    state.routineCelebrated = '';
-    saveState();
-    renderRoutine();
-    snd('uncheck');
+  /* ============ 날짜 넘김 처리 ============ */
+  /* 체크는 날짜별(state.checks[currentKey])로 남기 때문에 날짜가 바뀌면
+     오늘 화면은 0/N에서 새로 시작합니다. 태블릿을 켜 둔 채 밤을 넘기거나
+     잠금이 풀린 뒤 돌아와도 바로 새 날짜로 맞춥니다. */
+  function checkDayRollover() {
+    var k = dateKey(new Date());
+    if (k === currentKey) return false;
+    try { snapshotDay(currentKey); } catch (e) { /* 무시 */ }
+    currentKey = k;
+    freshIdx = -1;
+    try {
+      renderHeader();
+      renderSectionTitles();
+      renderRoutine();
+      renderRoutineTargets();
+      renderStickers();
+      renderPet();
+      renderTodayAcademy();
+      renderWeek();
+      updateOverall(true);
+      renderCoinBadge();
+      if (!document.getElementById('roomModal').hidden) renderRoom();
+    } catch (e) { /* 무시 */ }
+    try { saveState(); } catch (e) { /* 무시 */ }
+    return true;
   }
 
   /* ============ 스티커 ============ */
@@ -5410,15 +5449,6 @@
     a.stickers -= 1;
     coinAdd(-COIN_STICKER);
   }
-  function revokeTodayCheckCoins() {
-    var a = prof().award;
-    var back = 0, k;
-    for (k in a.checks) if (own(a.checks, k)) back += COIN_CHECK;
-    for (k in a.groups) if (own(a.groups, k)) back += COIN_GROUP;
-    a.checks = {};
-    a.groups = {};
-    if (back) coinAdd(-back);
-  }
 
 
   /* ---------------- 상점 기본 목록 ---------------- */
@@ -6533,10 +6563,6 @@
       '</div>' +
       '<div class="pet-acts">' + acts +
         '<button class="pet-go" data-act="pet-open" aria-haspopup="dialog">🐾 <b>' + p.collection.length + '</b>/' + SPECIES_MAX + '</button>' +
-      '</div>' +
-      '<div class="pet-tools">' +
-        '<button type="button" class="tool-pill" data-act="avatar-open">👕 아바타</button>' +
-        '<button type="button" class="tool-pill" data-act="shop-open">🛒 상점</button>' +
       '</div>';
 
     var modal = document.getElementById('petModal');
@@ -8893,9 +8919,12 @@
     if (roomUi.msg) h += '<p class="shop-msg">' + esc(roomUi.msg) + '</p>';
     h += roomPanelHtml();
     h += roomSelHtml();
-    h += '<p class="lf-note">바닥을 누르면 아바타가 그 자리로 걸어가요. 층마다 컨셉·벽지·가구·벽 장식을 따로 꾸미고, 친구들은 지금 보는 층에서 놀아요.</p>';
-    h += '<div class="care-actions"><button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="room">🛒 가구·벽지·장식 상점</button>' +
-      '<button type="button" class="ghost-btn" data-act="room-close">닫기</button></div>';
+    h += '<ul class="room-hint-list">' +
+      '<li>바닥을 누르면 아바타가 그 자리로 걸어가요.</li>' +
+      '<li>층마다 컨셉·벽지·가구·벽 장식을 따로 꾸밀 수 있어요.</li>' +
+      '<li>부화한 친구들은 지금 보는 층에서 함께 놀아요.</li>' +
+      '</ul>';
+    h += '<div class="room-foot"><button type="button" class="ghost-btn" data-act="room-close">닫기</button></div>';
     return h;
   }
 
@@ -11943,8 +11972,6 @@
     if (accBtn) accBtn.hidden = !can('accounts');
     var statsBtn = document.getElementById('statsBtn');
     if (statsBtn) statsBtn.hidden = !can('edit');
-    var resetBtn = document.getElementById('resetTodayBtn');
-    if (resetBtn) resetBtn.hidden = !can('reset');
     var soundBtn = document.getElementById('soundBtn');
     if (soundBtn) soundBtn.hidden = !can('check');
     if (ui.editing && !can('edit')) ui.editing = false;
@@ -12386,14 +12413,13 @@
     if ((act === 'edit-toggle' || act === 'add-item' || act === 'del-item' || act === 'add-event' || act === 'del-event' ||
          act === 'cat-add' || act === 'cat-del' || act === 'cat-left' || act === 'cat-right' || act === 'cat-color' || act === 'cat-target-clear' ||
          act === 'cat-day' || act === 'cat-day-preset') && !can('edit')) return;
-    if ((act === 'reset-today' || act === 'reset-all') && !can('reset')) return;
+    if (act === 'reset-all' && !can('reset')) return;
     if (act === 'stickers-reset-logs' && !isAdmin()) return;
 
     if (act === 'toggle-check') { onToggleCheck(el); return; }
     if (act === 'wb-item-open') { openWbForItem(el); return; }
     if (act === 'add-item') { onAddItem(el.getAttribute('data-cat')); return; }
     if (act === 'del-item') { onDelItem(el); return; }
-    if (act === 'reset-today') { resetToday(); return; }
     if (act === 'sticker-add') { openReason(); return; }
     if (act === 'sticker-undo') { undoSticker(parseInt(el.getAttribute('data-i'), 10)); return; }
     if (act === 'sticker-new') { newBoard(); return; }
@@ -12901,13 +12927,7 @@
     updateClock(now);
     try { phaseTick(); } catch (e) { /* 무시 */ }
     try { tickTargets(); } catch (e) { /* 무시 */ }
-    var k = dateKey(now);
-    if (k !== currentKey) {
-      currentKey = k;
-      renderRoutine();
-      renderTodayAcademy();
-      renderWeek();
-    }
+    try { checkDayRollover(); } catch (e) { /* 무시 */ }
   }
 
   function storageAvailable() {
@@ -12955,6 +12975,13 @@
     }
   }
   window.setInterval(tick, 1000);
+  /* 자정 넘김·잠금 해제·탭 복귀 대비: 30초마다 날짜 확인 */
+  window.setInterval(function () { try { checkDayRollover(); } catch (e) { /* 무시 */ } }, 30 * 1000);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) { try { checkDayRollover(); } catch (e) { /* 무시 */ } }
+  });
+  window.addEventListener('focus', function () { try { checkDayRollover(); } catch (e) { /* 무시 */ } });
+  window.addEventListener('pageshow', function () { try { checkDayRollover(); } catch (e) { /* 무시 */ } });
   window.setInterval(function () { loadWeather(); }, 30 * 60 * 1000);
 
   window.addEventListener('online', function () {
