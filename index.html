@@ -356,7 +356,7 @@
     border-radius:999px; background:#fff; color:var(--c); white-space:nowrap;
   }
   .rc-count.done{ background:var(--c); color:#fff; }
-  .rc-bar{ height:8px; border-radius:999px; background:rgba(255,255,255,.78); overflow:hidden; }
+  .rc-bar{ height:8px; border-radius:999px; background:rgba(0,0,0,.08); overflow:hidden; margin:10px 0 12px; box-shadow:inset 0 1px 1px rgba(0,0,0,.05); }
   .rc-bar i{ display:block; height:100%; width:0; border-radius:999px; background:var(--c); transition:width .45s ease; }
   .rc-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
 
@@ -635,7 +635,29 @@
   .day-empty{ font-size:12.5px; font-weight:800; color:#c0b4a3; padding:4px 2px; }
   .ev-edit{ display:flex; flex-direction:column; gap:4px; background:#fff; border:1.5px dashed #e2d5c4; border-radius:11px; padding:5px; }
   .ev-edit .del-btn{ width:100%; height:28px; font-size:12px; border-radius:8px; }
+  /* 시간은 시계에서 골라요 — 시작 · 종료 */
+  .ev-times{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .ev-t{ display:flex; align-items:center; gap:4px; min-width:0; }
+  .ev-t > span{ flex:0 0 auto; font-size:10px; font-weight:900; color:#a89c8e; letter-spacing:-.01em; }
+  .ev-t .inp{ flex:1 1 0; min-width:0; width:100%; min-height:32px; padding:2px 4px; font-size:12px; border-radius:8px; }
   .add-item.add-sm{ min-height:36px; font-size:12.5px; border-radius:10px; }
+
+  /* 일과표 알림 버튼 */
+  .week-head{ flex-wrap:wrap; row-gap:7px; }
+  .week-tools{ margin-left:auto; gap:6px; }
+  .notify-btn{
+    display:inline-flex; align-items:center; gap:5px; min-height:34px; padding:0 11px;
+    border-radius:999px; border:2px solid #e6d8c3; background:#fff; color:#8a7f70;
+    font-family:inherit; font-size:12px; font-weight:900; cursor:pointer; white-space:nowrap;
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .notify-btn.on{ background:#fff4d6; border-color:#ffc94d; color:#a15c00; }
+  .notify-btn:active{ transform:scale(.97); }
+  @media (max-width:560px){
+    .ev-t .inp{ min-height:31px; font-size:11.5px; padding:2px 3px; }
+    .notify-btn{ font-size:11px; min-height:32px; padding:0 9px; }
+    .week-head .head-note{ font-size:11px; }
+  }
 
   .footer-note{ text-align:center; font-size:11.5px; font-weight:700; color:#b3a696; margin:2px 0 0; line-height:1.5; }
 
@@ -1332,11 +1354,37 @@
   .room-petdock{ flex:0 0 auto; padding:10px 12px 0; background:#fffdf9; }
   .petbar.in-room{ border-radius:20px; }
   .petbar.in-room .pet-tools{ flex:0 0 auto; border-top:none; padding-top:0; margin-top:0; }
+  /* 마이룸 안 펫바 — 방 그림을 가리지 않게 일반 흐름 + 한 줄짜리 압축 배치 */
+  .petbar.in-room{
+    position:static; top:auto; bottom:auto; z-index:auto;
+    display:grid; grid-template-columns:46px minmax(0,1fr) auto;
+    grid-template-areas:"art meta acts" "sub sub sub" "grow grow grow" "tools tools tools";
+    align-items:center; gap:4px 8px; padding:7px 10px; border-radius:18px;
+    box-shadow:0 4px 12px rgba(255,190,90,.12);
+  }
+  .petbar.in-room .pet-visual{ grid-area:art; width:46px; height:46px; border-radius:15px; }
+  .petbar.in-room .pet-visual .egg-svg{ width:84%; height:84%; }
+  .petbar.in-room .pet-meta{ grid-area:meta; min-width:0; }
+  .petbar.in-room .pet-name{ font-size:13.5px; flex-wrap:wrap; gap:4px; row-gap:2px; white-space:normal; line-height:1.25; }
+  .petbar.in-room .pet-name .pet-stage{ font-size:9.5px; padding:2px 6px; }
+  .petbar.in-room .egg-badge{ font-size:9.5px; padding:2px 6px; }
+  .petbar.in-room .rarity-badge, .petbar.in-room .type-badge{ font-size:9.5px; padding:2px 6px; }
+  .petbar.in-room .pet-sub{ grid-area:sub; font-size:10.5px; margin:0; white-space:normal; line-height:1.3; }
+  .petbar.in-room .pet-acts{ grid-area:acts; width:auto; flex:0 0 auto; margin:0; gap:4px; justify-content:flex-end; flex-wrap:nowrap; }
+  .petbar.in-room .pet-go{ min-height:31px; padding:0 8px; font-size:11px; gap:3px; border-radius:11px; white-space:nowrap; }
+  .petbar.in-room .pet-grow{ grid-area:grow; min-width:0; margin-top:1px; }
+  .petbar.in-room .pet-gauge{ height:10px; }
+  .petbar.in-room .pet-growline{ margin-top:2px; font-size:10px; }
+  .petbar.in-room .pet-next svg, .petbar.in-room .pet-next img{ width:17px; height:17px; }
+  .petbar.in-room .pet-next .pn-q{ width:18px; height:18px; font-size:10px; border-radius:6px; }
+  .petbar.in-room .pet-tools{ grid-area:tools; flex:1 1 100%; gap:5px; justify-content:flex-end; padding-top:4px; border-top:1px dashed #ffe2ae; }
+  .petbar.in-room .pet-tools .tool-pill{ min-height:27px; padding:0 8px; font-size:10.5px; border-radius:9px; }
   @media (max-width:760px){
-    .petbar.in-room .pet-tools{ flex:1 1 100%; padding-top:6px; border-top:1px dashed #ffe2ae; }
+    .petbar.in-room .pet-tools{ flex:1 1 100%; padding-top:4px; border-top:1px dashed #ffe2ae; }
   }
   @media (max-width:560px){
     .room-petdock{ padding:8px 8px 0; }
+    .petbar.in-room .pet-sub{ font-size:10px; }
   }
   .room-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
   .room-title{ font-size:12px; font-weight:900; color:#a2937f; }
@@ -1746,9 +1794,13 @@
     </section>
 
   <section class="card week sec sec-week" id="secWeek" data-sec="week">
-    <div class="card-head">
+    <div class="card-head week-head">
       <h2 id="secTitleWeek">학원 시간표</h2>
       <span class="head-note">오늘 칸이 노란색이에요</span>
+      <div class="head-tools week-tools">
+        <button type="button" class="notify-btn" id="notifyBtn" data-act="notify-toggle" aria-pressed="false">🔔 일과표 10분 전 알림</button>
+        <button type="button" class="ghost-btn tiny" id="notifyTestBtn" data-act="notify-test" hidden>테스트 알림</button>
+      </div>
     </div>
     <div class="week-grid" id="weekGrid"></div>
   </section>
@@ -3043,7 +3095,11 @@
     { c: '#2f80ed', t: '#eaf3ff' }, { c: '#f2a900', t: '#fff8e3' },
     { c: '#00a8a8', t: '#e6fbfb' }, { c: '#8e6b3d', t: '#f7efe4' }
   ];
-  var CAT_EMOJIS = ['🌅', '🎒', '📚', '🌙', '⭐️', '🧸', '🍎', '🛁', '🧹', '🎹', '⚽️', '🎨', '🌱', '🐶', '🦷', '💤', '🚿', '🍽️', '📖', '🎵'];
+  var CAT_EMOJIS = [
+    '🌅', '🌙', '⭐', '🌟', '🎒', '📚', '📖', '📝', '✏️', '🔤', '🇺🇸', '🧮', '🤖', '🔬',
+    '🏫', '🚌', '🧸', '🎹', '🎨', '🎻', '🎵', '⚽', '🏀', '🏊', '🥋', '🤸', '🚴', '🧘',
+    '🍎', '🍽️', '🥛', '🛁', '🚿', '🦷', '💤', '🛌', '🧹', '🧺', '🐶', '🌱', '🩺', '🏠'
+  ];
 
   /* 보기 방식: 이 기기에서만 기억해요 (가로 = 옆으로 넘기기, 세로 = 여러 줄) */
   function routineView() {
@@ -3264,7 +3320,6 @@
       }
       html += '<span class="rc-sub">' + esc(cat.sub || '') + '</span>';
       if (daysText(cat.days) !== '매일') html += '<span class="rc-days">📅 ' + esc(daysText(cat.days)) + '</span>';
-      if (ui.editing && !catOn) html += '<span class="rc-off">오늘은 쉬는 날</span>';
       if (hhmmValid(cat.targetTime)) html += '<span class="rc-target">⏰ ' + hhmmLabel(cat.targetTime) + '</span>';
       html += '</div>';
       html += '<span class="rc-count' + (complete ? ' done' : '') + '">' +
@@ -4289,6 +4344,37 @@
     box.innerHTML = h;
   }
 
+  /* "16:30–17:30" · "16:30-17:30" · "16:30 ~ 17:30" · "14:20" 을 시작·종료로 나눠요 */
+  function evTimeParts(t) {
+    var m = String(t || '').match(/(\d{1,2})\s*[:.]\s*(\d{1,2})\s*(?:[–\-~〜→～]+\s*(\d{1,2})\s*[:.]\s*(\d{1,2}))?/);
+    if (!m) return { start: '', end: '' };
+    var out = { start: pad2(parseInt(m[1], 10)) + ':' + pad2(parseInt(m[2], 10)), end: '' };
+    if (m[3] != null && m[4] != null) out.end = pad2(parseInt(m[3], 10)) + ':' + pad2(parseInt(m[4], 10));
+    return out;
+  }
+
+  function evTimeJoin(start, end) {
+    if (start && end) return start + '–' + end;
+    return start || end || '';
+  }
+
+  /* 시간 고르개로 바꾸면 그 자리에서 저장해요 (입력칸을 다시 만들지 않아 iOS 시간 횔이 닫히지 않아요) */
+  function setEventTime(el) {
+    var day = el.getAttribute('data-day');
+    var evId = el.getAttribute('data-id');
+    var box = el.closest ? el.closest('.ev-edit') : null;
+    var sInp = box ? box.querySelector('[data-field="evTimeStart"]') : null;
+    var eInp = box ? box.querySelector('[data-field="evTimeEnd"]') : null;
+    var start = sInp ? String(sInp.value || '') : '';
+    var end = eInp ? String(eInp.value || '') : '';
+    var arr = state.schedule[day] || [];
+    for (var j = 0; j < arr.length; j++) {
+      if (arr[j].id === evId) { arr[j].time = evTimeJoin(start, end); break; }
+    }
+    saveState();
+    renderTodayAcademy();
+  }
+
   function renderWeek() {
     var grid = document.getElementById('weekGrid');
     if (!grid) return;
@@ -4307,11 +4393,16 @@
       if (ui.editing) {
         for (var i = 0; i < evs.length; i++) {
           var e = evs[i];
+          var tp = evTimeParts(e.time);
           html += '<div class="ev-edit">' +
             '<input class="inp inp-sm" data-field="evName" data-day="' + key + '" data-id="' + esc(e.id) +
               '" value="' + esc(e.name) + '" placeholder="학원 이름">' +
-            '<input class="inp inp-sm" data-field="evTime" data-day="' + key + '" data-id="' + esc(e.id) +
-              '" value="' + esc(e.time) + '" placeholder="16:30–17:30">' +
+            '<div class="ev-times">' +
+              '<label class="ev-t"><span>시작</span><input class="inp inp-sm" type="time" data-field="evTimeStart" data-day="' + key +
+                '" data-id="' + esc(e.id) + '" value="' + esc(tp.start) + '" aria-label="시작 시간"></label>' +
+              '<label class="ev-t"><span>종료</span><input class="inp inp-sm" type="time" data-field="evTimeEnd" data-day="' + key +
+                '" data-id="' + esc(e.id) + '" value="' + esc(tp.end) + '" aria-label="종료 시간"></label>' +
+            '</div>' +
             '<button class="del-btn" data-act="del-event" data-day="' + key + '" data-id="' + esc(e.id) +
               '" aria-label="삭제">✕</button>' +
             '</div>';
@@ -4355,6 +4446,130 @@
     saveState();
     renderWeek();
     renderTodayAcademy();
+  }
+
+  /* ============ 일과표 알림 (이 기기에서만) ============ */
+  var NOTIFY_KEY = 'kidsDashboard.notifySchedule.v1';
+  var NOTIFY_FIRED_KEY = 'kidsDashboard.notifyFired.v1';
+  var NOTIFY_LEAD = 10;           /* 시작·종료 10분 전에 알려요 */
+  var NOTIFY_CHECK_MS = 20000;    /* 20초마다 확인 */
+  var NOTIFY_GRACE = 5;           /* 알림 시각을 지난 5분 안에만 확인 (늦은 밤에 몰아치지 않게) */
+  var notifyTimer = 0;
+
+  function notifySupported() { return !!window.Notification; }
+  function notifyPermission() {
+    try { return (window.Notification && window.Notification.permission) ? window.Notification.permission : 'default'; }
+    catch (e) { return 'denied'; }
+  }
+  function notifyOn() { return lsGet(NOTIFY_KEY) === '1' && notifySupported() && notifyPermission() === 'granted'; }
+
+  function renderNotifyBtns() {
+    var btn = document.getElementById('notifyBtn');
+    var test = document.getElementById('notifyTestBtn');
+    var on = notifyOn();
+    if (btn) {
+      btn.classList.toggle('on', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.textContent = on ? '🔔 10분 전 알림 켜짐' : '🔔 일과표 10분 전 알림';
+    }
+    if (test) test.hidden = !on;
+  }
+
+  function setNotifyOn(on) {
+    lsSet(NOTIFY_KEY, on ? '1' : '0');
+    renderNotifyBtns();
+  }
+
+  function toggleScheduleNotify() {
+    if (notifyOn()) { setNotifyOn(false); showToast('🔕 일과표 알림을 껐어요.'); return; }
+    if (!notifySupported()) { showToast('이 브라우저에서는 알림을 쓸 수 없어요.'); return; }
+    if (notifyPermission() === 'denied') { showToast('브라우저 설정에서 이 사이트 알림을 허용해 주세요.'); return; }
+    if (notifyPermission() === 'granted') {
+      setNotifyOn(true);
+      showToast('🔔 일과표 10분 전 알림을 켰어요!');
+      return;
+    }
+    var done = false;
+    var finish = function (res) {
+      if (done) return;
+      done = true;
+      if (res === 'granted') { setNotifyOn(true); showToast('🔔 일과표 10분 전 알림을 켰어요!'); }
+      else showToast('알림을 허용하지 않아 켤 수 없어요.');
+      renderNotifyBtns();
+    };
+    try {
+      var req = window.Notification.requestPermission(finish);
+      if (req && req.then) req.then(finish);
+    } catch (e) { finish('denied'); }
+  }
+
+  function showNotify(title, body) {
+    try {
+      if (notifySupported() && notifyPermission() === 'granted') {
+        new window.Notification(title, { body: body, tag: 'kids-schedule', lang: 'ko' });
+      }
+    } catch (e) { /* 알림을 못 띄우면 화면 안 알림으로 */ }
+    if (document.visibilityState !== 'hidden') showToast(body);
+  }
+
+  function testScheduleNotify() {
+    if (!notifyOn()) { showToast('알림을 먼저 켜 주세요.'); return; }
+    showNotify('⏰ 하루 일과표', '🔔 알림 테스트예요. 이렇게 알려 드릴게요!');
+  }
+
+  function firedMap() {
+    try {
+      var o = JSON.parse(lsGet(NOTIFY_FIRED_KEY) || '{}');
+      return (o && typeof o === 'object') ? o : {};
+    } catch (e) { return {}; }
+  }
+
+  function saveFired(o) {
+    var keys = Object.keys(o), keep = {}, cut = Date.now() - 3 * 86400000;
+    for (var i = 0; i < keys.length; i++) if (Number(o[keys[i]]) >= cut) keep[keys[i]] = o[keys[i]];
+    lsSet(NOTIFY_FIRED_KEY, JSON.stringify(keep));
+  }
+
+  /* 20초마다 오늘 일과표를 보며 시작 10분 전 · 끝(픽업) 10분 전을 한 번씩만 알려요 */
+  function checkScheduleAlerts() {
+    if (!notifyOn()) return;
+    var now = new Date();
+    var nowMin = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+    var dayKey = DAY_KEYS[now.getDay()];
+    var evs = state.schedule[dayKey] || [];
+    var fired = firedMap(), changed = false, today = dateKey(now);
+    for (var i = 0; i < evs.length; i++) {
+      var ev = evs[i] || {};
+      var tp = evTimeParts(ev.time);
+      var nm = String(ev.name || '').trim() || '일정';
+      var marks = [];
+      if (tp.start) marks.push({ kind: 'start', hhmm: tp.start, at: hhmmMinutes(tp.start),
+        text: '🚗 10분 뒤 ' + tp.start + ' [' + nm + '] 시작 시간이에요!' });
+      if (tp.end) marks.push({ kind: 'end', hhmm: tp.end, at: hhmmMinutes(tp.end),
+        text: '🎒 10분 뒤 ' + tp.end + ' [' + nm + '] 마치는(픽업) 시간이에요!' });
+      for (var k = 0; k < marks.length; k++) {
+        var m = marks[k];
+        var lead = m.at - NOTIFY_LEAD;
+        if (lead < 0) continue;
+        var diff = nowMin - lead;
+        if (diff < 0 || diff > NOTIFY_GRACE) continue;
+        var key = today + '|' + dayKey + '|' + (ev.id || ('i' + i)) + '|' + m.kind + '|' + m.hhmm;
+        if (fired[key]) continue;
+        fired[key] = Date.now();
+        changed = true;
+        showNotify('⏰ 하루 일과표', m.text);
+      }
+    }
+    if (changed) saveFired(fired);
+  }
+
+  function startNotifyLoop() {
+    renderNotifyBtns();
+    if (notifyTimer) return;
+    notifyTimer = window.setInterval(function () {
+      try { checkScheduleAlerts(); } catch (e) { /* 무시 */ }
+    }, NOTIFY_CHECK_MS);
+    window.setTimeout(function () { try { checkScheduleAlerts(); } catch (e) { /* 무시 */ } }, 2500);
   }
 
   /* ============ 편집 패널 ============ */
@@ -5536,130 +5751,372 @@
 
   /* ---------------- 그림 ---------------- */
 
-  /* 모찌햄찌 라인 — 동글볼 볼주머니 햄스터 */
-  function hamsterSvg(sp, stage) {
-    stage = Math.max(1, Math.min(3, stage || 1));
-    var c = sp.c, d = sp.d, l = sp.l, a = sp.accent;
-    var rx = 21 + stage * 3;
-    var ry = 18 + stage * 3;
-    var cy = 68 - stage;
-    var earR = 6.5 + stage * 1.4;
-    var s = '<svg viewBox="0 0 100 100" class="mon-svg" aria-hidden="true">';
-    s += '<ellipse cx="50" cy="93" rx="' + (rx - 2) + '" ry="4.5" fill="#000" opacity=".08"/>';
-    if (stage === 3) {
-      s += '<circle cx="50" cy="' + cy + '" r="45" fill="' + a + '" opacity=".14"/>';
-      s += '<path d="M14 22l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="#ffd93d" opacity=".9"/>';
-      s += '<path d="M86 30l1.6 4.8 4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8-4.8-1.6 4.8-1.6Z" fill="#fff3b0"/>';
-    }
-    /* 발 */
-    s += '<ellipse cx="' + (50 - rx * 0.4) + '" cy="' + (cy + ry - 1) + '" rx="8" ry="4.4" fill="' + d + '"/>';
-    s += '<ellipse cx="' + (50 + rx * 0.4) + '" cy="' + (cy + ry - 1) + '" rx="8" ry="4.4" fill="' + d + '"/>';
-    /* 귀 */
-    s += '<circle cx="' + (50 - rx * 0.62) + '" cy="' + (cy - ry * 0.86) + '" r="' + earR + '" fill="' + c + '" stroke="' + d + '" stroke-width="2"/>';
-    s += '<circle cx="' + (50 + rx * 0.62) + '" cy="' + (cy - ry * 0.86) + '" r="' + earR + '" fill="' + c + '" stroke="' + d + '" stroke-width="2"/>';
-    s += '<circle cx="' + (50 - rx * 0.62) + '" cy="' + (cy - ry * 0.86) + '" r="' + (earR * 0.52) + '" fill="#ffc2d1"/>';
-    s += '<circle cx="' + (50 + rx * 0.62) + '" cy="' + (cy - ry * 0.86) + '" r="' + (earR * 0.52) + '" fill="#ffc2d1"/>';
-    /* 몸통 */
-    s += '<ellipse cx="50" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + c + '" stroke="' + d + '" stroke-width="2.6"/>';
-    s += '<ellipse cx="50" cy="' + (cy + ry * 0.4) + '" rx="' + (rx * 0.62) + '" ry="' + (ry * 0.44) + '" fill="' + l + '"/>';
-    /* 볼주머니 */
-    s += '<ellipse cx="' + (50 - rx * 0.72) + '" cy="' + (cy + ry * 0.18) + '" rx="' + (rx * 0.34) + '" ry="' + (ry * 0.3) + '" fill="#ffe0c2" opacity=".95"/>';
-    s += '<ellipse cx="' + (50 + rx * 0.72) + '" cy="' + (cy + ry * 0.18) + '" rx="' + (rx * 0.34) + '" ry="' + (ry * 0.3) + '" fill="#ffe0c2" opacity=".95"/>';
-    /* 눈 */
-    var ey = cy - 2;
-    var ex = rx * 0.32;
-    s += '<circle cx="' + (50 - ex) + '" cy="' + ey + '" r="4.6" fill="#2c2440"/>';
-    s += '<circle cx="' + (50 + ex) + '" cy="' + ey + '" r="4.6" fill="#2c2440"/>';
-    s += '<circle cx="' + (50 - ex + 1.5) + '" cy="' + (ey - 1.6) + '" r="1.7" fill="#fff"/>';
-    s += '<circle cx="' + (50 + ex + 1.5) + '" cy="' + (ey - 1.6) + '" r="1.7" fill="#fff"/>';
-    /* 주둥이 · 코 · 앞니 */
-    s += '<ellipse cx="50" cy="' + (cy + ry * 0.3) + '" rx="' + (rx * 0.36) + '" ry="' + (ry * 0.26) + '" fill="#fff7ec"/>';
-    s += '<ellipse cx="50" cy="' + (cy + ry * 0.16) + '" rx="3.2" ry="2.4" fill="#e08a8a"/>';
-    if (stage >= 2) {
-      s += '<rect x="47.4" y="' + (cy + ry * 0.2) + '" width="2.4" height="4" rx="1" fill="#fff" stroke="#e2c9a8" stroke-width=".6"/>';
-      s += '<rect x="50.2" y="' + (cy + ry * 0.2) + '" width="2.4" height="4" rx="1" fill="#fff" stroke="#e2c9a8" stroke-width=".6"/>';
-    }
-    /* 수염 */
-    s += '<path d="M' + (50 - rx * 0.95) + ' ' + (cy + ry * 0.2) + 'l-8-3M' + (50 - rx * 0.95) + ' ' + (cy + ry * 0.24) + 'l-8 1M' + (50 + rx * 0.95) + ' ' + (cy + ry * 0.2) + 'l8-3M' + (50 + rx * 0.95) + ' ' + (cy + ry * 0.24) + 'l8 1" stroke="' + d + '" stroke-width="1.2" stroke-linecap="round" opacity=".55"/>';
-    /* 볼터치 */
-    s += '<ellipse cx="' + (50 - rx * 0.52) + '" cy="' + (cy + ry * 0.5) + '" rx="4" ry="2.6" fill="#ff9db4" opacity=".55"/>';
-    s += '<ellipse cx="' + (50 + rx * 0.52) + '" cy="' + (cy + ry * 0.5) + '" rx="4" ry="2.6" fill="#ff9db4" opacity=".55"/>';
-    /* 머리 장식 */
-    if (stage === 3) {
-      s += '<path d="M38 ' + (cy - ry - 3) + 'l4-12 8 7 8-7 4 12Z" fill="#ffd34d" stroke="#e0a800" stroke-width="1.6"/>';
-      s += '<circle cx="50" cy="' + (cy - ry - 12) + '" r="2.6" fill="#ff6b8a"/>';
-    } else if (stage === 2) {
-      s += '<path d="M' + (50 - 7) + ' ' + (cy - ry - 2) + 'q7-9 14 0q-7-3-14 0Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>';
-    } else {
-      s += '<circle cx="50" cy="' + (cy - ry * 0.46) + '" r="2.6" fill="' + a + '" opacity=".8"/>';
-    }
-    s += '</svg>';
-    return s;
+  /* ---------------- 그림 ---------------- */
+
+    /* ---------------- 그림 ---------------- */
+
+    /* ---------------- 그림 ---------------- */
+
+    /* ---------------- 그림 ---------------- */
+
+  /* 손그림풍 통통 친구 —
+     아이가 그린 동글동글한 친구를 기본 실루엣으로 삼아요.
+     동그란 머리 · 동글 귀 · 점 눈 · ω 입 · 통통한 몸에 동그란 배 · 짧은 팔 · 작은 발.
+     18속성 × 3단계(54종) 모두 이 실루엣을 쓰고, 속성 색과 장식, 진화 단계로 서로 달라 보이게 해요. */
+
+  /* ω(오메가) 입 — 아이 그림 그대로 두 개의 동그란 곡선 */
+  function petOmega(y) {
+    return '<path d="M42.4 ' + y + 'q3.8 5.2 7.6 0q3.8 5.2 7.6 0" fill="none" stroke="#7a3b2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
   }
 
-  function monSvg(sp, stage) {
-    if (sp.face === 'hamster') return hamsterSvg(sp, stage);
-    var c = sp.c, d = sp.d, l = sp.l, a = sp.accent;
-    stage = Math.max(1, Math.min(3, stage || 1));
-    var shape = sp.shape || 0;
-    var baseRx = shape === 1 ? 19 : (shape === 2 ? 26 : 22);
-    var baseRy = shape === 1 ? 23 : (shape === 2 ? 17 : 20);
-    var rx = baseRx + (stage - 1) * (shape === 1 ? 2 : 3);
-    var ry = baseRy + (stage - 1) * (shape === 1 ? 2 : 2.5);
-    var cy = 66 - (stage - 1) * 3;
-    var s = '<svg viewBox="0 0 100 100" class="mon-svg" aria-hidden="true">';
-    s += '<ellipse cx="50" cy="92" rx="' + Math.round(rx * 0.9) + '" ry="4.5" fill="#000" opacity=".08"/>';
-    if (stage === 3) {
-      s += '<circle cx="50" cy="' + cy + '" r="43" fill="' + a + '" opacity=".13"/>';
-      s += '<path d="M16 20l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="#ffd93d" opacity=".9"/>';
-      s += '<path d="M86 32l1.6 4.8 4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8-4.8-1.6 4.8-1.6Z" fill="#fff3b0"/>';
+  /* 목도리 · 스카프 */
+  function petScarf(a, d) {
+    return '<path d="M35 61.5q15 6.6 30 0" fill="none" stroke="' + d + '" stroke-width="6.6" stroke-linecap="round"/>' +
+      '<path d="M35 61.5q15 6.6 30 0" fill="none" stroke="' + a + '" stroke-width="3.6" stroke-linecap="round"/>';
+  }
+
+  /* 최종 진화 왕관 */
+  function petCrown(inner) {
+    return '<path d="M37.5 22.6l3.6-12 8.9 7.3 8.9-7.3 3.6 12Z" fill="#ffd34d" stroke="#e0a800" stroke-width="1.5" stroke-linejoin="round"/>' +
+      '<circle cx="50" cy="8.4" r="2.3" fill="' + (inner || '#ff6b8a') + '" stroke="#e0a800" stroke-width=".8"/>' +
+      '<circle cx="42.6" cy="11.8" r="1.5" fill="#fff8d8"/><circle cx="57.4" cy="11.8" r="1.5" fill="#fff8d8"/>';
+  }
+
+  /* 잎 날개 — 풀 속성 */
+  function petLeafWings(a, d, big) {
+    var k = big ? 1 : 0.68;
+    var out = '';
+    var pts = [[0, -8], [-9, 1], [-5, 10]];
+    for (var i = 0; i < pts.length; i++) {
+      var dx = pts[i][0] * k, dy = pts[i][1] * k;
+      var cx1 = (26 + dx).toFixed(1), cy1 = (66 + dy).toFixed(1);
+      var cw = (8 * k).toFixed(1), ch = (13 * k).toFixed(1);
+      out += '<ellipse cx="' + cx1 + '" cy="' + cy1 + '" rx="' + cw + '" ry="' + ch + '" fill="' + a + '" stroke="' + d + '" stroke-width="1" opacity=".9" transform="rotate(-32 ' + cx1 + ' ' + cy1 + ')"/>';
+      out += '<ellipse cx="' + (100 - Number(cx1)).toFixed(1) + '" cy="' + cy1 + '" rx="' + cw + '" ry="' + ch + '" fill="' + a + '" stroke="' + d + '" stroke-width="1" opacity=".9" transform="rotate(32 ' + (100 - Number(cx1)).toFixed(1) + ' ' + cy1 + ')"/>';
     }
-    if (stage >= 2) {
-      s += '<ellipse cx="' + (50 - rx - 4) + '" cy="' + (cy - 2) + '" rx="12" ry="7" fill="' + l + '" stroke="' + d + '" stroke-width="1.6" transform="rotate(-24 ' + (50 - rx - 4) + ' ' + (cy - 2) + ')"/>';
-      s += '<ellipse cx="' + (50 + rx + 4) + '" cy="' + (cy - 2) + '" rx="12" ry="7" fill="' + l + '" stroke="' + d + '" stroke-width="1.6" transform="rotate(24 ' + (50 + rx + 4) + ' ' + (cy - 2) + ')"/>';
-      s += '<path d="M' + (50 + rx - 6) + ' ' + (cy + ry - 8) + 'q16 6 10 16q-3 5-8 1" fill="none" stroke="' + d + '" stroke-width="4" stroke-linecap="round"/>';
+    return out;
+  }
+
+  /* 수정 날개 — 얼음 · 바위 · 강철 */
+  function petShardWings(a, d, big) {
+    var k = big ? 1 : 0.6;
+    var tips = [[-15, -13], [-20, -1], [-15, 11]];
+    var out = '';
+    for (var i = 0; i < tips.length; i++) {
+      var tx = (tips[i][0] * k).toFixed(1), ty = (tips[i][1] * k).toFixed(1);
+      var bx = (7 * k).toFixed(1);
+      out += '<path d="M26 ' + (66 - Number(bx)) + 'L' + (26 + Number(tx)).toFixed(1) + ' ' + (66 + Number(ty)).toFixed(1) +
+        'L26 ' + (66 + Number(bx)) + 'Z" fill="' + a + '" stroke="' + d + '" stroke-width=".9" opacity=".92"/>';
     }
-    /* 발 */
-    s += '<ellipse cx="' + (50 - rx * 0.42) + '" cy="' + (cy + ry - 1) + '" rx="7.5" ry="4.2" fill="' + d + '"/>';
-    s += '<ellipse cx="' + (50 + rx * 0.42) + '" cy="' + (cy + ry - 1) + '" rx="7.5" ry="4.2" fill="' + d + '"/>';
-    /* 몸통 */
-    s += '<ellipse cx="50" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + c + '" stroke="' + d + '" stroke-width="2.6"/>';
-    s += '<ellipse cx="50" cy="' + (cy + ry * 0.44) + '" rx="' + (rx * 0.58) + '" ry="' + (ry * 0.38) + '" fill="' + l + '" opacity=".9"/>';
-    /* 무늬 */
-    if (sp.pat === 0) {
-      s += '<circle cx="' + (50 - rx * 0.62) + '" cy="' + (cy - ry * 0.52) + '" r="3.4" fill="' + d + '" opacity=".35"/>';
-      s += '<circle cx="' + (50 + rx * 0.56) + '" cy="' + (cy - ry * 0.22) + '" r="2.6" fill="' + d + '" opacity=".3"/>';
-      s += '<circle cx="' + (50 - rx * 0.2) + '" cy="' + (cy - ry * 0.68) + '" r="2.2" fill="' + d + '" opacity=".28"/>';
-    } else if (sp.pat === 1) {
-      s += '<path d="M' + (50 - rx * 0.5) + ' ' + (cy - ry * 0.55) + 'q' + (rx * 0.25) + ' ' + (ry * 0.4) + ' 0 ' + (ry * 0.8) + '" fill="none" stroke="' + d + '" stroke-width="3" opacity=".28"/>';
-      s += '<path d="M' + (50 + rx * 0.18) + ' ' + (cy - ry * 0.6) + 'q' + (rx * 0.25) + ' ' + (ry * 0.4) + ' 0 ' + (ry * 0.8) + '" fill="none" stroke="' + d + '" stroke-width="3" opacity=".28"/>';
+    out = '<g>' + out + '</g><g transform="translate(100,0) scale(-1,1)">' + out + '</g>';
+    return out;
+  }
+
+  /* 박쥐 날개 — 악 · 드래곤 */
+  function petBatWings(a, d, big) {
+    var k = big ? 1 : 0.7;
+    var left = '<path d="M40 62C35 45 20 38 9 47c7 1 9 6 5 11 7-2 11 3 7 9 6-3 12 0 15 6Z" fill="' + a +
+      '" stroke="' + d + '" stroke-width="1.1" opacity=".92"/>' +
+      '<path d="M36 60C32 50 22 44 14 49" fill="none" stroke="' + d + '" stroke-width=".9" opacity=".45"/>';
+    var g = '<g transform="translate(50 88) scale(' + k + ') translate(-50 -88)">' + left + '</g>';
+    return g + '<g transform="translate(50 88) scale(' + k + ') translate(-50 -88)"><g transform="translate(100,0) scale(-1,1)">' + left + '</g></g>';
+  }
+
+  /* 날개 — 작게(1차 진화) / 크게(최종 진화) */
+  function petWings(a, d, big) {
+    var k = big ? 1 : 0.68;
+    var pts = [[0, -7], [-9, 2], [-5, 11]];
+    var out = '';
+    for (var i = 0; i < pts.length; i++) {
+      var dx = pts[i][0] * k, dy = pts[i][1] * k;
+      var rx = (13 * k).toFixed(1), ry = (6.2 * k).toFixed(1);
+      out += '<ellipse cx="' + (26 + dx).toFixed(1) + '" cy="' + (66 + dy).toFixed(1) + '" rx="' + rx + '" ry="' + ry +
+        '" fill="' + a + '" stroke="' + d + '" stroke-width="1" opacity=".92" transform="rotate(-26 ' + (26 + dx).toFixed(1) + ' ' + (66 + dy).toFixed(1) + ')"/>';
+      out += '<ellipse cx="' + (74 - dx).toFixed(1) + '" cy="' + (66 + dy).toFixed(1) + '" rx="' + rx + '" ry="' + ry +
+        '" fill="' + a + '" stroke="' + d + '" stroke-width="1" opacity=".92" transform="rotate(26 ' + (74 - dx).toFixed(1) + ' ' + (66 + dy).toFixed(1) + ')"/>';
+    }
+    return out;
+  }
+
+  /* 속성별 장식 — back(몸 뒤) · belly(배 위) · face(눈가) · front(몸 앞) · head(머리 위) */
+  function petParts(sp, stage, v) {
+    var a = sp.accent, d = sp.d, l = sp.l;
+    var t = String(sp.type || 'normal');
+    var o = { back: '', belly: '', face: '', front: '', head: '' };
+    var s2 = stage >= 2, s3 = stage === 3;
+
+    /* 같은 속성의 3종은 배 무늬 · 주근깨로 조금씩 달라 보여요 */
+    if (v === 1) {
+      o.belly += '<circle cx="50" cy="79.4" r="1.7" fill="' + d + '" opacity=".22"/>' +
+        '<circle cx="44.4" cy="77" r="1.2" fill="' + d + '" opacity=".18"/>' +
+        '<circle cx="55.6" cy="77" r="1.2" fill="' + d + '" opacity=".18"/>';
+    } else if (v === 2) {
+      o.face += '<circle cx="30.6" cy="45.6" r=".9" fill="' + d + '" opacity=".34"/>' +
+        '<circle cx="33.8" cy="47.4" r=".9" fill="' + d + '" opacity=".28"/>' +
+        '<circle cx="69.4" cy="45.6" r=".9" fill="' + d + '" opacity=".34"/>' +
+        '<circle cx="66.2" cy="47.4" r=".9" fill="' + d + '" opacity=".28"/>';
+    }
+
+    if (t === 'fire') {
+      if (s3) {
+        o.head = '<path d="M50 3.5c6.4 9.4 12.8 14.8 7.8 23.2-2.6-3.9-6.3-3.9-8.9 0-5-8.4.3-13.8 1.1-23.2Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6" stroke-linejoin="round"/>' +
+          petCrown('#ff5a2b');
+        o.back = petWings(a, d, true) +
+          '<path d="M70 78c9-2 13-8 11-15 5 5 6 13 0 17-4 3-9 2-11-2Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>';
+      } else if (s2) {
+        o.head = '<path d="M50 9.5c4.7 7 9.5 11 5.8 17.6-2-3-4.8-3-6.8 0-3.8-6.6.2-10.6 1-17.6Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.5" stroke-linejoin="round"/>';
+        o.back = '<path d="M70 78c9-2 13-8 11-15 5 5 6 13 0 17-4 3-9 2-11-2Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>';
+        o.front = petScarf(a, d);
+      }
+    } else if (t === 'water') {
+      if (s3) {
+        o.head = '<path d="M50 8.6c4.6 6.6 8.6 10 8.6 14.4 0 4.6-3.8 7.4-8.6 7.4s-8.6-2.8-8.6-7.4c0-4.4 4-7.8 8.6-14.4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.5"/>' +
+          '<ellipse cx="46.4" cy="20.4" rx="1.8" ry="2.8" fill="#fff" opacity=".7"/>' +
+          '<path d="M36.4 24q13.6 5 27.2 0" fill="none" stroke="#ffd34d" stroke-width="2" stroke-linecap="round" opacity=".35"/>';
+        o.back = petWings(a, d, true);
+        o.belly += '<circle cx="46" cy="73" r="2.2" fill="' + a + '" opacity=".45"/><circle cx="54" cy="77" r="2.8" fill="' + a + '" opacity=".4"/>';
+      } else if (s2) {
+        o.head = '<path d="M50 11.5c3.8 5.6 7.4 8.4 7.4 12.2 0 4-3.2 6.6-7.4 6.6s-7.4-2.6-7.4-6.6c0-3.8 3.6-6.6 7.4-12.2Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.4"/>';
+        o.back = '<path d="M72 82c6.4 0 10.4-4.4 10.4-9.6 4.2 5.4 3 12.4-3.2 13.6-3.2.6-6.4-.6-7.2-4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>';
+        o.front = petScarf(a, d);
+      }
+    } else if (t === 'grass') {
+      if (s3) {
+        o.head = '<path d="M50 21V10" stroke="' + d + '" stroke-width="2.6" stroke-linecap="round"/>' +
+          '<path d="M50 15c-7 0-12-4.4-12-11 7 0 12 4.4 12 11Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>' +
+          '<path d="M50 17c7 0 12-4.4 12-11-7 0-12 4.4-12 11Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>' +
+          '<circle cx="50" cy="8.4" r="4.2" fill="#ff9ec4" stroke="#e4638f" stroke-width="1"/><circle cx="50" cy="8.4" r="1.6" fill="#fff3b0"/>';
+        o.back = petLeafWings(a, d, true) +
+          '<path d="M71 80c8 1 13-4 12-11 3 6 1 13-5 15-4 1-6-1-7-4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>';
+      } else if (s2) {
+        o.head = '<path d="M50 19V11" stroke="' + d + '" stroke-width="2.4" stroke-linecap="round"/>' +
+          '<path d="M50 14c-5.6 0-9.6-3.6-9.6-9 5.6 0 9.6 3.6 9.6 9Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>' +
+          '<path d="M50 16.4c5.2 0 9-3.6 9-9-5.2 0-9 3.6-9 9Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>';
+        o.front = petScarf(a, d);
+      }
+      o.belly += '<path d="M53 72c0-3-2.4-5-5-5 3.6-.6 6.4 1 6.6 4.2.2 2.4-1.4 4-3.6 4.2 1.6-1 2-2 2-3.4Z" fill="' + a + '" opacity=".4"/>';
+    } else if (t === 'electric') {
+      if (s3) {
+        o.head = '<path d="M52 8L61 23h-8l4 11L45 21h7l-4-13Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6" stroke-linejoin="round"/>' +
+          petCrown('#fff3b0');
+        o.back = petWings(a, d, true);
+        o.belly += '<path d="M53 70l-6 9h5l-3 7 9-11h-5l3-5Z" fill="' + a + '" opacity=".5"/>';
+      } else if (s2) {
+        o.head = '<path d="M52 8L61 23h-8l4 11L45 21h7l-4-13Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.4" stroke-linejoin="round"/>';
+        o.back = '<path d="M74 76l-4 10h5l-7 8 3-10h-4l7-8Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>';
+        o.front = petScarf(a, d);
+      }
+    } else if (t === 'ice') {
+      if (s3) {
+        o.head = '<path d="M50 1.5l7 11-7 10-7-10Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.5"/>' +
+          '<path d="M39 22l-6-11 6 3 3-7 2 9Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>' +
+          '<path d="M61 22l6-11-6 3-3-7-2 9Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>';
+        o.back = petShardWings(a, d, true);
+        o.belly += '<path d="M50 69v10M45 71.4l10 5.2M55 71.4l-10 5.2" stroke="' + a + '" stroke-width="1.8" stroke-linecap="round" opacity=".55"/>';
+      } else if (s2) {
+        o.head = '<path d="M50 8l6.4 9.6L50 27l-6.4-9.4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.4"/>';
+        o.back = '<path d="M73 80l4-9 4 9-4 3Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.1"/>';
+        o.front = petScarf(a, d);
+      }
+    } else if (t === 'fighting') {
+      o.head = s3
+        ? '<path d="M31 26q19-7 38 0" fill="none" stroke="' + d + '" stroke-width="6" stroke-linecap="round"/>' +
+          '<path d="M31 26q19-7 38 0" fill="none" stroke="#e8443d" stroke-width="3.4" stroke-linecap="round"/>' +
+          '<path d="M66 22l6-6 4 8-4 2Z" fill="#e8443d" stroke="' + d + '" stroke-width="1"/>' +
+          petCrown('#ffd93d')
+        : (s2 ? '<path d="M31 25q19-7 38 0" fill="none" stroke="#e8443d" stroke-width="3.8" stroke-linecap="round" opacity=".9"/>' : '');
+      if (s2) {
+        o.back = s3 ? petWings(a, d, true) : '';
+        o.belly += '<path d="M43 74h14M41 79h18" stroke="' + d + '" stroke-width="2" stroke-linecap="round" opacity=".22"/>';
+      }
+      if (s3) {
+        o.front = '<path d="M38 66h24" stroke="#ffd34d" stroke-width="4.4" stroke-linecap="round"/>' +
+          '<rect x="46.6" y="62.6" width="6.8" height="6.8" rx="1.6" fill="#ffd34d" stroke="#e0a800" stroke-width="1"/>';
+      } else if (s2) {
+        o.front += '<circle cx="27" cy="67" r="6.4" fill="#e8443d" stroke="' + d + '" stroke-width="1.4"/>' +
+          '<circle cx="73" cy="67" r="6.4" fill="#e8443d" stroke="' + d + '" stroke-width="1.4"/>';
+      }
+    } else if (t === 'poison') {
+      if (s3) {
+        o.head = '<path d="M28 22c0-9 9.8-15 22-15s22 6 22 15Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6" stroke-linejoin="round"/>' +
+          '<circle cx="38" cy="13" r="3.2" fill="#fff" opacity=".75"/><circle cx="54" cy="10" r="2.4" fill="#fff" opacity=".65"/><circle cx="62" cy="16" r="2" fill="#fff" opacity=".6"/>';
+        o.back = petWings(a, d, true);
+      } else if (s2) {
+        o.head = '<path d="M43 21c0-5 3-8 7-8s7 3 7 8Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>' +
+          '<circle cx="46" cy="15" r="1.6" fill="#fff" opacity=".7"/>';
+        o.back = '<path d="M74 78c6 0 9-4 8-9 4 5 2 11-4 11-2 0-4-1-4-2Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.1"/>';
+        o.front = petScarf(a, d);
+      }
+      o.belly += '<circle cx="45" cy="71" r="2.4" fill="' + a + '" opacity=".5"/><circle cx="55" cy="76" r="1.9" fill="' + a + '" opacity=".45"/>' +
+        '<circle cx="53" cy="68.6" r="1.4" fill="' + a + '" opacity=".4"/>';
+    } else if (t === 'ground') {
+      if (s3) {
+        o.head = '<path d="M33 22l6-12 6 7 5-9 5 9 6-7 6 12Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6" stroke-linejoin="round"/>';
+        o.back = petWings(a, d, true);
+        o.belly += '<path d="M42 74l4-4 4 4M54 78l4-4 4 4" fill="none" stroke="' + d + '" stroke-width="1.6" stroke-linecap="round" opacity=".3"/>';
+      } else if (s2) {
+        o.head = '<path d="M43 20l4-8 4 6 4-6 4 8Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3"/>';
+        o.back = '<path d="M24 86c6-8 16-8 22 0Z" fill="' + a + '" opacity=".45"/>' +
+          '<path d="M56 86c6-8 16-8 22 0Z" fill="' + a + '" opacity=".45"/>';
+        o.front = petScarf(a, d);
+      }
+    } else if (t === 'flying') {
+      if (s3) {
+        o.back = petWings(a, d, true);
+        o.head = '<path d="M50 5l4 8 8-2-4 8 4 6-12-5-12 5 4-6-4-8 8 2Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3" stroke-linejoin="round" opacity=".95"/>';
+      } else if (s2) {
+        o.back = petWings(a, d, false);
+        o.head = '<path d="M50 11l3 6 6-1.6-3 6 2.6 4.6-8.6-3.4-8.6 3.4L44 21.4l-3-6 6 1.6Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.1"/>';
+        o.front = petScarf(a, d);
+      }
+      o.belly += '<path d="M45 73q5-4 10 0" fill="none" stroke="' + a + '" stroke-width="2" stroke-linecap="round" opacity=".55"/>';
+    } else if (t === 'psychic') {
+      o.face += '<path d="M50 47.4c-1.6-1.6-1.6-4 0-5.4 1.6 1.4 1.6 3.8 0 5.4Z" fill="' + a + '" opacity=".9"/>';
+      if (s3) {
+        o.head = '<ellipse cx="50" cy="11" rx="14" ry="4.6" fill="' + a + '" stroke="#ffd34d" stroke-width="1.6" opacity=".95"/>' +
+          '<ellipse cx="50" cy="11" rx="8" ry="2.4" fill="#fff" opacity=".55"/>';
+        o.back = petWings(a, d, true);
+        o.belly += '<circle cx="50" cy="74" r="3.4" fill="#fff" opacity=".55"/><circle cx="50" cy="74" r="1.8" fill="' + a + '"/>';
+      } else if (s2) {
+        o.head = '<circle cx="50" cy="13" r="4.4" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>' +
+          '<circle cx="48.6" cy="11.6" r="1.4" fill="#fff" opacity=".8"/>';
+      }
+    } else if (t === 'bug') {
+      o.head = '<path d="M43 22c-3-8-7-11-11-11" fill="none" stroke="' + d + '" stroke-width="2" stroke-linecap="round"/>' +
+        '<path d="M57 22c3-8 7-11 11-11" fill="none" stroke="' + d + '" stroke-width="2" stroke-linecap="round"/>' +
+        '<circle cx="31" cy="10.4" r="2.8" fill="' + a + '" stroke="' + d + '" stroke-width=".8"/>' +
+        '<circle cx="69" cy="10.4" r="2.8" fill="' + a + '" stroke="' + d + '" stroke-width=".8"/>';
+      o.back = petWings(a, d, s3);
+      o.belly += '<path d="M42 70h16M42 76h16" stroke="' + d + '" stroke-width="1.8" stroke-linecap="round" opacity=".22"/>';
+      if (s3) o.head += petCrown('#7cb342');
+    } else if (t === 'rock') {
+      if (s3) {
+        o.head = '<path d="M33 22l5-13 6 6 6-9 6 9 6-6 5 13Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.5" stroke-linejoin="round"/>' +
+          '<path d="M45 12l3 5 3-4" fill="none" stroke="#fff" stroke-width="1.1" opacity=".6"/>';
+        o.back = petShardWings(a, d, true);
+      } else if (s2) {
+        o.head = '<path d="M40 20l4-9 6 4 5-6 4 11Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.3" stroke-linejoin="round"/>';
+        o.back = '<path d="M30 86l5-7 5 7Z" fill="' + a + '" opacity=".5"/><path d="M60 86l5-6 5 6Z" fill="' + a + '" opacity=".45"/>';
+        o.front = petScarf(a, d);
+      }
+      o.belly += '<path d="M45 71l4 4-3 4" fill="none" stroke="' + d + '" stroke-width="1.4" stroke-linecap="round" opacity=".25"/>';
+    } else if (t === 'ghost') {
+      if (s3) {
+        o.head = '<path d="M50 3c9 0 14 6 12 13-2-3-5-3-7 0-2-3-5-3-7 0-2-3-5-3-7 0-2-7 3-13 9-13Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.5" opacity=".95"/>';
+        o.back = '<circle cx="20" cy="60" r="4.4" fill="' + a + '" opacity=".35"/><circle cx="80" cy="70" r="3.4" fill="' + a + '" opacity=".3"/>' +
+          '<circle cx="68" cy="42" r="2.6" fill="#fff" opacity=".6"/>';
+      } else if (s2) {
+        o.head = '<path d="M50 8c5.4 0 8.4 3.6 7.2 8-1.2-2-3-2-3.6 0-1.4-2-3.6-2-4.6 0-1-4.4 1-8 1-8Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>';
+        o.back = '<circle cx="22" cy="66" r="3.6" fill="' + a + '" opacity=".3"/>';
+      }
+      o.belly += '<path d="M50 68v9" stroke="' + a + '" stroke-width="2" stroke-linecap="round" opacity=".35"/>';
+    } else if (t === 'dragon') {
+      if (s3) {
+        o.head = '<path d="M37 22l3-13 6 8-3 6Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.4"/>' +
+          '<path d="M63 22l-3-13-6 8 3 6Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.4"/>' +
+          petCrown('#4b5ae0');
+        o.back = petBatWings(a, d, true);
+        o.belly += '<path d="M44 70l3 3 3-3 3 3 3-3" fill="none" stroke="' + a + '" stroke-width="1.8" stroke-linecap="round" opacity=".5"/>';
+      } else if (s2) {
+        o.head = '<path d="M41 21l2-9 5 6-2 4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>' +
+          '<path d="M59 21l-2-9-5 6 2 4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>';
+        o.back = '<path d="M71 80c8 2 13-3 12-10 3 6 1 13-5 14-4 1-6-1-7-4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>';
+        o.front = petScarf(a, d);
+      }
+    } else if (t === 'dark') {
+      o.head = s3
+        ? '<path d="M40 24c-4-8 1-14 8-16-3 4-3.4 8-1 12 1.6 3-3 6-7 4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.4"/>' +
+          '<path d="M60 24c4-8-1-14-8-16 3 4 3.4 8 1 12-1.6 3 3 6 7 4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.4"/>'
+        : (s2 ? '<path d="M33 26c-3-8 1-13 7-15-3 4-3 8-1 11 1 3-3 5-6 4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>' +
+          '<path d="M67 26c3-8-1-13-7-15 3 4 3 8 1 11-1 3 3 5 6 4Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>' : '');
+      if (s2) {
+        o.back = s3 ? petBatWings(a, d, true) : '';
+        o.front = petScarf(a, d);
+      }
+      if (s3) o.belly += '<path d="M44 72l6 5 6-5" fill="none" stroke="' + a + '" stroke-width="1.8" stroke-linecap="round" opacity=".55"/>';
+    } else if (t === 'steel') {
+      var gear = '<circle cx="50" cy="14" r="6.4" fill="' + a + '" stroke="' + d + '" stroke-width="1.4"/>' +
+        '<path d="M50 5.4V8M50 20v2.6M41.4 14H44M56 14h2.6" stroke="' + d + '" stroke-width="2.4" stroke-linecap="round"/>' +
+        '<circle cx="50" cy="14" r="2.2" fill="' + d + '" opacity=".55"/>';
+      o.head = s2 ? gear : (gear + petCrown('#8fa3ad'));
+      if (s2) {
+        o.back = s3 ? petShardWings(a, d, true) : '<circle cx="74" cy="80" r="4.4" fill="' + a + '" stroke="' + d + '" stroke-width="1.2"/>';
+        o.belly += '<circle cx="45" cy="70" r="1.2" fill="' + d + '" opacity=".3"/><circle cx="55" cy="70" r="1.2" fill="' + d + '" opacity=".3"/>' +
+          '<circle cx="44" cy="78" r="1.2" fill="' + d + '" opacity=".3"/><circle cx="56" cy="78" r="1.2" fill="' + d + '" opacity=".3"/>';
+        o.front = petScarf(a, d);
+      }
+    } else if (t === 'fairy') {
+      o.head = s3
+        ? '<path d="M50 3l3.4 8.6 9-1.6-6 6.6 2.6 6-9-4.4-9 4.4 2.6-6-6-6.6 9 1.6Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.2" stroke-linejoin="round"/>' +
+          '<circle cx="50" cy="13" r="2.2" fill="#fff3b0"/>'
+        : '<path d="M50 7.6l2.4 5.6 6-1-4 4.4 1.8 4.4-6.2-3.2-6.2 3.2 1.8-4.4-4-4.4 6 1Z" fill="' + a + '" stroke="' + d + '" stroke-width="1"/>';
+      o.back = petWings(a, d, s3);
+      if (s2) o.front = petScarf(a, d);
+      o.belly += '<path d="M47 71.4l1.6 3.2 3.4-2.6-3.4-1.6Z" fill="' + a + '" opacity=".55"/>';
     } else {
-      s += '<ellipse cx="50" cy="' + (cy + ry * 0.28) + '" rx="' + (rx * 0.34) + '" ry="' + (ry * 0.42) + '" fill="#ffffff" opacity=".35"/>';
+      /* normal — 몽글 */
+      o.head = s3 ? petCrown('#9aa0a6') : (s2 ? '<circle cx="50" cy="13" r="4.6" fill="' + l + '" stroke="' + d + '" stroke-width="1.4"/>' : '');
+      if (s3) o.back = '<circle cx="50" cy="60" r="35" fill="none" stroke="' + a + '" stroke-width="2.2" opacity=".45"/>';
+      if (s2) o.front = petScarf(a, d);
     }
-    /* 얼굴 */
-    var ey = cy - 2;
-    var ex = rx * 0.36;
-    s += '<ellipse cx="' + (50 - ex) + '" cy="' + ey + '" rx="4.3" ry="5" fill="#2c2440"/>';
-    s += '<ellipse cx="' + (50 + ex) + '" cy="' + ey + '" rx="4.3" ry="5" fill="#2c2440"/>';
-    s += '<circle cx="' + (50 - ex + 1.5) + '" cy="' + (ey - 1.8) + '" r="1.6" fill="#fff"/>';
-    s += '<circle cx="' + (50 + ex + 1.5) + '" cy="' + (ey - 1.8) + '" r="1.6" fill="#fff"/>';
-    s += '<ellipse cx="' + (50 - rx * 0.72) + '" cy="' + (ey + 6) + '" rx="4" ry="2.5" fill="#ff9db4" opacity=".7"/>';
-    s += '<ellipse cx="' + (50 + rx * 0.72) + '" cy="' + (ey + 6) + '" rx="4" ry="2.5" fill="#ff9db4" opacity=".7"/>';
-    if (stage === 3) s += '<path d="M44 ' + (ey + 6) + 'q6 8 12 0q-6 4-12 0Z" fill="#7a3b2e"/>';
-    else s += '<path d="M45 ' + (ey + 7) + 'q5 5 10 0" fill="none" stroke="#7a3b2e" stroke-width="2.2" stroke-linecap="round"/>';
+    return o;
+  }
+
+  /* stage: 1 아기, 2 1차 진화, 3 2차 진화 — 모두 같은 손그림풍 친구 */
+  function monSvg(sp, stage) {
+    stage = Math.max(1, Math.min(3, stage || 1));
+    var c = sp.c, d = sp.d, a = sp.accent;
+    var v = (Number(sp.no) || 0) % 3;
+    var k = stage === 1 ? 0.84 : (stage === 2 ? 0.93 : 1);
+    var p = petParts(sp, stage, v);
+    var s = '<svg viewBox="0 0 100 100" class="mon-svg" aria-hidden="true">';
+    s += '<ellipse cx="50" cy="94.4" rx="' + (22 * k + 5).toFixed(1) + '" ry="3.9" fill="#000" opacity=".09"/>';
     if (stage === 3) {
-      s += '<path d="M40 ' + (cy - ry - 1) + 'l4-10 6 7 6-7 4 10Z" fill="' + a + '" stroke="' + d + '" stroke-width="1.6"/>';
-    } else if (stage === 2) {
-      s += '<path d="M' + (50 - rx * 0.62) + ' ' + (cy - ry + 2) + 'l-5-11 9 5Z" fill="' + a + '"/>';
-      s += '<path d="M' + (50 + rx * 0.62) + ' ' + (cy - ry + 2) + 'l5-11-9 5Z" fill="' + a + '"/>';
+      s += '<circle cx="50" cy="58" r="41" fill="' + a + '" opacity=".13"/>';
+      s += '<path d="M12 30l1.7 5 5 1.7-5 1.7-1.7 5-1.7-5-5-1.7 5-1.7Z" fill="#ffd93d" opacity=".85"/>';
+      s += '<path d="M88 41l1.4 4.1 4.1 1.4-4.1 1.4L88 52l-1.4-4.1-4.1-1.4 4.1-1.4Z" fill="#fff3b0"/>';
     }
-    s += '<g transform="translate(0,10)">' + petGlyph(sp) + '</g>';
-    /* 전설 반짝임 */
+    s += '<g transform="translate(50 94.4) scale(' + k + ') translate(-50 -94.4)">';
+    s += p.back;
+    /* 작은 발 두 개 */
+    s += '<ellipse cx="41.6" cy="89.4" rx="6.4" ry="4.4" fill="' + d + '"/>';
+    s += '<ellipse cx="58.4" cy="89.4" rx="6.4" ry="4.4" fill="' + d + '"/>';
+    /* 짧은 팔 두 개 */
+    s += '<ellipse cx="27.6" cy="67" rx="6.9" ry="4.5" fill="' + c + '" stroke="' + d + '" stroke-width="2" transform="rotate(-14 27.6 67)"/>';
+    s += '<ellipse cx="72.4" cy="67" rx="6.9" ry="4.5" fill="' + c + '" stroke="' + d + '" stroke-width="2" transform="rotate(14 72.4 67)"/>';
+    /* 통통한 몸통 */
+    s += '<ellipse cx="50" cy="71.5" rx="21" ry="17.6" fill="' + c + '" stroke="' + d + '" stroke-width="2.6"/>';
+    /* 동그란 배 */
+    var brx = v === 2 ? 12.3 : (v === 1 ? 13.9 : 13.2);
+    var bry = v === 1 ? 12.5 : 11.4;
+    s += '<ellipse cx="50" cy="74.8" rx="' + brx + '" ry="' + bry + '" fill="' + sp.l + '" stroke="' + d + '" stroke-width="1.2" opacity=".95"/>';
+    s += p.belly;
+    /* 동글 귀 두 개 */
+    var er = v === 2 ? 8.5 : 7.9;
+    s += '<circle cx="33" cy="24.4" r="' + er + '" fill="' + c + '" stroke="' + d + '" stroke-width="2.2"/>';
+    s += '<circle cx="67" cy="24.4" r="' + er + '" fill="' + c + '" stroke="' + d + '" stroke-width="2.2"/>';
+    s += '<circle cx="33" cy="24.4" r="' + (er * 0.48).toFixed(1) + '" fill="#ffc9d6"/>';
+    s += '<circle cx="67" cy="24.4" r="' + (er * 0.48).toFixed(1) + '" fill="#ffc9d6"/>';
+    /* 동그란 머리 */
+    s += '<circle cx="50" cy="42" r="21.6" fill="' + c + '" stroke="' + d + '" stroke-width="2.6"/>';
+    /* 점 눈 두 개 */
+    s += '<circle cx="41.6" cy="41" r="3.1" fill="#2c2440"/>';
+    s += '<circle cx="58.4" cy="41" r="3.1" fill="#2c2440"/>';
+    s += '<circle cx="42.9" cy="39.7" r="1.15" fill="#fff"/>';
+    s += '<circle cx="59.7" cy="39.7" r="1.15" fill="#fff"/>';
+    /* 볼터치 */
+    s += '<ellipse cx="34.4" cy="49.6" rx="4.3" ry="2.7" fill="#ff9db4" opacity="' + (v === 2 ? '.55' : '.4') + '"/>';
+    s += '<ellipse cx="65.6" cy="49.6" rx="4.3" ry="2.7" fill="#ff9db4" opacity="' + (v === 2 ? '.55' : '.4') + '"/>';
+    /* ω 입 */
+    s += petOmega(50.2);
+    s += p.face;
+    s += p.front;
+    s += p.head;
     if (sp.rarity >= 2) {
-      s += '<circle cx="24" cy="34" r="1.8" fill="#fff" opacity=".85"/>';
-      s += '<circle cx="78" cy="46" r="1.4" fill="#fff" opacity=".7"/>';
+      s += '<circle cx="21" cy="52" r="1.8" fill="#fff" opacity=".8"/>';
+      s += '<circle cx="79" cy="60" r="1.4" fill="#fff" opacity=".65"/>';
     }
-    s += '</svg>';
+    s += '</g></svg>';
     return s;
   }
 
@@ -5681,7 +6138,7 @@
     var title = stage === 0 ? '수수께끼 알' : sp.names[stage - 1];
     var sub;
     if (stage === 0) {
-      sub = '⏳ 부화까지 <b id="petTimer">' + fmtLeft(petHatchLeft()) + '</b> · 알 영양제로 100 EXP를 채워도 돼요';
+      sub = '⏳ 부화까지 <b id="petTimer">' + fmtLeft(petHatchLeft()) + '</b> · 영양제 100 EXP';
     } else if (stage === 1 || stage === 2) {
       sub = sp.kind + ' · 다음 진화까지 <b>' + Math.max(0, need - p.exp) + ' EXP</b> · 먹이를 주세요';
     } else {
@@ -5695,8 +6152,8 @@
     }
 
     var acts = stage >= 3
-      ? '<button class="pet-go warm" data-act="pet-new-egg">🥚 새 알 받기</button>'
-      : '<button class="pet-go warm" data-act="care-open">🍖 먹이 주기</button>';
+      ? '<button class="pet-go warm" data-act="pet-new-egg" aria-label="새 알 받기">🥚 새 알</button>'
+      : '<button class="pet-go warm" data-act="care-open" aria-label="먹이 주기">🍖 먹이</button>';
 
     bar.style.setProperty('--pet-c', sp.c);
     bar.style.setProperty('--pet-t', sp.l);
@@ -5705,7 +6162,8 @@
       '<div class="pet-meta">' +
         '<div class="pet-name">' + esc(stage === 0 ? title : title) + '<span class="pet-stage">' + PET_STAGE_LABEL[stage] + '</span>' +
           (stage === 0 ? '<span class="egg-badge">부화 중</span>' : typeBadgeHtml(sp) + rarityBadgeHtml(sp)) + '</div>' +
-        '<div class="pet-sub">' + sub + '</div>' +
+        '</div>' +
+      '<div class="pet-sub">' + sub + '</div>' +
       '</div>' +
       '<div class="pet-grow">' +
         '<div class="pet-gauge"><i style="width:' + pct + '%"></i></div>' +
@@ -8147,8 +8605,45 @@
     else if (hhmmValid(val)) { c.targetTime = val; }
     else return;
     saveState();
-    renderRoutine();
+    /* 입력칸을 새로 만들면 iOS 시간 휠이 닫혀 버려요 — 카드 머리의 목표 배지만 그 자리에서 고쳐요 */
+    paintCatTarget(c);
+    renderRoutineTargets();
     updateOverall(true);
+  }
+
+  function paintCatTarget(cat) {
+    var card = document.querySelector('.routine-card[data-cat="' + cat.id + '"]');
+    if (!card) return;
+    var valid = hhmmValid(cat.targetTime);
+    var badge = card.querySelector('.rc-target');
+    if (valid) {
+      if (!badge) {
+        var titles = card.querySelector('.rc-titles');
+        if (!titles) return;
+        badge = document.createElement('span');
+        badge.className = 'rc-target';
+        titles.appendChild(badge);
+      }
+      badge.textContent = '⏰ ' + hhmmLabel(cat.targetTime);
+    } else if (badge && badge.parentNode) {
+      badge.parentNode.removeChild(badge);
+    }
+    /* 지우기 버튼만 살짝 보이거나 숨겨요 (시간 입력칸은 그대로 둡니다) */
+    var clearBtn = card.querySelector('[data-act="cat-target-clear"]');
+    if (valid && !clearBtn) {
+      var row = card.querySelector('.rce-target');
+      if (row) {
+        clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.className = 'ghost-btn tiny';
+        clearBtn.setAttribute('data-act', 'cat-target-clear');
+        clearBtn.setAttribute('data-cat', cat.id);
+        clearBtn.textContent = '지우기';
+        row.appendChild(clearBtn);
+      }
+    } else if (!valid && clearBtn && clearBtn.parentNode) {
+      clearBtn.parentNode.removeChild(clearBtn);
+    }
   }
   function clearCatTarget(id) {
     var c = findCat(id);
@@ -8180,7 +8675,9 @@
       for (var k = 0; k < total; k++) if (ck[cat.items[k].id]) done++;
       var complete = total > 0 && done === total;
       var left = target - now;
-      var late = left <= 0 && !complete;
+      /* 목표 시간이 지난 그룹은 바를 띄우지 않아요 — 지난 일로 재촉하지 않습니다 */
+      if (left < 0) continue;
+      var late = false;
       var hot = !complete && left > 0 && left <= TARGET_WINDOW_MIN;
       /* 60분 남음 = 0%(왼쪽) → 목표 시각 = 100%(오른쪽) */
       var pct;
@@ -9244,19 +9741,25 @@
   function applyLayoutOrder() {
     var order = (state.layoutOrder && state.layoutOrder.length) ? state.layoutOrder.slice(0) : SEC_IDS.slice(0);
     for (var k = 0; k < SEC_IDS.length; k++) if (order.indexOf(SEC_IDS[k]) < 0) order.push(SEC_IDS[k]);
-    var FULL = { routine: 1, week: 1 };
     var wide = window.innerWidth >= 768;
 
-    /* 스티커·오늘의 학원(일정)은 항상 한 줄을 반반 나눠 써서 오른쪽이 비지 않게 해요 */
-    var pair = [];
-    for (var pi = 0; pi < order.length; pi++) if (!FULL[order[pi]]) pair.push(order[pi]);
+    /* 넓은 화면에서만 스티커·일정을 반반 나눠 쓰고, 순서가 바로 붙어 있을 때만 짝지어요 */
+    var pairIds = [];
+    if (wide) {
+      for (var pi = 0; pi < order.length - 1; pi++) {
+        var pa = order[pi], pb = order[pi + 1];
+        if ((pa === 'sticker' && pb === 'academy') || (pa === 'academy' && pb === 'sticker')) {
+          pairIds = [pa, pb];
+          break;
+        }
+      }
+    }
 
     var rows = [];
-    var paired = false;
     for (var i = 0; i < order.length; i++) {
       var id = order[i];
-      if (FULL[id]) rows.push([id]);
-      else if (!paired) { paired = true; rows.push(wide ? pair : pair); }
+      if (pairIds.length && id === pairIds[0]) { rows.push([pairIds[0], pairIds[1]]); i++; continue; }
+      rows.push([id]);
     }
 
     var r = 1;
@@ -9267,14 +9770,12 @@
         if (!el) continue;
         el.style.order = '';
         el.style.gridRow = String(r);
-        if (list.length > 1 && wide) {
+        if (list.length > 1) {
           el.style.gridColumn = String(ci + 1);
           el.classList.add('sec-pair');
         } else {
           el.style.gridColumn = '1 / -1';
           el.classList.remove('sec-pair');
-          /* 좁은 화면에서는 반반 칸도 위아래로 쌓아요 */
-          if (!wide && ci < list.length - 1) r++;
         }
       }
       r++;
@@ -10805,6 +11306,8 @@
     if (act === 'weather-refresh') { loadWeather(); return; }
     if (act === 'add-event') { addEvent(el.getAttribute('data-day')); return; }
     if (act === 'del-event') { delEvent(el.getAttribute('data-day'), el.getAttribute('data-id')); return; }
+    if (act === 'notify-toggle') { toggleScheduleNotify(); return; }
+    if (act === 'notify-test') { testScheduleNotify(); return; }
     if (act === 'history-open') { openHistory(); return; }
     if (act === 'stats-open') { openStats(); return; }
     if (act === 'stats-close') { closeStats(); return; }
@@ -11177,6 +11680,7 @@
       shopUi.draft[field.replace('newShop', '').toLowerCase()] = el.value;
       return;
     }
+    if (field === 'evTimeStart' || field === 'evTimeEnd') { setEventTime(el); return; }
     if (field === 'evName' || field === 'evTime') {
       var day = el.getAttribute('data-day');
       var evId = el.getAttribute('data-id');
@@ -11235,6 +11739,8 @@
       }
       return;
     }
+    if (field === 'evTimeStart' || field === 'evTimeEnd') { setEventTime(el); return; }
+    if (field === 'catTarget') { setCatTarget(el.getAttribute('data-cat'), el.value); return; }
     if (field === 'stickerSlots') {
       var n = parseInt(el.value, 10);
       if (isNaN(n) || n < 3) n = 10;
@@ -11279,6 +11785,7 @@
   installRoomDrag();
   loadWeatherCache();
   renderAll();
+  startNotifyLoop();
   loadWeather();
   initAuth();
 
