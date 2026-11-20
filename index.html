@@ -1470,7 +1470,7 @@
   .av-thumb-fig{ background:#fff8ec; overflow:hidden; }
   .av-thumb-fig svg{ width:34px; height:56px; display:block; }
   .av-thumb-fig.face{ background:radial-gradient(circle at 50% 40%,#fff8ec,#ffeede); }
-  .av-thumb-fig.face svg{ width:44px; height:44px; }
+  .av-thumb-fig.face svg{ width:46px; height:52px; }
   .av-thumb-fig.bust svg{ width:38px; height:46px; }
   .av-card{ min-height:112px; }
 
@@ -1494,6 +1494,20 @@
   .gender-btn:active{ transform:scale(.97); }
   .gender-btn.on{ background:#2c2440; border-color:#2c2440; color:#fff; box-shadow:0 4px 10px rgba(44,36,64,.18); }
   .av-card.gend-other{ opacity:.74; }
+  /* 헤어 구역 나누기 (남아 / 여아 / 공용) */
+  .av-sec{
+    display:flex; align-items:center; gap:7px; margin:14px 0 0; font-size:12.5px; font-weight:900; color:#6d6484;
+    padding-top:10px; border-top:2px dashed #f0e5d4; flex-wrap:wrap;
+  }
+  .av-sec:first-of-type{ border-top:0; padding-top:0; margin-top:4px; }
+  .av-sec .av-sec-badge{
+    display:inline-flex; align-items:center; gap:4px; color:#fff; border-radius:999px; padding:3px 10px;
+    font-size:12px; font-weight:900; background:#a2937f;
+  }
+  .av-sec.boy .av-sec-badge{ background:#5b8cc8; }
+  .av-sec.girl .av-sec-badge{ background:#ff7fa8; }
+  .av-sec small{ margin-left:auto; font-size:10.5px; font-weight:800; color:#a2937f; }
+  .av-sec + .av-grid{ margin-top:8px; }
 
   .salon{
     background:linear-gradient(160deg,#fff4f9,#fff7e7); border:2px dashed #ffc0d4; border-radius:18px;
@@ -4790,34 +4804,49 @@
       { id: 'wall_galaxy', cat: 'wall', kind: 'wall', name: '은하수 벽지', icon: '🌌', price: 160, color: '#2b2550', desc: '우주 한가운데' },
 
       /* 👕 아바타 */
-      /* --- 헤어: 남아 --- */
-      { id: 'av_hair_basic', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'short', g: 'both', name: '기본 머리', icon: '💇', price: 0, color: '#6b4423', desc: '단정한 머리' },
-      { id: 'av_hair_short', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'short', g: 'boy', name: '단정 숏컷', icon: '👦', price: 0, color: '#4a3018', desc: '남아 기본 숏컷' },
+      /* --- 헤어: 남아 (0코인 = 바로 쓸 수 있어요) --- */
+      { id: 'av_hair_short', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'crop', g: 'boy', name: '단정 숏컷', icon: '👦', price: 0, color: '#4a3018', desc: '남아 기본 숏컷' },
+      { id: 'av_hair_dandy', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'dandy', g: 'boy', name: '댄디 투블럭', icon: '👦', price: 0, color: '#3f2a17', desc: '옆은 짧게, 위는 볼륨' },
+      { id: 'av_hair_comma', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'comma', g: 'boy', name: '쉼표머리', icon: '👦', price: 0, color: '#4a3018', desc: '이마로 내려온 쉼표' },
+      { id: 'av_hair_bowl', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bowl', g: 'boy', name: '바가지 컷', icon: '🍄', price: 30, color: '#33220f', desc: '동글동글 바가지' },
       { id: 'av_hair_bang', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bang', g: 'boy', name: '앞머리 내림', icon: '👦', price: 25, color: '#3f2a17', desc: '이마를 덮는 앞머리' },
       { id: 'av_hair_spiky', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'spiky', g: 'boy', name: '뾰족 스포츠', icon: '⚽', price: 25, color: '#4a3018', desc: '뾰족뾰족 활동파' },
-      { id: 'av_hair_parted', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'parted', g: 'boy', name: '가르마 펌', icon: '👦', price: 35, color: '#5a3a1c', desc: '단정한 가르마' },
-      { id: 'av_hair_bowl', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bowl', g: 'boy', name: '바가지 컷', icon: '🍄', price: 30, color: '#33220f', desc: '동글동글 바가지' },
-      { id: 'av_hair_mohawk', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'mohawk', g: 'boy', name: '모히칸', icon: '🔥', price: 40, color: '#2b2438', desc: '가운데만 솟은 머리' },
       { id: 'av_hair_buzz', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'buzz', g: 'boy', name: '스포츠 머리', icon: '⚽', price: 25, color: '#4a3018', desc: '짧고 시원하게' },
-      /* --- 헤어: 여아 --- */
+      { id: 'av_hair_parted', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'parted', g: 'boy', name: '가르마 펌', icon: '👦', price: 35, color: '#5a3a1c', desc: '단정한 가르마' },
+      { id: 'av_hair_regent', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'regent', g: 'boy', name: '리젠트 펌', icon: '💈', price: 45, color: '#4a3018', desc: '앞머리를 위로 올린 펌' },
+      { id: 'av_hair_mohawk', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'mohawk', g: 'boy', name: '모히칸', icon: '🔥', price: 40, color: '#2b2438', desc: '가운데만 솟은 머리' },
+      { id: 'av_hair_shag', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'shag', g: 'boy', name: '덮수룩 머리', icon: '🍂', price: 40, color: '#3a2412', desc: '눈썹까지 덮는 수룩수룩' },
+      /* --- 헤어: 여아 (0코인 = 바로 쓸 수 있어요) --- */
       { id: 'av_hair_long', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'long', g: 'girl', name: '긴 생머리', icon: '👧', price: 0, color: '#4a3018', desc: '여아 기본 생머리' },
-      { id: 'av_hair_bob', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bob', g: 'girl', name: '단발 컷', icon: '💇', price: 30, color: '#8a5a2b', desc: '가지런한 단발' },
-      { id: 'av_hair_pony', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'pony', g: 'girl', name: '포니테일', icon: '🎀', price: 30, color: '#5a3a1c', desc: '한쪽으로 묶은 꼬리' },
+      { id: 'av_hair_bob', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bob', g: 'girl', name: '단발 보브컷', icon: '💇', price: 0, color: '#5a3a1c', desc: '가지런한 단발' },
+      { id: 'av_hair_pony', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'pony', g: 'girl', name: '높은 포니테일', icon: '🎀', price: 0, color: '#5a3a1c', desc: '머리 위에서 묶은 꼬리' },
+      { id: 'av_hair_twin', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'twin', g: 'girl', name: '양갈래 리본', icon: '👧', price: 0, color: '#7a4a1f', desc: '깜찍 양갈래' },
       { id: 'av_hair_buns', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'buns', g: 'girl', name: '양갈래 만두', icon: '🍡', price: 40, color: '#3f2a17', desc: '머리 위 두 개의 만두' },
       { id: 'av_hair_wave', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'wave', g: 'girl', name: '긴 웨이브', icon: '🌊', price: 35, color: '#6b4423', desc: '찰랑찰랑 웨이브' },
       { id: 'av_hair_ribbon', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'ribbon', g: 'girl', name: '반묶음 리본', icon: '🎀', price: 30, color: '#5a3a1c', desc: '리본으로 반묶음' },
-      { id: 'av_hair_twin', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'twin', g: 'girl', name: '양갈래', icon: '👧', price: 40, color: '#7a4a1f', desc: '깜찍 양갈래' },
+      { id: 'av_hair_bunup', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'bunup', g: 'girl', name: '당고머리', icon: '🍬', price: 35, color: '#3f2a17', desc: '머리 위 하나로 묶은 당고' },
+      { id: 'av_hair_hime', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'hime', g: 'girl', name: '히메컷', icon: '🌷', price: 45, color: '#33220f', desc: '가지런 앞머리 + 옆머리' },
+      { id: 'av_hair_braid', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'braid', g: 'girl', name: '사이드 브레이드', icon: '🎗', price: 40, color: '#5f3a1c', desc: '한쪽으로 땋은 머리' },
+      { id: 'av_hair_poodle', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'poodle', g: 'girl', name: '뽀글 펌', icon: '🐩', price: 35, color: '#6b4423', desc: '동글동글 뽀글펌' },
+      /* --- 헤어: 공용 --- */
+      { id: 'av_hair_basic', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'short', g: 'both', name: '기본 머리', icon: '💇', price: 0, color: '#6b4423', desc: '단정한 머리' },
       { id: 'av_hair_curly', cat: 'avatar', kind: 'cloth', slot: 'hair', style: 'curly', g: 'both', name: '곱슬곱슬', icon: '🌀', price: 35, color: '#5f3a1c', desc: '곱슬곱슬' },
 
-      { id: 'av_top_tee', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'tee', name: '기본 티셔츠', icon: '👕', price: 0, color: '#ffffff', color2: '#7ec8f0', desc: '하얀 티셔츠' },
-      { id: 'av_top_stripe', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'stripe', name: '줄무늬 티', icon: '👕', price: 25, color: '#ffffff', color2: '#ff8f8f', desc: '빨간 줄무늬' },
-      { id: 'av_top_hood', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'hood', name: '후드티', icon: '🧥', price: 40, color: '#7c9cf5', color2: '#5a7ce0', desc: '후드 + 주머니' },
-      { id: 'av_top_knit', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'knit', name: '포근 니트', icon: '🧶', price: 35, color: '#ffc46b', color2: '#ffa53d', desc: '보들보들 니트' },
+      { id: 'av_top_tee', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'tee', g: 'boy', name: '기본 티셔츠', icon: '👕', price: 0, color: '#ffffff', color2: '#7ec8f0', desc: '하얀 티셔츠' },
+      { id: 'av_top_blouse', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'blouse', g: 'girl', name: '분홍 블라우스', icon: '🎀', price: 0, color: '#ffd9e7', color2: '#ff9ec4', desc: '여아 기본 블라우스' },
+      { id: 'av_top_stripe', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'stripe', g: 'both', name: '줄무늬 티', icon: '👕', price: 25, color: '#ffffff', color2: '#ff8f8f', desc: '빨간 줄무늬' },
+      { id: 'av_top_hood', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'hood', g: 'both', name: '후드티', icon: '🧥', price: 40, color: '#7c9cf5', color2: '#5a7ce0', desc: '후드 + 주머니' },
+      { id: 'av_top_knit', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'knit', g: 'both', name: '포근 니트', icon: '🧶', price: 35, color: '#ffc46b', color2: '#ffa53d', desc: '보들보들 니트' },
+      { id: 'av_top_soccer', cat: 'avatar', kind: 'cloth', slot: 'top', style: 'soccer', g: 'boy', name: '축구 유니폼', icon: '⚽', price: 45, color: '#4a86e8', color2: '#ffffff', desc: '등번호 7번 유니폼' },
 
-      { id: 'av_bottom_jeans', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'jeans', name: '청바지', icon: '👖', price: 0, color: '#5b8cc8', desc: '파란 청바지' },
-      { id: 'av_bottom_shorts', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'shorts', name: '반바지', icon: '🩳', price: 25, color: '#7fd6a8', desc: '시원한 반바지' },
-      { id: 'av_bottom_skirt', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'skirt', name: '주름 치마', icon: '👗', price: 35, color: '#f7a1c4', desc: '팔랑팔랑' },
-      { id: 'av_bottom_train', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'train', name: '트레이닝', icon: '🏃', price: 30, color: '#9aa4b8', desc: '편한 운동복' },
+      { id: 'av_bottom_jeans', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'jeans', g: 'both', name: '청바지', icon: '👖', price: 0, color: '#5b8cc8', desc: '파란 청바지' },
+      { id: 'av_bottom_shorts', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'shorts', g: 'boy', name: '반바지', icon: '🩳', price: 0, color: '#7fd6a8', desc: '시원한 반바지' },
+      { id: 'av_bottom_skirt', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'skirt', g: 'girl', name: '주름 치마', icon: '👗', price: 0, color: '#f7a1c4', desc: '팔랑팔랑' },
+      { id: 'av_bottom_pleats', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'pleats', g: 'girl', name: '플리츠 스커트', icon: '🌸', price: 35, color: '#ff9ec4', desc: '잔주름이 예뻐요' },
+      { id: 'av_bottom_denim', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'denimskirt', g: 'girl', name: '데님 스커트', icon: '👗', price: 35, color: '#7ba7d9', desc: '청 데님 치마' },
+      { id: 'av_bottom_dress', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'dress', g: 'girl', name: '원피스 치마', icon: '👘', price: 45, color: '#ffc0d9', desc: '무릎까지 내려와요' },
+      { id: 'av_bottom_train', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'train', g: 'both', name: '트레이닝', icon: '🏃', price: 30, color: '#9aa4b8', desc: '편한 운동복' },
+      { id: 'av_bottom_jogger', cat: 'avatar', kind: 'cloth', slot: 'bottom', style: 'jogger', g: 'boy', name: '조거 팬츠', icon: '🏃', price: 30, color: '#8a94a8', desc: '발목을 조인 팬츠' },
 
       { id: 'av_shoes_sneaker', cat: 'avatar', kind: 'cloth', slot: 'shoes', style: 'sneaker', name: '운동화', icon: '👟', price: 0, color: '#ffffff', color2: '#7ec8f0', desc: '깔끔한 운동화' },
       { id: 'av_shoes_boots', cat: 'avatar', kind: 'cloth', slot: 'shoes', style: 'boots', name: '부츠', icon: '🥾', price: 30, color: '#a9744a', desc: '든든한 부츠' },
@@ -4846,9 +4875,48 @@
     ];
   }
 
+  /* 저장된 상점 목록에도 새 기본 아이템(헤어·옷)을 한 번씩 합쳐요.
+     seed 판이 올라가면 그때만 합치므로, 보호자가 지우거나 숨긴 아이템은 그 뒤로 그대로 둡니다. */
+  var SHOP_SEED_V = 2;
+  var SHOP_SEED_FREE = ['av_hair_bob', 'av_hair_pony', 'av_hair_twin', 'av_bottom_shorts', 'av_bottom_skirt'];
+
+  function mergeShopSeed() {
+    var shop = state.shop;
+    if (!shop || Object.prototype.toString.call(shop.items) !== '[object Array]' || !shop.items.length) return false;
+    if ((parseInt(shop.seed, 10) || 1) >= SHOP_SEED_V) return false;
+    var dflt = defaultShopItems(), have = {}, i, changed = false;
+    for (i = 0; i < shop.items.length; i++) if (shop.items[i] && shop.items[i].id) have[shop.items[i].id] = 1;
+    for (i = 0; i < dflt.length; i++) {
+      var d = dflt[i];
+      if (!have[d.id]) { shop.items.push(clone(d)); have[d.id] = 1; changed = true; }
+    }
+    /* 시작 옷·시작 머리는 0코인으로, 헤어는 성별·모양을 지금 기본값으로 맞춰요 */
+    var byId = {};
+    for (i = 0; i < dflt.length; i++) byId[dflt[i].id] = dflt[i];
+    for (i = 0; i < shop.items.length; i++) {
+      var it = shop.items[i];
+      if (!it || !it.id) continue;
+      var base = byId[it.id];
+      if (base && it.slot === 'hair') {
+        if (base.g && it.g !== base.g) { it.g = base.g; changed = true; }
+        if (base.style && it.style !== base.style) { it.style = base.style; changed = true; }
+      }
+      if (SHOP_SEED_FREE.indexOf(it.id) >= 0) {
+        if (it.price !== 0) { it.price = 0; changed = true; }
+        if (base && it.name !== base.name) { it.name = base.name; changed = true; }
+        if (base && it.desc !== base.desc) { it.desc = base.desc; changed = true; }
+      }
+    }
+    shop.seed = SHOP_SEED_V;
+    return changed;
+  }
+
   function shopAll() {
     if (!state.shop || typeof state.shop !== 'object' || Object.prototype.toString.call(state.shop.items) !== '[object Array]' || !state.shop.items.length) {
-      state.shop = { items: defaultShopItems() };
+      state.shop = { items: defaultShopItems(), seed: SHOP_SEED_V };
+    } else if (mergeShopSeed()) {
+      state.shop.updatedAt = new Date().toISOString();
+      if (cloud.conn && cloud.me) scheduleSync('settings');
     }
     return state.shop.items;
   }
@@ -5772,6 +5840,25 @@
       s += '<rect x="43" y="156" width="14" height="16" rx="6" fill="' + botC + '"/>';
       s += '<rect x="63" y="156" width="14" height="16" rx="6" fill="' + botC + '"/>';
       s += '<path d="M39 146h42" stroke="#ffffff" stroke-width="2" opacity=".35"/>';
+    } else if (bstyle === 'pleats') {
+      s += '<path d="M41 133h38l11 33H30z" fill="' + botC + '"/>';
+      s += '<path d="M46 136l-4 27M54 136l-2 29M62 136v29M70 136l2 29M78 136l4 27" stroke="#ffffff" stroke-width="1.6" opacity=".42"/>';
+      s += '<path d="M30 160h61l2 6H28z" fill="' + darken(botC, .1) + '"/>';
+    } else if (bstyle === 'denimskirt') {
+      s += '<path d="M42 134h36l8 27H34z" fill="' + botC + '"/>';
+      s += '<path d="M42 137h36" stroke="#ffffff" stroke-width="2" opacity=".45"/>';
+      s += '<path d="M50 137v22M70 137v22" stroke="#ffffff" stroke-width="1.4" stroke-dasharray="3 3" opacity=".55"/>';
+      s += '<path d="M34 156h52l1 5H33z" fill="' + darken(botC, .12) + '"/>';
+    } else if (bstyle === 'dress') {
+      s += '<path d="M39 132h42l5 20 5 28H29l6-28z" fill="' + botC + '"/>';
+      s += '<path d="M39 132h42" stroke="' + darken(botC, .12) + '" stroke-width="3" opacity=".45"/>';
+      s += '<path d="M29 168h62l-1 7H31z" fill="#ffffff" opacity=".55"/>';
+      s += '<path d="M56 136h8" stroke="' + darken(botC, .18) + '" stroke-width="2.4"/>';
+    } else if (bstyle === 'jogger') {
+      s += '<rect x="40" y="135" width="40" height="20" rx="7" fill="' + botC + '"/>';
+      s += '<path d="M43 152h12l-2 22h-9z" fill="' + botC + '"/>';
+      s += '<path d="M65 152h12l-1 22h-9z" fill="' + botC + '"/>';
+      s += '<path d="M43 170h11M66 170h10" stroke="#ffffff" stroke-width="3" opacity=".7"/>';
     } else {
       s += '<rect x="39" y="136" width="42" height="26" rx="6" fill="' + botC + '"/>';
       s += '<rect x="42" y="158" width="15" height="16" rx="6" fill="' + botC + '"/>';
@@ -5807,6 +5894,18 @@
         s += '<path d="M' + (45 + k * 9) + ' 104v34" stroke="#ffffff" stroke-width="2" opacity=".35"/>';
       }
       s += '<path d="M42 100q18-8 36 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
+    } else if (tstyle === 'blouse') {
+      /* 둥근 카라 + 리본 + 단추 */
+      s += '<path d="M53 99q7 9 14 0l-2 5H55z" fill="' + topC2 + '"/>';
+      s += '<path d="M52 100q8 10 16 0" fill="none" stroke="' + topC2 + '" stroke-width="2.6"/>';
+      s += '<path d="M60 108l-5-4v8z" fill="' + topC2 + '"/><path d="M60 108l5-4v8z" fill="' + topC2 + '"/>';
+      s += '<circle cx="60" cy="108" r="2.2" fill="' + darken(topC2, .12) + '"/>';
+      s += '<circle cx="60" cy="118" r="1.7" fill="' + topC2 + '" opacity=".9"/><circle cx="60" cy="126" r="1.7" fill="' + topC2 + '" opacity=".9"/>';
+      s += '<path d="M46 132q14 5 28 0" fill="none" stroke="' + topC2 + '" stroke-width="2" opacity=".55"/>';
+    } else if (tstyle === 'soccer') {
+      s += '<path d="M' + (tx + 6) + ' 100v34M' + (tx + tw - 6) + ' 100v34" stroke="' + topC2 + '" stroke-width="3" opacity=".8"/>';
+      s += '<path d="M' + tx + ' 116h' + tw + '" stroke="' + topC2 + '" stroke-width="2.4" opacity=".55"/>';
+      s += '<text x="60" y="112" text-anchor="middle" font-size="13" font-weight="900" fill="' + topC2 + '">7</text>';
     } else {
       s += '<path d="M' + tx + ' 100q' + (tw / 2) + ' -8 ' + tw + ' 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
       s += '<circle cx="60" cy="118" r="5" fill="' + topC2 + '" opacity=".85"/>';
@@ -5823,6 +5922,8 @@
     if (hstyle === 'long' || hstyle === 'wave') bh = 48;
     else if (hstyle === 'pony' || hstyle === 'ribbon') bh = 28;
     else if (hstyle === 'buns') bh = 22;
+    else if (hstyle === 'shag') bh = 30;
+    else if (hstyle === 'hime' || hstyle === 'braid') bh = 26;
     if (bh) {
       s += '<path d="M27 62c0-22 15-34 33-34s33 12 33 34v' + bh + 'c-6 5-12 6-17 2V66H44v' + (bh - 4) + 'c-5 4-11 3-17-2z" fill="' + hairC + '"/>';
     }
@@ -5834,28 +5935,57 @@
       s += '<path d="M88 72c15 6 22 22 18 40-3 14-11 24-17 26-6 1-8-5-4-10 8-10 12-24 8-38-2-6-6-11-11-14z" fill="' + hairC + '"/>';
       s += '<circle cx="90" cy="70" r="5.5" fill="#ff8fb0"/>';
     }
+    if (hstyle === 'braid') {
+      /* 한쪽으로 땋아 내린 머리 — 어깨 위로 동글동글 */
+      var brx = [31, 33, 35, 37, 39], bry = [74, 84, 94, 104, 114];
+      s += '<path d="M29 68q3 4 4 8" fill="none" stroke="' + hairC + '" stroke-width="4" stroke-linecap="round"/>';
+      for (var bri = 0; bri < brx.length; bri++) {
+        s += '<ellipse cx="' + brx[bri] + '" cy="' + bry[bri] + '" rx="6.8" ry="5.8" fill="' + hairC + '" transform="rotate(-12 ' + brx[bri] + ' ' + bry[bri] + ')"/>';
+      }
+      s += '<ellipse cx="40" cy="121" rx="5.2" ry="2.6" fill="#ff8fb0"/>';
+    }
 
-    /* 얼굴 */
+    /* 얼굴 — 여아는 속눈썹·분홍 입술·볼터치로 확실히 달라요 */
     var headR = girl ? 33 : 33.5;
     s += '<circle cx="26" cy="64" r="6" fill="' + skin + '"/>';
     s += '<circle cx="94" cy="64" r="6" fill="' + skin + '"/>';
     s += '<circle cx="60" cy="62" r="' + headR + '" fill="' + skin + '"/>';
-    var eyeRx = girl ? 3.9 : 3.5, eyeRy = girl ? 5.2 : 4.6;
+    var eyeRx = girl ? 4.1 : 3.4, eyeRy = girl ? 5.6 : 4.5;
     s += '<ellipse cx="48" cy="65" rx="' + eyeRx + '" ry="' + eyeRy + '" fill="#2c2440"/>';
     s += '<ellipse cx="72" cy="65" rx="' + eyeRx + '" ry="' + eyeRy + '" fill="#2c2440"/>';
-    s += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="63.2" r="' + (girl ? 1.45 : 1.3) + '" fill="#fff"/>';
-    s += '<circle cx="' + (girl ? 73.4 : 73.2) + '" cy="63.2" r="' + (girl ? 1.45 : 1.3) + '" fill="#fff"/>';
-    s += '<ellipse cx="40" cy="74" rx="' + (girl ? 5 : 4.4) + '" ry="2.8" fill="#ff9db4" opacity="' + (girl ? '.72' : '.5') + '"/>';
-    s += '<ellipse cx="80" cy="74" rx="' + (girl ? 5 : 4.4) + '" ry="2.8" fill="#ff9db4" opacity="' + (girl ? '.72' : '.5') + '"/>';
-    s += '<path d="M55 75q5 5 10 0" fill="none" stroke="#b0603f" stroke-width="2.2" stroke-linecap="round"/>';
-    /* 여아는 눈이 조금 크고 볼터치가 진해요 (눈썹·속눈썹은 이 크기에서 화나 보여서 그리지 않아요) */
+    s += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="63.2" r="' + (girl ? 1.55 : 1.3) + '" fill="#fff"/>';
+    s += '<circle cx="' + (girl ? 73.4 : 73.2) + '" cy="63.2" r="' + (girl ? 1.55 : 1.3) + '" fill="#fff"/>';
+    if (girl) {
+      /* 반짝이 하나 더 */
+      s += '<circle cx="46.6" cy="67.2" r="0.95" fill="#fff" opacity=".85"/>';
+      s += '<circle cx="70.6" cy="67.2" r="0.95" fill="#fff" opacity=".85"/>';
+      /* 바깥으로 살짝 올라간 속눈썹 */
+      s += '<path d="M44.8 60.8q-2.8-1.6-4.2-4.6" fill="none" stroke="#2c2440" stroke-width="1.6" stroke-linecap="round"/>';
+      s += '<path d="M75.2 60.8q2.8-1.6 4.2-4.6" fill="none" stroke="#2c2440" stroke-width="1.6" stroke-linecap="round"/>';
+      s += '<path d="M47.4 59.6q-1.2-1.6-1.6-3.2" fill="none" stroke="#2c2440" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>';
+      s += '<path d="M72.6 59.6q1.2-1.6 1.6-3.2" fill="none" stroke="#2c2440" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>';
+      /* 볼터치 — 더 진하고 반짝 */
+      s += '<ellipse cx="39.4" cy="73.6" rx="5.3" ry="3" fill="#ff9ec4" opacity=".82"/>';
+      s += '<ellipse cx="80.6" cy="73.6" rx="5.3" ry="3" fill="#ff9ec4" opacity=".82"/>';
+      s += '<circle cx="37.6" cy="72.4" r="1.05" fill="#ffffff" opacity=".6"/>';
+      s += '<circle cx="82.4" cy="72.4" r="1.05" fill="#ffffff" opacity=".6"/>';
+      /* 분홍 입술 */
+      s += '<path d="M55.2 74.4q4.8 5.6 9.6 0q-4.8 2.2-9.6 0z" fill="#f4799f"/>';
+      s += '<path d="M57.6 75.4q2.4 1.6 4.8 0" fill="none" stroke="#ffffff" stroke-width=".9" opacity=".55"/>';
+    } else {
+      s += '<ellipse cx="40" cy="74" rx="4.2" ry="2.6" fill="#ffb3c6" opacity=".45"/>';
+      s += '<ellipse cx="80" cy="74" rx="4.2" ry="2.6" fill="#ffb3c6" opacity=".45"/>';
+      s += '<path d="M55 75q5 5 10 0" fill="none" stroke="#b0603f" stroke-width="2.2" stroke-linecap="round"/>';
+    }
 
-    /* 헤어 (앞머리) */
+    /* 헤어 (앞머리) — 모양마다 실루엣이 또렷하게 달라요 */
     var cap = '<path d="M27 53c0-20 15-31 33-31s33 11 33 31z" fill="' + hairC + '"/>';
+    var hairHi = '#ffffff';
     if (hstyle === 'bob') {
       s += '<path d="M26 56c0-21 15-34 34-34s34 13 34 34z" fill="' + hairC + '"/>';
-      s += '<rect x="23" y="52" width="11" height="30" rx="5.5" fill="' + hairC + '"/>';
-      s += '<rect x="86" y="52" width="11" height="30" rx="5.5" fill="' + hairC + '"/>';
+      s += '<rect x="23" y="52" width="11" height="32" rx="5.5" fill="' + hairC + '"/>';
+      s += '<rect x="86" y="52" width="11" height="32" rx="5.5" fill="' + hairC + '"/>';
+      s += '<path d="M33 40q14-10 30-8" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".2"/>';
     } else if (hstyle === 'twin') {
       s += '<circle cx="24" cy="42" r="12" fill="' + hairC + '"/>';
       s += '<circle cx="96" cy="42" r="12" fill="' + hairC + '"/>';
@@ -5866,45 +5996,89 @@
       var curls = [[32, 34], [44, 26], [60, 23], [76, 26], [88, 34], [28, 48], [92, 48]];
       for (var ci = 0; ci < curls.length; ci++) s += '<circle cx="' + curls[ci][0] + '" cy="' + curls[ci][1] + '" r="9" fill="' + hairC + '"/>';
       s += '<path d="M27 62c0-16 14-26 33-26s33 10 33 26c-8-8-17-12-33-12s-25 4-33 12z" fill="' + hairC + '"/>';
+    } else if (hstyle === 'poodle') {
+      var pcurls = [[30, 40], [38, 30], [48, 24], [60, 21], [72, 24], [82, 30], [90, 40], [27, 54], [93, 54], [26, 67], [94, 67]];
+      for (var pc = 0; pc < pcurls.length; pc++) s += '<circle cx="' + pcurls[pc][0] + '" cy="' + pcurls[pc][1] + '" r="8.2" fill="' + hairC + '"/>';
+      s += '<path d="M28 64c0-18 14-28 32-28s32 10 32 28c-8-9-18-13-32-13s-24 4-32 13z" fill="' + hairC + '"/>';
     } else if (hstyle === 'buzz') {
       s += '<path d="M28 60c0-20 14-31 32-31s32 11 32 31q-6-10-32-10t-32 10z" fill="' + hairC + '"/>';
       s += '<path d="M46 31l3 7 4-6 4 7 3-6 4 6" fill="none" stroke="' + hairC + '" stroke-width="3" stroke-linecap="round"/>';
     } else if (hstyle === 'bang') {
       s += '<path d="M27 64c0-23 14-37 33-37s33 14 33 37c-2-12-6-18-13-19-6 5-12 7-20 7s-14-2-20-7c-7 1-11 7-13 19z" fill="' + hairC + '"/>';
-      s += '<path d="M39 47h42" stroke="#ffffff" stroke-width="2.4" opacity=".16"/>';
+      s += '<path d="M39 47h42" stroke="' + hairHi + '" stroke-width="2.4" opacity=".16"/>';
     } else if (hstyle === 'spiky') {
       s += '<path d="M26 62c0-23 15-36 34-36s34 13 34 36l-7-9-6 6-4-12-7 10-6-14-6 14-7-10-4 12-6-6z" fill="' + hairC + '"/>';
     } else if (hstyle === 'parted') {
       s += '<path d="M26 62c0-23 15-36 34-36 18 0 30 10 33 27-6-6-12-9-19-9-9 0-16 4-21 10-4 5-6 12-6 20-6-14-11-15-21-12z" fill="' + hairC + '"/>';
-      s += '<path d="M62 30q-3 12 2 22" fill="none" stroke="#ffffff" stroke-width="2" opacity=".22"/>';
+      s += '<path d="M62 30q-3 12 2 22" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".22"/>';
     } else if (hstyle === 'bowl') {
       s += '<path d="M25 66c0-25 16-39 35-39s35 14 35 39l-3 8c-2-16-6-22-14-23H42c-8 1-12 7-14 23z" fill="' + hairC + '"/>';
-      s += '<path d="M42 44h36" stroke="#ffffff" stroke-width="2.6" opacity=".2"/>';
+      s += '<path d="M42 44h36" stroke="' + hairHi + '" stroke-width="2.6" opacity=".2"/>';
     } else if (hstyle === 'mohawk') {
       s += '<path d="M52 38c2-14 14-14 16 0l5 24H47z" fill="' + hairC + '"/>';
       s += '<path d="M30 50q8-8 16-6l-3 12H29z" fill="' + hairC + '" opacity=".55"/>';
       s += '<path d="M74 44q8-2 16 6l1 6H77z" fill="' + hairC + '" opacity=".55"/>';
+    } else if (hstyle === 'crop') {
+      s += '<path d="M28 54c0-21 14-33 32-33s32 12 32 33c-3-6-7-9-12-10-6 2-13 3-20 3s-14-1-20-3c-5 1-9 4-12 10z" fill="' + hairC + '"/>';
+      s += '<path d="M44 33c-4 6-6 11-6 17" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".2"/>';
+      s += '<path d="M40 36q10-6 22-5" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".2"/>';
+    } else if (hstyle === 'dandy') {
+      /* 옆은 짧게(밝게), 위는 볼륨 있는 두 덩어리 */
+      s += '<path d="M29 54c0-18 14-29 31-29s31 11 31 29q-4-7-9-9H38q-5 2-9 9z" fill="' + lighten(hairC, .26) + '"/>';
+      s += '<path d="M30 45c1-14 13-23 30-23s29 9 30 23c-2 2-5 2-8 0-6-4-14-6-22-6s-16 2-22 6c-3 2-6 2-8 0z" fill="' + hairC + '"/>';
+      s += '<path d="M38 32q11-7 24-6" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".22"/>';
+    } else if (hstyle === 'comma') {
+      s += cap;
+      s += '<path d="M62 29c10 3 17 11 18 22 1 7-1 12-5 13-3 1-5-1-5-4 0-7-4-12-10-15-4-2-8-3-12-2 4-5 9-9 14-14z" fill="' + lighten(hairC, .1) + '"/>';
+      s += '<path d="M50 34c-5 6-8 12-9 19" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".22"/>';
+    } else if (hstyle === 'regent') {
+      s += cap;
+      s += '<path d="M38 36c4-14 18-21 31-15 8 4 13 11 15 20-4-6-9-10-15-11-9-2-17 1-23 8-2 2-4 3-8 2z" fill="' + lighten(hairC, .18) + '"/>';
+      s += '<path d="M45 25q15-6 28 2" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".3"/>';
+      s += '<path d="M40 44q8-6 18-6" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".18"/>';
+    } else if (hstyle === 'mohawk') {
+      s += '<path d="M32 50c2-15 13-24 28-24s26 9 28 24q-6-8-28-8t-28 8z" fill="' + hairC + '" opacity=".22"/>';
+      s += '<path d="M52 41c1-18 15-18 16 0l4 21H48z" fill="' + hairC + '"/>';
+      s += '<path d="M52 27l4-11 5 10 4-9 4 10" fill="' + hairC + '"/>';
+      s += '<path d="M57 30q1 12 0 22" fill="none" stroke="' + hairHi + '" stroke-width="1.8" opacity=".26"/>';
+    } else if (hstyle === 'shag') {
+      s += '<path d="M26 58c0-23 15-36 34-36s34 13 34 36c0 8-2 14-5 17-3 2-6 1-6-2 0-2 0-4-1-6-2 3-4 5-7 6-3 1-4-1-3-4 0-2 1-4 1-6-3 3-8 5-13 5s-10-2-13-5c0 2 1 4 1 6 1 3 0 5-3 4-3-1-5-3-7-6-1 2-1 4-1 6 0 3-3 4-6 2-3-3-5-9-5-17z" fill="' + hairC + '"/>';
+      s += '<path d="M38 44q22-13 44 0" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".2"/>';
+      s += '<path d="M31 56q-1 8 1 14M89 56q1 8-1 14" stroke="' + hairC + '" stroke-width="3.6" stroke-linecap="round"/>';
+    } else if (hstyle === 'hime') {
+      s += '<path d="M27 50c0-18 15-28 33-28s33 10 33 28z" fill="' + hairC + '"/>';
+      s += '<rect x="27" y="44" width="66" height="9" rx="3" fill="' + hairC + '"/>';
+      s += '<rect x="25" y="49" width="13" height="47" rx="5" fill="' + hairC + '"/>';
+      s += '<rect x="82" y="49" width="13" height="47" rx="5" fill="' + hairC + '"/>';
+      s += '<path d="M34 51h52" stroke="' + hairHi + '" stroke-width="2" opacity=".18"/>';
+    } else if (hstyle === 'bunup') {
+      s += cap;
+      s += '<circle cx="60" cy="19" r="13" fill="' + lighten(hairC, .06) + '"/>';
+      s += '<path d="M50 18q10-6 20 0" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".28"/>';
+      s += '<ellipse cx="60" cy="29" rx="12" ry="3.6" fill="#ff8fb0"/>';
+      s += '<circle cx="60" cy="29" r="2.4" fill="#ff6fa1"/>';
+      s += '<path d="M40 42q20-12 40 0" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".2"/>';
     } else if (hstyle === 'long') {
       s += cap;
-      s += '<path d="M60 30v15" stroke="#ffffff" stroke-width="1.8" opacity=".2"/>';
+      s += '<path d="M60 30v15" stroke="' + hairHi + '" stroke-width="1.8" opacity=".2"/>';
     } else if (hstyle === 'wave') {
       s += cap;
-      s += '<path d="M33 42q14-16 30-12" fill="none" stroke="#ffffff" stroke-width="2.6" opacity=".2"/>';
+      s += '<path d="M33 42q14-16 30-12" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".2"/>';
     } else if (hstyle === 'pony') {
       s += '<path d="M28 60c0-20 14-31 32-31s32 11 32 31c-9-11-18-15-32-15s-23 4-32 15z" fill="' + hairC + '"/>';
-      s += '<path d="M42 40q18-10 36 0" fill="none" stroke="#ffffff" stroke-width="2.4" opacity=".18"/>';
+      s += '<path d="M42 40q18-10 36 0" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".18"/>';
     } else if (hstyle === 'buns') {
       s += cap;
       s += '<circle cx="40" cy="27" r="11.5" fill="' + hairC + '"/>';
       s += '<circle cx="80" cy="27" r="11.5" fill="' + hairC + '"/>';
-      s += '<path d="M34 25q6-5 12 0M74 25q6-5 12 0" fill="none" stroke="#ffffff" stroke-width="2" opacity=".22"/>';
+      s += '<path d="M34 25q6-5 12 0M74 25q6-5 12 0" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".22"/>';
     } else if (hstyle === 'ribbon') {
       s += cap;
       s += '<path d="M60 26l-14-9 2 17z" fill="#ff8fb0"/><path d="M60 26l14-9-2 17z" fill="#ff8fb0"/>';
       s += '<circle cx="60" cy="26" r="4.2" fill="#ff6fa1"/>';
     } else {
       s += cap;
-      s += '<path d="M40 40q20-12 40 0" fill="none" stroke="#ffffff" stroke-width="3" opacity=".22"/>';
+      s += '<path d="M40 40q20-12 40 0" fill="none" stroke="' + hairHi + '" stroke-width="3" opacity=".22"/>';
     }
 
     /* 모자 · 머리장식 */
@@ -6052,20 +6226,40 @@
     return h;
   }
 
+  /* 성별마다 시작 옷·시작 머리 (모두 0코인) */
+  var AV_STARTER = {
+    boy: { hair: 'av_hair_short', top: 'av_top_tee', bottom: 'av_bottom_shorts' },
+    girl: { hair: 'av_hair_long', top: 'av_top_blouse', bottom: 'av_bottom_skirt' }
+  };
+  /* 아직 아무것도 안 고른 기본 모습 */
+  var AV_PLAIN = { hair: 'av_hair_basic', top: 'av_top_tee', bottom: 'av_bottom_jeans' };
+
   function setAvatarGender(id) {
     if (id !== 'boy' && id !== 'girl') return;
     var av = prof().avatar;
     if (avGender(av) === id) return;
+    var from = avGender(av);
     av.gender = id;
-    var cur = avItem(av.hair);
-    var cg = cur ? (cur.g || 'both') : 'both';
-    if (cg !== 'both' && cg !== id) {
-      av.hair = (id === 'girl') ? 'av_hair_long' : 'av_hair_short';
-      prof().owned[av.hair] = 1;
+    /* 지금 입은 게 '반대 성별 시작 옷'이거나 '아직 기본'이면 새 성별 시작 옷으로 갈아입혀요.
+       아이가 골라 입은 옷은 그대로 둬요. */
+    var swap = ['hair', 'top', 'bottom'], swapped = [];
+    for (var si = 0; si < swap.length; si++) {
+      var slot = swap[si], cur = av[slot], it = avItem(cur);
+      var cg = it ? (it.g || 'both') : 'both';
+      var otherStarter = (AV_STARTER[from] && AV_STARTER[from][slot] === cur);
+      var plain = (AV_PLAIN[slot] === cur);
+      var otherOnly = (cg !== 'both' && cg !== id);
+      if (!(otherStarter || plain || otherOnly)) continue;
+      var next = AV_STARTER[id][slot];
+      if (!avItem(next) || next === cur) continue;
+      av[slot] = next;
+      prof().owned[next] = 1;
+      swapped.push(slot);
     }
     saveState();
     snd('sticker');
-    showToast((id === 'girl' ? '👧 여아' : '👦 남아') + ' 아바타로 바꿨어요!');
+    showToast((id === 'girl' ? '👧 여아' : '👦 남아') + ' 아바타로 바꿨어요!' +
+      (swapped.length ? ' 머리와 옷도 ' + (id === 'girl' ? '여아' : '남아') + ' 기본으로 맞췄어요.' : ''));
     renderAvatar();
     if (!document.getElementById('roomModal').hidden) renderRoom();
   }
@@ -6119,18 +6313,56 @@
       if (it.kind !== 'cloth' || it.slot !== slot || it.hidden) continue;
       out.push(it);
     }
-    if (slot === 'hair') {
-      var g = avGender();
-      out.sort(function (a, b) {
-        function rank(o) {
-          var og = o.g || 'both';
-          if (og === 'both') return 1;
-          return og === g ? 0 : 2;
-        }
-        return rank(a) - rank(b);
-      });
-    }
     return out;
+  }
+
+  var AV_GROUP_TITLE = {
+    boy: { icon: '👦', label: '남아 머리' },
+    girl: { icon: '👧', label: '여아 머리' },
+    both: { icon: '🧑', label: '남녀 공용 머리' }
+  };
+
+  /* 지금 고른 성별 → 다른 성별 → 공용 순서로 묶고, 0코인 머리를 먼저 보여 줘요 */
+  function avatarItemGroups(slot) {
+    var g = avGender();
+    var order = [g, (g === 'girl' ? 'boy' : 'girl'), 'both'];
+    var all = avatarSlotItems(slot), groups = [];
+    for (var oi = 0; oi < order.length; oi++) {
+      var gems = [];
+      for (var i = 0; i < all.length; i++) if ((all[i].g || 'both') === order[oi]) gems.push(all[i]);
+      gems.sort(function (a, b) { return (a.price > 0 ? 1 : 0) - (b.price > 0 ? 1 : 0); });
+      groups.push({ g: order[oi], items: gems });
+    }
+    return groups;
+  }
+
+  function avCardHtml(av, p, it, slot) {
+    var ownIt = it.price <= 0 || p.owned[it.id];
+    var on = av[slot] === it.id;
+    var ig = it.g || 'both';
+    var gmark = (ig !== 'both' && (slot === 'top' || slot === 'bottom')) ? (ig === 'boy' ? ' 👦' : ' 👧') : '';
+    var tmpAv = {}, ak;
+    for (ak in av) if (Object.prototype.hasOwnProperty.call(av, ak)) tmpAv[ak] = av[ak];
+    tmpAv[it.slot] = it.id;
+    /* 머리·모자는 얼굴을 크게, 옷은 입은 부분만 크게 보여 줘야 모양이 구분돼요 */
+    var thumbVB = '0 0 120 200', thumbCls = ' av-thumb-fig';
+    if (slot === 'hair') {
+      thumbVB = '18 -12 84 104'; thumbCls = ' av-thumb-fig face';
+      tmpAv.hat = '';   /* 머리 모양이 잘 보이도록 미리보기에서는 모자를 벗겨요 */
+    } else if (slot === 'hat') {
+      thumbVB = '6 0 108 108'; thumbCls = ' av-thumb-fig face';
+    } else if (slot === 'acc') {
+      thumbVB = '8 8 104 124'; thumbCls = ' av-thumb-fig bust';
+    } else if (slot === 'top') {
+      thumbVB = '20 86 80 62'; thumbCls = ' av-thumb-fig bust';
+    } else if (slot === 'bottom') {
+      thumbVB = '22 118 76 86'; thumbCls = ' av-thumb-fig bust';
+    }
+    return '<button type="button" class="av-card' + (on ? ' on' : '') + (ownIt ? '' : ' locked') + '" data-act="av-wear" data-id="' + esc(it.id) + '">' +
+      '<span class="av-thumb' + thumbCls + '">' + '<svg viewBox="' + thumbVB + '" aria-hidden="true">' + avatarInner(tmpAv) + '</svg></span>' +
+      '<b>' + esc(it.name) + gmark + '</b>' +
+      '<small>' + (ownIt ? (on ? '입는 중' : '입어 보기') : coinSvg() + ' ' + fmtNum(it.price)) + '</small>' +
+      '</button>';
   }
 
   function avatarHtml() {
@@ -6160,41 +6392,32 @@
     h += '</div>';
 
     if (avatarUi.slot === 'hair') {
-      h += '<p class="lf-note">👦 남자 머리 · 👧 여자 머리 — 지금 고른 성별 머리가 먼저 나와요.</p>';
-    }
-    h += '<div class="av-grid">';
-    if (avatarUi.slot === 'acc' || avatarUi.slot === 'hat') {
-      h += '<button type="button" class="av-card' + (!av[avatarUi.slot] ? ' on' : '') + '" data-act="av-off" data-slot="' + avatarUi.slot + '">' +
-        '<span class="av-thumb">🚫</span><b>안 쓰기</b><small>' + (avatarUi.slot === 'hat' ? '모자 없음' : '소품 없음') + '</small></button>';
-    }
-    var list = avatarSlotItems(avatarUi.slot);
-    for (var k = 0; k < list.length; k++) {
-      var it = list[k];
-      var ownIt = it.price <= 0 || p.owned[it.id];
-      var on = av[avatarUi.slot] === it.id;
-      var ig = it.g || 'both';
-      var otherG = (avatarUi.slot === 'hair' && ig !== 'both' && ig !== avGender(av));
-      var gmark = (avatarUi.slot === 'hair' && ig !== 'both') ? (ig === 'boy' ? ' 👦' : ' 👧') : '';
-      var tmpAv = {};
-      for (var ak in av) if (Object.prototype.hasOwnProperty.call(av, ak)) tmpAv[ak] = av[ak];
-      tmpAv[it.slot] = it.id;
-      /* 머리·모자는 얼굴을 크게, 안경·소품은 상반신을 보여 줘야 모양이 구분돼요 */
-      var thumbVB = '0 0 120 200', thumbCls = ' av-thumb-fig';
-      if (avatarUi.slot === 'hair') {
-        thumbVB = '4 0 112 124'; thumbCls = ' av-thumb-fig face';
-        tmpAv.hat = '';   /* 머리 모양이 잘 보이도록 미리보기에서는 모자를 벗겨요 */
-      } else if (avatarUi.slot === 'hat') {
-        thumbVB = '6 0 108 108'; thumbCls = ' av-thumb-fig face';
-      } else if (avatarUi.slot === 'acc') {
-        thumbVB = '8 8 104 124'; thumbCls = ' av-thumb-fig bust';
+      h += '<p class="lf-note">지금 고른 성별 머리가 먼저 나와요. <b>0코인</b> 머리는 코인 없이 바로 쓸 수 있어요.</p>';
+      var grp = avatarItemGroups('hair');
+      for (var gi = 0; gi < grp.length; gi++) {
+        var gset = grp[gi];
+        if (!gset.items.length) continue;
+        var freeN = 0;
+        for (var fi = 0; fi < gset.items.length; fi++) if (gset.items[fi].price <= 0) freeN++;
+        h += '<div class="av-sec ' + gset.g + '"><span class="av-sec-badge">' + AV_GROUP_TITLE[gset.g].icon + ' ' + AV_GROUP_TITLE[gset.g].label + '</span>' +
+          '<small>' + gset.items.length + '가지 · 0코인 ' + freeN + '가지</small></div>';
+        h += '<div class="av-grid">';
+        for (var hk = 0; hk < gset.items.length; hk++) h += avCardHtml(av, p, gset.items[hk], 'hair');
+        h += '</div>';
       }
-      h += '<button type="button" class="av-card' + (on ? ' on' : '') + (ownIt ? '' : ' locked') + (otherG ? ' gend-other' : '') + '" data-act="av-wear" data-id="' + esc(it.id) + '">' +
-        '<span class="av-thumb' + thumbCls + '">' + '<svg viewBox="' + thumbVB + '" aria-hidden="true">' + avatarInner(tmpAv) + '</svg></span>' +
-        '<b>' + esc(it.name) + gmark + '</b>' +
-        '<small>' + (ownIt ? (on ? '입는 중' : '입어 보기') : coinSvg() + ' ' + fmtNum(it.price)) + '</small>' +
-        '</button>';
+    } else {
+      if (avatarUi.slot === 'top' || avatarUi.slot === 'bottom') {
+        h += '<p class="lf-note">👦 👧 표시가 있는 옷은 그 성별에 맞춘 옷이에요. 어느 성별이든 입을 수 있어요.</p>';
+      }
+      h += '<div class="av-grid">';
+      if (avatarUi.slot === 'acc' || avatarUi.slot === 'hat') {
+        h += '<button type="button" class="av-card' + (!av[avatarUi.slot] ? ' on' : '') + '" data-act="av-off" data-slot="' + avatarUi.slot + '">' +
+          '<span class="av-thumb">🚫</span><b>안 쓰기</b><small>' + (avatarUi.slot === 'hat' ? '모자 없음' : '소품 없음') + '</small></button>';
+      }
+      var list = avatarSlotItems(avatarUi.slot);
+      for (var k = 0; k < list.length; k++) h += avCardHtml(av, p, list[k], avatarUi.slot);
+      h += '</div>';
     }
-    h += '</div>';
 
     h += salonHtml(av, p);
 
