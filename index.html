@@ -7106,7 +7106,11 @@
       if (senders.indexOf(nm) < 0) senders.push(nm);
     }
     h += '<div class="an-big">' + coinSvg() + '<span>' + (total >= 0 ? '+' : '') + fmtNum(total) + '</span></div>';
-    h += '<p class="an-who">' + esc(senders.join(', ') || '가족') + '님이 보냈어요</p>';
+    h += '<p class="an-who">' + (senders.length === 1 ? esc(senders[0]) + josa(senders[0], '이', '가') + ' 보냈어요' : '가족이 보냈어요') + '</p>';
+    var ttl = document.getElementById('allowNoticeTitle');
+    if (ttl) ttl.textContent = total < 0 ? '코인을 잠시 가져갔어요' : '코인 용돈이 도착했어요!';
+    var emo = document.querySelector('#allowNoticeModal .modal-emoji');
+    if (emo) emo.textContent = total < 0 ? '↩️' : '🎁';
     if (list.length > 1) h += '<p class="lf-note">알림 ' + list.length + '개를 모아서 보여 줘요.</p>';
     h += '<div class="an-list">';
     for (i = list.length - 1; i >= 0; i--) {
