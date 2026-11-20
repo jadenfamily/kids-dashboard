@@ -1034,6 +1034,22 @@
   .wb-chip.done{ background:#7c5cfc; border-color:#7c5cfc; color:#fff; }
   .wb-chip.locked{ cursor:default; }
   .wb-empty{ font-size:11.5px; font-weight:800; color:#b3a696; }
+  /* '문제지 풀기' 루틴 항목 — 누르면 문제지 고르기 팝업, 고른 문제지는 이름표로 */
+  .check-row.wb-row{ align-items:flex-start; }
+  .check-row.wb-row .box{ margin-top:2px; }
+  .wb-main{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:5px; }
+  .wb-main .wb-t{ font-size:15.5px; font-weight:800; line-height:1.3; transition:color .18s ease; }
+  .check-row.done .wb-main .wb-t{ color:#9a91ab; }
+  .wb-tags{ display:flex; flex-wrap:wrap; gap:4px; }
+  .wb-tag{
+    display:inline-flex; align-items:center; max-width:100%; border-radius:999px;
+    padding:3px 9px; font-size:11px; font-weight:900; line-height:1.3;
+    background:#f4efff; color:#6a5bb0; border:1.5px solid #e5d9ff;
+    overflow-wrap:anywhere; word-break:break-word;
+  }
+  .wb-tag.done{ background:#7c5cfc; border-color:#7c5cfc; color:#fff; }
+  .wb-tag.none{ background:#fffaf0; border-color:#f1e3c9; color:#a3907a; font-weight:800; }
+  .wb-tag.more{ background:#fff; border-color:#e5d9ff; color:#8b7cc4; }
   .wb-pick-row{ display:flex; align-items:center; gap:8px; width:100%; text-align:left; cursor:pointer; background:#fff; border:2px solid #f0e6f8; border-radius:14px; padding:9px 11px; }
   .wb-pick-row .nm{ flex:1 1 auto; font-size:14.5px; font-weight:900; }
   .wb-pick-row.on{ border-color:#7c5cfc; background:#f6f2ff; }
@@ -2524,6 +2540,7 @@
         { id: 'wb-4', name: '한자·퍼즐' }
       ],
       workbookPicks: {},
+      workbookItemPicks: {},
       layoutOrder: ['routine', 'sticker', 'academy', 'week'],
       pet: defaultPet(),
       shop: { items: defaultShopItems() },
@@ -2724,6 +2741,27 @@
       }
     }
     s.workbookPicks = picks;
+
+    /* '문제지 풀기' 항목별 문제지 선택 기록 (날짜 → 항목 → 선택) */
+    var itemPicks = {};
+    if (s.workbookItemPicks && typeof s.workbookItemPicks === 'object') {
+      for (var ipk in s.workbookItemPicks) {
+        if (!Object.prototype.hasOwnProperty.call(s.workbookItemPicks, ipk)) continue;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(ipk)) continue;
+        var perItem = s.workbookItemPicks[ipk];
+        if (!perItem || typeof perItem !== 'object') continue;
+        var oneDay = {};
+        var ipn = 0;
+        for (var ipid in perItem) {
+          if (!Object.prototype.hasOwnProperty.call(perItem, ipid)) continue;
+          if (typeof ipid !== 'string' || !ipid) continue;
+          oneDay[ipid.slice(0, 64)] = cleanPick(perItem[ipid]);
+          if (++ipn >= 40) break;
+        }
+        itemPicks[ipk] = oneDay;
+      }
+    }
+    s.workbookItemPicks = itemPicks;
 
     /* 섹션 순서 */
     var order = [];
@@ -3435,6 +3473,7 @@
       for (k = 0; k < cat.items.length; k++) {
         var item = cat.items[k];
         var isDone = !!ck[item.id];
+        var wbItem = isWbItemText(item.text);
         if (ui.editing) {
           html += '<li class="check-row edit">';
           html += '<span class="box" aria-hidden="true"></span>';
@@ -3445,11 +3484,17 @@
           html += '</li>';
         } else {
           var locked = !can('check');
-          html += '<li class="check-row' + (isDone ? ' done' : '') + (locked ? ' locked' : '') + '"' +
+          /* '문제지 풀기' 항목은 체크 대신 문제지 고르기 팝업을 열어요 */
+          var rowAct = wbItem ? 'wb-item-open' : 'toggle-check';
+          html += '<li class="check-row' + (isDone ? ' done' : '') + (wbItem ? ' wb-row' : '') + (locked ? ' locked' : '') + '"' +
             (locked ? '' : ' role="checkbox" tabindex="0" aria-checked="' + (isDone ? 'true' : 'false') + '"' +
-              ' data-act="toggle-check" data-cat="' + esc(cat.id) + '" data-item="' + esc(item.id) + '"') + '>';
+              ' data-act="' + rowAct + '" data-cat="' + esc(cat.id) + '" data-item="' + esc(item.id) + '"') + '>';
           html += '<span class="box" aria-hidden="true"></span>';
-          html += '<span class="label">' + esc(item.text) + '</span>';
+          if (wbItem) {
+            html += '<span class="wb-main"><span class="wb-t">' + esc(item.text) + '</span>' + wbTagsHtml(item.id) + '</span>';
+          } else {
+            html += '<span class="label">' + esc(item.text) + '</span>';
+          }
           html += '</li>';
         }
       }
@@ -3627,6 +3672,7 @@
     cat.items.splice(idx, 1);
     var ck = checksFor(currentKey);
     delete ck[itemId];
+    try { delete itemPickMap(currentKey)[itemId]; } catch (e2) { /* 무시 */ }
     saveState();
     renderRoutine();
   }
@@ -4717,7 +4763,7 @@
         '<p class="ep-hint" style="margin-top:7px">이름을 고치면 카드 안 제목도 바로 바뀌고, ⬆️ ⬇️ 로 순서도 바꿀 수 있어요. (카드 제목을 직접 눌러 고쳐도 돼요)</p>' +
       '</div>' +
       '<div class="ep-sub">' +
-        '<h3>📚 저녁 공부 문제지</h3>' +
+        '<h3>📚 문제지 목록</h3>' +
         '<div class="wb-edit">' + wbEditHtml() + '</div>' +
         '<button class="ghost-btn" data-act="wb-add" style="margin-top:8px">+ 문제지 추가</button>' +
       '</div>' +
@@ -9623,8 +9669,8 @@
       for (var k = 0; k < total; k++) if (ck[cat.items[k].id]) done++;
       var complete = total > 0 && done === total;
       var left = target - now;
-      /* 목표 시간이 지난 그룹은 바를 띄우지 않아요 — 지난 일로 재촉하지 않습니다 */
-      if (left < 0) continue;
+      /* 목표 1시간 전부터만 바를 띄워요 — 아직 멀었거나 지난 목표는 보이지 않습니다 */
+      if (left < 0 || left > TARGET_WINDOW_MIN) continue;
       var late = false;
       var hot = !complete && left > 0 && left <= TARGET_WINDOW_MIN;
       /* 60분 남음 = 0%(왼쪽) → 목표 시각 = 100%(오른쪽) */
@@ -10304,7 +10350,49 @@
   /* ============ 문제지 / 스티커 원장 / 통계 / 섹션 순서 ============ */
   var reasonState = { custom: false, msg: '' };
   var spendState = { item: '', count: 1, date: '', msg: '' };
-  var wbState = { sel: [], msg: '' };
+  var wbState = { sel: [], msg: '', itemId: '', catId: '' };
+
+  /* ---- '문제지 풀기' 루틴 항목 ←→ 문제지 목록 연결 ---- */
+  function isWbItemText(text) {
+    return String(text || '').replace(/\s+/g, '').indexOf('문제지풀기') >= 0;
+  }
+
+  function itemPickMap(key) {
+    key = key || currentKey;
+    if (!state.workbookItemPicks || typeof state.workbookItemPicks !== 'object') state.workbookItemPicks = {};
+    if (!state.workbookItemPicks[key] || typeof state.workbookItemPicks[key] !== 'object') state.workbookItemPicks[key] = {};
+    return state.workbookItemPicks[key];
+  }
+
+  function pickForItem(itemId, key) {
+    key = key || currentKey;
+    var map = itemPickMap(key);
+    if (map[itemId]) return cleanPick(map[itemId]);
+    /* 예전 날짜 단위 선택은 첫 '문제지 풀기' 항목에 그대로 이어 줘요 */
+    var any = false;
+    for (var k in map) if (Object.prototype.hasOwnProperty.call(map, k)) { any = true; break; }
+    if (!any) return cleanPick(state.workbookPicks ? state.workbookPicks[key] : null);
+    return { sel: [], done: [] };
+  }
+
+  function wbTagsHtml(itemId) {
+    var pick = pickForItem(itemId, currentKey);
+    var h = '<span class="wb-tags">';
+    if (!pick.sel.length) {
+      h += '<span class="wb-tag none">📚 문제지를 골라 보세요</span>';
+    } else {
+      var max = 3;
+      for (var i = 0; i < pick.sel.length && i < max; i++) {
+        var w = pick.sel[i];
+        var done = false;
+        for (var j = 0; j < pick.done.length; j++) if (pick.done[j].id === w.id) done = true;
+        h += '<span class="wb-tag' + (done ? ' done' : '') + '">' + (done ? '✓ ' : '') + esc(w.name) + '</span>';
+      }
+      if (pick.sel.length > max) h += '<span class="wb-tag more">+' + (pick.sel.length - max) + '</span>';
+    }
+    h += '</span>';
+    return h;
+  }
 
   function wbBoxHtml() {
     var pick = cleanPick(state.workbookPicks ? state.workbookPicks[currentKey] : null);
@@ -10334,7 +10422,20 @@
   function openWb() {
     if (!can('check')) return;
     var pick = cleanPick(state.workbookPicks[currentKey]);
-    wbState = { sel: [], msg: '' };
+    wbState = { sel: [], msg: '', itemId: '', catId: '' };
+    for (var i = 0; i < pick.sel.length; i++) wbState.sel.push(pick.sel[i].id);
+    renderWb();
+    var m = document.getElementById('wbModal');
+    if (m) m.hidden = false;
+    lockScroll();
+  }
+
+  function openWbForItem(el) {
+    if (!can('check') || !el) return;
+    var catId = el.getAttribute('data-cat') || '';
+    var itemId = el.getAttribute('data-item') || '';
+    var pick = pickForItem(itemId, currentKey);
+    wbState = { sel: [], msg: '', itemId: itemId, catId: catId };
     for (var i = 0; i < pick.sel.length; i++) wbState.sel.push(pick.sel[i].id);
     renderWb();
     var m = document.getElementById('wbModal');
@@ -10359,7 +10460,9 @@
   }
 
   function wbHtml() {
-    var h = '<p class="lf-note">오늘 풀 문제지를 골라 보세요. 고른 문제지는 저녁 공부 카드에 생겨요.</p>';
+    var h = '<p class="lf-note">' + (wbState.itemId
+      ? '오늘 푼 문제지를 골라 주세요. 고르면 이 항목이 바로 체크돼요.'
+      : '오늘 풀 문제지를 골라 보세요. 고른 문제지는 루틴 카드에 생겨요.') + '</p>';
     h += '<div class="acct-list">';
     if (!state.workbooks.length) h += '<p class="spend-empty">등록된 문제지가 없어요. 편집 모드에서 추가해 주세요.</p>';
     for (var i = 0; i < state.workbooks.length; i++) {
@@ -10370,7 +10473,9 @@
     }
     h += '</div>';
     h += '<button class="lf-btn" type="button" data-act="wb-save" style="margin-top:12px">오늘은 이걸로!</button>';
-    h += '<p class="lf-msg">' + esc(wbState.msg || '') + '</p>';
+    h += (wbState.itemId
+      ? '<p class="lf-msg">모두 지우고 저장하면 이 항목의 체크가 풀려요.</p>'
+      : '<p class="lf-msg">' + esc(wbState.msg || '') + '</p>');
     return h;
   }
 
@@ -10381,12 +10486,28 @@
 
   function saveWbPick() {
     if (!can('check')) return;
-    var prev = cleanPick(state.workbookPicks[currentKey]);
     var sel = [];
     for (var i = 0; i < state.workbooks.length; i++) {
       var w = state.workbooks[i];
       if (wbState.sel.indexOf(w.id) >= 0) sel.push({ id: w.id, name: w.name });
     }
+    if (wbState.itemId) {
+      var prevItem = pickForItem(wbState.itemId, currentKey);
+      var itemDone = [];
+      for (var pj = 0; pj < prevItem.done.length; pj++) {
+        for (var pk = 0; pk < sel.length; pk++) if (sel[pk].id === prevItem.done[pj].id) itemDone.push({ id: sel[pk].id, name: sel[pk].name });
+      }
+      itemPickMap(currentKey)[wbState.itemId] = { sel: sel, done: itemDone };
+      /* 날짜 단위 기록도 같이 맞춰 둬요 (예전 화면·다른 기기와 호환) */
+      state.workbookPicks[currentKey] = { sel: sel.slice(0), done: itemDone.slice(0) };
+      var wbItemId = wbState.itemId;
+      var wbCatId = wbState.catId;
+      saveState();
+      closeWb();
+      setWbItemChecked(wbCatId, wbItemId, sel.length > 0);
+      return;
+    }
+    var prev = cleanPick(state.workbookPicks[currentKey]);
     var done = [];
     for (var j = 0; j < prev.done.length; j++) {
       for (var k = 0; k < sel.length; k++) if (sel[k].id === prev.done[j].id) done.push({ id: sel[k].id, name: sel[k].name });
@@ -10395,6 +10516,38 @@
     saveState();
     renderRoutine();
     closeWb();
+  }
+
+  /* '문제지 풀기' 항목의 체크 상태를 문제지 선택과 맞춰 줘요 */
+  function setWbItemChecked(catId, itemId, on) {
+    if (!can('check') || !itemId) { renderRoutine(); return; }
+    var ck = checksFor(currentKey);
+    var was = !!ck[itemId];
+    if (was === !!on) { renderRoutine(); return; }
+    if (on) ck[itemId] = true;
+    else delete ck[itemId];
+    saveState();
+    if (on) {
+      var got = awardCheckCoins(itemId);
+      if (got) showToast(coinSvg() + ' +' + got + ' 코인!', true);
+      var cat = findCat(catId);
+      if (cat && cat.items.length) {
+        var allDone = true;
+        for (var gi = 0; gi < cat.items.length; gi++) if (!ck[cat.items[gi].id]) allDone = false;
+        if (allDone) {
+          var gcoin = awardGroupCoins(catId);
+          if (gcoin) { showToast('🎉 ' + esc(cat.title || '루틴') + ' 완료! ' + coinSvg() + ' +' + gcoin, true); }
+        }
+      }
+      snd('check');
+    } else {
+      revokeCheckCoins(itemId);
+      snd('uncheck');
+    }
+    saveState();
+    renderCoinBadge();
+    renderRoutine();
+    updateOverall(false);
   }
 
   function toggleWbDone(id) {
@@ -11115,6 +11268,7 @@
       pct: e ? e.pct : 0,
       cats: e ? e.cats : [],
       workbooks: cleanPick(state.workbookPicks ? state.workbookPicks[key] : null),
+      wbItems: (state.workbookItemPicks && state.workbookItemPicks[key]) ? state.workbookItemPicks[key] : {},
       stickers: stickers,
       spends: spends,
       boards: boards,
@@ -11299,6 +11453,17 @@
     }
     if (d.workbooks && typeof d.workbooks === 'object') {
       state.workbookPicks[key] = cleanPick(d.workbooks);
+    }
+    if (d.wbItems && typeof d.wbItems === 'object') {
+      var itemMap = {};
+      for (var iwk in d.wbItems) {
+        if (!Object.prototype.hasOwnProperty.call(d.wbItems, iwk)) continue;
+        if (typeof iwk !== 'string' || !iwk) continue;
+        itemMap[iwk.slice(0, 64)] = cleanPick(d.wbItems[iwk]);
+        if (Object.keys(itemMap).length >= 40) break;
+      }
+      if (!state.workbookItemPicks) state.workbookItemPicks = {};
+      state.workbookItemPicks[key] = itemMap;
     }
     if (Object.prototype.toString.call(d.spends) === '[object Array]') {
       var ks = [];
@@ -12215,6 +12380,7 @@
     if (act === 'relink-cancel') { renderLoginBody(cloud.conn ? 'login' : 'setup', true); return; }
 
     if (act === 'toggle-check' && !can('check')) return;
+    if (act === 'wb-item-open' && !can('check')) return;
     if ((act === 'sticker-add' || act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-new-direct' || act === 'sticker-clear') && !can('sticker')) return;
     if ((act === 'sticker-undo' || act === 'sticker-new' || act === 'sticker-clear') && !can('stickerManage')) return;
     if ((act === 'edit-toggle' || act === 'add-item' || act === 'del-item' || act === 'add-event' || act === 'del-event' ||
@@ -12224,6 +12390,7 @@
     if (act === 'stickers-reset-logs' && !isAdmin()) return;
 
     if (act === 'toggle-check') { onToggleCheck(el); return; }
+    if (act === 'wb-item-open') { openWbForItem(el); return; }
     if (act === 'add-item') { onAddItem(el.getAttribute('data-cat')); return; }
     if (act === 'del-item') { onDelItem(el); return; }
     if (act === 'reset-today') { resetToday(); return; }
@@ -12541,6 +12708,10 @@
     if (t.getAttribute('data-act') === 'toggle-check' && can('check')) {
       e.preventDefault();
       onToggleCheck(t);
+    }
+    if (t.getAttribute('data-act') === 'wb-item-open' && can('check')) {
+      e.preventDefault();
+      openWbForItem(t);
     }
   });
 
