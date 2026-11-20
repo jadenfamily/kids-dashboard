@@ -350,7 +350,7 @@
   }
   .rc-titles{ min-width:0; flex:1 1 auto; display:flex; flex-direction:column; gap:1px; }
   .rc-titles h3{ margin:0; font-size:16.5px; font-weight:900; letter-spacing:-.02em; line-height:1.25; }
-  .rc-sub{ font-size:11.5px; font-weight:800; color:var(--ink-2); opacity:.75; }
+  .rc-sub{ font-size:11.5px; font-weight:800; color:var(--ink-2); opacity:.75; line-height:1.35; overflow-wrap:anywhere; word-break:keep-all; }
   .rc-count{
     flex:0 0 auto; font-size:12.5px; font-weight:900; padding:4px 9px;
     border-radius:999px; background:#fff; color:var(--c); white-space:nowrap;
@@ -1544,6 +1544,105 @@
     .av-gender span{ min-width:32px; }
   }
 
+  /* ============ Phase 5: 표정·동작 · 위쪽 미리보기 고정 · 코인 용돈 ============ */
+  /* 아바타 창은 위(미리보기+성별·피부·코인+카테고리 탭)만 붙박이고, 아래 아이템만 스크롤해요 */
+  #avatarBody{ padding-top:0; padding-bottom:0; gap:0; }
+  .av-sticky{
+    position:sticky; top:0; z-index:9;
+    margin:0 -16px; padding:12px 16px 9px;
+    background:linear-gradient(180deg,#fffdf9 0%,#fffdf9 78%,rgba(255,253,249,.94) 100%);
+    border-bottom:2px solid #f6ece0;
+    box-shadow:0 9px 14px -12px rgba(120,80,20,.55);
+    display:flex; flex-direction:column; gap:9px;
+  }
+  .av-sticky .av-top{ gap:11px; }
+  .av-items{ display:flex; flex-direction:column; gap:12px; padding:12px 0 16px; }
+  .av-items .av-grid{ margin:0; }
+  .av-items .lf-note{ margin:0; }
+
+  /* 표정 · 동작 카드 */
+  .av-thumb-fig.face svg{ width:46px; height:46px; }
+  .av-thumb-fig.pose svg{ width:36px; height:58px; }
+  .av-card.wide b{ font-size:11px; }
+  .av-anim-note{ font-size:9px; font-weight:900; color:#b4436c; }
+
+  /* 동작 애니메이션 (아바타 창·마이룸 공통) */
+  .av-fig.jump{ animation:avJump 1.15s ease-in-out infinite; }
+  .av-fig.dance{ animation:avDance 1.6s ease-in-out infinite; }
+  .av-fig.wave .av-wave-hand{ animation:avWave 1s ease-in-out infinite; }
+  .av-fig.hero .av-cape{ animation:avCape 2.1s ease-in-out infinite; }
+  @keyframes avJump{ 0%,100%{transform:translateY(0)} 38%{transform:translateY(-10px)} 62%{transform:translateY(-10px)} }
+  @keyframes avDance{ 0%,100%{transform:rotate(-4deg) translateY(0)} 50%{transform:rotate(4deg) translateY(-5px)} }
+  @keyframes avWave{ 0%,100%{transform:rotate(-9deg)} 50%{transform:rotate(11deg)} }
+  @keyframes avCape{ 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(4deg)} }
+  .av-fig.jump, .av-fig.dance{ transform-box:fill-box; transform-origin:50% 96%; }
+  .av-wave-hand{ transform-box:fill-box; transform-origin:50% 90%; }
+  .av-cape{ transform-box:fill-box; transform-origin:90% 10%; }
+  @media (prefers-reduced-motion:reduce){
+    .av-fig.jump, .av-fig.dance, .av-wave-hand, .av-cape{ animation:none; }
+  }
+
+  @media (max-width:700px){
+    .av-sticky{ margin:0 -11px; padding:10px 11px 8px; gap:7px; }
+    .av-items{ padding:10px 0 14px; }
+  }
+  @media (max-width:560px){
+    .av-sticky{ margin:0 -11px; padding:8px 11px 7px; gap:6px; }
+    .av-sticky .av-top{ gap:9px; flex-wrap:nowrap; align-items:center; }
+    .av-sticky .av-preview{ width:84px; height:132px; border-radius:16px; }
+    .av-sticky .av-preview .av-svg{ width:78px; height:124px; }
+    .av-sticky .av-side{ flex:1 1 auto; gap:4px; font-size:11px; }
+    .av-sticky .av-side > b{ font-size:12px; }
+    .av-sticky .av-side .lf-note{ display:none; }
+    .av-sticky .av-gender span, .av-sticky .av-swatches span{ min-width:30px; font-size:10px; }
+    .av-sticky .gender-btn{ padding:4px 8px; font-size:11px; min-height:28px; }
+    .av-sticky .sw{ width:21px; height:21px; }
+    .av-sticky .shop-coin{ padding:3px 8px; font-size:11px; }
+    .av-sticky .shop-coin b{ font-size:12px; }
+    .av-sticky .av-tabs{ gap:4px; }
+    .av-sticky .av-tabs .tab{ padding:5px 8px; font-size:11px; }
+    .av-thumb-fig.face svg{ width:40px; height:40px; }
+    .av-thumb-fig.pose svg{ width:32px; height:50px; }
+  }
+
+  /* 코인 용돈 */
+  .allow-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .allow-row .lf-note{ margin:0; flex:1 1 160px; }
+  .allow-target{ display:flex; flex-direction:column; gap:5px; font-size:11.5px; font-weight:900; color:#8a7f70; }
+  .allow-row2{ display:flex; gap:6px; flex-wrap:wrap; }
+  .allow-mode{
+    flex:1 1 120px; border:2px solid #eee2d2; background:#fff; color:#6d6484; border-radius:14px;
+    padding:7px 9px; font-size:12px; font-weight:900; cursor:pointer; touch-action:manipulation; font-family:inherit;
+    min-height:38px;
+  }
+  .allow-mode.on{ background:#2c2440; border-color:#2c2440; color:#fff; }
+  .allow-quick{ display:flex; gap:6px; flex-wrap:wrap; }
+  .allow-quick .qbtn{
+    flex:1 1 60px; border:2px solid #ffe0a3; background:linear-gradient(135deg,#fffdf6,#fff3d6); color:#7a5200;
+    border-radius:13px; padding:8px 6px; font-size:12.5px; font-weight:900; cursor:pointer;
+    touch-action:manipulation; font-family:inherit; min-height:38px;
+  }
+  .allow-quick .qbtn.on{ border-color:#ff9f1c; background:linear-gradient(135deg,#ffe9b8,#ffd98a); box-shadow:0 4px 10px rgba(255,159,28,.22); }
+  .allow-line{ display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:900; color:#8a7f70; flex-wrap:wrap; }
+  .allow-line .inp{ flex:1 1 120px; }
+  .allow-prev{
+    font-size:12.5px; font-weight:900; color:#7a5200; background:#fff8e6; border:2px solid #ffe3b3;
+    border-radius:14px; padding:8px 11px; line-height:1.45;
+  }
+  .allow-msg{ margin:0; font-size:12.5px; font-weight:900; color:#12805c; background:#eefaf3; border-radius:12px; padding:8px 11px; }
+  .allow-msg.err{ color:#c6415a; background:#fff0f3; }
+
+  /* 코인 용돈 도착 알림 */
+  .allow-note-card{ max-width:420px; text-align:center; }
+  .an-big{ display:flex; align-items:center; justify-content:center; gap:6px; font-size:38px; font-weight:900; letter-spacing:-.04em; color:#c47a00; line-height:1.1; }
+  .an-big svg.coin-ico{ width:1em; height:1em; }
+  .an-who{ font-size:13px; font-weight:900; color:#8a7f70; margin-top:2px; }
+  .an-list{ display:flex; flex-direction:column; gap:6px; text-align:left; margin-top:4px; }
+  .an-item{ background:#fff8e6; border:1.5px solid #ffe3b3; border-radius:14px; padding:8px 11px; }
+  .an-amt{ font-size:12.5px; font-weight:900; color:#a8690a; }
+  .an-why{ font-size:12.5px; font-weight:800; color:#6d6484; line-height:1.45; }
+  .an-from{ font-size:10.5px; font-weight:800; color:#b3a696; }
+
 </style>
 </head>
 <body>
@@ -1811,6 +1910,27 @@
       <button class="hist-close" data-act="avatar-close" aria-label="아바타 닫기">✕</button>
     </div>
     <div class="hist-body" id="avatarBody"></div>
+  </div>
+</div>
+
+<div class="hist" id="allowModal" hidden role="dialog" aria-modal="true" aria-labelledby="allowTitle">
+  <div class="hist-card" style="max-width:540px">
+    <div class="hist-head">
+      <h2 id="allowTitle">코인 용돈 주기</h2>
+      <button class="hist-close" data-act="allow-close" aria-label="용돈 주기 닫기">✕</button>
+    </div>
+    <div class="hist-body" id="allowBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="allowNoticeModal" hidden role="dialog" aria-modal="true" aria-labelledby="allowNoticeTitle">
+  <div class="modal-card allow-note-card">
+    <div class="modal-emoji">🎁</div>
+    <h2 id="allowNoticeTitle">코인 용돈이 도착했어요!</h2>
+    <div id="allowNoticeBody"></div>
+    <div class="modal-actions">
+      <button class="modal-btn" data-act="allow-accept">고맙습니다! 받기</button>
+    </div>
   </div>
 </div>
 
@@ -2299,7 +2419,7 @@
         var cat = {
           id: typeof rawCat.id === 'string' && rawCat.id ? rawCat.id : ('cat-' + i),
           title: typeof rawCat.title === 'string' ? rawCat.title.slice(0, 16) : defCat.title,
-          sub: typeof rawCat.sub === 'string' ? rawCat.sub.slice(0, 12) : '',
+          sub: typeof rawCat.sub === 'string' ? rawCat.sub.slice(0, 50) : '',
           emoji: typeof rawCat.emoji === 'string' && rawCat.emoji ? rawCat.emoji.slice(0, 8) : '✅',
           targetTime: hhmmValid(rawCat.targetTime) ? rawCat.targetTime : '',
           days: normDays(rawCat.days),
@@ -3019,7 +3139,7 @@
         (cat.targetTime ? '<button type="button" class="ghost-btn tiny" data-act="cat-target-clear" data-cat="' + esc(cat.id) + '">지우기</button>' : '') +
         '</div>' +
       '<input class="inp inp-sm rce-sub" data-field="catSub" data-cat="' + esc(cat.id) + '" value="' + esc(cat.sub || '') +
-        '" placeholder="설명 (예: 아침, 잠자기 전)" maxlength="12" aria-label="그룹 설명">' +
+        '" placeholder="설명 (예: 위클래스, 방과후 로봇)" maxlength="50" aria-label="그룹 설명">' +
       '</div>';
   }
 
@@ -4430,14 +4550,17 @@
     { id: 'top', label: '상의', icon: '👕' },
     { id: 'bottom', label: '하의', icon: '👖' },
     { id: 'shoes', label: '신발', icon: '👟' },
-    { id: 'acc', label: '안경·소품', icon: '🕶' }
+    { id: 'acc', label: '안경·소품', icon: '🕶' },
+    { id: 'face', label: '표정', icon: '😊' },
+    { id: 'pose', label: '동작', icon: '🕺' }
   ];
 
   function defaultAvatar() {
     return {
       gender: 'boy', skin: 'skin1', hairColor: 'brown',
       hair: 'av_hair_basic', hat: '', top: 'av_top_tee', bottom: 'av_bottom_jeans',
-      shoes: 'av_shoes_sneaker', acc: ''
+      shoes: 'av_shoes_sneaker', acc: '',
+      face: 'av_face_smile', pose: 'av_pose_stand'
     };
   }
   function defaultRoom() {
@@ -4469,6 +4592,7 @@
       },
       room: defaultRoom(),
       avatar: defaultAvatar(),
+      allowanceNotices: [],
       award: { day: '', checks: {}, groups: {}, stickers: 0 },
       updatedAt: new Date().toISOString()
     };
@@ -4506,6 +4630,7 @@
       owned: {},
       room: defaultRoom(),
       avatar: defaultAvatar(),
+      allowanceNotices: [],
       award: { day: '', checks: {}, groups: {}, stickers: 0 },
       updatedAt: (typeof p.updatedAt === 'string' && p.updatedAt) ? p.updatedAt : new Date().toISOString(),
       userId: userId || ''
@@ -4630,22 +4755,44 @@
     if (skinOk) av.skin = ra.skin;
     if (hcOk) av.hairColor = ra.hairColor;
     av.gender = (ra.gender === 'girl') ? 'girl' : 'boy';
-    var slots = ['hair', 'hat', 'top', 'bottom', 'shoes', 'acc'];
+    var slots = ['hair', 'hat', 'top', 'bottom', 'shoes', 'acc', 'face', 'pose'];
     for (var sl = 0; sl < slots.length; sl++) {
       var key = slots[sl];
       var val = ra[key];
       if (typeof val !== 'string' || !val) continue;
       var item = known[val];
       if (!item || item.kind !== 'cloth' || item.slot !== key) continue;
-      if (!out.owned[val]) continue;
+      if (!out.owned[val] && !(item.price <= 0)) continue;
       av[key] = val;
     }
+    if (!av.face) av.face = AV_FACE_DEFAULT;
+    if (!av.pose) av.pose = AV_POSE_DEFAULT;
     /* 옛 프로필: 모자를 액세서리 칸에 쓰고 있었다면 모자 칸으로 옮겨요 */
     if (!av.hat && typeof ra.acc === 'string' && ra.acc) {
       var oldAcc = known[ra.acc];
       if (oldAcc && oldAcc.kind === 'cloth' && oldAcc.slot === 'hat' && out.owned[ra.acc]) av.hat = ra.acc;
     }
     out.avatar = av;
+
+    /* ---- 코인 용돈 알림 (엄마·아빠가 보낸 코인) ---- */
+    var an = [];
+    var rawAn = (Object.prototype.toString.call(p.allowanceNotices) === '[object Array]') ? p.allowanceNotices : [];
+    for (var ani = 0; ani < rawAn.length && an.length < 20; ani++) {
+      var nn = rawAn[ani];
+      if (!nn || typeof nn !== 'object') continue;
+      var amt = parseInt(nn.amount, 10);
+      if (isNaN(amt) || !amt) continue;
+      an.push({
+        id: (typeof nn.id === 'string' && nn.id) ? nn.id : ('al' + ani),
+        at: Number(nn.at) || 0,
+        amount: Math.max(-999999, Math.min(999999, amt)),
+        reason: String(nn.reason == null ? '' : nn.reason).slice(0, 60),
+        from: String(nn.from == null ? '' : nn.from).slice(0, 40),
+        fromName: String(nn.fromName == null ? '' : nn.fromName).slice(0, 20),
+        read: !!nn.read
+      });
+    }
+    out.allowanceNotices = an.slice(-20);
 
     /* ---- 오늘의 코인 기록 ---- */
     if (p.award && typeof p.award === 'object') {
@@ -4871,14 +5018,49 @@
       { id: 'av_acc_necklace', cat: 'avatar', kind: 'cloth', slot: 'acc', style: 'necklace', name: '목걸이', icon: '📿', price: 20, color: '#ffd34d', desc: '작은 펜던트' },
       /* --- 옛 프로필 호환(모자였던 액세서리) --- */
       { id: 'av_acc_cap', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'cap', name: '야구 모자(옛)', icon: '🧢', price: 35, color: '#6fb7ff', desc: '옛 액세서리', hidden: true },
-      { id: 'av_acc_crown', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'crown', name: '반짝 왕관(옛)', icon: '👑', price: 60, color: '#ffd34d', desc: '옛 액세서리', hidden: true }
+      { id: 'av_acc_crown', cat: 'avatar', kind: 'cloth', slot: 'hat', style: 'crown', name: '반짝 왕관(옛)', icon: '👑', price: 60, color: '#ffd34d', desc: '옛 액세서리', hidden: true },
+
+      /* --- 😊 표정 (0코인 3가지 + 코인으로 사는 11가지) --- */
+      { id: 'av_face_smile', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'smile', name: '방긋 웃음', icon: '😊', price: 0, color: '#ffe3b3', desc: '기본 표정' },
+      { id: 'av_face_bright', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'bright', name: '씩씩 미소', icon: '😄', price: 0, color: '#ffe9a8', desc: '이를 보이고 활짝' },
+      { id: 'av_face_wink', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'wink', name: '윙크', icon: '😉', price: 0, color: '#ffe4ee', desc: '한쪽 눈만 감고' },
+      { id: 'av_face_angry', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'angry', name: '화남', icon: '😠', price: 30, color: '#ffd0c7', desc: '눈썹 꿈틀 볼 빵빵' },
+      { id: 'av_face_sad', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'sad', name: '슬픔 울먹', icon: '😢', price: 30, color: '#cfe6ff', desc: '눈물 뚝뚝' },
+      { id: 'av_face_surprise', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'surprise', name: '깜짝', icon: '😲', price: 25, color: '#ffe6b8', desc: '눈 동그랗게' },
+      { id: 'av_face_shy', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'shy', name: '부끄러움', icon: '😊', price: 25, color: '#ffd6e2', desc: '볼이 발개요' },
+      { id: 'av_face_pout', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'pout', name: '삐짐', icon: '😤', price: 30, color: '#ffd9c2', desc: '입을 쭉 내밀고' },
+      { id: 'av_face_heart', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'heart', name: '하트눈', icon: '😍', price: 45, color: '#ffc9dc', desc: '눈이 하트로 콩닥' },
+      { id: 'av_face_star', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'star', name: '별눈 반짝', icon: '🤩', price: 45, color: '#ffe98f', desc: '눈이 별로 반짝' },
+      { id: 'av_face_sweat', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'sweat', name: '땀 뻘뻘', icon: '😅', price: 30, color: '#cdeeff', desc: '식은땀 줄줄' },
+      { id: 'av_face_tongue', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'tongue', name: '메롱', icon: '😜', price: 30, color: '#ffd6ea', desc: '혀 쏙 내밀기' },
+      { id: 'av_face_sleepy', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'sleepy', name: '졸림 하품', icon: '🥱', price: 30, color: '#dcd6ff', desc: '하암~ 쿨쿨' },
+      { id: 'av_face_cool', cat: 'avatar', kind: 'cloth', slot: 'face', style: 'cool', name: '멋짐 쿨', icon: '😎', price: 40, color: '#c9d2e0', desc: '선글라스 쓰고 폼나게' },
+
+      /* --- 🕺 동작 (0코인 3가지 + 코인으로 사는 8가지) --- */
+      { id: 'av_pose_stand', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'stand', name: '기본 서기', icon: '🧍', price: 0, color: '#ffe3b3', desc: '차분하게 서 있어요' },
+      { id: 'av_pose_wave', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'wave', name: '손 흔들기', icon: '👋', price: 0, color: '#ffe6c2', desc: '안녕~ 손을 흔들어요' },
+      { id: 'av_pose_v', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'v', name: '브이', icon: '✌️', price: 0, color: '#e2f0ff', desc: '브이 하고 찰칵' },
+      { id: 'av_pose_cheer', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'cheer', name: '만세', icon: '🙌', price: 30, color: '#fff0b8', desc: '두 팔 번쩍 만세' },
+      { id: 'av_pose_jump', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'jump', name: '점프', icon: '🦘', price: 35, color: '#d6f5d9', desc: '통통 뛰어요', anim: 1 },
+      { id: 'av_pose_dance', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'dance', name: '신나는 댄스', icon: '💃', price: 40, color: '#ffd9e9', desc: '흔들흔들 춤을 춰요', anim: 1 },
+      { id: 'av_pose_heart', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'heart', name: '하트 포즈', icon: '🫶', price: 35, color: '#ffc9d8', desc: '두 손으로 하트' },
+      { id: 'av_pose_kick', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'kick', name: '태권도 하이킥', icon: '🥋', price: 45, color: '#dfe6ff', desc: '발차기 씽씽' },
+      { id: 'av_pose_fight', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'fight', name: '응원 파이팅', icon: '💪', price: 30, color: '#ffe0cf', desc: '주먹 불끈 파이팅' },
+      { id: 'av_pose_cross', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'cross', name: '팔짱 삐짐', icon: '🙅', price: 30, color: '#ffd6d6', desc: '팔짱 끼고 흥' },
+      { id: 'av_pose_hero', cat: 'avatar', kind: 'cloth', slot: 'pose', style: 'hero', name: '한 바퀴 턴', icon: '🦸', price: 45, color: '#d9d0ff', desc: '망토 펄럭 영웅 포즈', anim: 1 }
     ];
   }
 
+  /* 표정·동작의 기본값 (프로필에 아직 없을 때) */
+  var AV_FACE_DEFAULT = 'av_face_smile';
+  var AV_POSE_DEFAULT = 'av_pose_stand';
+
   /* 저장된 상점 목록에도 새 기본 아이템(헤어·옷)을 한 번씩 합쳐요.
      seed 판이 올라가면 그때만 합치므로, 보호자가 지우거나 숨긴 아이템은 그 뒤로 그대로 둡니다. */
-  var SHOP_SEED_V = 2;
-  var SHOP_SEED_FREE = ['av_hair_bob', 'av_hair_pony', 'av_hair_twin', 'av_bottom_shorts', 'av_bottom_skirt'];
+  var SHOP_SEED_V = 3;
+  var SHOP_SEED_FREE = ['av_hair_bob', 'av_hair_pony', 'av_hair_twin', 'av_bottom_shorts', 'av_bottom_skirt',
+    'av_face_smile', 'av_face_bright', 'av_face_wink',
+    'av_pose_stand', 'av_pose_wave', 'av_pose_v'];
 
   function mergeShopSeed() {
     var shop = state.shop;
@@ -4975,6 +5157,8 @@
   function shopAdminHtml() {
     var list = shopAll();
     var h = '<div class="shop-admin">' +
+      '<div class="allow-row"><button type="button" class="pill-btn warm" data-act="allow-open">' + coinSvg() + ' 코인 용돈 주기</button>' +
+      '<span class="lf-note">아이에게 코인을 용돈처럼 보내고 한마디도 남겨요.</span></div>' +
       '<p class="lf-note">가격을 바꾸면 바로 저장돼요. 아이템을 숨기거나 지울 수도 있어요. (config/settings.json)</p>';
     if (shopUi.msg) h += '<p class="shop-msg">' + esc(shopUi.msg) + '</p>';
     h += '<div class="admin-list">';
@@ -5091,7 +5275,9 @@
         msg = '🎨 ' + it.name + '으로 벽을 바꿨어요!';
       } else if (it.kind === 'cloth') {
         equipAvatar(it.slot, id, true);
-        msg = '👕 ' + josa(it.name, '을', '를') + ' 입었어요!';
+        msg = it.slot === 'face' ? '😊 ' + it.name + ' 표정을 샀어요!'
+          : it.slot === 'pose' ? '🕺 ' + it.name + ' 동작을 샀어요!'
+          : '👕 ' + josa(it.name, '을', '를') + ' 입었어요!';
       } else {
         msg = '🛋 ' + josa(it.name, '을', '를') + ' 샀어요! 마이룸 보관함에서 놓을 수 있어요.';
       }
@@ -5791,6 +5977,253 @@
     return (it && it.kind === 'cloth') ? it : null;
   }
 
+  /* ---- 표정·동작 그리기 도우미 ---- */
+  function avHeartPts(cx, cy, sc) {
+    var pts = [];
+    for (var i = 0; i < 26; i++) {
+      var t = i / 26 * Math.PI * 2;
+      var x = 16 * Math.pow(Math.sin(t), 3);
+      var y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+      pts.push((cx + x * sc).toFixed(1) + ',' + (cy + y * sc).toFixed(1));
+    }
+    return pts.join(' ');
+  }
+  function avStarPts(cx, cy, r) {
+    var pts = [];
+    for (var i = 0; i < 10; i++) {
+      var rad = (i % 2 === 0) ? r : r * 0.44;
+      var a = -Math.PI / 2 + i * Math.PI / 5;
+      pts.push((cx + Math.cos(a) * rad).toFixed(1) + ',' + (cy + Math.sin(a) * rad).toFixed(1));
+    }
+    return pts.join(' ');
+  }
+  function avTwinkle(cx, cy, r, c) {
+    return '<path d="M' + cx + ' ' + (cy - r) + 'q' + (r * 0.22) + ' ' + (r * 0.72) + ' ' + r + ' ' + r +
+      'q-' + (r * 0.78) + ' ' + (r * 0.22) + ' -' + r + ' ' + r +
+      'q-' + (r * 0.22) + ' -' + (r * 0.78) + ' -' + r + ' -' + r +
+      'q' + (r * 0.78) + ' -' + (r * 0.22) + ' ' + r + ' -' + r + 'z" fill="' + c + '"/>';
+  }
+  function avLimb(pts, w, c) {
+    var d = 'M' + pts[0][0] + ' ' + pts[0][1];
+    for (var i = 1; i < pts.length; i++) d += 'L' + pts[i][0] + ' ' + pts[i][1];
+    return '<path d="' + d + '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round" stroke-linejoin="round"/>';
+  }
+  function avHand(cx, cy, r, skin) {
+    return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + skin + '"/>';
+  }
+
+  /* 표정 — 얼굴 전체를 그려요 (기본은 방긋 웃음) */
+  function avFaceSvg(st, girl, skin) {
+    var s = '', dark = '#2c2440';
+    var erx = girl ? 4.1 : 3.4, ery = girl ? 5.6 : 4.5;
+    var hl = girl ? 1.55 : 1.3;
+    function openEyes(rx, ry, cy) {
+      var o = '';
+      cy = cy || 65;
+      o += '<ellipse cx="48" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + dark + '"/>';
+      o += '<ellipse cx="72" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + dark + '"/>';
+      o += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="' + (cy - 1.8) + '" r="' + hl + '" fill="#fff"/>';
+      o += '<circle cx="' + (girl ? 73.4 : 73.2) + '" cy="' + (cy - 1.8) + '" r="' + hl + '" fill="#fff"/>';
+      return o;
+    }
+    function closedEyes(bend, cy) {
+      cy = cy || 65;
+      return '<path d="M43 ' + cy + 'q5 ' + bend + ' 10 0" fill="none" stroke="' + dark + '" stroke-width="2.6" stroke-linecap="round"/>' +
+        '<path d="M67 ' + cy + 'q5 ' + bend + ' 10 0" fill="none" stroke="' + dark + '" stroke-width="2.6" stroke-linecap="round"/>';
+    }
+    function girlLashes() {
+      return '<path d="M44.8 60.8q-2.8-1.6-4.2-4.6" fill="none" stroke="#2c2440" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<path d="M75.2 60.8q2.8-1.6 4.2-4.6" fill="none" stroke="#2c2440" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<path d="M47.4 59.6q-1.2-1.6-1.6-3.2" fill="none" stroke="#2c2440" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>' +
+        '<path d="M72.6 59.6q1.2-1.6 1.6-3.2" fill="none" stroke="#2c2440" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>';
+    }
+    function brow(l, r) {
+      return '<path d="' + l + '" fill="none" stroke="#5a4638" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="' + r + '" fill="none" stroke="#5a4638" stroke-width="3" stroke-linecap="round"/>';
+    }
+
+    if (st === 'bright') {
+      s += openEyes(erx + 0.2, ery - 0.3, 64.6);
+      s += brow('M41 56q7-3 13-1', 'M79 56q-7-3-13-1');
+      s += '<path d="M52 71q8 12 16 0z" fill="#b0603f"/>';
+      s += '<path d="M53.4 71.6h13.2q-1.5 3.2-6.6 3.2t-6.6-3.2z" fill="#ffffff"/>';
+      s += '<path d="M49 69q-3 1-4 4M71 69q3 1 4 4" fill="none" stroke="#b0603f" stroke-width="1.8" stroke-linecap="round"/>';
+      s += '<ellipse cx="38.5" cy="73.4" rx="5.4" ry="3.1" fill="#ff9ec4" opacity=".7"/>';
+      s += '<ellipse cx="81.5" cy="73.4" rx="5.4" ry="3.1" fill="#ff9ec4" opacity=".7"/>';
+    } else if (st === 'wink') {
+      s += '<ellipse cx="48" cy="65" rx="' + erx + '" ry="' + ery + '" fill="' + dark + '"/>';
+      s += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="63.2" r="' + hl + '" fill="#fff"/>';
+      s += '<path d="M66.5 65.5q5.5-4.5 11 0" fill="none" stroke="' + dark + '" stroke-width="2.8" stroke-linecap="round"/>';
+      s += '<path d="M77.8 64.6l4-3" fill="none" stroke="' + dark + '" stroke-width="1.6" stroke-linecap="round"/>';
+      s += '<path d="M54 73.6q6 7.4 12 0" fill="none" stroke="#b0603f" stroke-width="2.4" stroke-linecap="round"/>';
+      s += '<ellipse cx="39" cy="73.6" rx="4.6" ry="2.7" fill="#ff9ec4" opacity=".8"/>';
+      s += '<ellipse cx="81" cy="73.6" rx="4.6" ry="2.7" fill="#ff9ec4" opacity=".8"/>';
+    } else if (st === 'angry') {
+      s += brow('M40 56l14 7', 'M80 56l-14 7');
+      s += '<ellipse cx="48" cy="66" rx="3.9" ry="2.7" fill="' + dark + '"/>';
+      s += '<ellipse cx="72" cy="66" rx="3.9" ry="2.7" fill="' + dark + '"/>';
+      s += '<circle cx="49.2" cy="65.2" r="1.1" fill="#fff"/>';
+      s += '<circle cx="73.2" cy="65.2" r="1.1" fill="#fff"/>';
+      s += '<path d="M55 79q5-6 10 0" fill="none" stroke="#b0603f" stroke-width="2.6" stroke-linecap="round"/>';
+      s += '<circle cx="37" cy="71.5" r="6.6" fill="#ffc9a8" opacity=".95"/>';
+      s += '<circle cx="83" cy="71.5" r="6.6" fill="#ffc9a8" opacity=".95"/>';
+      s += '<path d="M86 40q7-4 5-11M93 44q7-4 5-11" fill="none" stroke="#d9c9b6" stroke-width="2.6" stroke-linecap="round"/>';
+    } else if (st === 'sad') {
+      s += brow('M41 53q7 0 12 5', 'M79 53q-7 0-12 5');
+      s += openEyes(erx + 0.3, ery + 0.2, 66);
+      s += '<path d="M54.5 78q5.5-5 11 0" fill="none" stroke="#b0603f" stroke-width="2.4" stroke-linecap="round"/>';
+      s += '<path d="M45.6 71.2q-1.4 5.4.2 7.6 2 2.4 3.4-.2 1.2-2.8-3.6-7.4z" fill="#7cc6f2"/>';
+      s += '<path d="M75.4 70.4q-1.2 4.4.2 6.2 1.6 2 2.8-.2 1-2.2-3-6z" fill="#a9dbff"/>';
+      s += '<ellipse cx="38" cy="73" rx="4.6" ry="2.8" fill="#ffb3c6" opacity=".6"/>';
+      s += '<ellipse cx="82" cy="73" rx="4.6" ry="2.8" fill="#ffb3c6" opacity=".6"/>';
+    } else if (st === 'surprise') {
+      s += brow('M41 50q7-2 12 0', 'M79 50q-7-2-12 0');
+      s += '<ellipse cx="48" cy="64" rx="5.2" ry="6.2" fill="#ffffff" stroke="' + dark + '" stroke-width="1.7"/>';
+      s += '<ellipse cx="72" cy="64" rx="5.2" ry="6.2" fill="#ffffff" stroke="' + dark + '" stroke-width="1.7"/>';
+      s += '<circle cx="48" cy="64.6" r="2.5" fill="' + dark + '"/>';
+      s += '<circle cx="72" cy="64.6" r="2.5" fill="' + dark + '"/>';
+      s += '<ellipse cx="60" cy="77.6" rx="4.6" ry="5.4" fill="#b0603f"/>';
+      s += '<ellipse cx="60" cy="79.4" rx="2.7" ry="2.9" fill="#e8897f"/>';
+    } else if (st === 'shy') {
+      s += closedEyes(-5);
+      s += '<ellipse cx="37.5" cy="72.8" rx="7.2" ry="4.6" fill="#ff9ec4" opacity=".95"/>';
+      s += '<ellipse cx="82.5" cy="72.8" rx="7.2" ry="4.6" fill="#ff9ec4" opacity=".95"/>';
+      s += '<circle cx="35.4" cy="71.4" r="1.2" fill="#ffffff" opacity=".75"/>';
+      s += '<circle cx="84.6" cy="71.4" r="1.2" fill="#ffffff" opacity=".75"/>';
+      s += '<path d="M56.6 75.6q3.4 3.4 6.8 0" fill="none" stroke="#b0603f" stroke-width="2.2" stroke-linecap="round"/>';
+      s += avTwinkle(84, 52, 2.6, '#ffd34d');
+    } else if (st === 'pout') {
+      s += brow('M41 55l12 5', 'M79 55l-12 5');
+      s += '<path d="M43 63.4h10M67 63.4h10" stroke="' + dark + '" stroke-width="2.4" stroke-linecap="round"/>';
+      s += '<ellipse cx="48" cy="66.4" rx="3.3" ry="2.6" fill="' + dark + '"/>';
+      s += '<ellipse cx="72" cy="66.4" rx="3.3" ry="2.6" fill="' + dark + '"/>';
+      s += '<path d="M56.4 77.4q4.6 2.6 9-1.4" fill="none" stroke="#b0603f" stroke-width="2.6" stroke-linecap="round"/>';
+      s += '<circle cx="82" cy="72" r="6.4" fill="#ffc9a8" opacity=".95"/>';
+      s += '<path d="M89 44q6-3 5-9" fill="none" stroke="#d9c9b6" stroke-width="2.4" stroke-linecap="round"/>';
+    } else if (st === 'heart') {
+      s += '<polygon points="' + avHeartPts(48, 65, 0.29) + '" fill="#ff5c8a"/>';
+      s += '<polygon points="' + avHeartPts(72, 65, 0.29) + '" fill="#ff5c8a"/>';
+      s += '<circle cx="45.6" cy="62" r="1.3" fill="#ffffff"/>';
+      s += '<circle cx="69.6" cy="62" r="1.3" fill="#ffffff"/>';
+      s += '<path d="M52 72.6q8 10.4 16 0z" fill="#b0603f"/>';
+      s += '<path d="M54 73.4h12q-1.2 2.6-6 2.6t-6-2.6z" fill="#ffffff"/>';
+      s += '<ellipse cx="37" cy="73" rx="5.2" ry="3" fill="#ff9ec4" opacity=".85"/>';
+      s += '<ellipse cx="83" cy="73" rx="5.2" ry="3" fill="#ff9ec4" opacity=".85"/>';
+      s += avHeartPts ? '<polygon points="' + avHeartPts(94, 40, 0.16) + '" fill="#ff9ec4" opacity=".9"/>' : '';
+    } else if (st === 'star') {
+      s += '<polygon points="' + avStarPts(48, 65, 7.6) + '" fill="#ffcf1f" stroke="#e0a800" stroke-width="1"/>';
+      s += '<polygon points="' + avStarPts(72, 65, 7.6) + '" fill="#ffcf1f" stroke="#e0a800" stroke-width="1"/>';
+      s += '<circle cx="48" cy="65" r="1.4" fill="#9a6a00"/>';
+      s += '<circle cx="72" cy="65" r="1.4" fill="#9a6a00"/>';
+      s += '<path d="M52.4 72.8q7.6 9.6 15.2 0z" fill="#b0603f"/>';
+      s += '<path d="M54.2 73.4h11.6q-1.2 2.4-5.8 2.4t-5.8-2.4z" fill="#ffffff"/>';
+      s += avTwinkle(18, 44, 4.4, '#ffd34d') + avTwinkle(102, 40, 3.6, '#ffe680') + avTwinkle(88, 26, 2.8, '#fff0a8');
+    } else if (st === 'sweat') {
+      s += brow('M41 51q7 1 12 4', 'M79 51q-7 1-12 4');
+      s += openEyes(erx + 0.2, ery - 0.4, 65);
+      s += '<path d="M52.6 74.6q7.4 6.4 14.8-1.6" fill="none" stroke="#b0603f" stroke-width="2.4" stroke-linecap="round"/>';
+      s += '<path d="M35.6 41q-3.2 5.4.2 8 3.4 2.4 4.6-1.4 1.2-3.6-4.8-6.6z" fill="#9ed6ff"/>';
+      s += '<path d="M90.4 46q-2.4 4 .2 6 2.6 1.8 3.4-1 0.8-2.6-3.6-5z" fill="#c6e9ff"/>';
+      s += '<path d="M80 36q4-4 4-9" fill="none" stroke="#9ed6ff" stroke-width="2.4" stroke-linecap="round"/>';
+    } else if (st === 'tongue') {
+      s += '<ellipse cx="48" cy="65" rx="' + erx + '" ry="' + ery + '" fill="' + dark + '"/>';
+      s += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="63.2" r="' + hl + '" fill="#fff"/>';
+      s += '<path d="M66.6 65.4q5.4-4.4 10.8 0" fill="none" stroke="' + dark + '" stroke-width="2.8" stroke-linecap="round"/>';
+      s += '<path d="M53 72.6q7 9.6 14 0z" fill="#b0603f"/>';
+      s += '<ellipse cx="60" cy="79" rx="3.8" ry="3.2" fill="#ff8fb0"/>';
+      s += '<path d="M60 76.6v4.6" stroke="#e0698c" stroke-width="1.2"/>';
+      s += '<ellipse cx="38.6" cy="73" rx="4.8" ry="2.8" fill="#ff9ec4" opacity=".8"/>';
+      s += '<ellipse cx="81.4" cy="73" rx="4.8" ry="2.8" fill="#ff9ec4" opacity=".8"/>';
+    } else if (st === 'sleepy') {
+      s += '<path d="M42 63q6 6 12 1" fill="none" stroke="' + dark + '" stroke-width="2.8" stroke-linecap="round"/>';
+      s += '<path d="M66 64q6 5 12-1" fill="none" stroke="' + dark + '" stroke-width="2.8" stroke-linecap="round"/>';
+      s += '<ellipse cx="60" cy="77.8" rx="5.2" ry="6.6" fill="#b0603f"/>';
+      s += '<ellipse cx="60" cy="80" rx="3.4" ry="3.8" fill="#e8897f"/>';
+      s += '<text x="86" y="48" font-size="13" font-weight="900" fill="#8fb8ff" font-family="inherit">Z</text>';
+      s += '<text x="95" y="36" font-size="9.5" font-weight="900" fill="#b8d4ff" font-family="inherit">z</text>';
+    } else if (st === 'cool') {
+      s += '<rect x="35.6" y="57.4" width="20" height="13" rx="5.4" fill="#2c2440"/>';
+      s += '<rect x="64.4" y="57.4" width="20" height="13" rx="5.4" fill="#2c2440"/>';
+      s += '<path d="M55.6 62.6h8.8" stroke="#2c2440" stroke-width="3.2"/>';
+      s += '<path d="M38 60.4l5 5M66.6 60.4l5 5" stroke="#ffffff" stroke-width="1.6" opacity=".55" stroke-linecap="round"/>';
+      s += '<path d="M54.6 76.6q7 4 13.4-2.6" fill="none" stroke="#b0603f" stroke-width="2.6" stroke-linecap="round"/>';
+      s += avTwinkle(92, 46, 3, '#ffffff');
+    } else {
+      /* 방긋 웃음 — 기본 얼굴 */
+      s += openEyes(erx, ery, 65);
+      if (girl) {
+        s += '<circle cx="46.6" cy="67.2" r="0.95" fill="#fff" opacity=".85"/>';
+        s += '<circle cx="70.6" cy="67.2" r="0.95" fill="#fff" opacity=".85"/>';
+        s += girlLashes();
+        s += '<ellipse cx="39.4" cy="73.6" rx="5.3" ry="3" fill="#ff9ec4" opacity=".82"/>';
+        s += '<ellipse cx="80.6" cy="73.6" rx="5.3" ry="3" fill="#ff9ec4" opacity=".82"/>';
+        s += '<circle cx="37.6" cy="72.4" r="1.05" fill="#ffffff" opacity=".6"/>';
+        s += '<circle cx="82.4" cy="72.4" r="1.05" fill="#ffffff" opacity=".6"/>';
+        s += '<path d="M55.2 74.4q4.8 5.6 9.6 0q-4.8 2.2-9.6 0z" fill="#f4799f"/>';
+        s += '<path d="M57.6 75.4q2.4 1.6 4.8 0" fill="none" stroke="#ffffff" stroke-width=".9" opacity=".55"/>';
+      } else {
+        s += '<ellipse cx="40" cy="74" rx="4.2" ry="2.6" fill="#ffb3c6" opacity=".45"/>';
+        s += '<ellipse cx="80" cy="74" rx="4.2" ry="2.6" fill="#ffb3c6" opacity=".45"/>';
+        s += '<path d="M55 75q5 5 10 0" fill="none" stroke="#b0603f" stroke-width="2.2" stroke-linecap="round"/>';
+      }
+    }
+    return s;
+  }
+
+  /* 동작 — 팔 모양 (기본 서기는 예전 그대로) */
+  function avPoseArms(st, skin, topC, topC2) {
+    var s = '', sw = 12.6, sl = 6.4;
+    if (st === 'wave') {
+      s += avLimb([[44, 106], [37, 124]], 13, topC) + avHand(36, 128, sl, skin);
+      s += avLimb([[76, 106], [90, 88], [96, 66]], sw, topC);
+      s += '<g class="av-wave-hand">' + avHand(98, 61, 6.8, skin) +
+        '<path d="M95 55v-5M99.4 54.4l1.2-5M103.4 57l3.6-3.4" fill="none" stroke="' + skin + '" stroke-width="2.6" stroke-linecap="round"/></g>';
+    } else if (st === 'v') {
+      s += avLimb([[44, 106], [38, 124]], 13, topC) + avHand(37, 128, sl, skin);
+      s += avLimb([[76, 106], [86, 119]], sw, topC);
+      s += avLimb([[86, 119], [74, 91]], 9, skin);
+      s += avHand(72, 87, 6.2, skin);
+      s += '<path d="M69.6 84.2l-3.6-9.4M74.4 83.4l2.2-9.2" fill="none" stroke="' + skin + '" stroke-width="3" stroke-linecap="round"/>';
+    } else if (st === 'cheer') {
+      s += avLimb([[44, 106], [30, 86], [25, 60]], sw, topC) + avHand(24, 55, sl, skin);
+      s += avLimb([[76, 106], [90, 86], [95, 60]], sw, topC) + avHand(96, 55, sl, skin);
+      s += avTwinkle(16, 42, 4, '#ffd34d') + avTwinkle(104, 42, 4, '#ffd34d');
+    } else if (st === 'jump') {
+      s += avLimb([[44, 106], [27, 92], [19, 73]], sw, topC) + avHand(17, 69, sl, skin);
+      s += avLimb([[76, 106], [93, 92], [101, 73]], sw, topC) + avHand(103, 69, sl, skin);
+      s += avTwinkle(50, 20, 3, '#ffd34d') + avTwinkle(74, 16, 2.4, '#ffe680');
+    } else if (st === 'dance') {
+      s += avLimb([[44, 106], [28, 86], [20, 62]], sw, topC) + avHand(19, 57, sl, skin);
+      s += avLimb([[76, 106], [94, 116], [105, 106]], sw, topC) + avHand(108, 103, sl, skin);
+      s += '<path d="M16 40q5-3 4-8M108 46q5-3 4-8" fill="none" stroke="#ffb0d0" stroke-width="2.6" stroke-linecap="round"/>';
+    } else if (st === 'heart') {
+      s += avLimb([[44, 106], [35, 126], [52, 121]], sw, topC) + avHand(54, 120, sl, skin);
+      s += avLimb([[76, 106], [85, 126], [68, 121]], sw, topC) + avHand(66, 120, sl, skin);
+      s += '<polygon points="' + avHeartPts(60, 115, 0.42) + '" fill="#ff5c8a" opacity=".95"/>';
+      s += avTwinkle(88, 48, 2.6, '#ffb0d0');
+    } else if (st === 'kick') {
+      s += avLimb([[44, 106], [50, 88]], 12, topC) + avHand(51, 84, 5.8, skin);
+      s += avLimb([[76, 106], [70, 88]], 12, topC) + avHand(69, 84, 5.8, skin);
+      s += '<path d="M104 104q6-6 4-12M110 110q5-5 4-10" fill="none" stroke="#c9d6ff" stroke-width="2.4" stroke-linecap="round"/>';
+    } else if (st === 'fight') {
+      s += avLimb([[44, 106], [35, 122], [47, 131]], sw, topC) + avHand(49, 132, 6, skin);
+      s += avLimb([[76, 106], [93, 116], [85, 95]], sw, topC);
+      s += avHand(84, 91, 7, skin);
+      s += '<path d="M79.6 88.6h8.8M80.4 92h7.6" stroke="#c98a5e" stroke-width="1.4" opacity=".55"/>';
+      s += '<path d="M96 104q6-4 6-11" fill="none" stroke="#ff9f1c" stroke-width="2.6" stroke-linecap="round"/>';
+      s += avTwinkle(104, 84, 3, '#ffd34d');
+    } else if (st === 'cross') {
+      s += avLimb([[45, 108], [74, 125]], 12.4, topC) + avHand(76, 126, sl, skin);
+      s += avLimb([[75, 108], [46, 126]], 12.4, topC) + avHand(44, 127, sl, skin);
+    } else if (st === 'hero') {
+      s += avLimb([[44, 106], [30, 84], [26, 58]], sw, topC);
+      s += avHand(25, 53, 7, skin);
+      s += '<path d="M20 46l1.6 4.4 4.4 1.6-4.4 1.6L20 58l-1.6-4.4L14 52l4.4-1.6z" fill="#ffd34d" stroke="#f0b400" stroke-width="1"/>';
+      s += avLimb([[76, 106], [85, 122], [66, 132]], sw, topC) + avHand(64, 133, 6, skin);
+    }
+    return s;
+  }
+
   function avatarInner(av) {
     av = av || prof().avatar;
     var skin = avSkin().color;
@@ -5808,9 +6241,18 @@
     var hst = hatItem ? hatItem.style : '';
     var accC = accItem ? (accItem.color || '#5a4a3a') : '#5a4a3a';
     var hatC = hatItem ? (hatItem.color || '#6fb7ff') : '#6fb7ff';
-    var s = '<g class="av-fig ' + (girl ? 'girl' : 'boy') + '">';
+    var faceItem = avItem(av.face), poseItem = avItem(av.pose);
+    var fstyle = faceItem ? faceItem.style : 'smile';
+    var pstyle = poseItem ? poseItem.style : 'stand';
+    var motion = (pstyle === 'jump' || pstyle === 'dance' || pstyle === 'wave' || pstyle === 'hero') ? (' ' + pstyle) : '';
+    var s = '<g class="av-fig ' + (girl ? 'girl' : 'boy') + motion + '">';
 
     s += '<ellipse cx="60" cy="194" rx="31" ry="6" fill="#2c2440" opacity=".10"/>';
+
+    /* 영웅 망토는 몸 뒤에서 펄럭여요 */
+    if (pstyle === 'hero') {
+      s += '<g class="av-cape"><path d="M46 98q-17 26-22 72 15-7 26-3 8 3 10 11 3-8 11-11 11-4 26 3-5-46-22-72z" fill="' + topC2 + '" opacity=".92"/></g>';
+    }
 
     /* 천사 날개 · 미니 백팩은 몸 뒤에 */
     if (ast === 'wings') {
@@ -5822,9 +6264,20 @@
       s += '<rect x="33" y="112" width="54" height="9" fill="#ffffff" opacity=".38"/>';
     }
 
-    /* 다리 */
-    s += '<rect x="47" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
-    s += '<rect x="60" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
+    /* 다리 — 동작마다 다르게 */
+    if (pstyle === 'jump') {
+      s += '<path d="M52 150l-7 17 8 13" fill="none" stroke="' + skin + '" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>';
+      s += '<path d="M68 150l7 15-8 14" fill="none" stroke="' + skin + '" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>';
+    } else if (pstyle === 'dance') {
+      s += '<rect x="47" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
+      s += '<path d="M67 152l13 14-6 18" fill="none" stroke="' + skin + '" stroke-width="12.5" stroke-linecap="round" stroke-linejoin="round"/>';
+    } else if (pstyle === 'kick') {
+      s += '<rect x="47" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
+      s += '<path d="M67 151l20-4 14-11" fill="none" stroke="' + skin + '" stroke-width="12.5" stroke-linecap="round" stroke-linejoin="round"/>';
+    } else {
+      s += '<rect x="47" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
+      s += '<rect x="60" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
+    }
 
     /* 하의 */
     var bstyle = bottom ? bottom.style : 'jeans';
@@ -5876,10 +6329,14 @@
     var handCx = girl ? 38.6 : 35;
     var handR = girl ? 5.9 : 6.4;
     s += '<path d="M' + tx + ' 100q' + (tw / 2) + ' -8 ' + tw + ' 0v' + thh + 'q-' + (tw / 2) + ' 7 -' + tw + ' 0z" fill="' + topC + '"/>';
-    s += '<rect x="' + slx + '" y="104" width="' + swid + '" height="22" rx="' + (swid / 2) + '" fill="' + topC + '"/>';
-    s += '<rect x="' + srx + '" y="104" width="' + swid + '" height="22" rx="' + (swid / 2) + '" fill="' + topC + '"/>';
-    s += '<circle cx="' + handCx + '" cy="130" r="' + handR + '" fill="' + skin + '"/>';
-    s += '<circle cx="' + (120 - handCx) + '" cy="130" r="' + handR + '" fill="' + skin + '"/>';
+    if (pstyle === 'stand') {
+      s += '<rect x="' + slx + '" y="104" width="' + swid + '" height="22" rx="' + (swid / 2) + '" fill="' + topC + '"/>';
+      s += '<rect x="' + srx + '" y="104" width="' + swid + '" height="22" rx="' + (swid / 2) + '" fill="' + topC + '"/>';
+      s += '<circle cx="' + handCx + '" cy="130" r="' + handR + '" fill="' + skin + '"/>';
+      s += '<circle cx="' + (120 - handCx) + '" cy="130" r="' + handR + '" fill="' + skin + '"/>';
+    } else {
+      s += avPoseArms(pstyle, skin, topC, topC2);
+    }
     var tstyle = top ? top.style : 'tee';
     if (tstyle === 'stripe') {
       for (var i = 0; i < 3; i++) {
@@ -5945,38 +6402,12 @@
       s += '<ellipse cx="40" cy="121" rx="5.2" ry="2.6" fill="#ff8fb0"/>';
     }
 
-    /* 얼굴 — 여아는 속눈썹·분홍 입술·볼터치로 확실히 달라요 */
+    /* 얼굴 — 표정마다 눈·입·볼이 확실히 달라요 */
     var headR = girl ? 33 : 33.5;
     s += '<circle cx="26" cy="64" r="6" fill="' + skin + '"/>';
     s += '<circle cx="94" cy="64" r="6" fill="' + skin + '"/>';
     s += '<circle cx="60" cy="62" r="' + headR + '" fill="' + skin + '"/>';
-    var eyeRx = girl ? 4.1 : 3.4, eyeRy = girl ? 5.6 : 4.5;
-    s += '<ellipse cx="48" cy="65" rx="' + eyeRx + '" ry="' + eyeRy + '" fill="#2c2440"/>';
-    s += '<ellipse cx="72" cy="65" rx="' + eyeRx + '" ry="' + eyeRy + '" fill="#2c2440"/>';
-    s += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="63.2" r="' + (girl ? 1.55 : 1.3) + '" fill="#fff"/>';
-    s += '<circle cx="' + (girl ? 73.4 : 73.2) + '" cy="63.2" r="' + (girl ? 1.55 : 1.3) + '" fill="#fff"/>';
-    if (girl) {
-      /* 반짝이 하나 더 */
-      s += '<circle cx="46.6" cy="67.2" r="0.95" fill="#fff" opacity=".85"/>';
-      s += '<circle cx="70.6" cy="67.2" r="0.95" fill="#fff" opacity=".85"/>';
-      /* 바깥으로 살짝 올라간 속눈썹 */
-      s += '<path d="M44.8 60.8q-2.8-1.6-4.2-4.6" fill="none" stroke="#2c2440" stroke-width="1.6" stroke-linecap="round"/>';
-      s += '<path d="M75.2 60.8q2.8-1.6 4.2-4.6" fill="none" stroke="#2c2440" stroke-width="1.6" stroke-linecap="round"/>';
-      s += '<path d="M47.4 59.6q-1.2-1.6-1.6-3.2" fill="none" stroke="#2c2440" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>';
-      s += '<path d="M72.6 59.6q1.2-1.6 1.6-3.2" fill="none" stroke="#2c2440" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>';
-      /* 볼터치 — 더 진하고 반짝 */
-      s += '<ellipse cx="39.4" cy="73.6" rx="5.3" ry="3" fill="#ff9ec4" opacity=".82"/>';
-      s += '<ellipse cx="80.6" cy="73.6" rx="5.3" ry="3" fill="#ff9ec4" opacity=".82"/>';
-      s += '<circle cx="37.6" cy="72.4" r="1.05" fill="#ffffff" opacity=".6"/>';
-      s += '<circle cx="82.4" cy="72.4" r="1.05" fill="#ffffff" opacity=".6"/>';
-      /* 분홍 입술 */
-      s += '<path d="M55.2 74.4q4.8 5.6 9.6 0q-4.8 2.2-9.6 0z" fill="#f4799f"/>';
-      s += '<path d="M57.6 75.4q2.4 1.6 4.8 0" fill="none" stroke="#ffffff" stroke-width=".9" opacity=".55"/>';
-    } else {
-      s += '<ellipse cx="40" cy="74" rx="4.2" ry="2.6" fill="#ffb3c6" opacity=".45"/>';
-      s += '<ellipse cx="80" cy="74" rx="4.2" ry="2.6" fill="#ffb3c6" opacity=".45"/>';
-      s += '<path d="M55 75q5 5 10 0" fill="none" stroke="#b0603f" stroke-width="2.2" stroke-linecap="round"/>';
-    }
+    s += avFaceSvg(fstyle, girl, skin);
 
     /* 헤어 (앞머리) — 모양마다 실루엣이 또렷하게 달라요 */
     var cap = '<path d="M27 53c0-20 15-31 33-31s33 11 33 31z" fill="' + hairC + '"/>';
@@ -6143,9 +6574,18 @@
       s += '<circle cx="60" cy="99" r="3.4" fill="' + accC + '" stroke="#e0a800" stroke-width="1"/>';
     }
 
-    /* 신발 */
+    /* 신발 — 점프·춤·발차기는 발 위치가 달라요 */
     var sstyle = shoes ? shoes.style : 'sneaker';
-    if (sstyle === 'boots') {
+    if (pstyle === 'jump') {
+      s += '<ellipse cx="52" cy="182" rx="9" ry="6" fill="' + shoeC + '" transform="rotate(-18 52 182)"/>';
+      s += '<ellipse cx="68" cy="180" rx="9" ry="6" fill="' + shoeC + '" transform="rotate(18 68 180)"/>';
+    } else if (pstyle === 'dance') {
+      s += '<ellipse cx="51" cy="187" rx="11" ry="7" fill="' + shoeC + '"/>';
+      s += '<ellipse cx="75" cy="185" rx="11" ry="7" fill="' + shoeC + '" transform="rotate(14 75 185)"/>';
+    } else if (pstyle === 'kick') {
+      s += '<ellipse cx="51" cy="187" rx="11" ry="7" fill="' + shoeC + '"/>';
+      s += '<ellipse cx="104" cy="133" rx="9" ry="11" fill="' + shoeC + '" transform="rotate(58 104 133)"/>';
+    } else if (sstyle === 'boots') {
       s += '<rect x="44" y="168" width="16" height="24" rx="5" fill="' + shoeC + '"/>';
       s += '<rect x="60" y="168" width="16" height="24" rx="5" fill="' + shoeC + '"/>';
       s += '<rect x="42" y="186" width="20" height="8" rx="4" fill="' + shoeC + '"/>';
@@ -6176,7 +6616,12 @@
     if (!isOwned(id) && it.price > 0) return;
     av[slot] = id;
     prof().owned[id] = 1;
-    if (!silent) { snd('sticker'); showToast('👕 ' + josa(it.name, '을', '를') + ' 입었어요!'); }
+    if (!silent) {
+      snd('sticker');
+      if (slot === 'face') showToast('😊 ' + it.name + ' 표정으로 바꿨어요!');
+      else if (slot === 'pose') showToast('🕺 ' + it.name + ' 동작을 해요!');
+      else showToast('👕 ' + josa(it.name, '을', '를') + ' 입었어요!');
+    }
     saveState();
     renderAvatar();
     renderPet();
@@ -6357,22 +6802,27 @@
       thumbVB = '20 86 80 62'; thumbCls = ' av-thumb-fig bust';
     } else if (slot === 'bottom') {
       thumbVB = '22 118 76 86'; thumbCls = ' av-thumb-fig bust';
+    } else if (slot === 'face') {
+      thumbVB = '22 28 76 74'; thumbCls = ' av-thumb-fig face';
+    } else if (slot === 'pose') {
+      thumbVB = '0 0 120 200'; thumbCls = ' av-thumb-fig pose';
     }
+    var ownTxt = slot === 'face' ? (on ? '쓰는 중' : '써 보기')
+      : slot === 'pose' ? (on ? '하는 중' : '해 보기')
+      : (on ? '입는 중' : '입어 보기');
     return '<button type="button" class="av-card' + (on ? ' on' : '') + (ownIt ? '' : ' locked') + '" data-act="av-wear" data-id="' + esc(it.id) + '">' +
       '<span class="av-thumb' + thumbCls + '">' + '<svg viewBox="' + thumbVB + '" aria-hidden="true">' + avatarInner(tmpAv) + '</svg></span>' +
       '<b>' + esc(it.name) + gmark + '</b>' +
-      '<small>' + (ownIt ? (on ? '입는 중' : '입어 보기') : coinSvg() + ' ' + fmtNum(it.price)) + '</small>' +
+      '<small>' + (ownIt ? ownTxt : coinSvg() + ' ' + fmtNum(it.price)) + (it.anim ? ' · 🎬' : '') + '</small>' +
       '</button>';
   }
 
-  function avatarHtml() {
-    var av = prof().avatar;
-    var p = prof();
+  function avTopHtml(av, p) {
     var h = '<div class="av-top">' +
       '<div class="av-preview">' + avatarSvg(av) + '</div>' +
       '<div class="av-side">' +
         '<b>나의 아바타</b>' +
-        '<p class="lf-note">옷을 고르면 바로 입어요. 마이룸에도 이 모습으로 서 있어요.</p>' +
+        '<p class="lf-note">옷·표정·동작을 고르면 바로 바뀌고, 마이룸에도 이 모습으로 있어요.</p>' +
         '<div class="av-gender"><span>성별</span>' + genderButtonsHtml(av) + '</div>' +
         '<div class="av-swatches"><span>피부</span>';
     for (var i = 0; i < AV_SKINS.length; i++) {
@@ -6381,8 +6831,11 @@
     h += '</div>' +
         '<div class="shop-coin">' + coinSvg() + ' <b>' + fmtNum(p.coins) + '</b></div>' +
       '</div></div>';
+    return h;
+  }
 
-    h += '<div class="tabs av-tabs">';
+  function avTabsHtml(av) {
+    var h = '<div class="tabs av-tabs">';
     for (var s = 0; s < AV_SLOTS.length; s++) {
       var slot = AV_SLOTS[s];
       var wearing = avItem(av[slot.id]);
@@ -6390,7 +6843,11 @@
         slot.icon + ' ' + slot.label + (wearing ? '' : ' <small>없음</small>') + '</button>';
     }
     h += '</div>';
+    return h;
+  }
 
+  function avSlotGridHtml(av, p) {
+    var h = '';
     if (avatarUi.slot === 'hair') {
       h += '<p class="lf-note">지금 고른 성별 머리가 먼저 나와요. <b>0코인</b> 머리는 코인 없이 바로 쓸 수 있어요.</p>';
       var grp = avatarItemGroups('hair');
@@ -6405,31 +6862,301 @@
         for (var hk = 0; hk < gset.items.length; hk++) h += avCardHtml(av, p, gset.items[hk], 'hair');
         h += '</div>';
       }
-    } else {
-      if (avatarUi.slot === 'top' || avatarUi.slot === 'bottom') {
-        h += '<p class="lf-note">👦 👧 표시가 있는 옷은 그 성별에 맞춘 옷이에요. 어느 성별이든 입을 수 있어요.</p>';
-      }
-      h += '<div class="av-grid">';
-      if (avatarUi.slot === 'acc' || avatarUi.slot === 'hat') {
-        h += '<button type="button" class="av-card' + (!av[avatarUi.slot] ? ' on' : '') + '" data-act="av-off" data-slot="' + avatarUi.slot + '">' +
-          '<span class="av-thumb">🚫</span><b>안 쓰기</b><small>' + (avatarUi.slot === 'hat' ? '모자 없음' : '소품 없음') + '</small></button>';
-      }
-      var list = avatarSlotItems(avatarUi.slot);
-      for (var k = 0; k < list.length; k++) h += avCardHtml(av, p, list[k], avatarUi.slot);
-      h += '</div>';
+      return h;
     }
 
-    h += salonHtml(av, p);
+    if (avatarUi.slot === 'face') {
+      h += '<p class="lf-note">표정을 고르면 얼굴이 바로 바뀌고 마이룸에도 나타나요. <b>0코인</b> 표정부터 써 보세요!</p>';
+    } else if (avatarUi.slot === 'pose') {
+      h += '<p class="lf-note">동작을 고르면 아바타가 그 자세를 해요. 점프·댄스는 움직이기도 해요. <b>0코인</b> 동작부터 써 보세요!</p>';
+    } else if (avatarUi.slot === 'top' || avatarUi.slot === 'bottom') {
+      h += '<p class="lf-note">👦 👧 표시가 있는 옷은 그 성별에 맞춘 옷이에요. 어느 성별이든 입을 수 있어요.</p>';
+    }
 
+    h += '<div class="av-grid">';
+    if (avatarUi.slot === 'acc' || avatarUi.slot === 'hat') {
+      h += '<button type="button" class="av-card' + (!av[avatarUi.slot] ? ' on' : '') + '" data-act="av-off" data-slot="' + avatarUi.slot + '">' +
+        '<span class="av-thumb">🚫</span><b>안 쓰기</b><small>' + (avatarUi.slot === 'hat' ? '모자 없음' : '소품 없음') + '</small></button>';
+    }
+    var list = avatarSlotItems(avatarUi.slot);
+    if (avatarUi.slot === 'face' || avatarUi.slot === 'pose') {
+      list.sort(function (a, b) { return (a.price > 0 ? 1 : 0) - (b.price > 0 ? 1 : 0); });
+    }
+    for (var k = 0; k < list.length; k++) h += avCardHtml(av, p, list[k], avatarUi.slot);
+    h += '</div>';
+    return h;
+  }
+
+  function avatarHtml() {
+    var av = prof().avatar;
+    var p = prof();
+    /* 위(미리보기·성별·피부·코인·탭)는 붙박이, 아래 아이템만 스크롤해요 */
+    var h = '<div class="av-sticky">' + avTopHtml(av, p) + avTabsHtml(av) + '</div>';
+    h += '<div class="av-items">' + avSlotGridHtml(av, p) + salonHtml(av, p);
     h += '<div class="care-actions">' +
       '<button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="avatar">🛒 아바타 상점</button>' +
       '<button type="button" class="ghost-btn" data-act="avatar-close">닫기</button></div>';
+    h += '</div>';
     return h;
   }
+
 
   function renderAvatar() {
     var b = document.getElementById('avatarBody');
     if (b) b.innerHTML = avatarHtml();
+  }
+
+  /* ---------------- 코인 용돈 (엄마·아빠 → 아이) ---------------- */
+  var allowUi = { to: '', amount: 50, minus: false, reason: '', msg: '', err: false, busy: false };
+
+  function roleLabel(role) {
+    var r = ROLES[role];
+    return (r && r.label) || role || '가족';
+  }
+  function allowUserList() {
+    var out = [], users = (cloud.users && cloud.users.users) || [];
+    for (var i = 0; i < users.length; i++) {
+      var u = users[i];
+      if (!u || !u.id) continue;
+      out.push(u);
+    }
+    return out;
+  }
+  function allowName(id) {
+    var list = allowUserList();
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i].name || list[i].id;
+    return id ? String(id) : '가족';
+  }
+  function defaultAllowTarget() {
+    var list = allowUserList(), me = (cloud.me && cloud.me.id) || '', i;
+    for (i = 0; i < list.length; i++) if (list[i].role === 'child' && list[i].id !== me) return list[i].id;
+    for (i = 0; i < list.length; i++) if (list[i].role !== 'admin' && list[i].id !== me) return list[i].id;
+    for (i = 0; i < list.length; i++) if (list[i].id === me) return list[i].id;
+    return list.length ? list[0].id : '';
+  }
+
+  function openAllowance() {
+    if (!can('edit')) return;
+    var list = allowUserList(), ok = false;
+    for (var i = 0; i < list.length; i++) if (list[i].id === allowUi.to) ok = true;
+    if (!ok) allowUi.to = defaultAllowTarget();
+    allowUi.msg = '';
+    allowUi.err = false;
+    allowUi.busy = false;
+    if (!(allowUi.amount > 0)) allowUi.amount = 50;
+    var ttl = document.getElementById('allowTitle');
+    if (ttl) ttl.innerHTML = coinSvg() + ' 코인 용돈 주기';
+    var m = document.getElementById('allowModal');
+    renderAllowance();
+    if (m) m.hidden = false;
+    raiseModal('allowModal');
+    lockScroll();
+  }
+  function closeAllowance() {
+    var m = document.getElementById('allowModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('allowModal')) unlockScroll();
+  }
+
+  function allowPrevHtml() {
+    var n = Math.abs(parseInt(allowUi.amount, 10) || 0);
+    return esc(allowName(allowUi.to)) + '에게 ' + coinSvg() + ' <b>' + (allowUi.minus ? '-' : '+') + fmtNum(n) + '</b> 코인' +
+      (allowUi.reason ? '<br>“' + esc(allowUi.reason) + '”' : '');
+  }
+
+  function renderAllowance() {
+    var b = document.getElementById('allowBody');
+    if (!b) return;
+    var list = allowUserList(), i, me = (cloud.me && cloud.me.id) || '';
+    var h = '';
+    if (!list.length) {
+      h += '<p class="lf-note">가족 계정이 아직 없어요. 👥 계정에서 먼저 만들어 주세요.</p>';
+    } else {
+      h += '<label class="allow-target"><span>받는 사람</span><select class="inp" data-field="allowTarget" aria-label="받는 사람">';
+      for (i = 0; i < list.length; i++) {
+        h += '<option value="' + esc(list[i].id) + '"' + (allowUi.to === list[i].id ? ' selected' : '') + '>' +
+          esc(list[i].name || list[i].id) + ' · ' + esc(roleLabel(list[i].role)) + (list[i].id === me ? ' (나)' : '') + '</option>';
+      }
+      h += '</select></label>';
+    }
+
+    h += '<div class="allow-row2">' +
+      '<button type="button" class="allow-mode' + (allowUi.minus ? '' : ' on') + '" data-act="allow-mode" data-minus="0">' + coinSvg() + ' 코인 주기</button>' +
+      '<button type="button" class="allow-mode' + (allowUi.minus ? ' on' : '') + '" data-act="allow-mode" data-minus="1">↩️ 코인 가져오기</button>' +
+      '</div>';
+
+    h += '<div class="allow-quick">';
+    var qs = [10, 30, 50, 100];
+    for (i = 0; i < qs.length; i++) {
+      h += '<button type="button" class="qbtn' + (Math.abs(allowUi.amount) === qs[i] ? ' on' : '') + '" data-act="allow-quick" data-n="' + qs[i] + '">' +
+        (allowUi.minus ? '-' : '+') + qs[i] + '</button>';
+    }
+    h += '</div>';
+
+    h += '<div class="allow-line">직접 입력 <input class="inp" type="number" min="1" max="9999" step="1" inputmode="numeric" data-field="allowAmount" value="' + Math.abs(parseInt(allowUi.amount, 10) || 0) + '" aria-label="코인 수"> 코인</div>';
+    h += '<div class="allow-line">한마디 <input class="inp" type="text" maxlength="40" data-field="allowReason" value="' + esc(allowUi.reason) + '" placeholder="예: 심부름 도와줘서 고마워!" aria-label="한마디"></div>';
+    h += '<div class="allow-prev" id="allowPrev">' + allowPrevHtml() + '</div>';
+    if (allowUi.msg) h += '<p class="allow-msg' + (allowUi.err ? ' err' : '') + '">' + esc(allowUi.msg) + '</p>';
+    h += '<div class="care-actions">' +
+      '<button type="button" class="pill-btn warm" data-act="allow-send"' + (allowUi.busy ? ' disabled' : '') + '>' + (allowUi.busy ? '보내는 중…' : '보내기') + '</button>' +
+      '<button type="button" class="ghost-btn" data-act="allow-close">닫기</button></div>';
+    h += '<p class="lf-note">보낸 코인은 아이가 다음에 로그인할 때 알림으로 알려 줘요.</p>';
+    b.innerHTML = h;
+  }
+
+  async function sendAllowance() {
+    if (!can('edit') || allowUi.busy) return;
+    var to = allowUi.to;
+    if (!to) { allowUi.err = true; allowUi.msg = '받는 사람을 골라 주세요.'; renderAllowance(); return; }
+    var n = Math.min(9999, Math.abs(parseInt(allowUi.amount, 10) || 0));
+    if (!n) { allowUi.err = true; allowUi.msg = '보낼 코인 수를 적어 주세요.'; renderAllowance(); return; }
+    var delta = allowUi.minus ? -n : n;
+    allowUi.busy = true;
+    allowUi.msg = '';
+    allowUi.err = false;
+    renderAllowance();
+
+    var res = await ghGet(profilePath(to));
+    if (!res.ok) {
+      allowUi.busy = false;
+      allowUi.err = true;
+      allowUi.msg = '저장하지 못했어요. ' + (res.error || '연결을 확인해 주세요.');
+      renderAllowance();
+      return;
+    }
+    var raw = (res.data && typeof res.data === 'object') ? clone(res.data) : null;
+    if (!raw) {
+      /* 아직 프로필이 없는 계정이면 깨끗한 상태에서 시작해요 (기본 코인은 빼고) */
+      raw = defaultProfile();
+      raw.coins = 0;
+      raw.clearedAt = 0;
+    }
+    var before = Math.max(0, parseInt(raw.coins, 10) || 0);
+    raw.coins = Math.max(0, Math.min(999999, before + delta));
+    raw.updatedAt = new Date().toISOString();
+    var notes = (Object.prototype.toString.call(raw.allowanceNotices) === '[object Array]') ? raw.allowanceNotices : [];
+    notes.push({
+      id: uid('al'),
+      at: Date.now(),
+      amount: delta,
+      reason: String(allowUi.reason || '').slice(0, 40),
+      from: (cloud.me && cloud.me.id) || '',
+      fromName: (cloud.me && cloud.me.name) || '',
+      read: false
+    });
+    raw.allowanceNotices = notes.slice(-20);
+
+    var put = await ghPut(profilePath(to), raw, '코인 용돈 ' + (delta > 0 ? '+' : '') + delta + ' · ' + to);
+    allowUi.busy = false;
+    if (!put.ok) {
+      allowUi.err = true;
+      allowUi.msg = '보내지 못했어요. ' + (put.error || '잠시 뒤 다시 해 주세요.');
+      renderAllowance();
+      return;
+    }
+
+    /* 나에게 보낸 경우엔 이 기기 프로필도 바로 맞춰 둬요 */
+    if (to === ((cloud.me && cloud.me.id) || '')) {
+      prof().coins = raw.coins;
+      prof().allowanceNotices = raw.allowanceNotices;
+      prof().updatedAt = raw.updatedAt;
+      writeProfileCache(cloud.me.id, prof());
+      lastProfileSig = profileSignature();
+      cloud.lastProfileSig = lastProfileSig;
+      renderCoinBadge(delta);
+      renderAll();
+    }
+
+    allowUi.err = false;
+    allowUi.msg = allowName(to) + '에게 코인 ' + n + '개를 ' + (delta > 0 ? '보냈어요!' : '가져왔어요!') +
+      ' (지금 ' + fmtNum(raw.coins) + '코인)';
+    allowUi.reason = '';
+    snd('chime');
+    showToast((delta > 0 ? '🎁 ' : '↩️ ') + allowName(to) + '에게 코인 ' + n + '개를 ' + (delta > 0 ? '보냈어요!' : '가져왔어요!'), false);
+    renderAllowance();
+  }
+
+  /* 아이 화면: 받지 않은 코인 용돈 알림 */
+  function unreadAllowances() {
+    var p = prof(), list = (Object.prototype.toString.call(p.allowanceNotices) === '[object Array]') ? p.allowanceNotices : [];
+    var out = [];
+    for (var i = 0; i < list.length; i++) if (list[i] && !list[i].read && list[i].amount) out.push(list[i]);
+    return out;
+  }
+
+  function allowWhen(ms) {
+    var t = Number(ms) || 0;
+    if (!t) return '방금';
+    var d = new Date(t);
+    if (isNaN(d.getTime())) return '방금';
+    var diff = Date.now() - t;
+    if (diff < 60 * 1000) return '방금';
+    if (diff < 60 * 60 * 1000) return Math.floor(diff / 60000) + '분 전';
+    if (diff < 24 * 60 * 60 * 1000) return Math.floor(diff / 3600000) + '시간 전';
+    return (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
+  }
+
+  function renderAllowanceNotice(list) {
+    var b = document.getElementById('allowNoticeBody');
+    if (!b) return;
+    var total = 0, senders = [], i, h = '';
+    for (i = 0; i < list.length; i++) {
+      total += list[i].amount;
+      var nm = list[i].fromName || '가족';
+      if (senders.indexOf(nm) < 0) senders.push(nm);
+    }
+    h += '<div class="an-big">' + coinSvg() + '<span>' + (total >= 0 ? '+' : '') + fmtNum(total) + '</span></div>';
+    h += '<p class="an-who">' + esc(senders.join(', ') || '가족') + '님이 보냈어요</p>';
+    if (list.length > 1) h += '<p class="lf-note">알림 ' + list.length + '개를 모아서 보여 줘요.</p>';
+    h += '<div class="an-list">';
+    for (i = list.length - 1; i >= 0; i--) {
+      var nt = list[i];
+      h += '<div class="an-item">' +
+        '<div class="an-amt">' + coinSvg() + ' ' + (nt.amount > 0 ? '+' : '') + fmtNum(nt.amount) + ' 코인</div>' +
+        (nt.reason ? '<div class="an-why">“' + esc(nt.reason) + '”</div>' : '') +
+        '<div class="an-from">' + esc(nt.fromName || '가족') + '님 · ' + esc(allowWhen(nt.at)) + '</div>' +
+        '</div>';
+    }
+    h += '</div>';
+    b.innerHTML = h;
+  }
+
+  function maybeAllowanceNotice() {
+    var m = document.getElementById('allowNoticeModal');
+    if (!m || !m.hidden) return;
+    if (!cloud.me) return;
+    var list = unreadAllowances();
+    if (!list.length) return;
+    renderAllowanceNotice(list);
+    m.hidden = false;
+    raiseModal('allowNoticeModal');
+    lockScroll();
+    snd('chime');
+  }
+
+  function acceptAllowance() {
+    var p = prof();
+    var list = (Object.prototype.toString.call(p.allowanceNotices) === '[object Array]') ? p.allowanceNotices : [];
+    var had = false;
+    for (var i = 0; i < list.length; i++) {
+      if (!list[i].read) had = true;
+      list[i].read = true;
+    }
+    p.updatedAt = new Date().toISOString();
+    if (cloud.me) {
+      writeProfileCache(cloud.me.id, p);
+      lastProfileSig = profileSignature();
+      cloud.lastProfileSig = lastProfileSig;
+      scheduleSync('profile');
+    }
+    var m = document.getElementById('allowNoticeModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('allowNoticeModal')) unlockScroll();
+    if (had) {
+      snd('sticker');
+      showToast('🎁 코인 용돈을 받았어요! 고마워요!');
+    }
+    renderCoinBadge();
   }
 
   /* ---------------- 2.5D 마이룸 ---------------- */
@@ -6801,6 +7528,8 @@
       '<button type="button" class="tool-pill' + (roomUi.panel === 'wall' ? ' on' : '') + '" data-act="room-wall">🎨 벽지</button>' +
       '<button type="button" class="tool-pill' + (roomUi.panel === 'storage' ? ' on' : '') + '" data-act="room-storage">🧺 보관함 ' + Math.max(0, ownedFurni - placed) + '</button>' +
       '<button type="button" class="tool-pill' + (roomUi.panel === 'pets' ? ' on' : '') + '" data-act="room-pets">🐾 친구 ' + room.pets.length + '/4</button>' +
+      '<button type="button" class="tool-pill" data-act="avatar-open">👕 아바타</button>' +
+      (can('edit') ? '<button type="button" class="tool-pill" data-act="allow-open">' + coinSvg() + ' 코인 용돈</button>' : '') +
       '</div>';
     return h;
   }
@@ -7145,7 +7874,7 @@
   function profileSignature() {
     var p = prof();
     return JSON.stringify({
-      c: p.coins, pt: p.pet, b: p.bag, o: p.owned, r: p.room, a: p.avatar
+      c: p.coins, pt: p.pet, b: p.bag, o: p.owned, r: p.room, a: p.avatar, al: p.allowanceNotices
     });
   }
 
@@ -7163,6 +7892,7 @@
       owned: p.owned,
       room: p.room,
       avatar: p.avatar,
+      allowanceNotices: p.allowanceNotices || [],
       award: p.award
     };
   }
@@ -8170,7 +8900,7 @@
   }
 
   function isOnlyModal(id) {
-    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal', 'roomModal', 'avatarModal', 'shopModal', 'careModal'];
+    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal', 'roomModal', 'avatarModal', 'shopModal', 'careModal', 'allowModal', 'allowNoticeModal'];
     for (var i = 0; i < ids.length; i++) {
       if (ids[i] === id) continue;
       var el = document.getElementById(ids[i]);
@@ -9441,6 +10171,8 @@
     applyPermissions();
     setSync(navigator.onLine === false ? 'offline' : 'ok');
     if (cloud.dirty.day) scheduleSync('day');
+    /* 엄마·아빠가 보낸 코인 용돈이 있으면 축하 알림을 띄워요 */
+    try { maybeAllowanceNotice(); } catch (e) { /* 무시 */ }
   }
 
   async function doLogout(silent) {
@@ -10197,6 +10929,12 @@
     if (act === 'av-dye') { dyeHair(el.getAttribute('data-id')); return; }
     if (act === 'av-skin') { setAvatarSkin(el.getAttribute('data-id')); return; }
     if (act === 'av-haircolor') { setAvatarHairColor(el.getAttribute('data-id')); return; }
+    if (act === 'allow-open') { openAllowance(); return; }
+    if (act === 'allow-close') { closeAllowance(); return; }
+    if (act === 'allow-mode') { allowUi.minus = el.getAttribute('data-minus') === '1'; allowUi.msg = ''; renderAllowance(); return; }
+    if (act === 'allow-quick') { allowUi.amount = Math.abs(parseInt(el.getAttribute('data-n'), 10) || 50); allowUi.msg = ''; renderAllowance(); return; }
+    if (act === 'allow-send') { sendAllowance(); return; }
+    if (act === 'allow-accept') { acceptAllowance(); return; }
     if (act === 'close-goal') { closeGoal(); return; }
   });
 
@@ -10225,10 +10963,18 @@
     if (shm && !shm.hidden && e.target === shm) closeShop();
     var cm = document.getElementById('careModal');
     if (cm && !cm.hidden && e.target === cm) closeCare();
+    var alm = document.getElementById('allowModal');
+    if (alm && !alm.hidden && e.target === alm) closeAllowance();
+    var anm = document.getElementById('allowNoticeModal');
+    if (anm && !anm.hidden && e.target === anm) acceptAllowance();
   });
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape' && e.key !== 'Esc') return;
+    var anm2 = document.getElementById('allowNoticeModal');
+    if (anm2 && !anm2.hidden) { acceptAllowance(); return; }
+    var alm2 = document.getElementById('allowModal');
+    if (alm2 && !alm2.hidden) { closeAllowance(); return; }
     var e1 = document.getElementById('evoModal');
     if (e1 && !e1.hidden) { closeEvo(); return; }
     var rm1 = document.getElementById('roomModal');
@@ -10327,6 +11073,14 @@
     var field = el.getAttribute('data-field');
     if (!field) return;
 
+    if (field === 'allowAmount' || field === 'allowReason') {
+      if (field === 'allowAmount') allowUi.amount = Math.abs(parseInt(el.value, 10) || 0);
+      else allowUi.reason = String(el.value || '').slice(0, 40);
+      var apv = document.getElementById('allowPrev');
+      if (apv) apv.innerHTML = allowPrevHtml();
+      return;
+    }
+
     if (field === 'childName') {
       state.settings.childName = el.value;
       saveState();
@@ -10390,7 +11144,7 @@
     if (field === 'catSub') {
       var cs = findCat(el.getAttribute('data-cat'));
       if (cs) {
-        cs.sub = el.value.slice(0, 12);
+        cs.sub = el.value.slice(0, 50);
         saveState();
       }
       return;
@@ -10454,6 +11208,7 @@
     }
     if (field === 'petArtSp') { artEdit.sp = el.value; renderEditPanel(); return; }
     if (field === 'petArtStage') { artEdit.stage = el.value; renderEditPanel(); return; }
+    if (field === 'allowTarget') { allowUi.to = el.value; allowUi.msg = ''; renderAllowance(); return; }
 
     if (field === 'city') {
       state.settings.city = el.value;
