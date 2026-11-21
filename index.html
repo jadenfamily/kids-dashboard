@@ -1415,6 +1415,26 @@
   .av-side{ flex:1 1 190px; min-width:0; display:flex; flex-direction:column; gap:7px; font-size:14px; font-weight:900; }
   .av-swatches{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:900; color:#8a7f70; flex-wrap:wrap; }
   .av-swatches span{ min-width:40px; }
+  /* 머리색 줄 — 지금 색 동그라미 + 이름 + 💇 미용실 바로가기 */
+  .av-hairline{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:900; color:#8a7f70; flex-wrap:wrap; }
+  .av-hairline > span{ min-width:40px; }
+  .av-hairline .ah-dot{
+    width:22px; height:22px; border-radius:50%; background:var(--sw,#6b4423); flex:0 0 auto;
+    box-shadow:inset 0 -3px 0 rgba(0,0,0,.14), 0 0 0 2px #fff, 0 0 0 3.5px #eee2d2;
+  }
+  .av-hairline .ah-name{ font-size:11.5px; font-weight:900; color:var(--ink); }
+  .av-hairline .ah-name small{ font-size:9.5px; font-weight:900; color:#2f7fa8; margin-left:4px; }
+  .av-hairline .ah-salon{
+    margin-left:auto; min-height:30px; padding:4px 10px; border-radius:999px; border:1.5px solid #ffc0d4;
+    background:#fff4f9; color:#b4436c; font-family:inherit; font-size:11.5px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .av-hairline .ah-salon.on{ background:#2c2440; border-color:#2c2440; color:#fff; }
+  @media (max-width:560px){
+    .av-hairline > span{ min-width:30px; font-size:10px; }
+    .av-hairline .ah-dot{ width:19px; height:19px; }
+    .av-hairline .ah-name{ font-size:10.5px; }
+    .av-hairline .ah-salon{ font-size:10.5px; min-height:26px; padding:3px 8px; }
+  }
   .sw{ width:26px; height:26px; border-radius:50%; border:2px solid #fff; background:var(--sw,#ffd9b0); box-shadow:0 0 0 2px #eee2d2; cursor:pointer; touch-action:manipulation; }
   .sw.on{ box-shadow:0 0 0 2px #2c2440; transform:scale(1.06); }
   .av-tabs{ display:flex; gap:5px; flex-wrap:wrap; }
@@ -1775,6 +1795,53 @@
     box-shadow:inset 0 -3px 0 rgba(0,0,0,.14), 0 0 0 3px #fff, 0 0 0 4.5px #eee2d2;
   }
   .salon-sw.on .ssw-dot{ box-shadow:inset 0 -3px 0 rgba(0,0,0,.14), 0 0 0 3px #fff, 0 0 0 5px #ff8fb0; }
+  .salon-sw.prev{ border-color:#7ec8f0; background:#f2faff; }
+  .salon-sw.prev small{ color:#2f7fa8; }
+  .salon-sw.prev .ssw-dot{ box-shadow:inset 0 -3px 0 rgba(0,0,0,.14), 0 0 0 3px #fff, 0 0 0 5px #7ec8f0; }
+  /* 색을 누르면 미리보기만 — 염색하기 / 되돌리기 줄이 아래에 떠요 */
+  .salon-act{
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    background:#fff; border:2px solid #bfe5f7; border-radius:14px; padding:7px 8px;
+  }
+  .salon-act .sa-label{ font-size:11px; font-weight:900; color:#2f7fa8; flex:1 1 100%; }
+  .salon-act button{ font-family:inherit; cursor:pointer; touch-action:manipulation; border-radius:999px; }
+  .salon-act .sa-go{
+    flex:1 1 auto; min-height:38px; border:0; background:linear-gradient(160deg,#ff8fb0,#ff6fa1); color:#fff;
+    font-size:12.5px; font-weight:900; display:inline-flex; align-items:center; justify-content:center; gap:4px;
+  }
+  .salon-act .sa-go.off{ background:#eadfd2; color:#9a8a76; }
+  .salon-act .sa-back{
+    flex:0 0 auto; min-height:38px; padding:0 12px; border:2px solid #f0e2d0; background:#fff; color:#8a7a66;
+    font-size:12px; font-weight:900;
+  }
+  .salon-act .sa-go svg.coin-ico{ width:1.1em; height:1.1em; }
+  .salon-note{
+    margin:0; font-size:11px; font-weight:900; color:#2f7fa8; background:#f2faff; border:1.5px solid #bfe5f7;
+    border-radius:12px; padding:7px 9px; display:flex; align-items:center; gap:3px; flex-wrap:wrap;
+  }
+  .salon-note svg.coin-ico{ width:1.05em; height:1.05em; }
+  /* 붙박이 위쪽: 제목 + 🔄 초기화 · 미리보기 적용 막대 */
+  .av-title-row{ display:flex; align-items:center; gap:6px; }
+  .av-title-row > b{ flex:1 1 auto; }
+  .av-reset{
+    border:1.5px solid #eee2d2; background:#fff; color:#8a7a66; border-radius:999px; padding:3px 9px;
+    font-family:inherit; font-size:10.5px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .av-applybar{
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    background:#fff8e6; border:2px solid #ffd58a; border-radius:14px; padding:6px 8px;
+  }
+  .av-applybar .aab-msg{ flex:1 1 100%; font-size:10.5px; font-weight:900; color:#a8761c; }
+  .av-applybar .aab-go{
+    flex:1 1 auto; min-height:36px; border:0; border-radius:999px; background:linear-gradient(160deg,#5fcf8f,#35b56e);
+    color:#fff; font-family:inherit; font-size:12.5px; font-weight:900; cursor:pointer; touch-action:manipulation;
+    display:inline-flex; align-items:center; justify-content:center; gap:3px;
+  }
+  .av-applybar .aab-back{
+    flex:0 0 auto; min-height:36px; padding:0 12px; border-radius:999px; border:2px solid #f0e2d0; background:#fff;
+    color:#8a7a66; font-family:inherit; font-size:12px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .av-applybar .aab-go svg.coin-ico{ width:1.05em; height:1.05em; }
 
   .room-ava{ pointer-events:none; }
   .room-ava .room-ava-hop{ will-change:transform; }
@@ -4956,7 +5023,7 @@
   var legacyPetSeed = null;   /* 예전 settings.json의 공용 펫 기록 (첫 프로필로 이사) */
   var COIN_CHECK = 10;      /* 루틴 하나 체크 */
   var COIN_GROUP = 20;      /* 루틴 그룹 완료 보너스 */
-  var COIN_STICKER = 15;    /* 칭찬 스티커 */
+  var COIN_STICKER = 10;    /* 칭찬 스티커 */
   var COIN_START = 120;     /* 새 계정 시작 코인 */
   var HATCH_MS = 24 * 60 * 60 * 1000;  /* 새 알 기본 부화 시간 24시간 */
   var EXP_MAX = 100;        /* 단계마다 필요한 경험치 */
@@ -5069,7 +5136,7 @@
     { id: 'boy', label: '남아', icon: '👦' },
     { id: 'girl', label: '여아', icon: '👧' }
   ];
-  var HAIR_DYE_COST = 20;   /* 미용실 염색 1회 요금 */
+  var HAIR_DYE_COST = 5;    /* 미용실 염색 1회 요금 */
   var AV_SLOTS = [
     { id: 'hair', label: '헤어', icon: '💇' },
     { id: 'hat', label: '모자', icon: '🧢' },
@@ -6050,7 +6117,7 @@
         roomMirror();
         msg = (it.icon || '🏷') + ' ' + it.name + ' 컨셉을 펼쳤어요! 어느 층에나 바꿔 쓸 수 있어요.';
       } else if (it.kind === 'cloth') {
-        equipAvatar(it.slot, id, true);
+        wearAvatarNow(it.slot, id);   /* 산 옷은 바로 입혀요(미리보기 대기 없음) */
         msg = it.slot === 'face' ? '😊 ' + it.name + ' 표정을 샀어요!'
           : it.slot === 'pose' ? '🕺 ' + it.name + ' 동작을 샀어요!'
           : '👕 ' + josa(it.name, '을', '를') + ' 입었어요!';
@@ -7245,8 +7312,8 @@
     for (var i = 0; i < AV_SKINS.length; i++) if (AV_SKINS[i].id === id) return AV_SKINS[i];
     return AV_SKINS[0];
   }
-  function avHairColor() {
-    var id = prof().avatar.hairColor;
+  function avHairColor(av) {
+    var id = ((av || prof().avatar) || {}).hairColor;
     for (var i = 0; i < AV_HAIR_COLORS.length; i++) if (AV_HAIR_COLORS[i].id === id) return AV_HAIR_COLORS[i];
     return AV_HAIR_COLORS[0];
   }
@@ -7505,7 +7572,7 @@
   function avatarInner(av) {
     av = av || prof().avatar;
     var skin = avSkin().color;
-    var hairC = avHairColor().color;
+    var hairC = avHairColor(av).color;
     var top = avItem(av.top), bottom = avItem(av.bottom), shoes = avItem(av.shoes);
     var hair = avItem(av.hair), hatItem = avItem(av.hat), accItem = avItem(av.acc);
     var girl = avGender(av) === 'girl';
@@ -7804,16 +7871,21 @@
       s += '<path d="M38 32l4-14 8 9 10-13 10 13 8-9 4 14z" fill="' + hatC + '" stroke="#e0a800" stroke-width="1.5"/>';
       s += '<circle cx="60" cy="24" r="2.6" fill="#ff6b8a"/>';
     } else if (hst === 'bunnyband') {
+      /* 머리띠는 이마가 아니라 머리 위에 얹히도록 조금 올려 그려요 */
+      s += '<g transform="translate(0,-6)">';
       s += '<path d="M30 54q30-22 60 0" fill="none" stroke="' + hatC + '" stroke-width="6" stroke-linecap="round"/>';
       s += '<ellipse cx="43" cy="20" rx="7.5" ry="17" fill="#ffffff" stroke="#f3c6d8" stroke-width="2" transform="rotate(-12 43 20)"/>';
       s += '<ellipse cx="43" cy="20" rx="3.6" ry="10" fill="#ffc2d6" transform="rotate(-12 43 20)"/>';
       s += '<ellipse cx="77" cy="20" rx="7.5" ry="17" fill="#ffffff" stroke="#f3c6d8" stroke-width="2" transform="rotate(12 77 20)"/>';
       s += '<ellipse cx="77" cy="20" rx="3.6" ry="10" fill="#ffc2d6" transform="rotate(12 77 20)"/>';
+      s += '</g>';
     } else if (hst === 'catband') {
+      s += '<g transform="translate(0,-6)">';
       s += '<path d="M30 54q30-22 60 0" fill="none" stroke="' + hatC + '" stroke-width="6" stroke-linecap="round"/>';
       s += '<path d="M34 44l2-18 16 10z" fill="' + hatC + '"/>';
       s += '<path d="M86 44l-2-18-16 10z" fill="' + hatC + '"/>';
       s += '<path d="M40 40l1-9 7 5z" fill="#ffd0e0"/><path d="M80 40l-1-9-7 5z" fill="#ffd0e0"/>';
+      s += '</g>';
     } else if (hst === 'ribbonpin') {
       s += '<path d="M66 26l-13-7 2 14z" fill="' + hatC + '"/><path d="M66 26l13-7-2 14z" fill="' + hatC + '"/>';
       s += '<circle cx="66" cy="26" r="3.6" fill="#ffd34d"/>';
@@ -7887,41 +7959,88 @@
     return '<svg viewBox="0 0 120 200" class="' + (cls || 'av-svg') + '" aria-hidden="true">' + avatarInner(av) + '</svg>';
   }
 
-  function equipAvatar(slot, id, silent) {
-    var av = prof().avatar;
+  /* ===== 아바타 피팅룸: 탭에서 고른 것은 모두 '미리보기(draft)' =====
+     위쪽 ✅ 적용하기를 눌러야 저장되고, 머리색이 바뀌었을 때만 염색 요금이 나가요. */
+  var AV_ALL_KEYS = ['gender', 'skin', 'hairColor', 'hair', 'top', 'bottom', 'shoes', 'hat', 'acc', 'face', 'pose'];
+  var AV_WEAR_KEYS = ['hair', 'top', 'bottom', 'shoes', 'hat', 'acc', 'face', 'pose'];
+  var AV_DEFAULT_HAIR_COLOR = 'brown';
+
+  function avatarClone(av) {
+    var o = {}, fallback = { gender: 'boy', skin: 'skin1', hairColor: AV_DEFAULT_HAIR_COLOR, hair: 'av_hair_basic',
+      top: 'av_top_tee', bottom: 'av_bottom_jeans', shoes: 'av_shoes_sneaker', hat: '', acc: '', face: '', pose: '' };
+    for (var i = 0; i < AV_ALL_KEYS.length; i++) {
+      var k = AV_ALL_KEYS[i];
+      o[k] = (av && av[k] != null) ? av[k] : fallback[k];
+    }
+    return o;
+  }
+  function avatarShown() { return avatarUi.draft || prof().avatar; }
+  function avatarDraftAv() {
+    if (!avatarUi.draft) avatarUi.draft = avatarClone(prof().avatar);
+    return avatarUi.draft;
+  }
+  function avatarDirty() {
+    var d = avatarUi.draft;
+    if (!d) return false;
+    var s = prof().avatar;
+    for (var i = 0; i < AV_ALL_KEYS.length; i++) {
+      var k = AV_ALL_KEYS[i];
+      if (String(d[k] == null ? '' : d[k]) !== String(s[k] == null ? '' : s[k])) return true;
+    }
+    return false;
+  }
+  /* 머리색이 바뀌었을 때만 염색 요금 — 기본(밤색)으로 되돌리는 건 무료 */
+  function avatarDyeFee() {
+    var d = avatarUi.draft;
+    if (!d) return 0;
+    var saved = prof().avatar.hairColor || AV_DEFAULT_HAIR_COLOR;
+    var next = d.hairColor || AV_DEFAULT_HAIR_COLOR;
+    if (saved === next) return 0;
+    if (next === AV_DEFAULT_HAIR_COLOR) return 0;
+    return HAIR_DYE_COST;
+  }
+
+  /* 상점에서 산 옷은 바로 입어요 — 피팅룸 미리보기와 별개 */
+  function wearAvatarNow(slot, id) {
     var it = avItem(id);
     if (!it || it.slot !== slot) return;
-    if (!isOwned(id) && it.price > 0) return;
-    av[slot] = id;
+    prof().avatar[slot] = id;
     prof().owned[id] = 1;
-    if (!silent) {
-      snd('sticker');
-      if (slot === 'face') showToast('😊 ' + it.name + ' 표정으로 바꿨어요!');
-      else if (slot === 'pose') showToast('🕺 ' + it.name + ' 동작을 해요!');
-      else showToast('👕 ' + josa(it.name, '을', '를') + ' 입었어요!');
-    }
-    saveState();
-    renderAvatar();
+    prof().updatedAt = new Date().toISOString();
+    if (avatarUi.draft) avatarUi.draft[slot] = id;
+    if (!document.getElementById('avatarModal').hidden) renderAvatar(true);
     renderPet();
     if (!document.getElementById('roomModal').hidden) renderRoom();
   }
 
+  function equipAvatar(slot, id, silent) {
+    var it = avItem(id);
+    if (!it || it.slot !== slot) return;
+    if (!isOwned(id) && it.price > 0) return;
+    avatarDraftAv()[slot] = id;
+    if (!silent) {
+      snd('sticker');
+      if (slot === 'face') showToast('😊 ' + it.name + ' 표정을 미리 보는 중이에요!');
+      else if (slot === 'pose') showToast('🕺 ' + it.name + ' 동작을 미리 보는 중이에요!');
+      else showToast('👕 ' + josa(it.name, '을', '를') + ' 입어 보는 중이에요!');
+    }
+    renderAvatar(true);
+  }
+
   function setAvatarSkin(id) {
-    prof().avatar.skin = id;
-    saveState();
-    renderAvatar();
-    if (!document.getElementById('roomModal').hidden) renderRoom();
+    avatarDraftAv().skin = id;
+    renderAvatar(true);
   }
   function setAvatarHairColor(id) {
-    prof().avatar.hairColor = id;
-    saveState();
-    renderAvatar();
-    if (!document.getElementById('roomModal').hidden) renderRoom();
+    avatarDraftAv().hairColor = id;
+    renderAvatar(true);
   }
 
-  var avatarUi = { slot: 'hair' };
+  var avatarUi = { slot: 'hair', salon: false, draft: null };   /* draft: 저장 전 미리보기 · salon: 아래 칸을 머리색 고르기로 */
 
   function openAvatar() {
+    avatarUi.draft = null;      /* 창을 열 때는 항상 저장된 모습으로 시작해요 */
+    avatarUi.salon = false;
     renderAvatar();
     var m = document.getElementById('avatarModal');
     if (m) m.hidden = false;
@@ -7929,6 +8048,8 @@
     lockScroll();
   }
   function closeAvatar() {
+    avatarUi.draft = null;      /* 확인하지 않고 닫으면 미리보기는 사라지고 코인은 그대로예요 */
+    avatarUi.salon = false;
     var m = document.getElementById('avatarModal');
     if (m) m.hidden = true;
     if (isOnlyModal('avatarModal')) unlockScroll();
@@ -7959,7 +8080,7 @@
 
   function setAvatarGender(id) {
     if (id !== 'boy' && id !== 'girl') return;
-    var av = prof().avatar;
+    var av = avatarDraftAv();
     if (avGender(av) === id) return;
     var from = avGender(av);
     av.gender = id;
@@ -7976,56 +8097,108 @@
       var next = AV_STARTER[id][slot];
       if (!avItem(next) || next === cur) continue;
       av[slot] = next;
-      prof().owned[next] = 1;
       swapped.push(slot);
     }
-    saveState();
     snd('sticker');
-    showToast((id === 'girl' ? '👧 여아' : '👦 남아') + ' 아바타로 바꿨어요!' +
+    showToast((id === 'girl' ? '👧 여아' : '👦 남아') + ' 아바타를 미리 보는 중이에요!' +
       (swapped.length ? ' 머리와 옷도 ' + (id === 'girl' ? '여아' : '남아') + ' 기본으로 맞췄어요.' : ''));
-    renderAvatar();
-    if (!document.getElementById('roomModal').hidden) renderRoom();
+    renderAvatar(true);
   }
 
-  /* 💇 미용실: 머리색을 바꾸면 코인이 나가요 */
-  function dyeHair(id) {
-    var c = null;
-    for (var i = 0; i < AV_HAIR_COLORS.length; i++) if (AV_HAIR_COLORS[i].id === id) c = AV_HAIR_COLORS[i];
+  /* 💇 미용실: 색을 누르면 미리보기만 — 위쪽 ✅ 적용하기를 눌러야 염색 요금이 나가요 */
+  function hairColorById(id) {
+    for (var i = 0; i < AV_HAIR_COLORS.length; i++) if (AV_HAIR_COLORS[i].id === id) return AV_HAIR_COLORS[i];
+    return null;
+  }
+  function dyePick(id) {
+    var c = hairColorById(id);
     if (!c) return;
-    var p = prof();
-    if (p.avatar.hairColor === id) { showToast('💇 지금 머리색이에요!'); return; }
-    if (p.coins < HAIR_DYE_COST) {
+    var d = avatarDraftAv();
+    if (d.hairColor === id) return;
+    d.hairColor = id;
+    renderAvatar(true);
+  }
+
+  /* 미리보기를 저장해요 (머리색이 바뀌었을 때만 염색 요금) */
+  function applyAvatarDraft() {
+    if (!avatarDirty()) return;
+    var p = prof(), d = avatarUi.draft;
+    var fee = avatarDyeFee();
+    if (fee > 0 && p.coins < fee) {
       snd('uncheck');
-      showToast(coinSvg() + ' 코인이 부족해요. 미용실은 ' + HAIR_DYE_COST + '코인이에요!', true);
+      showToast(coinSvg() + ' 코인이 부족해요. 염색은 ' + HAIR_DYE_COST + '코인이에요!', true);
       return;
     }
-    p.coins -= HAIR_DYE_COST;
+    if (fee > 0) p.coins -= fee;
+    for (var i = 0; i < AV_ALL_KEYS.length; i++) {
+      var k = AV_ALL_KEYS[i];
+      p.avatar[k] = d[k];
+    }
+    for (var w = 0; w < AV_WEAR_KEYS.length; w++) {
+      var wid = p.avatar[AV_WEAR_KEYS[w]];
+      if (wid) p.owned[wid] = 1;
+    }
     p.updatedAt = new Date().toISOString();
-    p.avatar.hairColor = id;
+    avatarUi.draft = null;
     saveState();
     renderCoinBadge();
     snd('chime');
-    showToast('💇 머리를 ' + c.label + ' 색으로 염색했어요! ' + coinSvg() + ' -' + HAIR_DYE_COST, true);
-    renderAvatar();
+    showToast(fee > 0
+      ? '✅ 적용했어요! 머리색 염색 ' + coinSvg() + ' -' + fee
+      : '✅ 아바타를 적용했어요!', true);
+    renderAvatar(true);
+    renderPet();
     if (!document.getElementById('roomModal').hidden) renderRoom();
+  }
+  function revertAvatarDraft() {
+    if (!avatarUi.draft) return;
+    avatarUi.draft = null;
+    renderAvatar(true);
+    showToast('↩️ 미리 보기를 되돌렸어요. 코인은 그대로예요!');
+  }
+  /* 🔄 초기화: 아바타를 깨끗한 기본 모습으로 (미리보기만 — 적용하기를 눌러야 저장) */
+  function resetAvatarDraft() {
+    var d = avatarDraftAv();
+    var g = avGender(d);
+    d.gender = g;
+    d.skin = 'skin1';
+    d.hairColor = AV_DEFAULT_HAIR_COLOR;
+    d.hair = AV_PLAIN.hair;
+    d.top = AV_PLAIN.top;
+    d.bottom = AV_PLAIN.bottom;
+    d.shoes = 'av_shoes_sneaker';
+    d.hat = '';
+    d.acc = '';       /* 모자·안경·날개·가방도 같이 비워요 */
+    d.face = 'av_face_smile';
+    d.pose = 'av_pose_stand';   /* 영웅 포즈의 망토까지 사라져요 */
+    avatarUi.salon = false;
+    renderAvatar(true);
+    showToast('🔄 아바타를 처음 모습으로 되돌렸어요. 위쪽 ✅ 적용하기를 누르면 저장돼요!');
   }
 
   function salonHtml(av, p) {
     var can = p.coins >= HAIR_DYE_COST;
+    var savedId = p.avatar.hairColor || AV_DEFAULT_HAIR_COLOR;
+    var fee = avatarDyeFee();
     var h = '<div class="salon" id="hairSalon">' +
       '<div class="salon-head"><b>💇 미용실 · 머리 염색</b><small>' + coinSvg() + ' ' + HAIR_DYE_COST + '코인</small></div>' +
-      '<p class="lf-note">마음에 드는 색을 고르면 ' + HAIR_DYE_COST + '코인을 내고 머리를 염색해요. 지금 머리색은 무료예요.</p>' +
+      '<p class="lf-note">색을 누르면 <b>미리보기</b>만 해요. 마음에 들면 위쪽 <b>✅ 적용하기</b>를 눌러 ' + HAIR_DYE_COST + '코인으로 염색해요. 저장된 색은 무료예요.</p>' +
       '<div class="salon-grid">';
     for (var i = 0; i < AV_HAIR_COLORS.length; i++) {
       var c = AV_HAIR_COLORS[i];
-      var now = av.hairColor === c.id;
-      h += '<button type="button" class="salon-sw' + (now ? ' on' : '') + '" data-act="av-dye" data-id="' + c.id + '" style="--sw:' + c.color + '" title="' + esc(c.label) + ' 머리색"' +
-        (now ? ' aria-pressed="true"' : '') + '>' +
+      var now = savedId === c.id;
+      var picked = av.hairColor === c.id && !now;
+      h += '<button type="button" class="salon-sw' + (picked ? ' prev' : (now ? ' on' : '')) + '" data-act="av-dye" data-id="' + c.id + '" style="--sw:' + c.color + '" title="' + esc(c.label) + ' 머리색"' +
+        ((now || picked) ? ' aria-pressed="true"' : '') + '>' +
         '<span class="ssw-dot"></span><b>' + esc(c.label) + '</b>' +
-        '<small>' + (now ? '현재 색' : (can ? coinSvg() + ' ' + HAIR_DYE_COST : '코인 부족')) + '</small>' +
+        '<small>' + (now ? '현재 색' : (picked ? '고른 색' : (can ? coinSvg() + ' ' + HAIR_DYE_COST : '코인 부족'))) + '</small>' +
         '</button>';
     }
-    h += '</div></div>';
+    h += '</div>';
+    if (fee > 0) {
+      h += '<p class="salon-note" id="salonNote">💇 위쪽 <b>✅ 적용하기 (염색 ' + coinSvg() + ' ' + fee + ')</b>를 누르면 염색돼요. 아직 코인은 그대로예요!</p>';
+    }
+    h += '</div>';
     return h;
   }
 
@@ -8047,7 +8220,7 @@
 
   /* 지금 고른 성별 → 다른 성별 → 공용 순서로 묶고, 0코인 머리를 먼저 보여 줘요 */
   function avatarItemGroups(slot) {
-    var g = avGender();
+    var g = avGender(avatarShown());
     var order = [g, (g === 'girl' ? 'boy' : 'girl'), 'both'];
     var all = avatarSlotItems(slot), groups = [];
     for (var oi = 0; oi < order.length; oi++) {
@@ -8095,18 +8268,45 @@
       '</button>';
   }
 
+  /* 머리색 줄: 지금(또는 미리보는) 색 동그라미 + 이름 + 💇 미용실 버튼 */
+  function avHairLineHtml(av) {
+    var shown = avHairColor(av);
+    var changed = String(av.hairColor || AV_DEFAULT_HAIR_COLOR) !== String(prof().avatar.hairColor || AV_DEFAULT_HAIR_COLOR);
+    return '<div class="av-hairline" id="avHairLine">' +
+      '<span>머리색</span>' +
+      '<span class="ah-dot" style="--sw:' + shown.color + '" aria-hidden="true"></span>' +
+      '<b class="ah-name" id="avHairName">' + esc(shown.label) + (changed ? '<small>미리보기</small>' : '') + '</b>' +
+      '<button type="button" class="ah-salon' + (avatarUi.salon ? ' on' : '') + '" data-act="av-salon" aria-pressed="' + (avatarUi.salon ? 'true' : 'false') + '">' +
+        (avatarUi.salon ? '← 헤어로' : '💇 미용실') + '</button>' +
+      '</div>';
+  }
+
+  /* 미리보기가 저장된 모습과 다를 때만 뜨는 적용 막대 */
+  function avApplyBarHtml() {
+    if (!avatarDirty()) return '';
+    var fee = avatarDyeFee();
+    return '<div class="av-applybar" id="avApplyBar">' +
+      '<span class="aab-msg">👀 미리 보는 중 · 아직 저장 전이에요</span>' +
+      '<button type="button" class="aab-go" data-act="av-apply">✅ 적용하기' +
+        (fee > 0 ? ' (염색 ' + coinSvg() + ' ' + fee + ')' : '') + '</button>' +
+      '<button type="button" class="aab-back" data-act="av-revert">↩️ 되돌리기</button>' +
+      '</div>';
+  }
+
   function avTopHtml(av, p) {
     var h = '<div class="av-top">' +
       '<div class="av-preview">' + avatarSvg(av) + '</div>' +
       '<div class="av-side">' +
-        '<b>나의 아바타</b>' +
-        '<p class="lf-note">옷·표정·동작을 고르면 바로 바뀌고, 마이룸에도 이 모습으로 있어요.</p>' +
+        '<div class="av-title-row"><b>나의 아바타</b>' +
+          '<button type="button" class="av-reset" data-act="av-reset">🔄 초기화</button></div>' +
+        '<p class="lf-note">옷·표정·동작을 고르면 미리 보여 주고, 위쪽 <b>적용하기</b>를 누르면 저장돼요.</p>' +
         '<div class="av-gender"><span>성별</span>' + genderButtonsHtml(av) + '</div>' +
         '<div class="av-swatches"><span>피부</span>';
     for (var i = 0; i < AV_SKINS.length; i++) {
       h += '<button type="button" class="sw' + (av.skin === AV_SKINS[i].id ? ' on' : '') + '" data-act="av-skin" data-id="' + AV_SKINS[i].id + '" style="--sw:' + AV_SKINS[i].color + '" title="' + esc(AV_SKINS[i].label) + '"></button>';
     }
     h += '</div>' +
+        avHairLineHtml(av) +
         '<div class="shop-coin">' + coinSvg() + ' <b>' + fmtNum(p.coins) + '</b></div>' +
       '</div></div>';
     return h;
@@ -8166,11 +8366,12 @@
   }
 
   function avatarHtml() {
-    var av = prof().avatar;
+    var av = avatarShown();
     var p = prof();
-    /* 위(미리보기·성별·피부·코인·탭)는 붙박이, 아래 아이템만 스크롤해요 */
-    var h = '<div class="av-sticky">' + avTopHtml(av, p) + avTabsHtml(av) + '</div>';
-    h += '<div class="av-items">' + avSlotGridHtml(av, p) + salonHtml(av, p);
+    /* 위(미리보기·성별·피부·코인·탭·적용 막대)는 붙박이, 아래 아이템만 스크롤해요 */
+    var h = '<div class="av-sticky">' + avTopHtml(av, p) + avTabsHtml(av) + avApplyBarHtml() + '</div>';
+    /* 아래 칸은 옷·머리 목록이거나, 💇 미용실을 열면 머리색 고르기로 바뀌어요 */
+    h += '<div class="av-items">' + (avatarUi.salon ? salonHtml(av, p) : avSlotGridHtml(av, p));
     h += '<div class="care-actions">' +
       '<button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="avatar">🛒 아바타 상점</button>' +
       '<button type="button" class="ghost-btn" data-act="avatar-close">닫기</button></div>';
@@ -8179,9 +8380,12 @@
   }
 
 
-  function renderAvatar() {
+  function renderAvatar(keepScroll) {
     var b = document.getElementById('avatarBody');
-    if (b) b.innerHTML = avatarHtml();
+    if (!b) return;
+    var sc = keepScroll ? b.scrollTop : 0;
+    b.innerHTML = avatarHtml();
+    if (keepScroll) b.scrollTop = sc;
   }
 
   /* ---------------- 코인 조절 (엄마·아빠 → 아이) — 주기 / 빼기 / 직접 맞추기 ---------------- */
@@ -9627,6 +9831,9 @@
           roomMirror();
           if (hopEl) hopEl.setAttribute('transform', 'translate(0,0)');
           if (ringEl) ringEl.setAttribute('visibility', 'hidden');
+          /* 걷는 사이 방을 다시 그렸다면 목표 표시도 새것으로 찾아 숨겨요 (안 그러면 링이 남아요) */
+          var ringNow = document.querySelector('#roomScene .room-ava-target');
+          if (ringNow && ringNow.setAttribute) ringNow.setAttribute('visibility', 'hidden');
           roomAva.idle = 3 + Math.random() * 3;
         } else {
           roomAva.idle -= dt;
@@ -13709,7 +13916,8 @@
     if (act === 'room-pet-toggle') { toggleRoomPet(el.getAttribute('data-id')); return; }
     if (act === 'avatar-open') { openAvatar(); return; }
     if (act === 'avatar-close') { closeAvatar(); return; }
-    if (act === 'av-slot') { avatarUi.slot = el.getAttribute('data-slot') || 'hair'; renderAvatar(); return; }
+    if (act === 'av-slot') { avatarUi.slot = el.getAttribute('data-slot') || 'hair'; avatarUi.salon = false; renderAvatar(); return; }
+    if (act === 'av-salon') { avatarUi.salon = !avatarUi.salon; renderAvatar(); return; }
     if (act === 'av-wear') {
       var avId = el.getAttribute('data-id');
       var avIt = shopItem(avId);
@@ -13720,14 +13928,25 @@
     }
     if (act === 'av-off') {
       var offSlot = el.getAttribute('data-slot') || 'acc';
-      prof().avatar[offSlot] = '';
-      saveState();
-      renderAvatar();
-      if (!document.getElementById('roomModal').hidden) renderRoom();
+      var offD = avatarDraftAv();
+      offD[offSlot] = '';
+      /* 동작(영웅 포즈)이 그리는 등 뒤 망토도 '없음'을 누르면 함께 벗겨요 */
+      var capeGone = false;
+      if (offSlot === 'acc') {
+        var poseIt = offD.pose ? avItem(offD.pose) : null;
+        if (poseIt && poseIt.style === 'hero') { offD.pose = 'av_pose_stand'; capeGone = true; }
+      }
+      renderAvatar(true);
+      showToast(capeGone
+        ? '🧥 등 뒤 망토까지 같이 벗겼어요!'
+        : (offSlot === 'hat' ? '🧢 모자를 뺐어요!' : '🕶 안경·소품을 모두 뺐어요!'));
       return;
     }
     if (act === 'av-gender') { setAvatarGender(el.getAttribute('data-id')); return; }
-    if (act === 'av-dye') { dyeHair(el.getAttribute('data-id')); return; }
+    if (act === 'av-dye') { dyePick(el.getAttribute('data-id')); return; }
+    if (act === 'av-apply') { applyAvatarDraft(); return; }
+    if (act === 'av-revert') { revertAvatarDraft(); return; }
+    if (act === 'av-reset') { resetAvatarDraft(); return; }
     if (act === 'av-skin') { setAvatarSkin(el.getAttribute('data-id')); return; }
     if (act === 'av-haircolor') { setAvatarHairColor(el.getAttribute('data-id')); return; }
     if (act === 'allow-open') { openAllowance(); return; }
