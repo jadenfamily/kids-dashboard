@@ -7043,7 +7043,8 @@
         '</div>';
     }
 
-    h += '<h3 class="pet-sec-title">🐾 몬스터 도감 <b>' + p.collection.length + '</b> / ' + SPECIES_MAX + '</h3>';    h += '<div class="dex-sum">';
+    h += '<h3 class="pet-sec-title">🐾 몬스터 도감 <b>' + p.collection.length + '</b> / ' + SPECIES_MAX + '</h3>';
+    h += '<div class="dex-sum">';
     for (var r = 0; r < RARITY.length; r++) {
       var cnt = 0;
       for (var q = 0; q < PET_SPECIES.length; q++) if (PET_SPECIES[q].rarity === r && have[PET_SPECIES[q].id]) cnt++;
