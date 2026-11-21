@@ -1817,12 +1817,38 @@
   .allow-row .lf-note{ margin:0; flex:1 1 160px; }
   .allow-target{ display:flex; flex-direction:column; gap:5px; font-size:11.5px; font-weight:900; color:#8a7f70; }
   .allow-row2{ display:flex; gap:6px; flex-wrap:wrap; }
+  .allow-row3{ display:flex; gap:6px; }
   .allow-mode{
-    flex:1 1 120px; border:2px solid #eee2d2; background:#fff; color:#6d6484; border-radius:14px;
-    padding:7px 9px; font-size:12px; font-weight:900; cursor:pointer; touch-action:manipulation; font-family:inherit;
-    min-height:38px;
+    flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+    border:2px solid #eee2d2; background:#fff; color:#6d6484; border-radius:14px;
+    padding:7px 4px; font-size:12px; font-weight:900; cursor:pointer; touch-action:manipulation; font-family:inherit;
+    min-height:40px;
   }
+  .allow-mode b{ font-size:12px; font-weight:900; line-height:1.15; white-space:nowrap; }
+  .allow-mode span{ font-size:10px; font-weight:800; opacity:.7; line-height:1.1; }
   .allow-mode.on{ background:#2c2440; border-color:#2c2440; color:#fff; }
+  .allow-mode.on span{ opacity:.82; }
+  .allow-mode.add.on{ background:#12805c; border-color:#12805c; }
+  .allow-mode.sub.on{ background:#c6415a; border-color:#c6415a; }
+  .allow-mode.set.on{ background:#2c2440; border-color:#2c2440; }
+  @media (max-width:420px){
+    .allow-mode{ padding:6px 3px; }
+    .allow-mode b{ font-size:11px; }
+    .allow-mode span{ font-size:9.5px; }
+  }
+  .allow-bal{
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    background:linear-gradient(135deg,#fffdf6,#fff2d2); border:2px solid #ffe0a3; border-radius:14px;
+    padding:7px 11px; font-size:12px; font-weight:900; color:#7a5200;
+  }
+  .allow-bal .allow-bal-ico{ display:inline-flex; }
+  .allow-bal svg.coin-ico{ width:17px; height:17px; }
+  .allow-bal b{ font-size:15px; letter-spacing:-.02em; color:#a8690a; }
+  .allow-bal .allow-bal-who{ margin-left:auto; font-size:10.5px; font-weight:800; color:#b3a696; }
+  .allow-bal .allow-bal-wait{ font-weight:800; color:#b3a696; }
+  .allow-bal .allow-bal-err{ font-weight:900; color:#c6415a; }
+  .allow-bal .allow-bal-re{ margin-left:auto; border:0; background:#ffe9b8; color:#7a5200; border-radius:9px; padding:3px 8px; font-size:11px; font-weight:900; cursor:pointer; font-family:inherit; }
+  .allow-prev .allow-diff{ font-weight:800; color:#a8690a; opacity:.88; }
   .allow-quick{ display:flex; gap:6px; flex-wrap:wrap; }
   .allow-quick .qbtn{
     flex:1 1 60px; border:2px solid #ffe0a3; background:linear-gradient(135deg,#fffdf6,#fff3d6); color:#7a5200;
@@ -5426,25 +5452,32 @@
     }
     out.avatar = av;
 
-    /* ---- 코인 용돈 알림 (엄마·아빠가 보낸 코인) ---- */
+    /* ---- 코인 기록 (용돈 주기 · 빼기 · 직접 맞추기) ---- */
     var an = [];
     var rawAn = (Object.prototype.toString.call(p.allowanceNotices) === '[object Array]') ? p.allowanceNotices : [];
-    for (var ani = 0; ani < rawAn.length && an.length < 20; ani++) {
+    for (var ani = 0; ani < rawAn.length && an.length < 30; ani++) {
       var nn = rawAn[ani];
       if (!nn || typeof nn !== 'object') continue;
       var amt = parseInt(nn.amount, 10);
-      if (isNaN(amt) || !amt) continue;
+      var md = (nn.mode === 'sub' || nn.mode === 'set') ? nn.mode : 'give';
+      if (isNaN(amt)) continue;
+      /* 맞추기는 0만큼 바뀔 수도 있어요(같은 값으로 맞춤) — 그 기록은 남겨요 */
+      if (!amt && md !== 'set') continue;
+      var bf = parseInt(nn.before, 10), af = parseInt(nn.after, 10);
       an.push({
         id: (typeof nn.id === 'string' && nn.id) ? nn.id : ('al' + ani),
         at: Number(nn.at) || 0,
         amount: Math.max(-999999, Math.min(999999, amt)),
+        mode: md,
+        before: isNaN(bf) ? 0 : Math.max(0, Math.min(999999, bf)),
+        after: isNaN(af) ? 0 : Math.max(0, Math.min(999999, af)),
         reason: String(nn.reason == null ? '' : nn.reason).slice(0, 60),
         from: String(nn.from == null ? '' : nn.from).slice(0, 40),
         fromName: String(nn.fromName == null ? '' : nn.fromName).slice(0, 20),
         read: !!nn.read
       });
     }
-    out.allowanceNotices = an.slice(-20);
+    out.allowanceNotices = an.slice(-30);
 
     /* ---- 오늘의 코인 기록 ---- */
     if (p.award && typeof p.award === 'object') {
@@ -5882,7 +5915,7 @@
     var list = shopAll();
     var h = '<div class="shop-admin">' +
       '<div class="allow-row"><button type="button" class="pill-btn warm" data-act="allow-open">' + coinSvg() + ' 코인 용돈 주기</button>' +
-      '<span class="lf-note">아이에게 코인을 용돈처럼 보내고 한마디도 남겨요.</span></div>' +
+      '<span class="lf-note">코인을 용돈처럼 주거나, 빼거나, 지금 숫자로 맞출 수 있어요.</span></div>' +
       '<p class="lf-note">가격을 바꾸면 바로 저장돼요. 아이템을 숨기거나 지울 수도 있어요. (config/settings.json)</p>';
     if (shopUi.msg) h += '<p class="shop-msg">' + esc(shopUi.msg) + '</p>';
     h += '<div class="admin-list">';
@@ -8138,8 +8171,9 @@
     if (b) b.innerHTML = avatarHtml();
   }
 
-  /* ---------------- 코인 용돈 (엄마·아빠 → 아이) ---------------- */
-  var allowUi = { to: '', amount: 50, minus: false, reason: '', msg: '', err: false, busy: false };
+  /* ---------------- 코인 조절 (엄마·아빠 → 아이) — 주기 / 빼기 / 직접 맞추기 ---------------- */
+  var allowUi = { to: '', amount: 50, mode: 'add', reason: '', msg: '', err: false, busy: false,
+                  bal: null, balFor: '', balErr: '', balSeq: 0 };
 
   function roleLabel(role) {
     var r = ROLES[role];
@@ -8167,39 +8201,144 @@
     return list.length ? list[0].id : '';
   }
 
+  /* add = 용돈 주기(+), sub = 차감(-), set = 지금 코인을 그 숫자로 맞추기(=) */
+  function allowModeOf() {
+    return (allowUi.mode === 'sub' || allowUi.mode === 'set') ? allowUi.mode : 'add';
+  }
+  function allowAmountOf(v) {
+    var n = parseInt(v, 10);
+    if (isNaN(n) || n < 0) n = 0;
+    return Math.min(999999, n);
+  }
+  function allowKnownBal() {
+    return (allowUi.to && allowUi.balFor === allowUi.to && allowUi.bal != null) ? allowUi.bal : null;
+  }
+
+  function setAllowMode(mode) {
+    var m = (mode === 'sub' || mode === 'set') ? mode : 'add';
+    if (m === allowUi.mode) return;
+    allowUi.mode = m;
+    allowUi.msg = '';
+    allowUi.err = false;
+    if (m === 'set') {
+      /* 직접 맞추기는 '지금 코인'에서 시작하면 고치기 쉬워요 */
+      var bal = allowKnownBal();
+      if (bal != null) allowUi.amount = bal;
+    } else if (!(allowUi.amount > 0)) {
+      allowUi.amount = 50;
+    }
+    renderAllowance();
+  }
+
+  /* 받는 사람의 지금 코인 — 창을 열 때·사람을 바꿀 때·저장한 뒤에 다시 읽어요 */
+  function allowBalanceHtml() {
+    if (!allowUi.to) return '';
+    var bal = allowKnownBal();
+    if (bal == null) {
+      var retry = '<button type="button" class="allow-bal-re" data-act="allow-refresh">다시</button>';
+      if (allowUi.balErr) {
+        return '<span class="allow-bal-err">지금 코인을 못 읽었어요. ' + esc(allowUi.balErr) + '</span>' + retry;
+      }
+      return '<span class="allow-bal-ico">' + coinSvg() + '</span><span class="allow-bal-wait">지금 코인을 불러오는 중…</span>';
+    }
+    return '<span class="allow-bal-ico">' + coinSvg() + '</span>' +
+      '<span>지금 <b>' + fmtNum(bal) + '</b> 코인</span>' +
+      '<button type="button" class="allow-bal-re" data-act="allow-refresh" aria-label="지금 코인 새로고침">↻</button>';
+  }
+
+  function paintAllowBalance() {
+    var el = document.getElementById('allowBal');
+    if (el) el.innerHTML = allowBalanceHtml();
+    var pv = document.getElementById('allowPrev');
+    if (pv) pv.innerHTML = allowPrevHtml();
+  }
+
+  async function loadAllowBalance(force) {
+    var to = allowUi.to;
+    if (!to) return;
+    if (!force && allowUi.balFor === to && allowUi.bal != null) return;
+    var seq = ++allowUi.balSeq;
+    var mine = !!(cloud.me && to === cloud.me.id);
+    allowUi.balFor = mine ? to : '';
+    allowUi.bal = mine ? Math.max(0, Math.min(999999, parseInt(prof().coins, 10) || 0)) : null;
+    allowUi.balErr = '';
+    paintAllowBalance();
+    var res = await ghGet(profilePath(to));
+    if (seq !== allowUi.balSeq || allowUi.to !== to) return;
+    allowUi.balFor = to;
+    if (!res.ok) {
+      allowUi.bal = null;
+      allowUi.balErr = res.error || '연결을 확인해 주세요.';
+    } else if (res.missing || !res.data) {
+      allowUi.bal = 0;          /* 아직 프로필이 없는 계정 = 코인 0 */
+      allowUi.balErr = '';
+    } else {
+      allowUi.bal = Math.max(0, Math.min(999999, parseInt(normalizeProfile(res.data, to).coins, 10) || 0));
+      allowUi.balErr = '';
+    }
+    paintAllowBalance();
+  }
+
   function openAllowance() {
-    if (!can('edit')) return;
+    if (!can('edit') || !cloud.me || cloud.me.role === 'child') return;
     var list = allowUserList(), ok = false;
     for (var i = 0; i < list.length; i++) if (list[i].id === allowUi.to) ok = true;
     if (!ok) allowUi.to = defaultAllowTarget();
+    allowUi.mode = 'add';
     allowUi.msg = '';
     allowUi.err = false;
     allowUi.busy = false;
+    allowUi.bal = null;
+    allowUi.balFor = '';
+    allowUi.balErr = '';
+    allowUi.balSeq++;
     if (!(allowUi.amount > 0)) allowUi.amount = 50;
     var ttl = document.getElementById('allowTitle');
-    if (ttl) ttl.innerHTML = coinSvg() + ' 코인 용돈 주기';
+    if (ttl) ttl.innerHTML = coinSvg() + ' 코인 용돈 조절';
     var m = document.getElementById('allowModal');
     renderAllowance();
     if (m) m.hidden = false;
     raiseModal('allowModal');
     lockScroll();
+    loadAllowBalance();
   }
   function closeAllowance() {
+    allowUi.balSeq++;
     var m = document.getElementById('allowModal');
     if (m) m.hidden = true;
     if (isOnlyModal('allowModal')) unlockScroll();
   }
 
   function allowPrevHtml() {
-    var n = Math.abs(parseInt(allowUi.amount, 10) || 0);
-    return esc(allowName(allowUi.to)) + '에게 ' + coinSvg() + ' <b>' + (allowUi.minus ? '-' : '+') + fmtNum(n) + '</b> 코인' +
-      (allowUi.reason ? '<br>“' + esc(allowUi.reason) + '”' : '');
+    var mode = allowModeOf();
+    var n = allowAmountOf(allowUi.amount);
+    var name = esc(allowName(allowUi.to));
+    var bal = allowKnownBal();
+    var h;
+    if (mode === 'set') {
+      h = name + '의 코인을 ' + coinSvg() + ' <b>' + fmtNum(n) + '</b>개로 맞추기';
+      if (bal != null) {
+        var d2 = n - bal;
+        h += ' <span class="allow-diff">(지금 ' + fmtNum(bal) + ' → ' + fmtNum(n) + ' · ' +
+          (d2 ? (d2 > 0 ? '+' : '') + fmtNum(d2) : '그대로') + ')</span>';
+      }
+    } else {
+      var d = (mode === 'sub' ? -1 : 1) * n;
+      h = name + '에게 ' + coinSvg() + ' <b>' + (d > 0 ? '+' : '-') + fmtNum(Math.abs(d)) + '</b> 코인';
+      if (bal != null) {
+        h += ' <span class="allow-diff">(지금 ' + fmtNum(bal) + ' → ' + fmtNum(Math.max(0, Math.min(999999, bal + d))) + ')</span>';
+      }
+    }
+    if (allowUi.reason) h += '<br>“' + esc(allowUi.reason) + '”';
+    return h;
   }
 
   function renderAllowance() {
     var b = document.getElementById('allowBody');
     if (!b) return;
     var list = allowUserList(), i, me = (cloud.me && cloud.me.id) || '';
+    var mode = allowModeOf();
+    var n = allowAmountOf(allowUi.amount);
     var h = '';
     if (!list.length) {
       h += '<p class="lf-note">가족 계정이 아직 없어요. 👥 계정에서 먼저 만들어 주세요.</p>';
@@ -8212,37 +8351,60 @@
       h += '</select></label>';
     }
 
-    h += '<div class="allow-row2">' +
-      '<button type="button" class="allow-mode' + (allowUi.minus ? '' : ' on') + '" data-act="allow-mode" data-minus="0">' + coinSvg() + ' 코인 주기</button>' +
-      '<button type="button" class="allow-mode' + (allowUi.minus ? ' on' : '') + '" data-act="allow-mode" data-minus="1">↩️ 코인 가져오기</button>' +
+    h += '<div class="allow-bal" id="allowBal" aria-live="polite">' + allowBalanceHtml() + '</div>';
+
+    h += '<div class="allow-row3">' +
+      '<button type="button" class="allow-mode add' + (mode === 'add' ? ' on' : '') + '" data-act="allow-mode" data-mode="add" data-minus="0" aria-pressed="' + (mode === 'add') + '"><b>+ 주기</b><span>용돈</span></button>' +
+      '<button type="button" class="allow-mode sub' + (mode === 'sub' ? ' on' : '') + '" data-act="allow-mode" data-mode="sub" data-minus="1" aria-pressed="' + (mode === 'sub') + '"><b>- 빼기</b><span>차감</span></button>' +
+      '<button type="button" class="allow-mode set' + (mode === 'set' ? ' on' : '') + '" data-act="allow-mode" data-mode="set" data-minus="0" aria-pressed="' + (mode === 'set') + '"><b>= 직접 맞추기</b><span>설정</span></button>' +
       '</div>';
 
     h += '<div class="allow-quick">';
-    var qs = [10, 30, 50, 100];
-    for (i = 0; i < qs.length; i++) {
-      h += '<button type="button" class="qbtn' + (Math.abs(allowUi.amount) === qs[i] ? ' on' : '') + '" data-act="allow-quick" data-n="' + qs[i] + '">' +
-        (allowUi.minus ? '-' : '+') + qs[i] + '</button>';
+    if (mode === 'set') {
+      var qs2 = [0, 50, 100, 300];
+      for (i = 0; i < qs2.length; i++) {
+        h += '<button type="button" class="qbtn' + (n === qs2[i] ? ' on' : '') + '" data-act="allow-quick" data-n="' + qs2[i] + '">' + fmtNum(qs2[i]) + '</button>';
+      }
+    } else {
+      var qs = [10, 30, 50, 100];
+      for (i = 0; i < qs.length; i++) {
+        h += '<button type="button" class="qbtn' + (n === qs[i] ? ' on' : '') + '" data-act="allow-quick" data-n="' + qs[i] + '">' +
+          (mode === 'sub' ? '-' : '+') + qs[i] + '</button>';
+      }
     }
     h += '</div>';
 
-    h += '<div class="allow-line">직접 입력 <input class="inp" type="number" min="1" max="9999" step="1" inputmode="numeric" data-field="allowAmount" value="' + Math.abs(parseInt(allowUi.amount, 10) || 0) + '" aria-label="코인 수"> 코인</div>';
-    h += '<div class="allow-line">한마디 <input class="inp" type="text" maxlength="40" data-field="allowReason" value="' + esc(allowUi.reason) + '" placeholder="예: 심부름 도와줘서 고마워!" aria-label="한마디"></div>';
+    h += '<div class="allow-line">' + (mode === 'set' ? '맞출 코인' : '코인 수') +
+      ' <input class="inp" type="number" min="' + (mode === 'set' ? 0 : 1) + '" max="' + (mode === 'set' ? 999999 : 9999) + '" step="1" inputmode="numeric" data-field="allowAmount" value="' + n + '" aria-label="' + (mode === 'set' ? '맞출 코인' : '코인 수') + '">' +
+      (mode === 'set' ? '' : ' 코인') + '</div>';
+    h += '<div class="allow-line">' + (mode === 'add' ? '한마디' : '메모') +
+      ' <input class="inp" type="text" maxlength="40" data-field="allowReason" value="' + esc(allowUi.reason) + '" placeholder="' +
+      (mode === 'add' ? '예: 심부름 도와줘서 고마워!' : (mode === 'sub' ? '예: 약속을 못 지켰어요' : '예: 형제 코인을 맞춰 줘요')) +
+      '" aria-label="' + (mode === 'add' ? '한마디' : '메모') + '"></div>';
     h += '<div class="allow-prev" id="allowPrev">' + allowPrevHtml() + '</div>';
     if (allowUi.msg) h += '<p class="allow-msg' + (allowUi.err ? ' err' : '') + '">' + esc(allowUi.msg) + '</p>';
     h += '<div class="care-actions">' +
-      '<button type="button" class="pill-btn warm" data-act="allow-send"' + (allowUi.busy ? ' disabled' : '') + '>' + (allowUi.busy ? '보내는 중…' : '보내기') + '</button>' +
+      '<button type="button" class="pill-btn warm" data-act="allow-send"' + (allowUi.busy ? ' disabled' : '') + '>' +
+      (allowUi.busy ? '저장하는 중…' : (mode === 'add' ? '보내기' : (mode === 'sub' ? '빼기' : '맞추기'))) + '</button>' +
       '<button type="button" class="ghost-btn" data-act="allow-close">닫기</button></div>';
-    h += '<p class="lf-note">보낸 코인은 아이가 다음에 로그인할 때 알림으로 알려 줘요.</p>';
+    h += '<p class="lf-note">' + (mode === 'add'
+      ? '보낸 코인은 아이가 다음에 로그인할 때 알림으로 알려 줘요.'
+      : '빼기·맞추기는 알림 없이 코인만 바뀌어요. 코인은 0보다 작아지지 않아요.') + '</p>';
     b.innerHTML = h;
   }
 
   async function sendAllowance() {
     if (!can('edit') || allowUi.busy) return;
+    var mode = allowModeOf();
     var to = allowUi.to;
     if (!to) { allowUi.err = true; allowUi.msg = '받는 사람을 골라 주세요.'; renderAllowance(); return; }
-    var n = Math.min(9999, Math.abs(parseInt(allowUi.amount, 10) || 0));
-    if (!n) { allowUi.err = true; allowUi.msg = '보낼 코인 수를 적어 주세요.'; renderAllowance(); return; }
-    var delta = allowUi.minus ? -n : n;
+    var n = allowAmountOf(allowUi.amount);
+    if (mode !== 'set' && n < 1) {
+      allowUi.err = true;
+      allowUi.msg = mode === 'sub' ? '뺄 코인 수를 1개 이상 적어 주세요.' : '보낼 코인 수를 1개 이상 적어 주세요.';
+      renderAllowance();
+      return;
+    }
     allowUi.busy = true;
     allowUi.msg = '';
     allowUi.err = false;
@@ -8252,7 +8414,7 @@
     if (!res.ok) {
       allowUi.busy = false;
       allowUi.err = true;
-      allowUi.msg = '저장하지 못했어요. ' + (res.error || '연결을 확인해 주세요.');
+      allowUi.msg = '불러오지 못했어요. ' + (res.error || '연결을 확인해 주세요.');
       renderAllowance();
       return;
     }
@@ -8263,33 +8425,47 @@
       raw.coins = 0;
       raw.clearedAt = 0;
     }
-    var before = Math.max(0, parseInt(raw.coins, 10) || 0);
-    raw.coins = Math.max(0, Math.min(999999, before + delta));
+    var before = Math.max(0, Math.min(999999, parseInt(raw.coins, 10) || 0));
+    var after;
+    if (mode === 'set') after = n;
+    else if (mode === 'sub') after = Math.max(0, before - n);
+    else after = Math.min(999999, before + n);
+    var delta = after - before;
+    raw.coins = after;
     raw.updatedAt = new Date().toISOString();
     var notes = (Object.prototype.toString.call(raw.allowanceNotices) === '[object Array]') ? raw.allowanceNotices : [];
     notes.push({
       id: uid('al'),
       at: Date.now(),
       amount: delta,
+      before: before,
+      after: after,
+      mode: (mode === 'add' ? 'give' : mode),   /* give = 용돈 주기, sub = 빼기, set = 직접 맞추기 */
       reason: String(allowUi.reason || '').slice(0, 40),
       from: (cloud.me && cloud.me.id) || '',
       fromName: (cloud.me && cloud.me.name) || '',
-      read: false
+      read: mode !== 'add'   /* 용돈 주기만 아이에게 축하 알림으로 떠요 */
     });
-    raw.allowanceNotices = notes.slice(-20);
+    raw.allowanceNotices = notes.slice(-30);
 
-    var put = await ghPut(profilePath(to), raw, '코인 용돈 ' + (delta > 0 ? '+' : '') + delta + ' · ' + to);
+    var put = await ghPut(profilePath(to), raw,
+      (mode === 'set' ? '코인 맞추기 ' : (mode === 'sub' ? '코인 빼기 ' : '코인 용돈 ')) + after + ' · ' + to);
     allowUi.busy = false;
     if (!put.ok) {
       allowUi.err = true;
-      allowUi.msg = '보내지 못했어요. ' + (put.error || '잠시 뒤 다시 해 주세요.');
+      allowUi.msg = (mode === 'add' ? '보내지' : '저장하지') + ' 못했어요. ' + (put.error || '잠시 뒤 다시 해 주세요.');
       renderAllowance();
       return;
     }
 
-    /* 나에게 보낸 경우엔 이 기기 프로필도 바로 맞춰 둬요 */
+    /* 방금 저장한 값으로 지금 코인을 바로 맞춰 둬요 */
+    allowUi.balFor = to;
+    allowUi.bal = after;
+    allowUi.balErr = '';
+
+    /* 나에게 바꾼 경우엔 이 기기 화면(헤더·마이룸 코인)도 바로 맞춰요 */
     if (to === ((cloud.me && cloud.me.id) || '')) {
-      prof().coins = raw.coins;
+      prof().coins = after;
       prof().allowanceNotices = raw.allowanceNotices;
       prof().updatedAt = raw.updatedAt;
       writeProfileCache(cloud.me.id, prof());
@@ -8297,14 +8473,26 @@
       cloud.lastProfileSig = lastProfileSig;
       renderCoinBadge(delta);
       renderAll();
+      var rm = document.getElementById('roomModal');
+      if (rm && !rm.hidden) renderRoom();
     }
 
+    var nm = allowName(to);
     allowUi.err = false;
-    allowUi.msg = allowName(to) + '에게 코인 ' + n + '개를 ' + (delta > 0 ? '보냈어요!' : '가져왔어요!') +
-      ' (지금 ' + fmtNum(raw.coins) + '코인)';
+    if (mode === 'set') {
+      allowUi.msg = nm + '의 코인을 ' + fmtNum(after) + '개로 맞췄어요!' +
+        (delta ? ' (지금 ' + fmtNum(after) + '코인 · ' + (delta > 0 ? '+' : '') + fmtNum(delta) + ')' : ' (원래 그대로예요)');
+    } else if (mode === 'sub') {
+      allowUi.msg = nm + '의 코인을 ' + fmtNum(Math.abs(delta)) + '개 뺐어요! (지금 ' + fmtNum(after) + '코인' +
+        (delta === 0 ? ' · 이미 0코인이라 더 빼지 않았어요' : '') + ')';
+    } else {
+      allowUi.msg = nm + '에게 코인 ' + fmtNum(n) + '개를 보냈어요! (지금 ' + fmtNum(after) + '코인)';
+    }
     allowUi.reason = '';
     snd('chime');
-    showToast((delta > 0 ? '🎁 ' : '↩️ ') + allowName(to) + '에게 코인 ' + n + '개를 ' + (delta > 0 ? '보냈어요!' : '가져왔어요!'), false);
+    showToast(mode === 'add' ? ('🎁 ' + nm + '에게 코인 ' + fmtNum(n) + '개를 보냈어요!')
+      : (mode === 'sub' ? ('↩️ ' + nm + '의 코인 ' + fmtNum(Math.abs(delta)) + '개를 뺐어요')
+        : ('🎯 ' + nm + '의 코인을 ' + fmtNum(after) + '개로 맞췄어요')), false);
     renderAllowance();
   }
 
@@ -13420,8 +13608,9 @@
     if (act === 'av-haircolor') { setAvatarHairColor(el.getAttribute('data-id')); return; }
     if (act === 'allow-open') { openAllowance(); return; }
     if (act === 'allow-close') { closeAllowance(); return; }
-    if (act === 'allow-mode') { allowUi.minus = el.getAttribute('data-minus') === '1'; allowUi.msg = ''; renderAllowance(); return; }
-    if (act === 'allow-quick') { allowUi.amount = Math.abs(parseInt(el.getAttribute('data-n'), 10) || 50); allowUi.msg = ''; renderAllowance(); return; }
+    if (act === 'allow-mode') { setAllowMode(el.getAttribute('data-mode') || (el.getAttribute('data-minus') === '1' ? 'sub' : 'add')); return; }
+    if (act === 'allow-quick') { allowUi.amount = allowAmountOf(el.getAttribute('data-n')); allowUi.msg = ''; renderAllowance(); return; }
+    if (act === 'allow-refresh') { loadAllowBalance(true); return; }
     if (act === 'allow-send') { sendAllowance(); return; }
     if (act === 'allow-accept') { acceptAllowance(); return; }
     if (act === 'close-goal') { closeGoal(); return; }
@@ -13583,7 +13772,7 @@
     if (!field) return;
 
     if (field === 'allowAmount' || field === 'allowReason') {
-      if (field === 'allowAmount') allowUi.amount = Math.abs(parseInt(el.value, 10) || 0);
+      if (field === 'allowAmount') allowUi.amount = allowAmountOf(el.value);
       else allowUi.reason = String(el.value || '').slice(0, 40);
       var apv = document.getElementById('allowPrev');
       if (apv) apv.innerHTML = allowPrevHtml();
@@ -13718,7 +13907,16 @@
     }
     if (field === 'petArtSp') { artEdit.sp = el.value; renderEditPanel(); return; }
     if (field === 'petArtStage') { artEdit.stage = el.value; renderEditPanel(); return; }
-    if (field === 'allowTarget') { allowUi.to = el.value; allowUi.msg = ''; renderAllowance(); return; }
+    if (field === 'allowTarget') {
+      allowUi.to = el.value;
+      allowUi.msg = '';
+      allowUi.bal = null;
+      allowUi.balFor = '';
+      allowUi.balErr = '';
+      renderAllowance();
+      loadAllowBalance();
+      return;
+    }
 
     if (field === 'city') {
       state.settings.city = el.value;
