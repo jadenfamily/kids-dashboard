@@ -1,0 +1,12 @@
+{
+  "name": "Jaden's Today",
+  "short_name": "Jaden's Today",
+  "description": "하루 루틴 · 칭찬 스티커 · 학원 시간표",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff8ef",
+  "theme_color": "#fff8ef"
+}

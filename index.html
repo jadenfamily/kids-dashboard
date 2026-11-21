@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#fff8ef">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="format-detection" content="telephone=no">
 <title>Jaden's Today</title>
@@ -1278,6 +1280,9 @@
   .win-line{ font-size:13px; font-weight:800; color:var(--ink-2); margin:0 0 16px; }
   .ep-sub{ margin-top:14px; padding-top:12px; border-top:2px dashed #e2e9f5; }
   .ep-sub h3{ margin:0 0 8px; font-size:14px; font-weight:900; letter-spacing:-.01em; }
+  .fs-btn{ line-height:1; }
+  .fs-ico{ width:19px; height:19px; display:block; }
+  .fs-btn[hidden]{ display:none; }
   .as-list{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; margin:2px 0 10px; }
   .as-actions > *{ flex:0 0 auto; white-space:nowrap; }
   .as-chip{ border:1.5px solid #e3e8f2; background:#fff; color:#5f5877; border-radius:12px; padding:8px 10px; font-size:12px; font-weight:900; cursor:pointer; font-family:inherit; text-align:left; }
@@ -2252,6 +2257,7 @@
         <button class="icon-btn" id="soundBtn" data-act="sound-toggle" aria-label="소리 켜기">🔔</button>
         <button class="edit-btn" id="accountsBtn" data-act="accounts-open" aria-haspopup="dialog" hidden><span class="bi" aria-hidden="true">👥</span><span class="bl">계정</span></button>
         <button class="edit-btn hist-btn" id="historyBtn" data-act="history-open" aria-haspopup="dialog"><span class="bi" aria-hidden="true">📅</span><span class="bl">기록</span></button>
+        <button class="icon-btn fs-btn" id="fsBtn" data-act="fullscreen-toggle" aria-label="전체화면" title="전체화면"><svg class="fs-ico" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.2 7V3.2H7M13 3.2h3.8V7M16.8 13v3.8H13M7 16.8H3.2V13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
         <button class="edit-btn" id="statsBtn" data-act="stats-open" aria-haspopup="dialog" hidden><span class="bi" aria-hidden="true">📊</span><span class="bl">통계</span></button>
         <button class="edit-btn" id="editBtn" data-act="edit-toggle"><span class="bi" aria-hidden="true">✏️</span><span class="bl">편집</span></button>
       </div>
@@ -2531,6 +2537,7 @@
     sha: {}, months: {}, monthLoading: '',
     dirty: { day: false, settings: false, stickers: false, profile: false },
     lastProfileSig: '',
+    profileReady: false,   /* 지금 로그인한 계정의 프로필을 다 불러왔는지 */
     timer: 0, saving: false, again: false, lastSig: ''
   };
   var acct = { pwFor: '', msg: '', busy: false, link: '', tab: 'list' };
@@ -2963,6 +2970,8 @@
       ],
       sticker: {
         slots: 10, goal: '', stickers: [], celebrated: false,
+        /* boardUpdatedAt: 지금 판(10칸)이 마지막으로 바뀐 시각 — 다른 기기의 판과 견줘요 */
+        boardUpdatedAt: 0,
         clearedAt: 0,
         unit: 1000,
         reasons: STICKER_REASON_PRESETS.slice(0)
@@ -3219,6 +3228,8 @@
     /* 예전 기본값('주말 피자 파티')은 토큰형 UI에서 쓰지 않으므로 비워 둔다 */
     if (s.sticker.goal === '주말 피자 파티 🍕') s.sticker.goal = '';
     s.sticker.celebrated = (s.sticker.celebrated === true);
+    var boardAt = Number(s.sticker.boardUpdatedAt);
+    s.sticker.boardUpdatedAt = (boardAt && !isNaN(boardAt)) ? boardAt : 0;
     var clearedAt = Number(s.sticker.clearedAt);
     s.sticker.clearedAt = (clearedAt && !isNaN(clearedAt)) ? clearedAt : 0;
     var unit = parseInt(s.sticker.unit, 10);
@@ -3788,6 +3799,7 @@
           }));
         } catch (e) { /* 저장 못 해도 괜찮아요 */ }
         renderWeather();
+        try { saveWeatherToCloud(parsed, city.id); } catch (e2) { /* 무시 */ }
       }).catch(function () {
         if (finished) return;
         finished = true;
@@ -3799,11 +3811,62 @@
     }
   }
 
+  /* 성공한 기기에서 오늘 날씨를 저장해 두면, open-meteo가 막히는 기기(구형 안드로이드)가 이걸 대신 읽어요 */
+  var WEATHER_CLOUD_PATH = 'data/weather.json';
+  var weatherCloudAt = 0;
+  function saveWeatherToCloud(d, cityId) {
+    if (!d || !cloud.me || !cloud.conn) return;
+    if (Date.now() - weatherCloudAt < 15 * 60 * 1000) return;
+    weatherCloudAt = Date.now();
+    var info = weatherInfo(d.code);
+    try {
+      ghPut(WEATHER_CLOUD_PATH, {
+        version: 1,
+        temp: d.temp, hi: d.max, lo: d.min,
+        code: d.code,
+        desc: info.label, icon: info.icon,
+        feels: (d.feels == null ? null : d.feels),
+        isDay: (d.isDay == null ? 1 : d.isDay),
+        city: cityId || state.settings.city,
+        updatedAt: new Date().toISOString()
+      }, '오늘 날씨 저장');
+    } catch (e) { /* 저장 못 해도 괜찮아요 */ }
+  }
+
+  /* open-meteo가 안 되는 기기에서 가족이 저장해 둔 날씨를 대신 보여 줘요 (깃허브는 구형 태블릿에서도 열려요) */
+  async function applyWeatherFromCloud() {
+    if (!cloud.me || !cloud.conn) return false;
+    try {
+      var res = await ghGet(WEATHER_CLOUD_PATH);
+      if (!res || !res.ok || !res.data) return false;
+      var w = res.data;
+      if (!w || (w.code == null && w.temp == null)) return false;
+      if (w.city && w.city !== state.settings.city) return false;
+      var upd = Date.parse(w.updatedAt || '') || 0;
+      if (upd && (Date.now() - upd) > 12 * 3600 * 1000) return false;   /* 너무 오래된 날씨는 안 보여요 */
+      weather.data = {
+        temp: (w.temp == null ? null : Number(w.temp)),
+        max: (w.hi == null ? null : Number(w.hi)),
+        min: (w.lo == null ? null : Number(w.lo)),
+        code: (w.code == null ? null : Number(w.code)),
+        feels: (w.feels == null ? null : Number(w.feels)),
+        isDay: (w.isDay == null ? 1 : Number(w.isDay)),
+        pop: null, rainAmt: null
+      };
+      weather.status = 'cache';
+      weather.at = upd || Date.now();
+      weather.stale = !upd || (Date.now() - upd) > 30 * 60 * 1000;
+      renderWeather();
+      return true;
+    } catch (e) { return false; }
+  }
+
   function onWeatherFail(reason) {
     weather.status = 'error';
     weather.error = reason || '';
     if (weather.data) weather.stale = true;
     renderWeather();
+    try { applyWeatherFromCloud(); } catch (e) { /* 무시 */ }
   }
 
   function loadWeatherCache() {
@@ -4479,6 +4542,7 @@
     state.boardLog.push({ d: dateKey(), t: Date.now(), slots: full, goal: st.goal || '' });
     st.stickers = [];
     st.celebrated = false;
+    touchBoard(Date.now());
     freshIdx = -1;
     saveState();
     try { if (cloud.me) scheduleSync('stickers'); } catch (e) { /* 무시 */ }
@@ -4498,7 +4562,9 @@
     var emoji = STICKER_SET[Math.floor(Math.random() * STICKER_SET.length)];
     st.stickers.push(emoji);
     freshIdx = st.stickers.length - 1;
-    logSticker(emoji, reason);
+    var logged = logSticker(emoji, reason);
+    touchBoard(logged ? logged.t : Date.now());
+    markStickerCoinSeen(logged);   /* 이 기기에서 이미 받은 코인 — 다시 당기지 않게 */
     saveState();
     renderStickers();
 
@@ -4526,6 +4592,7 @@
     var emoji = st.stickers[i];
     st.stickers.splice(i, 1);
     st.celebrated = false;
+    touchBoard(Date.now());
     dropStickerLog(emoji);
     revokeStickerCoins();
     saveState();
@@ -4539,6 +4606,7 @@
     if (!direct && !window.confirm('새 스티커 판을 시작할까요?\n적립된 스티커 개수와 사용 내역은 그대로 유지돼요.')) return;
     state.sticker.stickers = [];
     state.sticker.celebrated = false;
+    touchBoard(Date.now());
     saveState();
     renderStickers();
     confetti(16, document.getElementById('stickerBoard'));
@@ -4548,6 +4616,7 @@
     if (!window.confirm('스티커를 모두 떼어낼까요?')) return;
     state.sticker.stickers = [];
     state.sticker.celebrated = false;
+    touchBoard(Date.now());
     saveState();
     renderStickers();
     refreshAcctStickerPane();
@@ -6211,6 +6280,20 @@
         }
       }
     }
+
+    /* ---- 다른 기기 스티커에 준 코인 기록 (하루가 지나도 남아야 두 번 안 줘요) ---- */
+    if (p.stickerCoin && typeof p.stickerCoin === 'object' && p.stickerCoin.seen && typeof p.stickerCoin.seen === 'object') {
+      var since = Number(p.stickerCoin.since);
+      var scSeen = {};
+      var scN = 0;
+      for (var sk in p.stickerCoin.seen) {
+        if (!own(p.stickerCoin.seen, sk) || !p.stickerCoin.seen[sk]) continue;
+        if (scN >= 800) break;
+        scSeen[String(sk).slice(0, 80)] = 1;
+        scN += 1;
+      }
+      out.stickerCoin = { since: (since && !isNaN(since)) ? since : 0, seen: scSeen };
+    }
     return out;
   }
 
@@ -6322,6 +6405,86 @@
     if (a.stickers <= 0) return;
     a.stickers -= 1;
     coinAdd(-COIN_STICKER);
+  }
+
+  /* ---- 다른 기지에서 붙인 스티커의 코인 ----
+     스티커 원장(stickers.json)은 가족 모두가 같이 봐요. 그래서 아내 폰에서 붙인 스티커가
+     아이 화면으로 넘어올 때도 아이 계정에 +COIN_STICKER가 들어가야 해요.
+     이미 준 스티커는 prof().stickerCoin.seen 에 남겨서 두 번 주지 않아요. */
+  var stickerCoinBootAt = 0;   /* 이번에 화면을 열 때 이미 갖고 있던 마지막 스티커 시각 */
+  function stickerCoinState() {
+    var p = prof();
+    var sc = p.stickerCoin;
+    if (!sc || typeof sc !== 'object' || !sc.seen || typeof sc.seen !== 'object') {
+      /* 이번 업데이트 전부터 쓰던 계정: 지금까지 쌓인 스티커는 지난 일이니
+         이 기지가 이미 갖고 있던 마지막 스티커 시각(없으면 지금)을 기준선으로 삼아 다시 주지 않아요.
+         (오늘 구름에서 새로 받아 온 스티커는 이 기준선보다 뒤라서 정상으로 코인이 들어가요) */
+      var base = 0;
+      for (var i = 0; i < state.stickerLog.length; i++) {
+        var t0 = Number(state.stickerLog[i] && state.stickerLog[i].t) || 0;
+        if (t0 > base) base = t0;
+      }
+      var boot = Number(stickerCoinBootAt) || 0;
+      if (boot && (!base || boot < base)) base = boot;
+      if (!base) base = Date.now();
+      sc = { since: base, seen: {} };
+      p.stickerCoin = sc;
+    }
+    var since = Number(sc.since);
+    if (isNaN(since) || since < 0) sc.since = 0;
+    return sc;
+  }
+
+  function stickerCoinKey(entry) {
+    if (!entry || !entry.t) return '';
+    return entry.t + '|' + (entry.e || '') + '|' + (entry.r || '');
+  }
+
+  /* 내 기기에서 붙인 스티커는 이미 코인을 받았으니 '받은 것'으로 표시만 해요 */
+  function markStickerCoinSeen(entry) {
+    if (!cloud.me || !entry) return;
+    var k = stickerCoinKey(entry);
+    if (!k) return;
+    try { stickerCoinState().seen[k] = 1; } catch (e) { /* 무시 */ }
+  }
+
+  /* 이 기기에 새로 들어온 스티커 기록에 코인을 한 장에 한 번씩 지급해요 */
+  function creditStickerLogCoins(silent) {
+    if (!cloud.me || !cloud.profileReady) return 0;
+    if (!state.profile || typeof state.profile !== 'object') return 0;
+    var sc = stickerCoinState();
+    var p = prof();
+    var base = Math.max(Number(sc.since) || 0, Number(state.sticker.clearedAt) || 0);
+    var n = 0;
+    for (var i = 0; i < state.stickerLog.length; i++) {
+      var e = state.stickerLog[i];
+      var t = Number(e && e.t) || 0;
+      if (!t || t <= base) continue;
+      var k = stickerCoinKey(e);
+      if (!k || sc.seen[k]) continue;
+      sc.seen[k] = 1;
+      n += 1;
+    }
+    if (!n) return 0;
+    pruneStickerCoinSeen(sc);
+    p.award.stickers = (parseInt(p.award.stickers, 10) || 0) + n;
+    coinAdd(COIN_STICKER * n);
+    try { saveProfileLocal(); } catch (e2) { /* 무시 */ }
+    try { onProfileChanged(); } catch (e3) { /* 무시 */ }
+    renderCoinBadge();
+    if (!silent) {
+      try { showToast('⭐ 새 칭찬 스티커 ' + n + '개! ' + coinSvg() + ' +' + fmtNum(n * COIN_STICKER), true); } catch (e4) { /* 무시 */ }
+    }
+    return n;
+  }
+
+  /* 받은 표시는 최근 800장만 남겨요 (프로필 파일이 너무 커지지 않게) */
+  function pruneStickerCoinSeen(sc) {
+    var keys = [];
+    for (var k in sc.seen) { if (own(sc.seen, k)) keys.push(k); }
+    if (keys.length <= 800) return;
+    keys.sort(function (a, b) { return (parseInt(a, 10) || 0) - (parseInt(b, 10) || 0); });
+    for (var i = 0; i < keys.length - 800; i++) delete sc.seen[keys[i]];
   }
 
 
@@ -11176,7 +11339,8 @@
     var p = prof();
     return JSON.stringify({
       c: p.coins, pt: p.pet, pe: p.pets, ap: p.activePetId, rp: p.runnerPetId,
-      b: p.bag, o: p.owned, r: p.room, a: p.avatar, al: p.allowanceNotices
+      b: p.bag, o: p.owned, r: p.room, a: p.avatar, al: p.allowanceNotices,
+      sc: p.stickerCoin || null
     });
   }
 
@@ -11199,7 +11363,8 @@
       room: p.room,
       avatar: p.avatar,
       allowanceNotices: p.allowanceNotices || [],
-      award: p.award
+      award: p.award,
+      stickerCoin: p.stickerCoin || null
     };
   }
 
@@ -11325,8 +11490,11 @@
     cloud.dirty.profile = needPush;
     lastProfileSig = profileSignature();
     cloud.lastProfileSig = lastProfileSig;
+    cloud.profileReady = true;
     renderCoinBadge();
     renderPet();
+    /* 이 프로필에 아직 안 들어온 스티커(다른 기기에서 붙인 것)의 코인을 채워요 */
+    try { creditStickerLogCoins(true); } catch (e0) { /* 무시 */ }
     if (needPush) scheduleSync('profile');
   }
 
@@ -12855,6 +13023,7 @@
     state.boardLog = bl;
     state.sticker.stickers = [];
     state.sticker.celebrated = false;
+    touchBoard(ts);
     state.stats = { stickersTotal: state.stickerLog.length };
     return true;
   }
@@ -12869,6 +13038,7 @@
     state.boardLog = [];
     state.sticker.stickers = [];
     state.sticker.celebrated = false;
+    touchBoard(now);
     state.stats = { stickersTotal: 0 };
     try { snapshotDay(currentKey); } catch (e) { /* 무시 */ }
     saveState();
@@ -12892,15 +13062,32 @@
 
   function logSticker(emoji, reason) {
     var now = new Date();
-    state.stickerLog.push({ d: dateKey(now), t: now.getTime(), e: emoji, r: (reason || '').slice(0, 20) });
+    var entry = { d: dateKey(now), t: now.getTime(), e: emoji, r: (reason || '').slice(0, 20) };
+    state.stickerLog.push(entry);
     state.stats.stickersTotal = stickerTotal() + 1;
     if (state.stickerLog.length > 6000) state.stickerLog.splice(0, state.stickerLog.length - 6000);
     if (cloud.me) scheduleSync('stickers');
+    return entry;
+  }
+
+  /* 판이 바뀐 시각을 적어 둬요 (다른 기기 판과 비교할 때 씀) */
+  function touchBoard(ts) {
+    state.sticker.boardUpdatedAt = Number(ts) || Date.now();
   }
 
   function dropStickerLog(emoji) {
     for (var i = state.stickerLog.length - 1; i >= 0; i--) {
-      if (state.stickerLog[i].e === emoji) { state.stickerLog.splice(i, 1); break; }
+      if (state.stickerLog[i].e === emoji) {
+        var gone = state.stickerLog[i];
+        state.stickerLog.splice(i, 1);
+        /* 떼어낸 스티커는 다시 들어와도 새 코인을 주지 않게 표시를 지워요 */
+        try {
+          if (state.profile && state.profile.stickerCoin && state.profile.stickerCoin.seen) {
+            delete state.profile.stickerCoin.seen[stickerCoinKey(gone)];
+          }
+        } catch (e) { /* 무시 */ }
+        break;
+      }
     }
     var t = stickerTotal() - 1;
     state.stats.stickersTotal = t < 0 ? 0 : t;
@@ -13544,7 +13731,7 @@
     var granted = 0;
     for (var i = 0; i < n; i++) {
       if (st.stickers.length >= st.slots) {
-        /* 앞의 판이 다 찾으면 기록만 남기고 조용히 새 판으로 이어 붙여요 */
+        /* 앞의 판이 다 찼으면 기록만 남기고 조용히 새 판으로 이어 붙여요 */
         st.celebrated = true;
         state.boardLog.push({ d: dateKey(), t: Date.now(), slots: st.slots, goal: st.goal || '' });
         st.stickers = [];
@@ -13552,7 +13739,9 @@
       }
       var emoji = STICKER_SET[Math.floor(Math.random() * STICKER_SET.length)];
       st.stickers.push(emoji);
-      logSticker(emoji, reason || '');
+      var logged = logSticker(emoji, reason || '');
+      touchBoard(logged ? logged.t : Date.now());
+      markStickerCoinSeen(logged);
       awardStickerCoins();
       granted += 1;
     }
@@ -14728,7 +14917,11 @@
       clearedAt: state.sticker.clearedAt || 0,
       reasons: state.sticker.reasons || [],
       total: stickerTotal(),
+      slots: Math.max(1, parseInt(state.sticker.slots, 10) || 10),
+      board: state.sticker.stickers.slice(0),
+      boardUpdatedAt: Number(state.sticker.boardUpdatedAt) || 0,
       log: state.stickerLog,
+      boardLog: state.boardLog,
       spends: state.stickerSpends
     };
   }
@@ -14785,29 +14978,63 @@
     var ok = true;
     try {
       if (cloud.dirty.settings) {
+        /* 보내는 동안 또 바뀔 수 있으니, 깃발은 먼저 내려 두고 실패하면 다시 올려요 */
+        cloud.dirty.settings = false;
         var sres = await ghPut('config/settings.json', settingsPayload(), '대시보드 설정 업데이트');
-        if (sres.ok) cloud.dirty.settings = false; else { ok = false; cloud.lastError = sres.error || ''; }
+        if (!sres.ok) { ok = false; cloud.dirty.settings = true; cloud.lastError = sres.error || ''; }
       }
       if (cloud.dirty.stickers) {
+        cloud.dirty.stickers = false;
         var kres = await ghPut('config/stickers.json', stickersPayload(), '스티커 원장 업데이트');
-        if (kres.ok) cloud.dirty.stickers = false; else { ok = false; cloud.lastError = kres.error || ''; }
+        if (!kres.ok) { ok = false; cloud.dirty.stickers = true; cloud.lastError = kres.error || ''; }
       }
       if (cloud.dirty.profile && cloud.me) {
         var blocked = false;
         try { blocked = await guardProfileReset(); } catch (e) { blocked = false; }
         if (!blocked) {
+          cloud.dirty.profile = false;
           var pres = await ghPut(profilePath(cloud.me.id), profilePayload(), '내 프로필 저장 (' + cloud.me.id + ')');
-          if (pres.ok) cloud.dirty.profile = false; else { ok = false; cloud.lastError = pres.error || ''; }
+          if (!pres.ok) { ok = false; cloud.dirty.profile = true; cloud.lastError = pres.error || ''; }
         }
       }
       if (cloud.dirty.day) {
+        cloud.dirty.day = false;
         var dres = await ghPut(dayPath(currentKey), dayPayload(currentKey), '기록 ' + currentKey);
-        if (dres.ok) cloud.dirty.day = false; else { ok = false; cloud.lastError = dres.error || ''; }
+        if (!dres.ok) { ok = false; cloud.dirty.day = true; cloud.lastError = dres.error || ''; }
       }
     } finally {
       cloud.saving = false;
       setSync(ok ? 'ok' : (navigator.onLine === false ? 'offline' : 'error'));
       if (cloud.again) { cloud.again = false; scheduleSync(); }
+    }
+  }
+
+  /* ---- 열어 둔 화면에도 다른 기기의 스티커를 곧 보여 줘요 ----
+     내가 저장할 게 남아 있거나 저장 중이면 건너뛰고, 아니면 1분에 한 번만 조용히 확인해요. */
+  var stickerPullAt = 0;
+  var stickerPulling = false;
+  async function refreshStickersFromCloud(force) {
+    if (!cloud.conn || !cloud.me || !cloud.profileReady) return false;
+    if (stickerPulling || cloud.saving || cloud.again) return false;
+    if (cloud.dirty.stickers || cloud.dirty.settings || cloud.dirty.day) return false;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return false;
+    var now = Date.now();
+    if (!force && now - stickerPullAt < 60000) return false;
+    stickerPullAt = now;
+    stickerPulling = true;
+    try {
+      var res = await ghGet('config/stickers.json');
+      if (!res || !res.ok || !res.data) return false;
+      if (cloud.dirty.stickers || cloud.saving) return false;
+      var before = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length;
+      applyStickersPayload(res.data, { notify: true });
+      var after = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length;
+      if (before !== after) saveLocalOnly();
+      return before !== after;
+    } catch (e) {
+      return false;
+    } finally {
+      stickerPulling = false;
     }
   }
 
@@ -14852,12 +15079,17 @@
     return true;
   }
 
-  function applyStickersPayload(d) {
+  function applyStickersPayload(d, opts) {
     if (!d || typeof d !== 'object') return false;
+    opts = opts || {};
     stickerWipeBefore(d.clearedAt);
     var clr = Number(state.sticker.clearedAt) || 0;
     var unit = parseInt(d.unit, 10);
     if (!isNaN(unit) && unit >= 100 && unit <= 100000) state.sticker.unit = unit;
+    var slotsRaw = parseInt(d.slots, 10);
+    if (!isNaN(slotsRaw) && slotsRaw >= 3 && slotsRaw <= 30 && slotsRaw > state.sticker.stickers.length) {
+      state.sticker.slots = Math.max(state.sticker.slots, slotsRaw);
+    }
     if (Object.prototype.toString.call(d.reasons) === '[object Array]') {
       var rs = [];
       for (var i = 0; i < d.reasons.length && rs.length < 12; i++) {
@@ -14865,12 +15097,35 @@
       }
       if (rs.length) state.sticker.reasons = migrateStickerReasons(rs);
     }
+
+    /* 지금 판(10칸)도 같이 맞춰요 — 아내 폰에서 붙인 스티커가 아이 화면에도 보이게 */
+    var boardTouched = false;
+    if (Object.prototype.toString.call(d.board) === '[object Array]') {
+      var bAt = Number(d.boardUpdatedAt) || 0;
+      var myAt = Number(state.sticker.boardUpdatedAt) || 0;
+      var blist = [];
+      for (var b0 = 0; b0 < d.board.length && b0 < 30; b0++) {
+        if (typeof d.board[b0] === 'string') blist.push(d.board[b0]);
+      }
+      /* 구름 판이 더 새로울 때만 (내 기기에서 방금 붙인 판을 덮어쓰지 않게) */
+      var takeBoard = bAt > clr && bAt > myAt;
+      if (!takeBoard && !bAt && !myAt && blist.length && !state.sticker.stickers.length) takeBoard = true;
+      if (takeBoard) {
+        state.sticker.stickers = blist;
+        state.sticker.boardUpdatedAt = bAt || Date.now();
+        if (blist.length > state.sticker.slots) state.sticker.slots = Math.min(30, blist.length);
+        freshIdx = -1;
+        boardTouched = true;
+      }
+    }
+
     var seen = {};
     for (var a = 0; a < state.stickerLog.length; a++) {
       var e0 = state.stickerLog[a];
       seen[e0.t + '|' + (e0.e || '') + '|' + (e0.r || '')] = true;
     }
     var merged = state.stickerLog.slice(0);
+    var logAdded = 0;
     if (Object.prototype.toString.call(d.log) === '[object Array]') {
       for (var j = 0; j < d.log.length && j < 4000; j++) {
         var le = d.log[j] || {};
@@ -14883,10 +15138,37 @@
           d: (typeof le.d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(le.d)) ? le.d : dateKey(new Date(Number(le.t))),
           t: Number(le.t), e: le.e || '⭐️', r: le.r || ''
         });
+        logAdded += 1;
       }
     }
     merged.sort(function (x, y) { return x.t - y.t; });
     state.stickerLog = merged;
+
+    /* 판을 다 채워 새 판으로 넘어간 기록도 같이 받아요 */
+    if (Object.prototype.toString.call(d.boardLog) === '[object Array]') {
+      var bseen = {};
+      for (var x = 0; x < state.boardLog.length; x++) {
+        var bx = state.boardLog[x];
+        bseen[(Number(bx.t) || 0) + '|' + (parseInt(bx.slots, 10) || 0)] = true;
+      }
+      for (var y = 0; y < d.boardLog.length && y < 500; y++) {
+        if (state.boardLog.length >= 2000) break;
+        var be = d.boardLog[y] || {};
+        var bbt = Number(be.t) || 0;
+        if (!bbt || bbt <= clr) continue;
+        var bkey = bbt + '|' + (parseInt(be.slots, 10) || 0);
+        if (bseen[bkey]) continue;
+        bseen[bkey] = true;
+        state.boardLog.push({
+          d: (typeof be.d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(be.d)) ? be.d : dateKey(new Date(bbt)),
+          t: bbt,
+          slots: Math.max(0, parseInt(be.slots, 10) || 0),
+          goal: (typeof be.goal === 'string') ? be.goal : ''
+        });
+        boardTouched = true;
+      }
+      if (boardTouched) state.boardLog.sort(function (q, w) { return q.t - w.t; });
+    }
 
     var ids = {};
     for (var b = 0; b < state.stickerSpends.length; b++) ids[state.stickerSpends[b].id] = true;
@@ -14912,6 +15194,15 @@
     if (d.total != null) {
       var tt = parseInt(d.total, 10);
       if (!isNaN(tt)) state.stats.stickersTotal = Math.max(stickerTotal(), tt, state.stickerLog.length);
+    }
+
+    /* 다른 기기에서 붙인 스티커의 코인을 이 계정에도 (한 장에 한 번) */
+    if (logAdded) {
+      try { creditStickerLogCoins(opts.notify !== true); } catch (e) { /* 무시 */ }
+    }
+    if (boardTouched) {
+      try { renderStickers(); } catch (e5) { /* 무시 */ }
+      try { refreshAcctStickerPane(); } catch (e6) { /* 무시 */ }
     }
     return true;
   }
@@ -14983,8 +15274,10 @@
     }
     var dayAt = Date.parse(d.updatedAt || '');
     var wipedAt = Number(state.sticker.clearedAt) || 0;
+    var boardAt = Number(state.sticker.boardUpdatedAt) || 0;
+    /* 이 날짜 파일의 판이 지금 판보다 오래됐으면(스티커 원장에서 이미 받은 판) 건드리지 않아요 */
     if (key === currentKey && d.board && Object.prototype.toString.call(d.board.stickers) === '[object Array]' &&
-        !(wipedAt && dayAt && dayAt < wipedAt)) {
+        !(wipedAt && dayAt && dayAt < wipedAt) && !(boardAt && (!dayAt || dayAt < boardAt))) {
       var list = [];
       for (var m = 0; m < d.board.stickers.length && m < 30; m++) {
         if (typeof d.board.stickers[m] === 'string') list.push(d.board.stickers[m]);
@@ -14992,6 +15285,7 @@
       state.sticker.stickers = list;
       state.sticker.celebrated = d.board.celebrated === true;
       if (list.length > state.sticker.slots) state.sticker.slots = list.length;
+      state.sticker.boardUpdatedAt = dayAt || Date.now();
       freshIdx = -1;
     }
     return true;
@@ -15234,6 +15528,7 @@
       lsSet(LAST_REMEMBER_KEY, remember ? '1' : '0');
       cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer', dashboards: dashboardsFor(u) };
       state.profile = defaultProfile();
+      cloud.profileReady = false;
       lastProfileSig = '';
       saveSession(cloud.me, remember, null);
       if (!dashAllowed(cloud.me)) { showLock(); return; }
@@ -15257,6 +15552,13 @@
     applyUserUi();
     setSync('syncing');
     cloud.months = {};
+    cloud.profileReady = false;
+    /* 이 기지가 이미 갖고 있던 스티커 — 새로 받아 온 스티커와 가르는 기준선이에요 */
+    stickerCoinBootAt = 0;
+    for (var bm = 0; bm < state.stickerLog.length; bm++) {
+      var bt0 = Number(state.stickerLog[bm] && state.stickerLog[bm].t) || 0;
+      if (bt0 > stickerCoinBootAt) stickerCoinBootAt = bt0;
+    }
 
     var sres = await ghGet('config/settings.json');
     if (sres.ok && sres.data) {
@@ -15283,11 +15585,16 @@
     }
 
     await loadProfile();
+    try { creditStickerLogCoins(true); } catch (e5) { /* 무시 */ }
     saveLocalOnly();
     renderAll();
     applyPermissions();
     setSync(navigator.onLine === false ? 'offline' : 'ok');
     if (cloud.dirty.day) scheduleSync('day');
+    /* 로그인하면 구름에 날씨를 저장하거나 구름 날씨를 대신 읽을 수 있으니 한 번 더 확인해요 */
+    try {
+      if (weather.status !== 'ok' || !weatherCloudAt) loadWeather();
+    } catch (e) { /* 무시 */ }
     /* 엄마·아빠가 보낸 코인 용돈이 있으면 축하 알림을 띄워요 */
     try { maybeAllowanceNotice(); } catch (e) { /* 무시 */ }
   }
@@ -15304,6 +15611,7 @@
     cloud.dirty.stickers = false;
     cloud.dirty.profile = false;
     state.profile = defaultProfile();
+    cloud.profileReady = false;
     lastProfileSig = '';
     cloud.lastProfileSig = '';
     if (cloud.timer) { window.clearTimeout(cloud.timer); cloud.timer = 0; }
@@ -16059,6 +16367,7 @@
     if (act === 'evo-new') { closeEvo(); petNewEgg(); return; }
     if (act === 'edit-toggle') { toggleEdit(); return; }
     if (act === 'sound-toggle') { toggleSound(); return; }
+    if (act === 'fullscreen-toggle') { toggleFullscreen(); return; }
     if (act === 'weather-refresh') { loadWeather(); return; }
     if (act === 'add-event') { addEvent(el.getAttribute('data-day')); return; }
     if (act === 'del-event') { delEvent(el.getAttribute('data-day'), el.getAttribute('data-id')); return; }
@@ -16633,6 +16942,54 @@
     }
   }
 
+  /* ---- ⛶ 전체화면 (구형 안드로이드 크롬은 webkit 접두어를 써요) ---- */
+  /* 안드로이드 7 기본 글꼴에는 ⛶ 글자가 없어서 네모로 보여요 → 같은 모양을 SVG로 그려요 */
+  var FS_ICON_OUT = '<svg class="fs-ico" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.2 7V3.2H7M13 3.2h3.8V7M16.8 13v3.8H13M7 16.8H3.2V13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  var FS_ICON_IN = '<svg class="fs-ico" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7 3.2V7H3.2M16.8 7H13V3.2M13 16.8V13h3.8M3.2 13H7v3.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  function fsFullElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+  }
+  function syncFullscreenBtn() {
+    var btn = document.getElementById('fsBtn');
+    if (!btn) return;
+    var standalone = false;
+    try {
+      standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+        window.navigator.standalone === true;
+    } catch (e) { standalone = false; }
+    var el = document.documentElement;
+    var supported = !!(el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen);
+    /* 홈 화면에 추가해 이미 전체화면으로 열렸거나, 전체화면을 못 쓰는 브라우저면 숨겨요 */
+    btn.hidden = standalone || !supported;
+    var on = !!fsFullElement();
+    btn.innerHTML = on ? FS_ICON_IN : FS_ICON_OUT;
+    btn.setAttribute('aria-label', on ? '전체화면 끄기' : '전체화면');
+    btn.title = on ? '전체화면 끄기' : '전체화면';
+  }
+  function toggleFullscreen() {
+    var el = document.documentElement;
+    try {
+      if (fsFullElement()) {
+        var ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if (ex) {
+          var r = ex.call(document);
+          if (r && r.catch) r.catch(function () { /* 무시 */ });
+        }
+      } else {
+        var rq = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (rq) {
+          var r2 = rq.call(el);
+          if (r2 && r2.catch) r2.catch(function () { /* 무시 */ });
+        } else {
+          showToast('이 브라우저에서는 전체화면을 쓸 수 없어요');
+        }
+      }
+    } catch (e) {
+      try { showToast('전체화면을 켜지 못했어요'); } catch (e2) { /* 무시 */ }
+    }
+    window.setTimeout(function () { try { syncFullscreenBtn(); } catch (e3) { /* 무시 */ } }, 120);
+  }
+
   /* ============ 시작 ============ */
   installAudioUnlock();
   installRoomDrag();
@@ -16644,6 +17001,9 @@
   window.setTimeout(function () { try { checkTargetAlerts(); } catch (e) { /* 무시 */ } }, 2500);
   loadWeather();
   initAuth();
+  try { syncFullscreenBtn(); } catch (e) { /* 무시 */ }
+  document.addEventListener('fullscreenchange', function () { try { syncFullscreenBtn(); } catch (e) { /* 무시 */ } });
+  document.addEventListener('webkitfullscreenchange', function () { try { syncFullscreenBtn(); } catch (e) { /* 무시 */ } });
 
   var routineResizeTimer = 0;
   window.addEventListener('resize', function () {
@@ -16661,6 +17021,12 @@
   window.setInterval(function () {
     if (cloud.me && (cloud.dirty.day || cloud.dirty.settings || cloud.dirty.stickers) && navigator.onLine !== false) flushSync();
   }, 15000);
+  /* 다른 기기에서 붙인 스티커·코인을 열어 둔 화면에도 1분 안에 보여 줘요 */
+  window.setInterval(function () { try { refreshStickersFromCloud(false); } catch (e) { /* 무시 */ } }, 30000);
+  window.addEventListener('focus', function () { try { refreshStickersFromCloud(false); } catch (e) { /* 무시 */ } });
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) { try { refreshStickersFromCloud(false); } catch (e) { /* 무시 */ } }
+  });
 
   if (!storageAvailable()) {
     var note = document.getElementById('footerNote');
