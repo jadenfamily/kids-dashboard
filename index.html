@@ -2332,7 +2332,7 @@
     <div class="tam-emoji" id="tamEmoji" aria-hidden="true">⏰</div>
     <h2 id="tamTitle">목표 시간 30분 전이에요!</h2>
     <p id="tamText">등교 준비 · 목표 08:30</p>
-    <p id="tamSound" hidden>♪ 하와이 파이브오 멜로디 연주 중 — 확인을 누르면 멈춰요</p>
+    <p id="tamSound" hidden>♪ 하와이 파이브오 알림 소리가 울리는 중 — 확인을 누르면 멈춰요</p>
     <div class="modal-actions">
       <button class="modal-btn" id="tamOkBtn" data-act="target-alert-ok">확인</button>
     </div>
@@ -11291,7 +11291,7 @@
     var s = document.getElementById('tamSound');
     if (s) {
       s.textContent = (v === 'on')
-        ? '♪ 하와이 파이브오 멜로디 연주 중 — 확인을 누르면 멈춰요'
+        ? '♪ 하와이 파이브오 알림 소리가 울리는 중 — 확인을 누르면 멈춰요'
         : '🔇 소리를 들으려면 화면을 한 번 눌러 주세요';
       s.hidden = (v !== 'on' && v !== 'blocked');
     }
@@ -11705,20 +11705,37 @@
     } catch (e) { return ''; }
   }
 
-  /* 알림음 재생 주소 — 내 알림음은 올린 소리·주소를 그대로, 기본은 Blob .wav */
+  /* 🎺 하와이 파이브오 — 진짜 오프닝 테마(MP3)를 먼저 틀고,
+     못 불러오면(오프라인·차단) 직접 만든 .wav로 넘어가요 */
+  var H50_REMOTE = {
+    hawaii: 'https://www.myinstants.com/media/sounds/hawaii-five-o-2010-opening-theme.mp3'
+  };
+
+  /* 이 소리는 진짜 음원(주소)으로 트나요? 내 알림음이 같은 id를 쓰면 그쪽이 먼저예요 */
+  function alertSoundRemote(id) {
+    if (!id || !H50_REMOTE[id]) return '';
+    if (customAlertSound(id)) return '';
+    return H50_REMOTE[id];
+  }
+
+  /* 알림음 재생 주소 — 내 알림음은 올린 소리·주소 그대로, 하와이는 진짜 MP3, 나머지는 Blob .wav */
   function alertSoundSrc(id) {
     var c = customAlertSound(id);
     if (c && c.src) return String(c.src);
+    if (H50_REMOTE[id]) return H50_REMOTE[id];
     return alertWavUrl(id);
   }
 
+  /* 음원(MP3)을 먼저 틀 때는 길이를 몰라도 되게 넉넉히 (미리 듣기는 9초까지) */
   function alertSoundMaxMs(id) {
     var hit = alertWavCache[id];
     if (hit && hit.dur) return Math.round((hit.dur + 0.4) * 1000);
-    return 9000;           /* 내 알림음은 끝날 때까지(최대 9초) */
+    return 9000;           /* 내 알림음·MP3는 끝날 때까지(최대 9초) */
   }
 
   var h50AudioEl = null, h50AudioOn = false, h50AudioStop = 0;
+  var h50Want = null;      /* 지금 트는 소리 — 주소가 안 되면 .wav로 바꿔 트는 데 써요 */
+  var h50Try = 0;
   var chimeAudioEl = null;
 
   function makeAudioEl() {
@@ -11736,15 +11753,57 @@
         h50AudioEl.addEventListener('ended', function () {
           if (h50AudioEl.loop) return;
           h50AudioOn = false;
+          h50Want = null;
           if (!h50.on) h50SetState('off');
         });
+        h50AudioEl.addEventListener('loadedmetadata', function () {
+          try { document.documentElement.setAttribute('data-h50-dur', String(Math.round(h50AudioEl.duration * 10) / 10)); } catch (e) { /* 무시 */ }
+        });
         h50AudioEl.addEventListener('error', function () {
+          /* 진짜 음원(MP3)이 안 열리면 직접 만든 .wav로 이어서 틀어요 */
+          if (h50Want && h50Want.canFallback && h50AudioOn) { h50PlayFallback(h50Want); return; }
           h50AudioOn = false;
+          h50Want = null;
           if (!h50.on) h50SetState('off');
         });
       }
     }
     return h50AudioEl;
+  }
+
+  /* 점검용 읽기 전용 상태 (화면에는 안 보여요) */
+  try {
+    document.documentElement.h50Status = function () {
+      var el = h50AudioEl;
+      return {
+        src: el ? String(el.src || '') : '', paused: el ? !!el.paused : true,
+        currentTime: el ? Number(el.currentTime || 0) : 0, loop: el ? !!el.loop : false,
+        duration: el ? Number(el.duration || 0) : 0, on: h50AudioOn
+      };
+    };
+  } catch (e) { /* 무시 */ }
+
+  function h50MarkFallback(v) {
+    try {
+      if (v) document.documentElement.setAttribute('data-h50-fallback', 'wav');
+      else document.documentElement.removeAttribute('data-h50-fallback');
+    } catch (e) { /* 무시 */ }
+  }
+
+  /* 지금 트는 소리가 무엇인지 화면 속성으로 남겨 둬요 (점검·시험용) */
+  function h50Stamp(id, src) {
+    try {
+      var d = document.documentElement, s = String(src), kind;
+      if (s.indexOf('blob:') === 0) kind = 'wav';
+      else if (s === alertSoundRemote(id)) kind = 'mp3';
+      else kind = 'url';
+      d.setAttribute('data-h50-play', 'playing');
+      d.setAttribute('data-h50-sound', id);
+      d.setAttribute('data-h50-src', s);
+      d.setAttribute('data-h50-source', kind);
+      if (kind === 'wav') d.setAttribute('data-h50-wav', s); else d.removeAttribute('data-h50-wav');
+      if (kind === 'mp3') d.setAttribute('data-h50-mp3', s); else d.removeAttribute('data-h50-mp3');
+    } catch (e) { /* 무시 */ }
   }
 
   function chimeAudio() {
@@ -11762,42 +11821,79 @@
     } catch (e) { return null; }
   }
 
-  /* .wav 재생 → 안 되면 false (부르는 쪽이 신시사이저로 넘어가요) */
+  function h50ArmStop(want) {
+    if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
+    if (!want || !want.maxMs) return;
+    h50AudioStop = window.setTimeout(function () {
+      h50AudioStop = 0;
+      if (!tamOpen) stopWavMelody();
+    }, want.maxMs);
+  }
+
+  /* .wav/MP3 재생 → 아예 못 틀면 false (부르는 쪽이 신시사이저로 넘어가요)
+     · 주소(MP3)로 트는 소리는 실패하면 직접 만든 .wav로 한 번 더 시도해요 */
   function h50PlayWav(loop, maxMs, id) {
     id = id || alertSoundId();
     var el = h50Audio(), src = alertSoundSrc(id);
     if (!el || !src) return false;
     if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
+    var want = { id: id, loop: !!loop, maxMs: maxMs || 0, canFallback: !!alertSoundRemote(id), no: ++h50Try };
+    h50Want = want;
+    h50MarkFallback(false);
     var p = playWav(el, src, loop);
-    if (p === null) return false;
+    if (p === null) return want.canFallback ? h50PlayFallback(want) : false;
     h50AudioOn = true;
     h50SetState('on');
-    try {
-      document.documentElement.setAttribute('data-h50-play', 'playing');
-      document.documentElement.setAttribute('data-h50-sound', id);
-      if (src.indexOf('blob:') === 0) document.documentElement.setAttribute('data-h50-wav', src);
-    } catch (e) { /* 무시 */ }
+    h50Stamp(id, src);
     if (p && p.then) {
       p.then(function () {
         try { document.documentElement.setAttribute('data-h50-play', 'playing'); } catch (e) { /* 무시 */ }
       }, function () {
+        if (h50Want !== want) return;                     /* 이미 다른 소리를 트는 중 */
+        if (want.canFallback) { h50PlayFallback(want); return; }
+        h50Want = null;
         h50AudioOn = false;
         try { document.documentElement.setAttribute('data-h50-play', 'blocked'); } catch (e) { /* 무시 */ }
         if (!h50.on) h50Start();
       });
     }
-    if (maxMs) {
-      h50AudioStop = window.setTimeout(function () {
-        h50AudioStop = 0;
-        if (!tamOpen) stopWavMelody();
-      }, maxMs);
+    h50ArmStop(want);
+    return true;
+  }
+
+  /* 진짜 음원(MP3)이 안 될 때 — 직접 만든 .wav로 이어서 틀어요. 그것도 안 되면 신시사이저.
+     (아이폰 무음 스위치에서도 들리는 쪽은 여전히 <audio>예요) */
+  function h50PlayFallback(want) {
+    var id = want.id, el = h50Audio(), wav = alertWavUrl(id);
+    var next = { id: id, loop: want.loop, maxMs: want.maxMs, canFallback: false, no: ++h50Try };
+    h50Want = next;
+    h50MarkFallback(true);
+    if (!el || !wav) { if (!h50.on) h50Start(); return false; }
+    if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
+    try { el.pause(); } catch (e) { /* 무시 */ }
+    var p = playWav(el, wav, next.loop);
+    h50AudioOn = true;
+    h50SetState('on');
+    h50Stamp(id, wav);
+    if (p && p.then) {
+      p.then(function () {
+        try { document.documentElement.setAttribute('data-h50-play', 'playing'); } catch (e) { /* 무시 */ }
+      }, function () {
+        if (h50Want !== next) return;
+        h50Want = null;
+        h50AudioOn = false;
+        try { document.documentElement.setAttribute('data-h50-play', 'blocked'); } catch (e) { /* 무시 */ }
+        if (!h50.on) h50Start();
+      });
     }
+    h50ArmStop(next);
     return true;
   }
 
   function stopWavMelody() {
     if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
     h50AudioOn = false;
+    h50Want = null;
     var el = h50AudioEl;
     if (el) {
       try { el.pause(); } catch (e) { /* 무시 */ }
@@ -11848,20 +11944,43 @@
   function alertChime() {
     if (!state.settings.soundOn) return;
     var id = alertSoundId(), el = chimeAudio(), src = alertSoundSrc(id);
+    var stopIn3 = function (one) {
+      if (alertChime.timer) window.clearTimeout(alertChime.timer);
+      alertChime.timer = window.setTimeout(function () {
+        try { one.pause(); one.currentTime = 0; } catch (e) { /* 무시 */ }
+      }, 3000);
+    };
+    /* 진짜 음원(MP3)·올린 소리가 안 되면 직접 만든 .wav로 이어서, 그것도 안 되면 신시사이저 */
+    var chimeMark = function (one) {
+      try {
+        document.documentElement.setAttribute('data-h50-chime', String(one).indexOf('blob:') === 0 ? 'wav' : 'audio');
+        document.documentElement.setAttribute('data-h50-chime-src', String(one));
+        document.documentElement.setAttribute('data-h50-chime-at', String(Date.now()));
+      } catch (e) { /* 무시 */ }
+    };
+    var wavTry = function () {
+      var wav = el ? alertWavUrl(id) : '';
+      if (el && wav) {
+        try {
+          var p2 = playWav(el, wav, false);
+          if (p2) { chimeMark(wav); stopIn3(el); return true; }
+        } catch (e) { /* 신시사이저로 */ }
+      }
+      snd('chime');
+      return false;
+    };
     if (el && src) {
       try {
         var p = playWav(el, src, false);
-        if (p && p.catch) p.catch(function () { snd('chime'); });
+        if (p && p.catch) p.catch(wavTry);
         if (p) {
-          if (alertChime.timer) window.clearTimeout(alertChime.timer);
-          alertChime.timer = window.setTimeout(function () {
-            try { el.pause(); el.currentTime = 0; } catch (e) { /* 무시 */ }
-          }, 3000);
+          chimeMark(src);
+          stopIn3(el);
           return;
         }
       } catch (e) { /* 신시사이저로 */ }
     }
-    snd('chime');
+    wavTry();
   }
 
   /* 미리 듣기 — 고른 소리를 한 번 들려줘요 */
