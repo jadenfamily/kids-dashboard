@@ -254,7 +254,7 @@
   .rt-jump{ display:none; gap:6px; overflow-x:auto; margin:0 0 10px; padding:2px 1px 4px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
   .rt-jump::-webkit-scrollbar{ display:none; }
   .rt-jump:empty{ display:none !important; margin:0; }
-  .routine[data-routine-view="row"] .rt-jump{ display:flex; }
+  .routine[data-routine-view="row"] .rt-jump, .blk-routine[data-routine-view="row"] .rt-jump{ display:flex; }
   .rt-pill{
     flex:0 0 auto; display:inline-flex; align-items:center; gap:5px; border:1.5px solid #eee2d2;
     background:#fff; color:#6d6484; border-radius:999px; padding:6px 10px; font-size:12px; font-weight:900;
@@ -1060,12 +1060,87 @@
     align-items:start;
   }
   .sections > .sec{ grid-column:1 / -1; min-width:0; }
+  .sections > .sec.sec-half{ grid-column:span 1; }
   .sec-pair{ align-self:stretch; display:flex; flex-direction:column; }
   .sec-pair .board{ align-content:start; }
   /* 720px 미만(아이폰·작은 폰)에서만 한 줄로 쌓고, 태블릿·아이패드·PC는 두 칸 */
   @media (max-width:719px){
     .sections{ grid-template-columns:minmax(0,1fr); }
+    .sections > .sec, .sections > .sec.sec-half{ grid-column:1 / -1; }
   }
+
+  /* ---------- DIY 블록 조립 ---------- */
+  .sec .sec-head{ align-items:flex-start; }
+  .sec .sec-head h2.sec-title{ margin:0; font-size:clamp(19px,2vw,23px); font-weight:900; letter-spacing:-.02em; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .sec .sec-emo{ font-size:1.02em; line-height:1; }
+  .sec .sec-title .sec-title-inp{ max-width:230px; }
+  .sec .sec-title .sec-emo-inp{ width:56px; text-align:center; }
+  .sec-tools{ display:flex; align-items:center; gap:5px; flex-wrap:wrap; justify-content:flex-end; }
+  .sec-tool{
+    min-height:30px; min-width:32px; padding:0 7px; border-radius:10px; cursor:pointer;
+    border:1.5px solid #f0e2cf; background:#fff; color:#7a6a56;
+    font-size:12px; font-weight:900; font-family:inherit; touch-action:manipulation;
+  }
+  .sec-tool[disabled]{ opacity:.35; cursor:default; }
+  .sec-tool.on{ background:#fff3d6; border-color:#ffc46b; color:#a86600; }
+  .sec-tool.danger{ color:#c6415a; border-color:#ffd6dd; }
+  .sec-blocks{ display:flex; flex-direction:column; gap:14px; min-width:0; }
+  .blk{ min-width:0; }
+  .blk + .blk{ border-top:2px dashed #f4eadd; padding-top:13px; }
+  .blk-tools{ display:flex; align-items:center; gap:5px; flex-wrap:wrap; margin-bottom:7px; }
+  .blk-tag{ flex:1 1 auto; font-size:11.5px; font-weight:900; color:#a2937f; background:#faf4ec; border-radius:999px; padding:4px 9px; }
+  .blk-h{ font-size:11.5px; font-weight:900; color:#a2937f; margin:0 0 7px; letter-spacing:-.01em; }
+  .blk-empty{ margin:0; font-size:12.5px; font-weight:800; color:#b3a696; text-align:center; padding:10px 4px; }
+  .blk-head-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+  .blk-week-tools{ margin:0 0 9px; }
+  .blk .rt-top{ margin-bottom:10px; }
+  .blk .rt-left p{ margin:0; }
+  .rt-target.tb-idle{ border-color:#f0e4d4; background:#fffdf8; }
+
+  /* 💬 오늘의 한마디 / 게시판 */
+  .nb{ border:2px solid #ffe3b3; border-radius:18px; background:linear-gradient(135deg,#fffdf6,#fff6e6); padding:12px 13px; }
+  .nb-head{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+  .nb-title{ flex:1 1 auto; font-size:14px; font-weight:900; color:#8a5a00; letter-spacing:-.01em; }
+  .nb-tools{ display:flex; gap:5px; }
+  .nb-edit{ border:1.5px solid #ffe0a8; background:#fff; color:#a86600; border-radius:999px; padding:5px 11px; font-size:11.5px; font-weight:900; font-family:inherit; cursor:pointer; touch-action:manipulation; }
+  .nb-text{ margin:0; font-size:14px; font-weight:800; color:#5b4a2e; line-height:1.6; white-space:pre-wrap; word-break:break-word; }
+  .nb-text.empty{ color:#b9a68c; font-weight:800; }
+  .nb-form{ display:flex; flex-direction:column; gap:7px; }
+  .nb-form-row{ display:flex; gap:6px; }
+  .nb-form-row .nb-emo{ width:58px; text-align:center; flex:0 0 auto; }
+  .nb-form-row .nb-title-inp{ flex:1 1 auto; }
+  .nb-text-inp{ width:100%; min-height:70px; resize:vertical; line-height:1.5; font-weight:700; }
+  .nb-form-act{ display:flex; justify-content:flex-end; }
+
+  /* 🧩 편집 패널 안 DIY 편집기 */
+  .diy-list{ display:flex; flex-direction:column; gap:11px; }
+  .diy-sec{ border:2px solid #f0e4d4; border-radius:16px; background:#fffdf9; padding:10px 11px; }
+  .diy-sec.off{ background:#f7f4ef; border-style:dashed; }
+  .diy-sec.custom{ border-color:#e3d6ff; background:#fdfbff; }
+  .diy-sec-head{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .diy-sec-head .diy-emo{ width:62px; flex:0 0 auto; }
+  .diy-sec-head .diy-title{ flex:1 1 120px; min-width:90px; font-weight:900; }
+  .diy-sec-head .diy-width{ flex:0 0 auto; width:92px; }
+  .diy-tools{ display:flex; align-items:center; gap:4px; margin-left:auto; }
+  .diy-blocks{ display:flex; flex-direction:column; gap:8px; margin-top:9px; }
+  .diy-blk{ border:1.5px dashed #eadfce; border-radius:13px; padding:8px 9px; background:#fff; }
+  .diy-blk-head{ display:flex; align-items:center; gap:6px; }
+  .diy-blk-name{ flex:1 1 auto; font-size:12px; font-weight:900; color:#6d6484; }
+  .diy-field{ display:flex; align-items:center; gap:7px; margin-top:6px; font-size:11.5px; font-weight:900; color:#a2937f; }
+  .diy-field > span{ flex:0 0 auto; }
+  .diy-field select{ flex:1 1 auto; min-width:0; }
+  .diy-field.nb-row{ display:flex; gap:6px; }
+  .diy-field.nb-row .nb-emo{ width:58px; flex:0 0 auto; text-align:center; }
+  .diy-blk .nb-text-inp{ margin-top:6px; }
+  .diy-add-blk{ display:flex; align-items:center; gap:5px; flex-wrap:wrap; margin-top:9px; }
+  .diy-add-blk > span{ font-size:11px; font-weight:900; color:#b3a696; }
+  .diy-add-btn{
+    border:1.5px solid #dcd3ff; background:#fff; color:#5b45c9; border-radius:999px;
+    padding:5px 9px; font-size:11px; font-weight:900; font-family:inherit; cursor:pointer; touch-action:manipulation;
+  }
+  .diy-add-btn:active{ transform:scale(.96); }
+  .diy-add-sec{ width:100%; }
+
   .ledger{ display:flex; flex-wrap:wrap; gap:6px; margin:0 0 11px; font-size:12px; font-weight:900; color:#8a7f70; }
   .ledger .lchip{ background:#f7f1e9; border-radius:999px; padding:5px 10px; }
   .ledger .lchip b{ color:var(--ink); }
@@ -1978,6 +2053,86 @@
   .an-why{ font-size:12.5px; font-weight:800; color:#6d6484; line-height:1.45; }
   .an-from{ font-size:10.5px; font-weight:800; color:#b3a696; }
 
+  /* ==================================================================
+     가로모드(태블릿·PC) 2단 분할 — 마이룸 · 아바타 · 상점
+     세로 화면(폰·세로 태블릿)은 지금의 위·아래 모양을 그대로 써요.
+     ================================================================== */
+  .room-split{ display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
+  .av-split{ display:block; }
+  .av-left{ display:contents; }
+  .av-right{ display:block; }
+  .shop-split{ display:block; }
+  .shop-left{ display:none; }
+  .shop-prev{ display:flex; flex-direction:column; gap:8px; }
+  .shop-prev-head{ font-size:12.5px; font-weight:900; color:#a2937f; }
+  .shop-prev-stage{ border-radius:18px; border:2px solid #f3e7d6; background:#fffdf8; overflow:hidden; }
+  .shop-prev-stage.av{ display:flex; align-items:center; justify-content:center; padding:10px; }
+  .shop-prev-stage.av .av-svg{ width:150px; height:230px; }
+  .shop-prev-foot{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .shop-prev-hint{ margin:0; font-size:11px; font-weight:800; color:#b3a696; line-height:1.5; }
+
+  @media (min-width:768px) and (orientation:landscape){
+    /* ---- 마이룸: 왼쪽 방 그림 · 오른쪽 서랍 ---- */
+    .room-modal .hist-card.room-card{ max-width:1020px; width:94vw; }
+    .room-card .room-split{
+      display:grid; grid-template-columns:minmax(0,1.12fr) minmax(0,0.88fr);
+      min-height:0; overflow:hidden;
+    }
+    .room-card .room-stage{
+      min-height:0; min-width:0; overflow:hidden; padding:10px 12px 12px;
+      border-right:2px solid #f6ece0; display:flex; flex-direction:column; gap:7px;
+    }
+    .room-card .room-stage > *{ max-width:100%; }
+    .room-card .room-stage .room-top-acts{ flex:0 0 auto; }
+    .room-card .room-stage .room-wrap{ flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; }
+    .room-card .room-stage .room-svg{ width:100%; height:100%; max-height:none; }
+    .room-card .room-drawer{ min-height:0; min-width:0; overflow-y:auto; border-top:0; }
+
+    /* ---- 아바타: 왼쪽 미리보기 · 오른쪽 옷장 ---- */
+    #avatarModal .hist-card{ max-width:980px; width:94vw; }
+    #avatarBody{ overflow:hidden; }
+    #avatarBody .av-split{
+      display:grid; grid-template-columns:minmax(0,0.92fr) minmax(0,1.08fr);
+      flex:1 1 auto; min-height:0; gap:0;
+    }
+    #avatarBody .av-left{
+      display:block; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+      padding:12px 14px 16px; border-right:2px solid #f6ece0; background:#fffdf9;
+    }
+    #avatarBody .av-left .av-sticky{
+      position:static; margin:0; padding:0; border:0; box-shadow:none; background:none;
+    }
+    #avatarBody .av-left .av-top{ flex-direction:column; align-items:stretch; gap:12px; }
+    #avatarBody .av-left .av-preview{ align-self:center; width:auto; height:auto; max-width:100%; }
+    #avatarBody .av-left .av-preview .av-svg{ width:170px; height:242px; }
+    #avatarBody .av-right{
+      display:flex; flex-direction:column; gap:10px; min-height:0; min-width:0;
+      overflow-y:auto; overscroll-behavior:contain; padding:12px 14px 16px;
+    }
+    #avatarBody .av-right .av-tabs{ margin:0; }
+    #avatarBody .av-right .av-items{ padding:0; }
+    #avatarBody .av-applybar{ position:static; }
+
+    /* ---- 상점: 왼쪽 미리보기 · 오른쪽 목록 ---- */
+    #shopModal .hist-card{ max-width:980px; width:94vw; }
+    #shopBody{ overflow:hidden; padding:0; }
+    #shopBody .shop-split{
+      display:grid; grid-template-columns:minmax(0,0.92fr) minmax(0,1.08fr);
+      flex:1 1 auto; min-height:0; gap:0;
+    }
+    #shopBody .shop-left{
+      display:block; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+      padding:12px 14px 16px; border-right:2px solid #f6ece0; background:#fffdf9;
+    }
+    #shopBody .shop-prev-stage.room{ padding:8px; }
+    #shopBody .shop-prev-stage.room .room-svg{ width:100%; height:auto; }
+    #shopBody .shop-right{
+      min-height:0; min-width:0; overflow-y:auto; overscroll-behavior:contain;
+      padding:12px 14px 18px; display:flex; flex-direction:column; gap:10px;
+    }
+    #shopBody .shop-prev-foot{ min-height:38px; }
+  }
+
 </style>
 </head>
 <body>
@@ -2027,71 +2182,8 @@
 
   <section class="card edit-panel" id="editPanel" hidden></section>
 
-  <div class="sections" id="sections">
-
-  <section class="card routine sec sec-routine" id="secRoutine" data-sec="routine">
-    <div class="routine-top">
-      <div class="rt-left">
-        <h2 id="secTitleRoutine">하루 루틴</h2>
-        <p id="routineHint">오늘 할 일을 하나씩 체크해 보자!</p>
-      </div>
-      <div class="rt-right">
-        <div class="rt-count"><strong id="overallDone">0</strong> / <span id="overallTotal">0</span> 완료</div>
-        <div class="rt-percent" id="overallPct">0%</div>
-        <div class="rt-bar" id="overallBar">
-          <div class="rt-fill" id="overallFill"></div>
-          <span class="rt-rocket" id="overallRocket">🚀</span>
-        </div>
-        <button class="rt-view-btn" id="routineViewBtn" data-act="routine-view-toggle" aria-label="루틴 가로로 보기">↔️ 가로 보기</button>
-      </div>
-    </div>
-    <div class="rt-targets" id="routineTargets" hidden></div>
-    <div class="rt-jump" id="routineJump" role="group" aria-label="루틴 그룹 바로가기"></div>
-    <div class="routine-grid" id="routineGrid" data-view="grid"></div>
-    <p class="routine-empty" id="routineEmpty" hidden>아직 루틴 그룹이 없어요. 편집(✏️)에서 그룹을 만들 수 있어요.</p>
-    <div class="routine-empty day-empty" id="routineDayEmpty" hidden>
-      <span>오늘 요일에는 하는 루틴이 없어요 🌤️</span>
-      <button class="rt-view-btn" id="routineDayEmptyEdit" data-act="edit-toggle" hidden>✏️ 편집에서 요일 바꾸기</button>
-    </div>
-    <button class="add-item add-group" id="routineAddBtn" data-act="cat-add" hidden>+ 루틴 그룹 추가</button>
-  </section>
-
-    <section class="card sticker sec" id="secSticker" data-sec="sticker">
-      <div class="card-head">
-        <h2 id="secTitleSticker">칭찬 스티커</h2>
-        <div class="head-tools">
-          <span class="rt-percent"><strong id="stickerCount">0</strong> / <span id="stickerSlots">10</span></span>
-          <button class="pill-btn warm" id="newBoardBtn" data-act="sticker-new" hidden>🎉 새 판 시작</button>
-        </div>
-      </div>
-      <p class="goal" id="stickerUnitLine" hidden></p>
-      <div class="board" id="stickerBoard"></div>
-      <div class="ledger" id="stickerLedger"></div>
-      <p class="sticker-hint" id="stickerHint">빈 칸을 누르면 스티커가 붙어요 · 붙인 스티커를 누르면 뗄 수 있어요</p>
-    </section>
-
-    <section class="card today-academy sec" id="secAcademy" data-sec="academy">
-      <div class="card-head">
-        <h2 id="secTitleAcademy">오늘의 학원</h2>
-        <span class="head-note">잊지 말고 챙겨요 🎒</span>
-      </div>
-      <div id="todayBox"></div>
-    </section>
-
-  <section class="card week sec sec-week" id="secWeek" data-sec="week">
-    <div class="card-head week-head">
-      <h2 id="secTitleWeek">학원 시간표</h2>
-      <span class="head-note">오늘 칸이 노란색이에요</span>
-      <div class="head-tools week-tools">
-        <button type="button" class="notify-btn" id="notifyBtn" data-act="notify-toggle" aria-pressed="false">🔔 일과표 10분 전 알림</button>
-        <button type="button" class="ghost-btn tiny" id="notifyTestBtn" data-act="notify-test" hidden>테스트 알림</button>
-        <button type="button" class="ghost-btn tiny" data-act="target-sound-test" aria-label="목표 시간 알림 소리 미리 듣기">🎵 알림 소리</button>
-      </div>
-    </div>
-    <div class="week-grid" id="weekGrid"></div>
-  </section>
-
-  </div>
+  <!-- 섹션·블록은 편집(✏️)에서 만든 설정대로 JS가 그려요 (DIY 블록 조립) -->
+  <div class="sections" id="sections"></div>
 
   <p class="footer-note" id="footerNote">체크와 스티커는 자동으로 저장돼요 · 인터넷이 없어도 그대로 쓸 수 있어요</p>
 </div>
@@ -2238,14 +2330,11 @@
         <h2 id="roomTitle">🏡 마이룸</h2>
         <button class="hist-close" data-act="room-close" aria-label="마이룸 닫기">✕</button>
       </div>
-      <div class="room-top-acts" role="group" aria-label="마이룸 바로가기">
-        <button type="button" class="room-top-btn" data-act="avatar-open">👕 아바타</button>
-        <button type="button" class="room-top-btn" data-act="pethome-open">🥚 내 펫</button>
-        <button type="button" class="room-top-btn" data-act="shop-open">🛒 상점</button>
-      </div>
     </div>
-    <div class="room-stage" id="roomStage"></div>
-    <div class="hist-body room-drawer" id="roomBody"></div>
+    <div class="room-split">
+      <div class="room-stage" id="roomStage"></div>
+      <div class="hist-body room-drawer" id="roomBody"></div>
+    </div>
   </div>
 </div>
 
@@ -2263,7 +2352,7 @@
 </div>
 
 <div class="hist" id="avatarModal" hidden role="dialog" aria-modal="true" aria-labelledby="avatarTitle">
-  <div class="hist-card" style="max-width:760px">
+  <div class="hist-card" style="max-width:980px">
     <div class="hist-head">
       <h2 id="avatarTitle">👕 아바타</h2>
       <button class="hist-close" data-act="avatar-close" aria-label="아바타 닫기">✕</button>
@@ -2284,7 +2373,7 @@
 </div>
 
 <div class="hist" id="shopModal" hidden role="dialog" aria-modal="true" aria-labelledby="shopTitle">
-  <div class="hist-card" style="max-width:820px">
+  <div class="hist-card" style="max-width:980px">
     <div class="hist-head">
       <h2 id="shopTitle">🛒 상점</h2>
       <button class="hist-close" data-act="shop-close" aria-label="상점 닫기">✕</button>
@@ -2328,6 +2417,26 @@
   var SEC_NAMES = { routine: '하루 루틴', sticker: '칭찬 스티커', academy: '오늘의 학원', week: '학원 시간표' };
   var SEC_EL = { routine: 'secRoutine', sticker: 'secSticker', academy: 'secAcademy', week: 'secWeek' };
   var SEC_TITLE_EL = { routine: 'secTitleRoutine', sticker: 'secTitleSticker', academy: 'secTitleAcademy', week: 'secTitleWeek' };
+
+  /* ============ DIY 섹션 · 블록 조립 ============
+     편집(✏️)에서 섹션(카드)을 만들고, 그 안에 기능 블록을 넣고 빼고 순서를 바꿔요.
+     기본 4개 섹션(routine/sticker/academy/week)은 그대로 이어받고,
+     예전 설정(sectionTitles·layoutOrder)만 있는 기기는 자동으로 새 모양으로 옮겨요. */
+  var SEC_DEFAULT_WIDTH = { routine: 'full', sticker: 'half', academy: 'half', week: 'full' };
+  var SEC_DEFAULT_EMOJI = { routine: '✅', sticker: '⭐', academy: '🎒', week: '🗓️' };
+  var SEC_CLASS = { routine: 'routine sec-routine', sticker: 'sticker', academy: 'today-academy', week: 'week sec-week' };
+  var SEC_PRIMARY_BLOCK = { routine: 'routine', sticker: 'sticker_board', academy: 'today_schedule', week: 'weekly_schedule' };
+  var SEC_ICON_CHOICES = ['✅', '⭐', '🎒', '🗓️', '🎯', '💬', '🌈', '🌙', '🧩', '🏡', '📚', '🍀', '🎨', '📌'];
+  var BLOCK_ORDER = ['routine', 'target_bar', 'notice_board', 'today_schedule', 'sticker_board', 'weekly_schedule'];
+  var BLOCK_LABEL = {
+    routine: '하루 루틴', target_bar: '목표시간 남은 시간 바', notice_board: '오늘의 한마디 / 게시판',
+    today_schedule: '오늘의 일정', sticker_board: '칭찬 스티커', weekly_schedule: '주간 일과표'
+  };
+  var BLOCK_ICON = {
+    routine: '✅', target_bar: '🎯', notice_board: '💬', today_schedule: '🎒', sticker_board: '⭐', weekly_schedule: '🗓️'
+  };
+  var BLOCK_MAX_PER_SEC = 8;
+  var SEC_MAX = 10;
 
   var ROLES = {
     admin: { label: '관리자', perms: { check: 1, sticker: 1, stickerManage: 1, edit: 1, reset: 1, history: 1, accounts: 1 } },
@@ -2646,12 +2755,28 @@
   function makeItem(id, text) { return { id: id, text: text }; }
   function makeEvent(name, time) { return { id: uid('ev'), name: name, time: time }; }
 
+  /* 기본 4개 섹션 — 예전과 똑같이 보이도록(오늘의 학원+칭찬 스티커 반 폭, 루틴·시간표 전체 폭) */
+  function defaultSections() {
+    var out = [];
+    for (var i = 0; i < SEC_IDS.length; i++) {
+      var base = SEC_IDS[i];
+      out.push({
+        id: base, base: base,
+        emoji: SEC_DEFAULT_EMOJI[base], title: SEC_NAMES[base],
+        width: SEC_DEFAULT_WIDTH[base], hidden: false,
+        blocks: [{ id: 'blk-' + base, type: SEC_PRIMARY_BLOCK[base], group: '' }]
+      });
+    }
+    return out;
+  }
+
   function defaultState() {
     return {
       version: 1,
       settings: {
         childName: '지우', greeting: GREETING_DEFAULT, city: 'seoul', soundOn: true,
-        sectionTitles: { routine: '하루 루틴', sticker: '칭찬 스티커', academy: '오늘의 학원', week: '학원 시간표' }
+        sectionTitles: { routine: '하루 루틴', sticker: '칭찬 스티커', academy: '오늘의 학원', week: '학원 시간표' },
+        dashboardSections: defaultSections()
       },
       categories: [
         {
@@ -2735,6 +2860,134 @@
   }
 
   /* ============ 저장 / 복원 ============ */
+  function normBlock(raw, catIds) {
+    if (!raw || typeof raw !== 'object') return null;
+    var type = String(raw.type || '');
+    if (BLOCK_ORDER.indexOf(type) < 0) return null;
+    var b = {
+      id: (typeof raw.id === 'string' && raw.id.trim()) ? raw.id.trim().slice(0, 40) : uid('blk'),
+      type: type, group: ''
+    };
+    if (type === 'routine' || type === 'target_bar') {
+      var g = (typeof raw.group === 'string') ? raw.group : '';
+      b.group = (g && catIds && catIds[g]) ? g : '';
+    }
+    if (type === 'notice_board') {
+      b.title = (typeof raw.title === 'string' && raw.title.trim()) ? raw.title.trim().slice(0, 24) : '오늘의 한마디';
+      b.emoji = (typeof raw.emoji === 'string' && raw.emoji.trim()) ? raw.emoji.trim().slice(0, 4) : '💬';
+      b.text = (typeof raw.text === 'string') ? raw.text.slice(0, 400) : '';
+    }
+    return b;
+  }
+
+  function normalizeSections(s) {
+    var defs = defaultSections();
+    var defByBase = {};
+    for (var di = 0; di < defs.length; di++) defByBase[defs[di].base] = defs[di];
+    var titles = (s.settings && s.settings.sectionTitles) ? s.settings.sectionTitles : {};
+    var order = (Object.prototype.toString.call(s.layoutOrder) === '[object Array]') ? s.layoutOrder : [];
+    var raw = (s.settings && Object.prototype.toString.call(s.settings.dashboardSections) === '[object Array]')
+      ? s.settings.dashboardSections : null;
+    var catIds = {};
+    for (var ci = 0; ci < s.categories.length; ci++) catIds[s.categories[ci].id] = 1;
+
+    function cleanBlocks(rawBlocks) {
+      var out = [];
+      var arr = (Object.prototype.toString.call(rawBlocks) === '[object Array]') ? rawBlocks : [];
+      for (var bi = 0; bi < arr.length && out.length < BLOCK_MAX_PER_SEC; bi++) {
+        var b = normBlock(arr[bi], catIds);
+        if (b) out.push(b);
+      }
+      return out;
+    }
+    function cleanTitle(v, base) {
+      var t = (typeof v === 'string') ? v.replace(/\s+/g, ' ').trim().slice(0, 16) : '';
+      if (t) return t;
+      if (base) return (typeof titles[base] === 'string' && titles[base].trim()) ? titles[base].trim().slice(0, 16) : SEC_NAMES[base];
+      return '새 섹션';
+    }
+    function cleanEmoji(v, base) {
+      var e = (typeof v === 'string') ? v.trim().slice(0, 4) : '';
+      if (e) return e;
+      return base ? SEC_DEFAULT_EMOJI[base] : '🧩';
+    }
+
+    var list = [], seen = {}, usedBase = {};
+    if (raw) {
+      for (var i = 0; i < raw.length && list.length < SEC_MAX; i++) {
+        var r = raw[i] || {};
+        var base = (SEC_IDS.indexOf(String(r.base || '')) >= 0) ? String(r.base)
+          : (SEC_IDS.indexOf(String(r.id || '')) >= 0 ? String(r.id) : '');
+        if (base && usedBase[base]) continue;
+        var id;
+        if (base) id = base;
+        else {
+          id = (typeof r.id === 'string' && /^sec-[A-Za-z0-9_-]{1,32}$/.test(r.id)) ? r.id : ('sec-' + uid(''));
+        }
+        if (seen[id]) continue;
+        seen[id] = 1;
+        if (base) usedBase[base] = 1;
+        var blocks = cleanBlocks(r.blocks);
+        /* 예전 모양으로 들어온 기본 섹션(블록 정보가 아예 없음)은 대표 블록 하나를 넣어요 */
+        if (base && !blocks.length && Object.prototype.toString.call(r.blocks) !== '[object Array]') {
+          blocks = [{ id: 'blk-' + base, type: SEC_PRIMARY_BLOCK[base], group: '' }];
+        }
+        list.push({
+          id: id, base: base,
+          emoji: cleanEmoji(r.emoji, base),
+          title: cleanTitle(r.title, base),
+          width: (r.width === 'full') ? 'full' : (r.width === 'half' ? 'half' : (base ? SEC_DEFAULT_WIDTH[base] : 'half')),
+          hidden: r.hidden === true,
+          blocks: blocks
+        });
+      }
+    }
+
+    if (!raw) {
+      /* 예전 설정 → 기본 섹션 (layoutOrder 순서대로) */
+      var seq = order.length ? order.slice(0) : SEC_IDS.slice(0);
+      for (var si = 0; si < seq.length; si++) {
+        var b2 = seq[si];
+        if (SEC_IDS.indexOf(b2) < 0 || usedBase[b2]) continue;
+        usedBase[b2] = 1;
+        var df = defByBase[b2];
+        list.push({
+          id: b2, base: b2, emoji: df.emoji, title: cleanTitle('', b2),
+          width: df.width, hidden: false, blocks: clone(df.blocks)
+        });
+      }
+    }
+    /* 기본 4개 섹션은 항상 있어요 (지워지지 않고 숨기기/블록 빼기만 해요) */
+    for (var b3 = 0; b3 < SEC_IDS.length && list.length < SEC_MAX; b3++) {
+      var baseId = SEC_IDS[b3];
+      if (usedBase[baseId]) continue;
+      usedBase[baseId] = 1;
+      var df3 = defByBase[baseId];
+      list.push({
+        id: baseId, base: baseId, emoji: df3.emoji, title: cleanTitle('', baseId),
+        width: df3.width, hidden: false, blocks: clone(df3.blocks)
+      });
+    }
+    return list;
+  }
+
+  /* 예전 화면·다른 기기와 섞여도 보이도록 이름·순서도 맞춰 둡니다 */
+  function syncSectionMirrors(s) {
+    var list = s.settings.dashboardSections || [];
+    var lo = [], titles = {};
+    for (var i = 0; i < list.length; i++) {
+      var sec = list[i];
+      if (!sec.base) continue;
+      lo.push(sec.base);
+      if (sec.title) titles[sec.base] = sec.title;
+    }
+    for (var k = 0; k < SEC_IDS.length; k++) {
+      if (!titles[SEC_IDS[k]]) titles[SEC_IDS[k]] = SEC_NAMES[SEC_IDS[k]];
+    }
+    s.layoutOrder = lo;
+    s.settings.sectionTitles = titles;
+  }
+
   function normalize(raw) {
     var d = defaultState();
     if (!raw || typeof raw !== 'object') return d;
@@ -2957,6 +3210,10 @@
     }
     for (var sj = 0; sj < SEC_IDS.length; sj++) if (order.indexOf(SEC_IDS[sj]) < 0) order.push(SEC_IDS[sj]);
     s.layoutOrder = order;
+
+    /* DIY 섹션·블록 조립 설정 — 없으면 예전 이름·순서에서 그대로 옮겨요 */
+    s.settings.dashboardSections = normalizeSections(s);
+    syncSectionMirrors(s);
 
     if (!s.dayUpdated || typeof s.dayUpdated !== 'object') s.dayUpdated = {};
     var duKeys = [];
@@ -3429,20 +3686,23 @@
   }
 
   function applyRoutineView() {
+    eachBlockOfType('routine', function (root, blk) { applyRoutineViewFor(root, blk); });
+  }
+
+  function applyRoutineViewFor(root, blk) {
     var v = routineView();
-    var grid = document.getElementById('routineGrid');
+    var grid = bpart(root, 'grid');
     if (grid && grid.getAttribute('data-view') !== v) grid.setAttribute('data-view', v);
-    var sec = document.getElementById('secRoutine');
-    if (sec) sec.setAttribute('data-routine-view', v);
-    var btn = document.getElementById('routineViewBtn');
+    root.setAttribute('data-routine-view', v);
+    var btn = bpart(root, 'viewBtn');
     if (btn) {
       btn.textContent = v === 'row' ? '↕️ 세로 보기' : '↔️ 가로 보기';
       btn.setAttribute('aria-label', v === 'row' ? '루틴 세로로 보기' : '루틴 가로로 보기');
     }
-    var addBtn = document.getElementById('routineAddBtn');
+    var addBtn = bpart(root, 'add');
     if (addBtn) addBtn.hidden = !(ui.editing && can('edit'));
-    var empty = document.getElementById('routineEmpty');
-    if (empty) empty.hidden = state.categories.length > 0;
+    var empty = bpart(root, 'empty');
+    if (empty) empty.hidden = state.categories.length > 0 || !!(blk && blk.group);
   }
 
   function toggleRoutineView() {
@@ -3452,12 +3712,18 @@
   }
 
   function renderRoutineJump() {
-    var box = document.getElementById('routineJump');
+    eachBlockOfType('routine', function (root, blk) { renderRoutineJumpFor(root, blk); });
+  }
+
+  function renderRoutineJumpFor(root, blk) {
+    var box = bpart(root, 'jump');
     if (!box) return;
+    var groupId = blk.group || '';
     var dow = keyDayIndex(currentKey);
     var h = '';
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
+      if (groupId && cat.id !== groupId) continue;
       if (!ui.editing && !activeDay(cat, dow)) continue;
       var nm = cat.title || '루틴';
       h += '<button type="button" class="rt-pill" data-act="routine-jump" data-cat="' + esc(cat.id) +
@@ -3465,12 +3731,8 @@
         '<span class="pp" aria-hidden="true"></span><span>' + esc(cat.emoji) + ' ' + esc(nm) + '</span></button>';
     }
     box.innerHTML = h;
-  }
-
-  function jumpToCategory(id) {
-    var card = document.querySelector('.routine-card[data-cat="' + id + '"]');
-    if (!card) return;
-    if (card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    /* 그룹이 하나뿐이면 바로가기는 숨겨요 */
+    box.hidden = !h || (groupId && h.indexOf('rt-pill') < 0);
   }
 
   function emojiOptions(cur) {
@@ -3603,8 +3865,13 @@
   }
 
   function renderRoutine() {
-    var grid = document.getElementById('routineGrid');
+    eachBlockOfType('routine', function (root, blk) { renderRoutineBlock(root, blk); });
+  }
+
+  function renderRoutineBlock(root, blk) {
+    var grid = bpart(root, 'grid');
     if (!grid) return;
+    var groupId = blk.group || '';
     var prevScroll = grid.scrollLeft || 0;
     var ck = checksFor(currentKey);
     var dow = keyDayIndex(currentKey);
@@ -3614,6 +3881,7 @@
 
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
+      if (groupId && cat.id !== groupId) continue;
       var catOn = activeDay(cat, dow);
       /* 보기 화면에서는 오늘 요일의 그룹만, 편집 화면에서는 전부 보여 줘요 */
       if (!catOn && !ui.editing) continue;
@@ -3703,25 +3971,27 @@
     }
 
     grid.innerHTML = html;
-    applyRoutineView();
-    renderRoutineJump();
+    applyRoutineViewFor(root, blk);
+    renderRoutineJumpFor(root, blk);
     /* 오늘 요일에 하는 그룹이 하나도 없을 때 */
-    var dayEmpty = document.getElementById('routineDayEmpty');
+    var dayEmpty = bpart(root, 'dayEmpty');
     if (dayEmpty) {
-      dayEmpty.hidden = ui.editing || state.categories.length === 0 || shownCats > 0;
-      var editBtn = document.getElementById('routineDayEmptyEdit');
+      dayEmpty.hidden = ui.editing || !groupId ? (ui.editing || state.categories.length === 0 || shownCats > 0) : shownCats > 0;
+      var msg = dayEmpty.querySelector('span');
+      if (msg) msg.textContent = groupId ? '이 그룹은 오늘 쉬는 날이에요 🌤️' : '오늘 요일에는 하는 루틴이 없어요 🌤️';
+      var editBtn = bpart(root, 'dayEmptyEdit');
       if (editBtn) editBtn.hidden = !can('edit');
     }
     if (prevScroll && grid.scrollLeft !== prevScroll) grid.scrollLeft = prevScroll;
-    updateOverall(true);
-    renderRoutineTargets();
+    updateOverallForBlock(root, blk, true);
+    renderRoutineTargetsForBlock(root, blk);
   }
 
   function updateCardStats(catId) {
     var cat = findCat(catId);
     if (!cat) return;
-    var card = document.querySelector('.routine-card[data-cat="' + catId + '"]');
-    if (!card) return;
+    var cards = document.querySelectorAll('.routine-card[data-cat="' + catId + '"]');
+    if (!cards.length) return;
     var ck = checksFor(currentKey);
     var done = 0;
     for (var j = 0; j < cat.items.length; j++) if (ck[cat.items[j].id]) done++;
@@ -3729,39 +3999,54 @@
     var pct = total ? Math.round(done / total * 100) : 0;
     var complete = total > 0 && done === total;
 
-    var count = card.querySelector('.rc-count');
-    if (count) {
-      count.textContent = complete ? '완료 🎉' : done + '/' + total;
-      count.className = 'rc-count' + (complete ? ' done' : '');
-    }
-    var bar = card.querySelector('.rc-bar i');
-    if (bar) bar.style.width = pct + '%';
-    if (complete) card.classList.add('complete');
-    else card.classList.remove('complete');
-
-    var bonus = card.querySelector('.rc-bonus');
-    if (complete && !ui.editing) {
-      if (!bonus) {
-        bonus = document.createElement('div');
-        bonus.className = 'rc-bonus';
-        bonus.innerHTML = '✨ 그룹 완료 보너스 <span>' + coinSvg() + ' +20 코인</span>';
-        card.appendChild(bonus);
+    for (var ci = 0; ci < cards.length; ci++) {
+      var card = cards[ci];
+      var count = card.querySelector('.rc-count');
+      if (count) {
+        count.textContent = complete ? '완료 🎉' : done + '/' + total;
+        count.className = 'rc-count' + (complete ? ' done' : '');
       }
-    } else if (bonus && bonus.parentNode) {
-      bonus.parentNode.removeChild(bonus);
+      var bar = card.querySelector('.rc-bar i');
+      if (bar) bar.style.width = pct + '%';
+      if (complete) card.classList.add('complete');
+      else card.classList.remove('complete');
+
+      var bonus = card.querySelector('.rc-bonus');
+      if (complete && !ui.editing) {
+        if (!bonus) {
+          bonus = document.createElement('div');
+          bonus.className = 'rc-bonus';
+          bonus.innerHTML = '✨ 그룹 완료 보너스 <span>' + coinSvg() + ' +20 코인</span>';
+          card.appendChild(bonus);
+        }
+      } else if (bonus && bonus.parentNode) {
+        bonus.parentNode.removeChild(bonus);
+      }
     }
   }
 
-  function updateOverall(silent) {
-    var c = counts();
+  function blockCounts(blk) {
+    if (blk && blk.group) {
+      var cat = findCat(blk.group);
+      if (!cat) return { done: 0, total: 0 };
+      var ck = checksFor(currentKey);
+      var done = 0;
+      for (var i = 0; i < cat.items.length; i++) if (ck[cat.items[i].id]) done++;
+      return { done: done, total: cat.items.length };
+    }
+    return counts();
+  }
+
+  function updateOverallForBlock(root, blk, silent) {
+    var c = blockCounts(blk);
     var pct = c.total ? Math.round(c.done / c.total * 100) : 0;
 
-    var doneEl = document.getElementById('overallDone');
-    var totalEl = document.getElementById('overallTotal');
-    var pctEl = document.getElementById('overallPct');
-    var fill = document.getElementById('overallFill');
-    var rocket = document.getElementById('overallRocket');
-    var bar = document.getElementById('overallBar');
+    var doneEl = bpart(root, 'done');
+    var totalEl = bpart(root, 'total');
+    var pctEl = bpart(root, 'pct');
+    var fill = bpart(root, 'fill');
+    var rocket = bpart(root, 'rocket');
+    var bar = bpart(root, 'bar');
 
     if (doneEl) doneEl.textContent = c.done;
     if (totalEl) totalEl.textContent = c.total;
@@ -3772,18 +4057,28 @@
       rocket.style.opacity = pct > 0 ? '1' : '0.45';
     }
 
-    var hint = document.getElementById('routineHint');
+    var hint = bpart(root, 'hint');
     if (hint) {
       if (!can('check')) hint.textContent = '지금은 보기만 할 수 있어요 👀';
       else if (c.total && c.done === c.total) hint.textContent = '오늘 할 일을 모두 끝냈어요! 정말 최고예요 🎉';
       else if (c.done > 0) hint.textContent = '잘하고 있어요! 남은 ' + (c.total - c.done) + '개도 화이팅!';
       else hint.textContent = '오늘 할 일을 하나씩 체크해 보자!';
     }
+    return { bar: bar, rocket: rocket, c: c, pct: pct };
+  }
 
-    if (!silent && c.total && c.done === c.total && state.routineCelebrated !== currentKey) {
+  function updateOverall(silent) {
+    var shared = null;
+    eachBlockOfType('routine', function (root, blk) {
+      var r = updateOverallForBlock(root, blk, silent);
+      if (!blk.group) shared = r;
+    });
+    if (silent) return;
+    var c = counts();
+    if (c.total && c.done === c.total && state.routineCelebrated !== currentKey) {
       state.routineCelebrated = currentKey;
       saveState();
-      confetti(34, bar || rocket);
+      confetti(34, (shared && (shared.bar || shared.rocket)) || null);
       snd('win');
       window.setTimeout(showWin, 380);
     }
@@ -3806,6 +4101,13 @@
     if (on) el.classList.add('done');
     else el.classList.remove('done');
     el.setAttribute('aria-checked', on ? 'true' : 'false');
+    /* 같은 항목이 여러 블록(예: 그룹별 루틴 카드)에 보이면 그쪽도 함께 바꿔요 */
+    var twins = document.querySelectorAll('.routine-card[data-cat="' + catId + '"] [data-item="' + itemId + '"][data-act]');
+    for (var tw = 0; tw < twins.length; tw++) {
+      if (twins[tw] === el) continue;
+      if (on) twins[tw].classList.add('done'); else twins[tw].classList.remove('done');
+      twins[tw].setAttribute('aria-checked', on ? 'true' : 'false');
+    }
 
     el.classList.remove('pop');
     void el.offsetWidth;
@@ -3916,7 +4218,11 @@
 
   /* ============ 스티커 ============ */
   function renderStickers() {
-    var board = document.getElementById('stickerBoard');
+    eachBlockOfType('sticker_board', function (root) { renderStickerBlock(root); });
+  }
+
+  function renderStickerBlock(root) {
+    var board = bpart(root, 'board');
     if (!board) return;
     var st = state.sticker;
     var slots = st.slots;
@@ -3946,11 +4252,11 @@
     board.innerHTML = html;
     freshIdx = -1;
 
-    var cnt = document.getElementById('stickerCount');
+    var cnt = bpart(root, 'count');
     if (cnt) cnt.textContent = list.length;
-    var slotsEl = document.getElementById('stickerSlots');
+    var slotsEl = bpart(root, 'slots');
     if (slotsEl) slotsEl.textContent = slots;
-    var unitLine = document.getElementById('stickerUnitLine');
+    var unitLine = bpart(root, 'unit');
     if (unitLine) {
       var sub = (st.goal || '').trim();
       if (sub) {
@@ -3962,21 +4268,15 @@
       }
     }
 
-    var btn = document.getElementById('newBoardBtn');
+    var btn = bpart(root, 'new');
     if (btn) {
       var full = list.length >= st.slots;
       btn.hidden = !(full && can('sticker'));
     }
     /* 알림 소리 미리 듣기는 보호자·관리자만 (아이 화면을 깔끔하게) */
-    var soundTest = document.querySelector('[data-act="target-sound-test"]');
-    if (soundTest) soundTest.hidden = !can('edit');
-    var hint = document.getElementById('stickerHint');
-    if (hint) {
-      if (!can('stickerManage')) hint.textContent = '부모님이 붙여 주신 스티커예요 · 적립·사용·남은 개수를 볼 수 있어요 👀';
-      else if (list.length >= st.slots) hint.textContent = '판을 다 채웠어요! 🎉 새 판을 시작해 보세요';
-      else hint.textContent = '빈 칸을 누르면 스티커가 붙어요 · 떼려면 붙은 스티커를 누르세요 · 여러 개·쓰기는 👥 계정';
-    }
-    renderLedger();
+    var soundTests = document.querySelectorAll('[data-act="target-sound-test"]');
+    for (var si = 0; si < soundTests.length; si++) soundTests[si].hidden = !can('edit');
+    renderLedgerFor(root);
   }
 
   function fmtNum(n) {
@@ -3995,7 +4295,11 @@
   }
 
   function renderLedger() {
-    var el = document.getElementById('stickerLedger');
+    eachBlockOfType('sticker_board', function (root) { renderLedgerFor(root); });
+  }
+
+  function renderLedgerFor(root) {
+    var el = bpart(root, 'ledger');
     if (!el) return;
     var unit = state.sticker.unit || 1000;
     var earned = stickerTotal();
@@ -4005,6 +4309,29 @@
       '<span class="lchip">적립 <b>' + fmtNum(earned) + '개</b></span>' +
       '<span class="lchip use">사용 <b>' + fmtNum(spent) + '개</b></span>' +
       '<span class="lchip rem">남은 <b>' + fmtNum(left) + '개 · ' + fmtNum(left * unit) + '원</b></span>';
+  }
+
+  /* 스티커판이 꽉 차면(10/10) 기록만 남기고 곰바로 새 판(0/칸)으로 넘어가요.
+     적립·사용·남은 개수와 스티커 장부는 그대로 두고, 판만 새로 시작해요. */
+  function completeStickerBoard() {
+    var st = state.sticker;
+    if (!st || !(st.slots > 0) || st.stickers.length < st.slots) return false;
+    var full = st.slots;
+    var earned = stickerTotal();
+    state.boardLog.push({ d: dateKey(), t: Date.now(), slots: full, goal: st.goal || '' });
+    st.stickers = [];
+    st.celebrated = false;
+    freshIdx = -1;
+    saveState();
+    try { if (cloud.me) scheduleSync('stickers'); } catch (e) { /* 무시 */ }
+    renderStickers();
+    try {
+      confetti(70);
+      snd('win');
+    } catch (e) { /* 무시 */ }
+    showToast('🎉 스티커판 ' + full + '개 완성! 새 판으로 자동 리프레시됐어요 · 적립 ' + fmtNum(earned) + '개는 그대로', true);
+    try { refreshAcctStickerPane(); } catch (e) { /* 무시 */ }
+    return true;
   }
 
   function addSticker(reason) {
@@ -4025,17 +4352,13 @@
     renderCoinBadge();
     showToast('⭐ 칭찬 스티커! ' + coinSvg() + ' +' + COIN_STICKER, true);
 
-    if (st.stickers.length >= st.slots && !st.celebrated) {
+    if (st.stickers.length >= st.slots) {
+      /* 다 채웠어요 → 축하하고 바로 새 판으로 (새 판 시작 버튼을 누를 필요 없음) */
       st.celebrated = true;
-      state.boardLog.push({ d: dateKey(), t: Date.now(), slots: st.slots, goal: st.goal || '' });
-      saveState();
       window.setTimeout(function () {
-        confetti(70);
-        snd('win');
-        var evo = document.getElementById('evoModal');
-        if (evo && !evo.hidden) return;   /* 진화 축하 팝업이 먼저 떠 있으면 겹치지 않게 */
-        openGoalModal();
-      }, 420);
+        try { completeStickerBoard(); } catch (e) { /* 무시 */ }
+      }, 260);
+      return;
     }
   }
 
@@ -4707,24 +5030,26 @@
 
   /* ============ 오늘의 학원 / 주간 시간표 ============ */
   function renderTodayAcademy() {
-    var box = document.getElementById('todayBox');
-    if (!box) return;
-    var idx = new Date().getDay();
-    var evs = state.schedule[DAY_KEYS[idx]] || [];
-    var h = '<p class="ta-day">' + DAY_NAMES[idx] + '요일</p>';
-    if (!evs.length) {
-      h += '<p class="ta-empty">오늘은 학원이 없어요! 🎈<br>신나는 하루 보내요</p>';
-    } else {
-      for (var i = 0; i < evs.length; i++) {
-        var e = evs[i];
-        h += '<div class="ta-ev" style="--ec:' + colorFor(e.name) + '">' +
-          '<span class="ev-dot" aria-hidden="true"></span>' +
-          '<span class="ev-name">' + esc(e.name) + '</span>' +
-          '<span class="ev-time">' + esc(e.time) + '</span>' +
-          '</div>';
+    eachBlockOfType('today_schedule', function (root) {
+      var box = bpart(root, 'box');
+      if (!box) return;
+      var idx = new Date().getDay();
+      var evs = state.schedule[DAY_KEYS[idx]] || [];
+      var h = '<p class="ta-day">' + DAY_NAMES[idx] + '요일</p>';
+      if (!evs.length) {
+        h += '<p class="ta-empty">오늘은 학원이 없어요! 🎈<br>신나는 하루 보내요</p>';
+      } else {
+        for (var i = 0; i < evs.length; i++) {
+          var e = evs[i];
+          h += '<div class="ta-ev" style="--ec:' + colorFor(e.name) + '">' +
+            '<span class="ev-dot" aria-hidden="true"></span>' +
+            '<span class="ev-name">' + esc(e.name) + '</span>' +
+            '<span class="ev-time">' + esc(e.time) + '</span>' +
+            '</div>';
+        }
       }
-    }
-    box.innerHTML = h;
+      box.innerHTML = h;
+    });
   }
 
   /* "16:30–17:30" · "16:30-17:30" · "16:30 ~ 17:30" · "14:20" 을 시작·종료로 나눠요 */
@@ -4759,7 +5084,11 @@
   }
 
   function renderWeek() {
-    var grid = document.getElementById('weekGrid');
+    eachBlockOfType('weekly_schedule', function (root) { renderWeekInto(root); });
+  }
+
+  function renderWeekInto(root) {
+    var grid = bpart(root, 'grid');
     if (!grid) return;
     var todayIdx = new Date().getDay();
     var html = '';
@@ -4847,15 +5176,18 @@
   function notifyOn() { return lsGet(NOTIFY_KEY) === '1' && notifySupported() && notifyPermission() === 'granted'; }
 
   function renderNotifyBtns() {
-    var btn = document.getElementById('notifyBtn');
-    var test = document.getElementById('notifyTestBtn');
     var on = notifyOn();
-    if (btn) {
-      btn.classList.toggle('on', on);
-      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-      btn.textContent = on ? '🔔 10분 전 알림 켜짐' : '🔔 일과표 10분 전 알림';
+    var blocks = document.querySelectorAll('[data-block-type="weekly_schedule"]');
+    for (var i = 0; i < blocks.length; i++) {
+      var btn = bpart(blocks[i], 'notify');
+      var test = bpart(blocks[i], 'notifyTest');
+      if (btn) {
+        btn.classList.toggle('on', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        btn.textContent = on ? '🔔 10분 전 알림 켜짐' : '🔔 일과표 10분 전 알림';
+      }
+      if (test) test.hidden = !on;
     }
-    if (test) test.hidden = !on;
   }
 
   function setNotifyOn(on) {
@@ -4972,6 +5304,107 @@
     return h;
   }
 
+  /* ---- DIY 편집기 (섹션 · 블록) ---- */
+  function diyEmojiOptions(cur) {
+    var list = SEC_ICON_CHOICES.slice(0);
+    if (cur && list.indexOf(cur) < 0) list.unshift(cur);
+    var h = '';
+    for (var i = 0; i < list.length; i++) {
+      h += '<option value="' + esc(list[i]) + '"' + (list[i] === cur ? ' selected' : '') + '>' + list[i] + '</option>';
+    }
+    return h;
+  }
+
+  function diyGroupOptions(cur, allLabel) {
+    var h = '<option value=""' + (cur ? '' : ' selected') + '>' + esc(allLabel) + '</option>';
+    for (var i = 0; i < state.categories.length; i++) {
+      var c = state.categories[i];
+      h += '<option value="' + esc(c.id) + '"' + (cur === c.id ? ' selected' : '') + '>' +
+        esc((c.emoji || '') + ' ' + (c.title || '루틴')) + '</option>';
+    }
+    return h;
+  }
+
+  function diyBlockAddHtml(sec) {
+    var h = '<div class="diy-add-blk"><span>+ 블록 넣기</span>';
+    var short = {
+      routine: '✅ 루틴', target_bar: '🎯 목표바', notice_board: '💬 한마디',
+      today_schedule: '🎒 일정', sticker_board: '⭐ 스티커', weekly_schedule: '🗓️ 일과표'
+    };
+    for (var i = 0; i < BLOCK_ORDER.length; i++) {
+      var t = BLOCK_ORDER[i];
+      h += '<button type="button" class="diy-add-btn" data-act="diy-blk-add" data-sec="' + esc(sec.id) + '" data-type="' + esc(t) + '">' +
+        esc(short[t] || BLOCK_LABEL[t]) + '</button>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function diyBlockRowHtml(sec, blk, idx, total) {
+    var h = '<div class="diy-blk" data-blk="' + esc(blk.id) + '" data-blk-type="' + esc(blk.type) + '">';
+    h += '<div class="diy-blk-head">' +
+      '<span class="diy-blk-name">' + esc((BLOCK_ICON[blk.type] || '🧩') + ' ' + (BLOCK_LABEL[blk.type] || blk.type)) + '</span>' +
+      '<span class="diy-tools">' +
+        '<button type="button" class="sec-tool" data-act="diy-blk-up" data-blk="' + esc(blk.id) + '"' + (idx === 0 ? ' disabled' : '') + ' aria-label="블록 위로">▲</button>' +
+        '<button type="button" class="sec-tool" data-act="diy-blk-down" data-blk="' + esc(blk.id) + '"' + (idx === total - 1 ? ' disabled' : '') + ' aria-label="블록 아래로">▼</button>' +
+        '<button type="button" class="sec-tool danger" data-act="diy-blk-del" data-blk="' + esc(blk.id) + '" aria-label="블록 빼기">✕</button>' +
+      '</span></div>';
+    if (blk.type === 'routine') {
+      h += '<label class="diy-field"><span>보여 줄 루틴</span><select class="inp inp-sm" data-field="diyBlkGroup" data-blk="' + esc(blk.id) + '">' +
+        diyGroupOptions(blk.group, '오늘의 모든 루틴') + '</select></label>';
+    } else if (blk.type === 'target_bar') {
+      h += '<label class="diy-field"><span>어느 목표를 보여 줄까요</span><select class="inp inp-sm" data-field="diyBlkGroup" data-blk="' + esc(blk.id) + '">' +
+        diyGroupOptions(blk.group, '다음 다가오는 목표') + '</select></label>';
+    } else if (blk.type === 'notice_board') {
+      h += '<div class="diy-field nb-row">' +
+        '<input class="inp inp-sm nb-emo" data-field="diyNbEmoji" data-blk="' + esc(blk.id) + '" value="' + esc(blk.emoji || '💬') + '" maxlength="4" aria-label="게시판 아이콘">' +
+        '<input class="inp inp-sm" data-field="diyNbTitle" data-blk="' + esc(blk.id) + '" value="' + esc(blk.title || '') + '" maxlength="24" placeholder="제목" aria-label="게시판 제목">' +
+        '</div>' +
+        '<textarea class="inp nb-text-inp" data-field="diyNbText" data-blk="' + esc(blk.id) + '" rows="2" maxlength="400" placeholder="가족에게 남길 한마디">' + esc(blk.text || '') + '</textarea>';
+    } else if (blk.type === 'weekly_schedule') {
+      h += '<p class="ep-hint">주 7일 학원 일과표와 🔔 10분 전 알림 버튼이 들어가요.</p>';
+    } else if (blk.type === 'sticker_board') {
+      h += '<p class="ep-hint">부모님 한 번 누르기 스티커 판이에요.</p>';
+    } else if (blk.type === 'today_schedule') {
+      h += '<p class="ep-hint">오늘 학원·일정을 모아 보여 줘요.</p>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function diySectionRowHtml(sec, idx, total) {
+    var h = '<div class="diy-sec' + (sec.hidden ? ' off' : '') + (sec.base ? '' : ' custom') + '" data-sec="' + esc(sec.id) + '">';
+    h += '<div class="diy-sec-head">' +
+      '<select class="inp inp-sm diy-emo" data-field="diySecEmoji" data-sec="' + esc(sec.id) + '" aria-label="섹션 아이콘">' + diyEmojiOptions(sec.emoji) + '</select>' +
+      '<input class="inp inp-sm diy-title" data-field="diySecTitle" data-sec="' + esc(sec.id) + '" value="' + esc(sec.title || '') + '" maxlength="16" placeholder="섹션 이름" aria-label="섹션 이름">' +
+      '<select class="inp inp-sm diy-width" data-field="diySecWidth" data-sec="' + esc(sec.id) + '" aria-label="가로 크기">' +
+        '<option value="half"' + (sec.width === 'half' ? ' selected' : '') + '>반 폭</option>' +
+        '<option value="full"' + (sec.width === 'full' ? ' selected' : '') + '>전체 폭</option>' +
+      '</select>' +
+      '<span class="diy-tools">' +
+        '<button type="button" class="sec-tool' + (sec.hidden ? ' on' : '') + '" data-act="diy-sec-hide" data-sec="' + esc(sec.id) + '" aria-pressed="' + (sec.hidden ? 'true' : 'false') + '" aria-label="숨기기/보이기">' + (sec.hidden ? '🙈' : '👁') + '</button>' +
+        '<button type="button" class="sec-tool" data-act="diy-sec-up" data-sec="' + esc(sec.id) + '"' + (idx === 0 ? ' disabled' : '') + ' aria-label="섹션 위로">▲</button>' +
+        '<button type="button" class="sec-tool" data-act="diy-sec-down" data-sec="' + esc(sec.id) + '"' + (idx === total - 1 ? ' disabled' : '') + ' aria-label="섹션 아래로">▼</button>' +
+        (sec.base ? '' : '<button type="button" class="sec-tool danger" data-act="diy-sec-del" data-sec="' + esc(sec.id) + '" aria-label="섹션 삭제">🗑</button>') +
+      '</span></div>';
+    var blocks = sec.blocks || [];
+    h += '<div class="diy-blocks">';
+    if (!blocks.length) h += '<p class="ep-hint">아직 블록이 없어요. 아래에서 골라 넣어 보세요.</p>';
+    for (var i = 0; i < blocks.length; i++) h += diyBlockRowHtml(sec, blocks[i], i, blocks.length);
+    h += '</div>';
+    h += diyBlockAddHtml(sec);
+    h += '</div>';
+    return h;
+  }
+
+  function diyEditorHtml() {
+    var list = secList();
+    var h = '<div class="diy-list">';
+    for (var i = 0; i < list.length; i++) h += diySectionRowHtml(list[i], i, list.length);
+    h += '</div>';
+    return h;
+  }
+
   function renderEditPanel() {
     var p = document.getElementById('editPanel');
     if (!p) return;
@@ -4997,10 +5430,11 @@
         fieldWrap('스티커 한 줄 소개', '<input class="inp" data-field="stickerGoal" value="' + esc(state.sticker.goal) + '" placeholder="비워 두면 안 보여요 (예: 모아서 원하는 선물에 써요)" maxlength="40">') +
         fieldWrap('스티커 이유 (콤마로 구분)', '<input class="inp" data-field="stickerReasons" value="' + esc((state.sticker.reasons || []).join(', ')) + '" placeholder="루틴 완료, 독서, 심부름">') +
       '</div>' +
-      '<div class="ep-sub">' +
-        '<h3>🧩 섹션 이름·순서</h3>' +
-        '<div class="sec-order">' + secOrderHtml() + '</div>' +
-        '<p class="ep-hint" style="margin-top:7px">이름을 고치면 카드 안 제목도 바로 바뀌고, ⬆️ ⬇️ 로 순서도 바꿀 수 있어요. (카드 제목을 직접 눌러 고쳐도 돼요)</p>' +
+      '<div class="ep-sub diy-editor">' +
+        '<h3>🧩 섹션 · 블록 조립 (DIY)</h3>' +
+        '<p class="ep-hint">카드를 만들고, 그 안에 기능 블록을 넣어 우리 집에 맞게 바꿔 보세요.</p>' +
+        diyEditorHtml() +
+        '<button class="ghost-btn diy-add-sec" data-act="diy-sec-add" style="margin-top:9px">＋ 새 섹션 만들기</button>' +
       '</div>' +
       '<div class="ep-sub">' +
         '<h3>📚 문제지 목록</h3>' +
@@ -5952,14 +6386,17 @@
   function openShop(tab) {
     shopUi.tab = tab || shopUi.tab || 'pet';
     var m = document.getElementById('shopModal');
-    renderShop();
     if (m) m.hidden = false;
+    renderShop();
     raiseModal('shopModal');
     lockScroll();
   }
   function closeShop() {
     var m = document.getElementById('shopModal');
     if (m) m.hidden = true;
+    /* 닫으면 상점 목록·미리보기 그림을 비워요 (숨은 방/아바타 그림이 남지 않게) */
+    var b = document.getElementById('shopBody');
+    if (b) b.innerHTML = '';
     if (isOnlyModal('shopModal')) unlockScroll();
   }
 
@@ -6039,9 +6476,27 @@
     return h;
   }
 
+  /* 넓은 가로 화면의 상점 왼쪽 — 지금 고른 탭에 맞는 방/아바타를 바로 보여 줘요 */
+  function shopPreviewHtml() {
+    var p = prof();
+    var isAv = (shopUi.tab === 'avatar');
+    var h = '<div class="shop-prev" id="shopPreview">';
+    h += '<div class="shop-prev-head">' + (isAv ? '👕 나의 아바타' : '🏡 마이 룸') + '</div>';
+    if (isAv) {
+      h += '<div class="shop-prev-stage av" id="shopAvatarPreview">' + avatarSvg(p.avatar) + '</div>';
+    } else {
+      h += '<div class="shop-prev-stage room" id="shopRoomPreview"><div class="room-wrap">' + roomSceneHtml(false) + '</div></div>';
+    }
+    h += '<div class="shop-prev-foot"></div>';
+    h += '<p class="shop-prev-hint">' + (isAv ? '산 옷은 바로 입혀지고, 여기서 미리 보여요.' : '가구·벽지·컨셉은 산 뒤 마이룸에서 꾸며요.') + '</p>';
+    h += '</div>';
+    return h;
+  }
+
   function shopHtml() {
     var p = prof();
-    var h = '<div class="shop-top">' +
+    var h = '<div class="shop-split"><aside class="shop-left">' + shopPreviewHtml() + '</aside><div class="shop-right">';
+    h += '<div class="shop-top">' +
       '<div class="tabs shop-tabs">' +
         '<button type="button" class="tab' + (shopUi.tab === 'pet' ? ' on' : '') + '" data-act="shop-tab" data-tab="pet">🐾 펫 케어</button>' +
         '<button type="button" class="tab' + (shopUi.tab === 'room' ? ' on' : '') + '" data-act="shop-tab" data-tab="room">🏠 방 꾸미기</button>' +
@@ -6073,12 +6528,33 @@
     }
 
     if (shopUi.admin && can('edit')) h += shopAdminHtml();
+    h += '</div></div>';
     return h;
   }
 
   function renderShop() {
     var b = document.getElementById('shopBody');
-    if (b) b.innerHTML = shopHtml();
+    if (!b) return;
+    var m = document.getElementById('shopModal');
+    if (m && m.hidden) { b.innerHTML = ''; return; }   /* 닫혀 있으면 그리지 않아요 */
+    b.innerHTML = shopHtml();
+    placeShopTopTools();
+  }
+
+  /* 코인 잔액·⚙️ 상점 관리 버튼은 한 벌만 두고, 넓은 가로 화면에서는 왼쪽 미리보기 아래로 옮겨요 */
+  function placeShopTopTools() {
+    var body = document.getElementById('shopBody');
+    if (!body) return;
+    var top = body.querySelector('.shop-top');
+    var foot = body.querySelector('.shop-prev-foot');
+    if (!top) return;
+    var wide = false;
+    try { wide = window.matchMedia('(min-width:768px) and (orientation:landscape)').matches; } catch (e) { wide = false; }
+    var coin = top.querySelector('.shop-coin');
+    var admin = top.querySelector('[data-act="shop-admin"]');
+    var target = (wide && foot) ? foot : top;
+    if (coin && coin.parentNode !== target) target.appendChild(coin);
+    if (admin && admin.parentNode !== target) target.appendChild(admin);
   }
 
   function buyItem(id) {
@@ -8368,14 +8844,15 @@
   function avatarHtml() {
     var av = avatarShown();
     var p = prof();
-    /* 위(미리보기·성별·피부·코인·탭·적용 막대)는 붙박이, 아래 아이템만 스크롤해요 */
-    var h = '<div class="av-sticky">' + avTopHtml(av, p) + avTabsHtml(av) + avApplyBarHtml() + '</div>';
-    /* 아래 칸은 옷·머리 목록이거나, 💇 미용실을 열면 머리색 고르기로 바뀌어요 */
+    /* 넓은 가로 화면에서는 왼쪽 미리보기 · 오른쪽 옷장 2단, 세로 화면에서는 지금처럼 위·아래로 */
+    var h = '<div class="av-split">';
+    h += '<div class="av-col av-left"><div class="av-sticky">' + avTopHtml(av, p) + avApplyBarHtml() + '</div></div>';
+    h += '<div class="av-col av-right">' + avTabsHtml(av);
     h += '<div class="av-items">' + (avatarUi.salon ? salonHtml(av, p) : avSlotGridHtml(av, p));
     h += '<div class="care-actions">' +
       '<button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="avatar">🛒 아바타 상점</button>' +
       '<button type="button" class="ghost-btn" data-act="avatar-close">닫기</button></div>';
-    h += '</div>';
+    h += '</div></div></div>';
     return h;
   }
 
@@ -9347,13 +9824,13 @@
     return s;
   }
 
-  function roomSceneHtml() {
+  function roomSceneHtml(withId) {
     var room = prof().room;
     var fl = curFloor(room);
     var N = ROOM.N;
     var look = roomLook(fl.theme, fl.wall);
     var S = roomScale();
-    var s = '<svg id="roomScene" viewBox="' + ROOM.VB + '" class="room-svg" role="img" aria-label="2.5D 마이룸 ' + fl.n + '층">';
+    var s = '<svg' + (withId === false ? '' : ' id="roomScene"') + ' viewBox="' + ROOM.VB + '" class="room-svg" role="img" aria-label="2.5D 마이룸 ' + fl.n + '층">';
 
     s += '<defs>';
     s += '<linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + lighten(look.wall, .16) + '"/><stop offset="1" stop-color="' + look.wall + '"/></linearGradient>';
@@ -9698,8 +10175,16 @@
   }
 
   /* 위에 고정되는 부분: 층 바 + 2.5D 방 그림 */
+  function roomTopActsHtml() {
+    return '<div class="room-top-acts" role="group" aria-label="마이룸 바로가기">' +
+      '<button type="button" class="room-top-btn" data-act="avatar-open">👕 아바타</button>' +
+      '<button type="button" class="room-top-btn" data-act="pethome-open">🥚 내 펫</button>' +
+      '<button type="button" class="room-top-btn" data-act="shop-open">🛒 상점</button>' +
+      '</div>';
+  }
+
   function roomStageHtml() {
-    var h = roomFloorBarHtml();
+    var h = roomTopActsHtml() + roomFloorBarHtml();
     h += '<div class="room-wrap">' + roomSceneHtml() + '</div>';
     return h;
   }
@@ -10479,8 +10964,13 @@
   }
 
   function renderRoutineTargets() {
-    var box = document.getElementById('routineTargets');
+    eachBlockOfType('routine', function (root, blk) { renderRoutineTargetsForBlock(root, blk); });
+  }
+
+  function renderRoutineTargetsForBlock(root, blk) {
+    var box = bpart(root, 'targets');
     if (!box) return;
+    var groupId = blk.group || '';
     var ck = checksFor(currentKey);
     var now = nowMinuteFloat();
     var dow = keyDayIndex(currentKey);
@@ -10491,6 +10981,7 @@
     var html = '';
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
+      if (groupId && cat.id !== groupId) continue;
       if (!hhmmValid(cat.targetTime)) continue;
       if (!activeDay(cat, dow)) continue;
       var target = hhmmMinutes(cat.targetTime);
@@ -10559,6 +11050,7 @@
     if (nowMs - lastTargetRender < (inWindow ? 15000 : 60000)) return;
     lastTargetRender = nowMs;
     renderRoutineTargets();
+    renderTargetBars();
   }
 
 
@@ -10840,12 +11332,15 @@
   function renderAll() {
     renderHeader();
     renderWeather();
+    renderSections();
     renderSectionTitles();
     renderRoutine();
     renderStickers();
     renderPet();
     renderTodayAcademy();
     renderWeek();
+    renderTargetBars();
+    renderNoticeBlocks();
     renderEditPanel();
     applyLayoutOrder();
   }
@@ -10861,11 +11356,14 @@
       else btn.classList.remove('on');
     }
     renderEditPanel();
+    renderSections();
     renderSectionTitles();
     renderRoutine();
     renderWeek();
     renderStickers();
     renderTodayAcademy();
+    renderTargetBars();
+    renderNoticeBlocks();
     updateOverall(true);
   }
 
@@ -11760,6 +12258,7 @@
     var granted = 0;
     for (var i = 0; i < n; i++) {
       if (st.stickers.length >= st.slots) {
+        /* 앞의 판이 다 찾으면 기록만 남기고 조용히 새 판으로 이어 붙여요 */
         st.celebrated = true;
         state.boardLog.push({ d: dateKey(), t: Date.now(), slots: st.slots, goal: st.goal || '' });
         st.stickers = [];
@@ -11780,8 +12279,11 @@
     confetti(Math.min(40, 10 + granted * 4), document.getElementById('stickerBoard'));
     showToast('⭐ 칭찬 스티커 ' + granted + '개! ' + coinSvg() + ' +' + fmtNum(granted * COIN_STICKER), true);
     if (st.stickers.length >= st.slots) {
+      /* 방금 채운 판도 바로 새 판으로 (자동 리프레시) */
       st.celebrated = true;
-      saveState();
+      window.setTimeout(function () {
+        try { completeStickerBoard(); } catch (e) { /* 무시 */ }
+      }, 260);
     }
     return granted;
   }
@@ -12069,129 +12571,602 @@
     if (isOnlyModal('winModal')) unlockScroll();
   }
 
-  /* ---- 섹션 순서 ---- */
-  function applyLayoutOrder() {
-    var order = (state.layoutOrder && state.layoutOrder.length) ? state.layoutOrder.slice(0) : SEC_IDS.slice(0);
-    for (var k = 0; k < SEC_IDS.length; k++) if (order.indexOf(SEC_IDS[k]) < 0) order.push(SEC_IDS[k]);
-    var wide = window.innerWidth >= 720;
-
-    /* 720px부터는 '오늘의 일정'과 '칭찬 스티커'를 순서와 상관없이 같은 줄에 반반 놓아요.
-       (보호자가 두 섹션 사이에 다른 섹션을 두었어도 나란히 붙여 줍니다) */
-    var pairIds = [];
-    if (wide) {
-      var ai = order.indexOf('academy'), si = order.indexOf('sticker');
-      if (ai >= 0 && si >= 0) pairIds = (ai < si) ? ['academy', 'sticker'] : ['sticker', 'academy'];
+  /* ============ DIY 섹션 · 블록 그리기 ============ */
+  function secList() {
+    if (!state.settings) state.settings = {};
+    var list = state.settings.dashboardSections;
+    if (Object.prototype.toString.call(list) !== '[object Array]' || !list.length) {
+      state.settings.dashboardSections = defaultSections();
     }
+    return state.settings.dashboardSections;
+  }
 
-    var rows = [];
-    var used = {};
-    for (var i = 0; i < order.length; i++) {
-      var id = order[i];
-      if (used[id]) continue;
-      if (pairIds.length && (id === pairIds[0] || id === pairIds[1])) {
-        used[pairIds[0]] = 1; used[pairIds[1]] = 1;
-        rows.push([pairIds[0], pairIds[1]]);
-        continue;
+  function findSec(id) {
+    var list = secList();
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+
+  function findBlk(bid) {
+    var list = secList();
+    for (var i = 0; i < list.length; i++) {
+      var blocks = list[i].blocks || [];
+      for (var k = 0; k < blocks.length; k++) {
+        if (blocks[k].id === bid) return { sec: list[i], secIdx: i, blk: blocks[k], blkIdx: k };
       }
-      used[id] = 1;
-      rows.push([id]);
     }
+    return null;
+  }
 
-    var r = 1;
-    for (var ri = 0; ri < rows.length; ri++) {
-      var list = rows[ri];
-      for (var ci = 0; ci < list.length; ci++) {
-        var el = document.getElementById(SEC_EL[list[ci]]);
-        if (!el) continue;
-        el.style.order = '';
-        el.style.gridRow = String(r);
-        if (list.length > 1) {
-          el.style.gridColumn = String(ci + 1);
-          el.classList.add('sec-pair');
-        } else {
-          el.style.gridColumn = '1 / -1';
-          el.classList.remove('sec-pair');
-        }
-      }
-      r++;
+  function catTitleOf(id) {
+    var c = findCat(id);
+    return c ? (c.emoji ? c.emoji + ' ' : '') + (c.title || '루틴') : '';
+  }
+
+  function blockLabelOf(blk) {
+    var base = (BLOCK_ICON[blk.type] || '🧩') + ' ' + (BLOCK_LABEL[blk.type] || blk.type);
+    if ((blk.type === 'routine' || blk.type === 'target_bar') && blk.group) {
+      var nm = catTitleOf(blk.group);
+      if (nm) base += ' · ' + nm;
+    }
+    if (blk.type === 'notice_board' && blk.title) base += ' · ' + blk.title;
+    return base;
+  }
+
+  /* ---- 섹션/블록 설정 바꾸기 ---- */
+  function afterSectionsChanged(opt) {
+    syncSectionMirrors(state);
+    saveState();
+    renderSections();
+    renderEditPanel();
+    if (opt && opt.focusSel) {
+      var el = document.querySelector(opt.focusSel);
+      if (el) { try { el.focus(); if (el.select) el.select(); } catch (e) { /* 무시 */ } }
     }
   }
 
   function moveSection(id, dir) {
     if (!can('edit')) return;
-    var order = (state.layoutOrder || SEC_IDS).slice(0);
-    var idx = order.indexOf(id);
+    var list = secList();
+    var idx = -1;
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) idx = i;
     if (idx < 0) return;
     var to = idx + dir;
-    if (to < 0 || to >= order.length) return;
-    order.splice(idx, 1);
-    order.splice(to, 0, id);
-    state.layoutOrder = order;
+    if (to < 0 || to >= list.length) return;
+    var moved = list.splice(idx, 1)[0];
+    list.splice(to, 0, moved);
+    afterSectionsChanged();
+  }
+
+  function addSection() {
+    if (!can('edit')) return;
+    var list = secList();
+    if (list.length >= SEC_MAX) { showToast('섹션은 ' + SEC_MAX + '개까지 만들 수 있어요.'); return; }
+    var id = 'sec-' + uid('');
+    list.push({
+      id: id, base: '', emoji: '🧩', title: '새 섹션', width: 'half', hidden: false,
+      blocks: [{ id: uid('blk'), type: 'notice_board', group: '', title: '오늘의 한마디', emoji: '💬', text: '' }]
+    });
+    afterSectionsChanged({ focusSel: 'input[data-field="diySecTitle"][data-sec="' + id + '"]' });
+    showToast('새 섹션을 만들었어요. 블록을 넣어 꾸며 보세요!');
+  }
+
+  function deleteSection(id) {
+    if (!can('edit')) return;
+    var sec = findSec(id);
+    if (!sec) return;
+    if (sec.base) { showToast('기본 섹션은 지우지 않고 숨길 수 있어요.'); return; }
+    if (!window.confirm('"' + (sec.title || '섹션') + '" 섹션을 지울까요?\n안에 넣은 블록도 함께 사라져요. (체크·스티커 기록은 그대로예요)')) return;
+    var list = secList();
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) { list.splice(i, 1); break; }
+    afterSectionsChanged();
+  }
+
+  function toggleSectionHidden(id) {
+    if (!can('edit')) return;
+    var sec = findSec(id);
+    if (!sec) return;
+    sec.hidden = !sec.hidden;
+    afterSectionsChanged();
+  }
+
+  function setSectionWidth(id, w) {
+    if (!can('edit')) return;
+    var sec = findSec(id);
+    if (!sec) return;
+    sec.width = (w === 'full') ? 'full' : 'half';
+    afterSectionsChanged();
+  }
+
+  function setSectionEmoji(id, v) {
+    if (!can('edit')) return;
+    var sec = findSec(id);
+    if (!sec) return;
+    sec.emoji = String(v == null ? '' : v).trim().slice(0, 4) || '🧩';
+    syncSectionMirrors(state);
     saveState();
-    applyLayoutOrder();
-    renderEditPanel();
-  }
-
-  /* ---- 섹션 이름 ---- */
-  function secTitleOf(id) {
-    var t = (state.settings && state.settings.sectionTitles) ? state.settings.sectionTitles[id] : '';
-    return (typeof t === 'string' && t.trim()) ? t.trim() : (SEC_NAMES[id] || id);
-  }
-
-  function secTitleInputHtml(id) {
-    return '<input class="inp title-inp sec-title-inp" data-field="secTitle" data-sec="' + esc(id) +
-      '" value="' + esc(secTitleOf(id)) + '" maxlength="16" placeholder="' + esc(SEC_NAMES[id] || '') +
-      '" aria-label="' + esc(SEC_NAMES[id] || id) + ' 섹션 이름">';
-  }
-
-  function renderSectionTitles() {
-    var editing = !!(ui.editing && can('edit'));
-    for (var i = 0; i < SEC_IDS.length; i++) {
-      var id = SEC_IDS[i];
-      var el = document.getElementById(SEC_TITLE_EL[id]);
-      if (!el) continue;
-      if (editing) el.innerHTML = secTitleInputHtml(id);
-      else el.textContent = secTitleOf(id);
-    }
-  }
-
-  function syncSectionTitle(id) {
-    var v = secTitleOf(id);
-    var el = document.getElementById(SEC_TITLE_EL[id]);
-    if (el) {
-      var inner = el.querySelector('input');
-      if (inner) { if (inner !== document.activeElement) inner.value = v; }
-      else el.textContent = v;
-    }
-    var nodes = document.querySelectorAll('[data-field="secTitle"][data-sec="' + id + '"]');
-    for (var i = 0; i < nodes.length; i++) {
-      if (nodes[i] !== document.activeElement) nodes[i].value = v;
-    }
+    syncSectionTitleNode(sec);
+    syncSecInputs(sec);
   }
 
   function setSectionTitle(id, value) {
-    if (SEC_IDS.indexOf(id) < 0) return;
+    if (!can('edit')) return;
+    var sec = findSec(id);
+    if (!sec) return;
     var v = String(value == null ? '' : value).replace(/\s+/g, ' ').trim().slice(0, 16);
-    if (!state.settings.sectionTitles) state.settings.sectionTitles = {};
-    if (v) state.settings.sectionTitles[id] = v;
-    else delete state.settings.sectionTitles[id];
+    sec.title = v || (sec.base ? SEC_NAMES[sec.base] : '새 섹션');
+    syncSectionMirrors(state);
     saveState();
-    syncSectionTitle(id);
+    syncSectionTitleNode(sec);
+    syncSecInputs(sec);
   }
 
-  function secOrderHtml() {
-    var order = state.layoutOrder || SEC_IDS;
-    var h = '';
-    for (var i = 0; i < order.length; i++) {
-      var id = order[i];
-      h += '<div class="sec-order-row" data-sec="' + esc(id) + '"><span class="so-name">' + (i + 1) + '.</span>' +
-        '<input class="inp inp-sm so-title" data-field="secTitle" data-sec="' + esc(id) + '" value="' + esc(secTitleOf(id)) +
-          '" maxlength="16" placeholder="' + esc(SEC_NAMES[id] || '') + '" aria-label="' + esc(SEC_NAMES[id] || id) + ' 섹션 이름">' +
-        '<button type="button" class="so-btn" data-act="sec-up" data-sec="' + esc(id) + '"' + (i === 0 ? ' disabled' : '') + ' aria-label="위로">▲</button>' +
-        '<button type="button" class="so-btn" data-act="sec-down" data-sec="' + esc(id) + '"' + (i === order.length - 1 ? ' disabled' : '') + ' aria-label="아래로">▼</button>' +
-        '</div>';
+  /* 제목·아이콘 입력칸(카드 안·편집 패널)을 서로 맞춰 줘요 — 입력 중인 칸은 건드리지 않습니다 */
+  function syncSecInputs(sec) {
+    var fields = [['secTitle', sec.title || ''], ['diySecTitle', sec.title || '']];
+    for (var i = 0; i < fields.length; i++) {
+      var nodes = document.querySelectorAll('[data-field="' + fields[i][0] + '"][data-sec="' + sec.id + '"]');
+      for (var k = 0; k < nodes.length; k++) {
+        if (nodes[k] !== document.activeElement) nodes[k].value = fields[i][1];
+      }
     }
+    var emos = document.querySelectorAll('[data-field="secEmoji"][data-sec="' + sec.id + '"], [data-field="diySecEmoji"][data-sec="' + sec.id + '"]');
+    for (var j = 0; j < emos.length; j++) {
+      if (emos[j] !== document.activeElement) emos[j].value = sec.emoji || '';
+    }
+    var hideBtns = document.querySelectorAll('[data-act="diy-sec-hide"][data-sec="' + sec.id + '"]');
+    for (var b = 0; b < hideBtns.length; b++) {
+      hideBtns[b].setAttribute('aria-pressed', sec.hidden ? 'true' : 'false');
+      hideBtns[b].classList.toggle('on', !!sec.hidden);
+    }
+  }
+
+  /* ---- 블록 넣기/옮기기/빼기 ---- */
+  function addBlock(secId, type) {
+    if (!can('edit')) return;
+    if (BLOCK_ORDER.indexOf(type) < 0) return;
+    var sec = findSec(secId);
+    if (!sec) return;
+    sec.blocks = sec.blocks || [];
+    if (sec.blocks.length >= BLOCK_MAX_PER_SEC) {
+      showToast('한 섹션에는 블록을 ' + BLOCK_MAX_PER_SEC + '개까지 넣을 수 있어요.');
+      return;
+    }
+    var blk = { id: uid('blk'), type: type, group: '' };
+    if (type === 'notice_board') { blk.title = '오늘의 한마디'; blk.emoji = '💬'; blk.text = ''; }
+    sec.blocks.push(blk);
+    afterSectionsChanged();
+    showToast(BLOCK_ICON[type] + ' ' + BLOCK_LABEL[type] + ' 블록을 넣었어요.');
+  }
+
+  function deleteBlock(bid) {
+    if (!can('edit')) return;
+    var f = findBlk(bid);
+    if (!f) return;
+    f.sec.blocks.splice(f.blkIdx, 1);
+    afterSectionsChanged();
+  }
+
+  function moveBlock(bid, dir) {
+    if (!can('edit')) return;
+    var f = findBlk(bid);
+    if (!f) return;
+    var to = f.blkIdx + dir;
+    if (to < 0 || to >= f.sec.blocks.length) return;
+    var moved = f.sec.blocks.splice(f.blkIdx, 1)[0];
+    f.sec.blocks.splice(to, 0, moved);
+    afterSectionsChanged();
+  }
+
+  function setBlockGroup(bid, group) {
+    if (!can('edit')) return;
+    var f = findBlk(bid);
+    if (!f) return;
+    if (f.blk.type !== 'routine' && f.blk.type !== 'target_bar') return;
+    f.blk.group = (group && findCat(group)) ? group : '';
+    afterSectionsChanged();
+  }
+
+  function setNoticeField(bid, field, value) {
+    if (!can('edit')) return;
+    var f = findBlk(bid);
+    if (!f || f.blk.type !== 'notice_board') return;
+    if (field === 'title') f.blk.title = String(value || '').replace(/\s+/g, ' ').trim().slice(0, 24) || '오늘의 한마디';
+    else if (field === 'emoji') f.blk.emoji = String(value || '').trim().slice(0, 4) || '💬';
+    else if (field === 'text') f.blk.text = String(value || '').slice(0, 400);
+    saveState();
+    paintNotice(f.blk);
+  }
+
+  /* 게시판 제목·문구만 그 자리에서 바꿔요 (입력 중 포커스가 튀지 않게) */
+  function paintNotice(blk) {
+    var root = document.querySelector('[data-block="' + blk.id + '"]');
+    if (!root) return;
+    var t = root.querySelector('.nb-title');
+    if (t) t.innerHTML = '<span aria-hidden="true">' + esc(blk.emoji || '💬') + '</span> ' + esc(blk.title || '오늘의 한마디');
+    var tx = root.querySelector('.nb-text');
+    if (tx) {
+      tx.textContent = blk.text || (ui.editing ? '✏️ 쓰기를 눌러 한마디를 남겨 보세요.' : '오늘의 한마디가 아직 없어요 🌤️');
+      if (blk.text) tx.classList.remove('empty'); else tx.classList.add('empty');
+    }
+    var tag = root.querySelector('.blk-tag');
+    if (tag) tag.textContent = blockLabelOf(blk);
+  }
+
+  /* ---- 섹션 제목(편집 중이면 입력칸) ---- */
+  function secTitleOf(id) {
+    var sec = findSec(id);
+    if (sec) return sec.title || (sec.base ? SEC_NAMES[sec.base] : '섹션');
+    return SEC_NAMES[id] || id;
+  }
+
+  function sectionTitleInnerHtml(sec) {
+    if (ui.editing && can('edit')) {
+      return '<input class="inp inp-sm sec-emo-inp" data-field="secEmoji" data-sec="' + esc(sec.id) + '" value="' + esc(sec.emoji || '') +
+        '" maxlength="4" aria-label="섹션 아이콘">' +
+        '<input class="inp inp-sm sec-title-inp" data-field="secTitle" data-sec="' + esc(sec.id) + '" value="' + esc(sec.title || '') +
+        '" maxlength="16" placeholder="' + esc(sec.base ? SEC_NAMES[sec.base] : '섹션 이름') + '" aria-label="섹션 이름">';
+    }
+    return '<span class="sec-emo" aria-hidden="true">' + esc(sec.emoji || '') + '</span><span class="sec-name">' + esc(sec.title || '') + '</span>';
+  }
+
+  function syncSectionTitleNode(sec) {
+    var el = document.getElementById('secTitle-' + sec.id);
+    if (!el) return;
+    if (ui.editing && can('edit')) return;      /* 편집 중에는 입력칸을 건드리지 않아요 */
+    el.innerHTML = '<span class="sec-emo" aria-hidden="true">' + esc(sec.emoji || '') + '</span><span class="sec-name">' + esc(sec.title || '') + '</span>';
+  }
+
+  function renderSectionTitles() {
+    var list = secList();
+    for (var i = 0; i < list.length; i++) {
+      var el = document.getElementById('secTitle-' + list[i].id);
+      if (!el) continue;
+      el.innerHTML = sectionTitleInnerHtml(list[i]);
+    }
+  }
+
+  /* ---- 섹션 그리기 ---- */
+  function visibleSections() {
+    var out = [];
+    var list = secList();
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].hidden) continue;
+      out.push(list[i]);
+    }
+    return out;
+  }
+
+  function applyLayoutOrder() {
+    var box = document.getElementById('sections');
+    if (!box) return;
+    var nodes = box.querySelectorAll('.sec');
+    var wide = window.innerWidth >= 720;
+    /* 반 폭 섹션은 두 장씩 한 줄에 모아요. 사이에 전체 폭 섹션이 있어도 모아서
+       예전처럼 '오늘의 일정 + 칭찬 스티커'가 나란히 보이게 해요. */
+    var rows = [];
+    var pending = null;
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      var half = wide && el.getAttribute('data-width') !== 'full';
+      if (half) {
+        if (pending) { pending.push(el); pending = null; }
+        else { var r = [el]; rows.push(r); pending = r; }
+      } else {
+        rows.push([el]);
+      }
+    }
+    for (var ri = 0; ri < rows.length; ri++) {
+      var row = rows[ri];
+      for (var ci = 0; ci < row.length; ci++) {
+        var one = row[ci];
+        one.style.gridRow = String(ri + 1);
+        if (row.length > 1) {
+          one.style.gridColumn = String(ci + 1);
+          one.classList.add('sec-pair');
+        } else if (one.getAttribute('data-width') !== 'full' && wide) {
+          one.style.gridColumn = '1';
+          one.classList.remove('sec-pair');
+        } else {
+          one.style.gridColumn = '1 / -1';
+          one.classList.remove('sec-pair');
+        }
+      }
+    }
+  }
+
+  function sectionShellHtml(sec, idx) {
+    var cls = 'card sec ' + (SEC_CLASS[sec.base] || 'sec-custom') + ' sec-' + (sec.width === 'half' ? 'half' : 'full');
+    var domId = sec.base ? ('sec' + sec.base.charAt(0).toUpperCase() + sec.base.slice(1)) : '';
+    var h = '<section class="' + cls + '"' + (domId ? ' id="' + domId + '"' : '') +
+      ' data-sec="' + esc(sec.id) + '" data-base="' + esc(sec.base || '') + '" data-width="' + (sec.width === 'half' ? 'half' : 'full') + '"' +
+      (sec.hidden ? ' hidden' : '') + '>';
+    h += '<div class="card-head sec-head">';
+    h += '<h2 class="sec-title" id="secTitle-' + esc(sec.id) + '">' + sectionTitleInnerHtml(sec) + '</h2>';
+    h += '<div class="head-tools sec-tools">';
+    if (ui.editing && can('edit')) {
+      h += '<button type="button" class="sec-tool' + (sec.hidden ? ' on' : '') + '" data-act="diy-sec-hide" data-sec="' + esc(sec.id) +
+        '" aria-pressed="' + (sec.hidden ? 'true' : 'false') + '" title="숨기기/보이기">' + (sec.hidden ? '🙈 숨김' : '👁 보임') + '</button>';
+      h += '<button type="button" class="sec-tool" data-act="diy-sec-up" data-sec="' + esc(sec.id) + '" aria-label="위로">▲</button>';
+      h += '<button type="button" class="sec-tool" data-act="diy-sec-down" data-sec="' + esc(sec.id) + '" aria-label="아래로">▼</button>';
+      if (!sec.base) h += '<button type="button" class="sec-tool danger" data-act="diy-sec-del" data-sec="' + esc(sec.id) + '" aria-label="섹션 삭제">🗑</button>';
+    }
+    h += '</div></div>';
+    h += '<div class="sec-blocks">';
+    var blocks = sec.blocks || [];
+    if (!blocks.length) {
+      h += '<p class="blk-empty">아직 블록이 없어요.' + (ui.editing && can('edit') ? ' 편집에서 블록을 넣어 보세요.' : '') + '</p>';
+    }
+    for (var i = 0; i < blocks.length; i++) h += blockShellHtml(sec, blocks[i], i, blocks.length);
+    h += '</div>';
+    h += '</section>';
     return h;
+  }
+
+  function blockShellHtml(sec, blk, idx, total) {
+    var h = '<div class="blk blk-' + esc(blk.type) + '" data-block="' + esc(blk.id) + '" data-block-type="' + esc(blk.type) + '">';
+    if (ui.editing && can('edit')) {
+      h += '<div class="blk-tools">' +
+        '<span class="blk-tag">' + esc(blockLabelOf(blk)) + '</span>' +
+        '<button type="button" class="sec-tool" data-act="diy-blk-up" data-blk="' + esc(blk.id) + '"' + (idx === 0 ? ' disabled' : '') + ' aria-label="블록 위로">▲</button>' +
+        '<button type="button" class="sec-tool" data-act="diy-blk-down" data-blk="' + esc(blk.id) + '"' + (idx === total - 1 ? ' disabled' : '') + ' aria-label="블록 아래로">▼</button>' +
+        '<button type="button" class="sec-tool danger" data-act="diy-blk-del" data-blk="' + esc(blk.id) + '" aria-label="블록 빼기">✕</button>' +
+        '</div>';
+    } else if (total > 1) {
+      h += '<div class="blk-h">' + esc(blockLabelOf(blk)) + '</div>';
+    }
+    h += '<div class="blk-body">' + blockInnerHtml(sec, blk) + '</div>';
+    h += '</div>';
+    return h;
+  }
+
+  function blockInnerHtml(sec, blk) {
+    if (blk.type === 'routine') return routineBlockInner(blk);
+    if (blk.type === 'sticker_board') return stickerBlockInner(blk);
+    if (blk.type === 'today_schedule') return '<div id="todayBox" data-part="box"></div>';
+    if (blk.type === 'weekly_schedule') return weekBlockInner(blk);
+    if (blk.type === 'target_bar') return '<div class="rt-targets" data-part="box" hidden></div>';
+    if (blk.type === 'notice_board') return noticeBlockInner(blk);
+    return '';
+  }
+
+  function renderSections() {
+    var box = document.getElementById('sections');
+    if (!box) return;
+    state.settings.dashboardSections = normalizeSections(state);
+    var list = visibleSections();
+    computeFirstBlocks(list);
+    var h = '';
+    for (var i = 0; i < list.length; i++) h += sectionShellHtml(list[i], i);
+    if (!list.length) {
+      h += '<section class="card sec sec-full"><p class="blk-empty">보이는 섹션이 없어요. ✏️ 편집에서 섹션을 보이게 해 주세요.</p></section>';
+    }
+    var keepTop = window.pageYOffset || 0;
+    box.innerHTML = h;
+    applyLayoutOrder();
+    renderBlockContents();
+    try { window.scrollTo(0, keepTop); } catch (e) { /* 무시 */ }
+  }
+
+  function eachBlockOfType(type, fn) {
+    var nodes = document.querySelectorAll('[data-block-type="' + type + '"]');
+    for (var i = 0; i < nodes.length; i++) {
+      var bid = nodes[i].getAttribute('data-block');
+      var f = findBlk(bid);
+      if (!f) continue;
+      fn(nodes[i], f.blk, i === 0);
+    }
+  }
+
+  function bpart(root, name) {
+    if (!root) return null;
+    return root.querySelector('[data-part="' + name + '"]');
+  }
+
+  function renderBlockContents() {
+    try { renderRoutine(); } catch (e) { /* 무시 */ }
+    try { renderStickers(); } catch (e) { /* 무시 */ }
+    try { renderTodayAcademy(); } catch (e) { /* 무시 */ }
+    try { renderWeek(); } catch (e) { /* 무시 */ }
+    try { renderTargetBars(); } catch (e) { /* 무시 */ }
+    try { renderNoticeBlocks(); } catch (e) { /* 무시 */ }
+    try { renderNotifyBtns(); } catch (e) { /* 무시 */ }
+  }
+
+  /* ---- 블록 골격 ---- */
+  function routineBlockInner(blk) {
+    var first = isFirstBlock(blk);
+    function id(v) { return first ? ' id="' + v + '"' : ''; }
+    var h = '<div class="rt-top routine-top">' +
+      '<div class="rt-left"><p class="rt-hint"' + id('routineHint') + ' data-part="hint">오늘 할 일을 하나씩 체크해 보자!</p></div>' +
+      '<div class="rt-right">' +
+        '<div class="rt-count"><strong' + id('overallDone') + ' data-part="done">0</strong> / <span' + id('overallTotal') + ' data-part="total">0</span> 완료</div>' +
+        '<div class="rt-percent"' + id('overallPct') + ' data-part="pct">0%</div>' +
+        '<div class="rt-bar"' + id('overallBar') + ' data-part="bar"><div class="rt-fill"' + id('overallFill') + ' data-part="fill"></div>' +
+          '<span class="rt-rocket"' + id('overallRocket') + ' data-part="rocket">🚀</span></div>' +
+        '<button class="rt-view-btn" data-act="routine-view-toggle"' + id('routineViewBtn') + ' data-part="viewBtn" aria-label="루틴 가로로 보기">↔️ 가로 보기</button>' +
+      '</div></div>' +
+      '<div class="rt-targets" data-part="targets"' + id('routineTargets') + ' hidden></div>' +
+      '<div class="rt-jump" data-part="jump"' + id('routineJump') + ' role="group" aria-label="루틴 그룹 바로가기"></div>' +
+      '<div class="routine-grid" data-part="grid"' + id('routineGrid') + ' data-view="grid"></div>' +
+      '<p class="routine-empty" data-part="empty"' + id('routineEmpty') + ' hidden>아직 루틴 그룹이 없어요. 편집(✏️)에서 그룹을 만들 수 있어요.</p>' +
+      '<div class="routine-empty day-empty" data-part="dayEmpty"' + id('routineDayEmpty') + ' hidden>' +
+        '<span>오늘 요일에는 하는 루틴이 없어요 🌤️</span>' +
+        '<button class="rt-view-btn" data-act="edit-toggle"' + id('routineDayEmptyEdit') + ' hidden>✏️ 편집에서 요일 바꾸기</button></div>' +
+      '<button class="add-item add-group" data-act="cat-add" data-part="add"' + id('routineAddBtn') + ' hidden>+ 루틴 그룹 추가</button>';
+    return h;
+  }
+
+  function stickerBlockInner(blk) {
+    var first = isFirstBlock(blk);
+    function id(v) { return first ? ' id="' + v + '"' : ''; }
+    var h = '<div class="blk-head-row">' +
+      '<span class="rt-percent"><strong' + id('stickerCount') + ' data-part="count">0</strong> / <span' + id('stickerSlots') + ' data-part="slots">10</span></span>' +
+      '<button class="pill-btn warm" data-act="sticker-new"' + id('newBoardBtn') + ' data-part="new" hidden>🎉 새 판 시작</button>' +
+      '</div>' +
+      '<p class="goal" data-part="unit"' + id('stickerUnitLine') + ' hidden></p>' +
+      '<div class="board" data-part="board"' + id('stickerBoard') + '></div>' +
+      '<div class="ledger" data-part="ledger"' + id('stickerLedger') + '></div>';
+    return h;
+  }
+
+  function weekBlockInner(blk) {
+    var first = isFirstBlock(blk);
+    function id(v) { return first ? ' id="' + v + '"' : ''; }
+    var h = '<div class="head-tools week-tools blk-week-tools">' +
+      '<button type="button" class="notify-btn" data-act="notify-toggle" data-part="notify"' + id('notifyBtn') + ' aria-pressed="false">🔔 일과표 10분 전 알림</button>' +
+      '<button type="button" class="ghost-btn tiny" data-act="notify-test" data-part="notifyTest"' + id('notifyTestBtn') + ' hidden>테스트 알림</button>' +
+      (can('edit') ? '<button type="button" class="ghost-btn tiny" data-act="target-sound-test" aria-label="목표 시간 알림 소리 미리 듣기">🎵 알림 소리</button>' : '') +
+      '</div>' +
+      '<div class="week-grid" data-part="grid"' + id('weekGrid') + '></div>';
+    return h;
+  }
+
+  function noticeBlockInner(blk) {
+    var editing = ui.editing && can('edit');
+    var open = noticeEditOpen(blk.id);
+    var h = '<div class="nb">';
+    h += '<div class="nb-head"><b class="nb-title"><span aria-hidden="true">' + esc(blk.emoji || '💬') + '</span> ' + esc(blk.title || '오늘의 한마디') + '</b>';
+    h += '<span class="nb-tools">';
+    if (can('edit')) {
+      h += '<button type="button" class="nb-edit" data-act="' + (open ? 'nb-cancel' : 'nb-edit') + '" data-blk="' + esc(blk.id) + '">' +
+        (open ? '닫기' : '✏️ 쓰기') + '</button>';
+    }
+    h += '</span></div>';
+    if (open && can('edit')) {
+      h += '<div class="nb-form">' +
+        '<div class="nb-form-row">' +
+          '<input class="inp inp-sm nb-emo" data-field="nbEmoji" data-blk="' + esc(blk.id) + '" value="' + esc(blk.emoji || '💬') + '" maxlength="4" aria-label="게시판 아이콘">' +
+          '<input class="inp inp-sm nb-title-inp" data-field="nbTitle" data-blk="' + esc(blk.id) + '" value="' + esc(blk.title || '') + '" maxlength="24" placeholder="제목" aria-label="게시판 제목">' +
+        '</div>' +
+        '<textarea class="inp nb-text-inp" data-field="nbText" data-blk="' + esc(blk.id) + '" rows="3" maxlength="400" placeholder="가족에게 남길 한마디를 적어 주세요">' + esc(blk.text || '') + '</textarea>' +
+        '<div class="nb-form-act"><button type="button" class="pill-btn" data-act="nb-save" data-blk="' + esc(blk.id) + '">저장</button></div>' +
+        '</div>';
+    } else {
+      h += blk.text ? '<p class="nb-text">' + esc(blk.text) + '</p>' : '<p class="nb-text empty">' + (editing ? '✏️ 쓰기를 눌러 한마디를 남겨 보세요.' : '오늘의 한마디가 아직 없어요 🌤️') + '</p>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  var firstBlockIds = {};
+  function computeFirstBlocks(list) {
+    var map = {};
+    for (var i = 0; i < list.length; i++) {
+      var bs = list[i].blocks || [];
+      for (var k = 0; k < bs.length; k++) {
+        if (!map[bs[k].type]) map[bs[k].type] = bs[k].id;
+      }
+    }
+    firstBlockIds = map;
+  }
+
+  function isFirstBlock(blk) {
+    if (!blk) return false;
+    if (firstBlockIds[blk.type]) return firstBlockIds[blk.type] === blk.id;
+    var nodes = document.querySelectorAll('[data-block-type="' + blk.type + '"]');
+    if (!nodes.length) return true;
+    return nodes[0].getAttribute('data-block') === blk.id;
+  }
+
+  var noticeUi = { open: '', draft: null };
+  function noticeEditOpen(bid) { return noticeUi.open === bid; }
+
+  function renderNoticeBlocks() {
+    eachBlockOfType('notice_board', function (root, blk) {
+      var body = root.querySelector('.blk-body');
+      if (!body) return;
+      var sc = body.scrollTop;
+      body.innerHTML = noticeBlockInner(blk);
+      body.scrollTop = sc;
+    });
+  }
+
+  /* 🎯 목표시간 남은 시간 바 — 고른 그룹(또는 다음 다가오는 목표) 하나만 */
+  function renderTargetBars() {
+    eachBlockOfType('target_bar', function (root, blk) {
+      var box = bpart(root, 'box');
+      if (!box) return;
+      box.innerHTML = targetBarHtml(blk);
+      box.hidden = false;
+    });
+  }
+
+  function targetPickGroup(blk) {
+    var dow = keyDayIndex(currentKey);
+    var now = nowMinuteFloat();
+    if (blk.group) {
+      var c = findCat(blk.group);
+      return (c && activeDay(c, dow)) ? c : null;
+    }
+    /* 다음 다가오는 목표: 아직 안 끝났고 목표가 가까운 순서 */
+    var best = null, bestLeft = 1e9;
+    for (var i = 0; i < state.categories.length; i++) {
+      var cat = state.categories[i];
+      if (!hhmmValid(cat.targetTime) || !activeDay(cat, dow)) continue;
+      var left = hhmmMinutes(cat.targetTime) - now;
+      var cand = { cat: cat, left: left };
+      if (left >= 0 && left < bestLeft) { bestLeft = left; best = cand; }
+    }
+    if (best) return best.cat;
+    /* 오늘 목표가 다 지났으면 가장 최근 목표를 보여 줘요 */
+    var last = null, lastLeft = -1e9;
+    for (var k = 0; k < state.categories.length; k++) {
+      var c2 = state.categories[k];
+      if (!hhmmValid(c2.targetTime) || !activeDay(c2, dow)) continue;
+      var l2 = hhmmMinutes(c2.targetTime) - now;
+      if (l2 > lastLeft) { lastLeft = l2; last = c2; }
+    }
+    return last;
+  }
+
+  function targetBarHtml(blk) {
+    var cat = targetPickGroup(blk);
+    if (!cat) {
+      return '<div class="rt-target tb-idle"><div class="rtt-head"><span class="rtt-emoji" aria-hidden="true">🎯</span>' +
+        '<span class="rtt-text">' + (blk.group ? '이 그룹은 오늘 쉬는 날이에요' : '오늘은 정한 목표 시간이 없어요') + '</span></div>' +
+        '<div class="rtt-foot"><span class="rtt-sub">편집(✏️)에서 루틴 그룹의 완료 목표 시간을 정해 주세요.</span></div></div>';
+    }
+    var ck = checksFor(currentKey);
+    var now = nowMinuteFloat();
+    var target = hhmmMinutes(cat.targetTime);
+    var total = cat.items.length, done = 0;
+    for (var i = 0; i < total; i++) if (ck[cat.items[i].id]) done++;
+    var complete = total > 0 && done === total;
+    var left = target - now;
+    var pct = complete || left <= 0 ? 100 : Math.max(0, Math.min(100, (1 - Math.min(left, TARGET_WINDOW_MIN) / TARGET_WINDOW_MIN) * 100));
+    var hot = !complete && left > 0 && left <= TARGET_WINDOW_MIN;
+    var late = !complete && left <= 0;
+    var status, big, sub;
+    if (complete) {
+      status = '✓ ' + esc(cat.title) + ' 제시간에 완료! 🎉';
+      big = '목표 달성!';
+      sub = '알이 결승선에 도착했어요 🎊';
+    } else if (left > 0) {
+      status = esc(cat.title) + ' 완료까지';
+      big = leftText(left);
+      sub = '목표 ' + hhmmLabel(cat.targetTime) + (hot ? ' · 알이 오른쪽으로 가고 있어요!' : ' · 1시간 전부터 알이 출발해요');
+    } else {
+      status = esc(cat.title) + ' 목표 시간이 지났어요! 서두르자 💪';
+      big = '목표 ' + hhmmLabel(cat.targetTime) + ' 지남';
+      sub = '목표 시간이 지났어요';
+    }
+    var who = complete ? '🎉' : (late ? '🏃' : cat.emoji);
+    var petIcon = '';
+    try { petIcon = petArt(speciesById(petState().currentEgg), petState().stage, 0); } catch (e) { petIcon = ''; }
+    var iconPct = 4 + pct * 0.92;
+    return '<div class="rt-target' + (complete ? ' done' : '') + (late ? ' late' : '') + (hot ? ' hot' : '') + '" style="--c:' + esc(cat.color) + '">' +
+      '<div class="rtt-head">' +
+        '<span class="rtt-emoji" aria-hidden="true">' + who + '</span>' +
+        '<span class="rtt-text">' + status + '</span>' +
+        '<span class="rtt-goal">목표 ' + hhmmLabel(cat.targetTime) + '</span>' +
+      '</div>' +
+      '<div class="rtt-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(pct) + '" aria-label="' + esc(cat.title) + ' 남은 시간">' +
+        '<i style="width:' + pct.toFixed(1) + '%"></i>' +
+        '<span class="rtt-pet" style="left:' + iconPct.toFixed(1) + '%">' + petIcon + '</span>' +
+      '</div>' +
+      '<div class="rtt-foot"><span class="rtt-big">' + big + '</span><span class="rtt-sub">' + sub + '</span></div>' +
+      '</div>';
   }
 
   function wbEditHtml() {
@@ -13745,6 +14720,8 @@
          act === 'cat-add' || act === 'cat-del' || act === 'cat-left' || act === 'cat-right' || act === 'cat-color' || act === 'cat-target-clear' ||
          act === 'cat-day' || act === 'cat-day-preset' || act === 'item-up' || act === 'item-down') && !can('edit')) return;
     if (act === 'reset-all' && !can('reset')) return;
+    if (act.indexOf('diy-') === 0 && !can('edit')) return;
+    if ((act === 'nb-edit' || act === 'nb-save') && !can('edit')) return;
     if ((act === 'pet-art-apply' || act === 'pet-art-reset') && !canPetArt()) return;
     if (act === 'stickers-reset-logs' && !isAdmin()) return;
 
@@ -13818,6 +14795,19 @@
     if (act === 'win-close') { closeWin(); return; }
     if (act === 'sec-up') { moveSection(el.getAttribute('data-sec'), -1); return; }
     if (act === 'sec-down') { moveSection(el.getAttribute('data-sec'), 1); return; }
+    /* ---------- DIY 섹션·블록 조립 ---------- */
+    if (act === 'diy-sec-add') { addSection(); return; }
+    if (act === 'diy-sec-del') { deleteSection(el.getAttribute('data-sec')); return; }
+    if (act === 'diy-sec-hide') { toggleSectionHidden(el.getAttribute('data-sec')); return; }
+    if (act === 'diy-sec-up') { moveSection(el.getAttribute('data-sec'), -1); return; }
+    if (act === 'diy-sec-down') { moveSection(el.getAttribute('data-sec'), 1); return; }
+    if (act === 'diy-blk-add') { addBlock(el.getAttribute('data-sec'), el.getAttribute('data-type')); return; }
+    if (act === 'diy-blk-del') { deleteBlock(el.getAttribute('data-blk')); return; }
+    if (act === 'diy-blk-up') { moveBlock(el.getAttribute('data-blk'), -1); return; }
+    if (act === 'diy-blk-down') { moveBlock(el.getAttribute('data-blk'), 1); return; }
+    if (act === 'nb-edit') { noticeUi.open = el.getAttribute('data-blk') || ''; renderNoticeBlocks(); return; }
+    if (act === 'nb-cancel') { noticeUi.open = ''; renderNoticeBlocks(); return; }
+    if (act === 'nb-save') { noticeUi.open = ''; renderNoticeBlocks(); renderEditPanel(); showToast('💬 한마디를 저장했어요.'); return; }
     if (act === 'routine-view-toggle') { toggleRoutineView(); return; }
     if (act === 'routine-jump') { jumpToCategory(el.getAttribute('data-cat')); return; }
     if (act === 'cat-add') { addCategory(); return; }
@@ -14172,6 +15162,21 @@
       setSectionTitle(el.getAttribute('data-sec'), el.value);
       return;
     }
+    if (field === 'secEmoji' || field === 'diySecEmoji') {
+      setSectionEmoji(el.getAttribute('data-sec'), el.value);
+      return;
+    }
+    if (field === 'diySecTitle') {
+      setSectionTitle(el.getAttribute('data-sec'), el.value);
+      return;
+    }
+    if (field === 'diyBlkGroup') {
+      setBlockGroup(el.getAttribute('data-blk'), el.value);
+      return;
+    }
+    if (field === 'diyNbTitle' || field === 'nbTitle') { setNoticeField(el.getAttribute('data-blk'), 'title', el.value); return; }
+    if (field === 'diyNbEmoji' || field === 'nbEmoji') { setNoticeField(el.getAttribute('data-blk'), 'emoji', el.value); return; }
+    if (field === 'diyNbText' || field === 'nbText') { setNoticeField(el.getAttribute('data-blk'), 'text', el.value); return; }
     if (field === 'catTitle') {
       var c = findCat(el.getAttribute('data-cat'));
       if (c) {
@@ -14280,6 +15285,18 @@
         saveState();
         renderRoutine();
       }
+      return;
+    }
+    if (field === 'diySecWidth') {
+      setSectionWidth(el.getAttribute('data-sec'), el.value);
+      return;
+    }
+    if (field === 'diyBlkGroup') {
+      setBlockGroup(el.getAttribute('data-blk'), el.value);
+      return;
+    }
+    if (field === 'diySecEmoji' || field === 'secEmoji') {
+      setSectionEmoji(el.getAttribute('data-sec'), el.value);
       return;
     }
     if (field === 'evTimeStart' || field === 'evTimeEnd') { setEventTime(el); return; }
