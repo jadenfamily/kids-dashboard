@@ -3819,15 +3819,19 @@
     if (Date.now() - weatherCloudAt < 15 * 60 * 1000) return;
     weatherCloudAt = Date.now();
     var info = weatherInfo(d.code);
+    var c = cityById(cityId || state.settings.city);
     try {
+      /* 예전부터 쓰던 파일 모양(city 이름·lat·lon)도 그대로 지켜서, 1시간 자동 업데이트와 같이 써요 */
       ghPut(WEATHER_CLOUD_PATH, {
         version: 1,
+        city: c.name || state.settings.city,
+        cityId: c.id || state.settings.city,
+        lat: c.lat, lon: c.lon,
         temp: d.temp, hi: d.max, lo: d.min,
         code: d.code,
         desc: info.label, icon: info.icon,
         feels: (d.feels == null ? null : d.feels),
         isDay: (d.isDay == null ? 1 : d.isDay),
-        city: cityId || state.settings.city,
         updatedAt: new Date().toISOString()
       }, '오늘 날씨 저장');
     } catch (e) { /* 저장 못 해도 괜찮아요 */ }
@@ -3841,7 +3845,9 @@
       if (!res || !res.ok || !res.data) return false;
       var w = res.data;
       if (!w || (w.code == null && w.temp == null)) return false;
-      if (w.city && w.city !== state.settings.city) return false;
+      /* city는 이름('서울')로도, id('seoul')로도 저장될 수 있어요 (1시간 자동 업데이트와 모양이 같아요) */
+      var myCity = cityById(state.settings.city);
+      if (w.city && w.city !== state.settings.city && w.city !== myCity.name) return false;
       var upd = Date.parse(w.updatedAt || '') || 0;
       if (upd && (Date.now() - upd) > 12 * 3600 * 1000) return false;   /* 너무 오래된 날씨는 안 보여요 */
       weather.data = {
