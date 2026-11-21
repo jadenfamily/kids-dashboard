@@ -1688,6 +1688,52 @@
   .pp-check{ font-size:9.5px; font-weight:900; color:#b4436c; }
   .shop-jump{ align-self:flex-start; }
 
+  /* 🥚 내 펫 — 알 뽑기 · 여러 마리 키우기 · 목표시간 달리기 펫 */
+  .pet-gacha{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:linear-gradient(135deg,#fff4de,#ffe9f2); border:2px solid #ffd9a0;
+    border-radius:18px; padding:10px 12px; margin:10px 0 4px;
+  }
+  .pet-gacha .pg-txt{ flex:1 1 140px; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .pet-gacha b{ font-size:13.5px; font-weight:900; }
+  .pet-gacha small{ font-size:11px; font-weight:800; color:#a2937f; }
+  .pet-gacha .pill-btn{ flex:0 0 auto; }
+  .pet-gacha.shop{ margin:8px 0 10px; }
+  .pet-mine-list{ display:flex; flex-direction:column; gap:7px; }
+  .pet-mine{
+    display:flex; align-items:center; gap:9px;
+    background:#fff; border:2px solid #f3e7d6; border-radius:16px; padding:8px 10px;
+  }
+  .pet-mine.now{ border-color:#ffc46b; background:#fff8e6; }
+  .pm-art{ flex:0 0 auto; width:46px; height:46px; border-radius:14px; background:#fffaf0; display:grid; place-items:center; overflow:hidden; }
+  .pm-art svg, .pm-art img{ width:40px; height:40px; display:block; }
+  .pm-meta{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .pm-name{ display:flex; align-items:center; gap:5px; flex-wrap:wrap; font-size:13px; font-weight:900; }
+  .pm-name .pm-no{ font-size:9.5px; font-weight:900; color:#a2937f; }
+  .pm-sub{ font-size:10.5px; font-weight:800; color:#8a93a8; }
+  .pm-gauge{ height:7px; border-radius:99px; background:#f1e6d6; overflow:hidden; }
+  .pm-gauge i{ display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#ffd93d,var(--c,#ff9f1c)); }
+  .pet-mine .pill-btn{ flex:0 0 auto; min-height:32px; padding:0 10px; font-size:11.5px; white-space:nowrap; }
+  .pm-now{ flex:0 0 auto; font-size:10.5px; font-weight:900; color:#b4436c; background:#ffe7f0; border-radius:999px; padding:5px 9px; white-space:nowrap; }
+  .runner-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); gap:7px; }
+  .runner-card{
+    display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 5px;
+    background:#fff; border:2px solid #f3e7d6; border-radius:14px;
+    font-family:inherit; color:var(--ink); cursor:pointer; touch-action:manipulation;
+  }
+  .runner-card.on{ border-color:#ffc46b; background:#fff8e6; box-shadow:0 3px 10px rgba(255,159,28,.18); }
+  .runner-card .rc-art{ width:44px; height:44px; display:grid; place-items:center; }
+  .runner-card .rc-art svg, .runner-card .rc-art img{ width:100%; height:100%; display:block; }
+  .runner-card b{ font-size:11px; font-weight:900; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .runner-card small{ font-size:9.5px; font-weight:800; color:#a2937f; }
+  @media (max-width:420px){
+    .pet-mine{ gap:7px; padding:7px 8px; }
+    .pm-art{ width:40px; height:40px; }
+    .pm-art svg, .pm-art img{ width:35px; height:35px; }
+    .pet-mine .pill-btn{ padding:0 8px; font-size:11px; }
+    .runner-grid{ grid-template-columns:repeat(auto-fill,minmax(74px,1fr)); }
+  }
+
   /* 마이룸: 층 · 컨셉 · 넓히기 · 벽 장식 */
   .floor-bar{ flex:0 0 auto; display:flex; align-items:stretch; gap:6px; overflow-x:auto; padding:2px 2px 5px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
   .floor-bar::-webkit-scrollbar{ display:none; }
@@ -2378,6 +2424,7 @@
     </div>
     <div class="hist-body" id="petHomeBody">
       <section class="petbar in-room" id="petBar" aria-label="오늘의 친구 (펫 키우기)"></section>
+      <div id="petHomeExtra"></div>
       <p class="lf-note">먹이를 주면 EXP가 올라요. 100 EXP마다 부화·진화하고, 다 자란 친구는 마이룸에서 함께 놀 수 있어요.</p>
     </div>
   </div>
@@ -4230,7 +4277,7 @@
 
     if (on) {
       var gotCoin = awardCheckCoins(itemId);
-      if (gotCoin) showToast(coinSvg() + ' +' + gotCoin + ' 코인!', true);
+      if (gotCoin.coin && gotCoin.first) showToast(coinSvg() + ' +' + gotCoin.coin + ' 코인!', true);
       var gcat = findCat(catId);
       if (gcat && gcat.items.length) {
         var allDone = true;
@@ -5593,6 +5640,7 @@
   var COIN_GROUP = 20;      /* 루틴 그룹 완료 보너스 */
   var COIN_STICKER = 10;    /* 칭찬 스티커 */
   var COIN_START = 120;     /* 새 계정 시작 코인 */
+  var COIN_MAX = 999999999;  /* 코인 상한 — 사실상 무제한 (입력·잔액 모두 여기까지만 잘라요) */
   var HATCH_MS = 24 * 60 * 60 * 1000;  /* 새 알 기본 부화 시간 24시간 */
   var EXP_MAX = 100;        /* 단계마다 필요한 경험치 */
 
@@ -5845,10 +5893,15 @@
       clearedAt: 0,   /* /home/ 초기화 시각 — 이 시각보다 오래된 로컬 기록은 버려요 */
       coins: COIN_START,
       pet: {
-        currentEgg: 'normal', stage: 0, exp: 0,
-        hatchAt: Date.now() + HATCH_MS, hatchedAt: 0,
+        id: petNewId(),
+        currentEgg: 'normal', speciesId: 'normal', stage: 0, exp: 0, xp: 0,
+        hatchAt: Date.now() + HATCH_MS, hatchedAt: 0, gotAt: 0,
         collection: [], art: {}
       },
+      /* 내가 가진 알·친구들 — 지금 키우는 친구(prof().pet) 말고 나머지가 여기에 담겨요 */
+      pets: [],
+      activePetId: '',
+      runnerPetId: '',   /* 목표 시간 바에서 달릴 친구 (비어 있으면 지금 키우는 친구) */
       bag: {},
       owned: {
         room_bed: 1, room_stool: 1, room_rug: 1, wall_cream: 1,
@@ -5890,7 +5943,7 @@
     var out = {
       v: 1,
       clearedAt: Number(p.clearedAt) || 0,
-      coins: (p.coins == null) ? d.coins : Math.max(0, Math.min(999999, parseInt(p.coins, 10) || 0)),
+      coins: (p.coins == null) ? d.coins : Math.max(0, Math.min(COIN_MAX, parseInt(p.coins, 10) || 0)),
       pet: d.pet,
       bag: {},
       owned: {},
@@ -5945,7 +5998,27 @@
       }
     }
     pet.art = art;
+    /* 친구 한 마리마다 자기 id·종족·단계·경험치를 가지고 있어요 (여러 마리 키우기) */
+    pet.id = (typeof rp.id === 'string' && rp.id) ? rp.id.slice(0, 40) : petNewId();
+    pet.speciesId = pet.currentEgg;
+    pet.xp = pet.exp;
+    pet.gotAt = Number(rp.gotAt) || 0;
     out.pet = pet;
+
+    /* 내 펫 목록 — 지금 키우는 친구(out.pet)는 목록에서 빼고 나머지만 담아요 */
+    var petList = [];
+    var rawPets = (Object.prototype.toString.call(p.pets) === '[object Array]') ? p.pets : [];
+    for (var pi = 0; pi < rawPets.length && petList.length < 80; pi++) {
+      var onePet = petCleanInstance(rawPets[pi]);
+      if (!onePet || onePet.id === pet.id) continue;
+      var dupPet = false;
+      for (var pj = 0; pj < petList.length; pj++) if (petList[pj].id === onePet.id) dupPet = true;
+      if (dupPet) continue;
+      petList.push(onePet);
+    }
+    out.pets = petList;
+    out.activePetId = pet.id;
+    out.runnerPetId = (typeof p.runnerPetId === 'string') ? p.runnerPetId : '';
 
     /* ---- 가방(먹이·부화권) ---- */
     if (p.bag && typeof p.bag === 'object') {
@@ -6108,10 +6181,10 @@
       an.push({
         id: (typeof nn.id === 'string' && nn.id) ? nn.id : ('al' + ani),
         at: Number(nn.at) || 0,
-        amount: Math.max(-999999, Math.min(999999, amt)),
+        amount: Math.max(-COIN_MAX, Math.min(COIN_MAX, amt)),
         mode: md,
-        before: isNaN(bf) ? 0 : Math.max(0, Math.min(999999, bf)),
-        after: isNaN(af) ? 0 : Math.max(0, Math.min(999999, af)),
+        before: isNaN(bf) ? 0 : Math.max(0, Math.min(COIN_MAX, bf)),
+        after: isNaN(af) ? 0 : Math.max(0, Math.min(COIN_MAX, af)),
         reason: String(nn.reason == null ? '' : nn.reason).slice(0, 60),
         from: String(nn.from == null ? '' : nn.from).slice(0, 40),
         fromName: String(nn.fromName == null ? '' : nn.fromName).slice(0, 20),
@@ -6177,7 +6250,7 @@
   function coinAdd(n) {
     if (!n) return;
     var p = prof();
-    p.coins = Math.max(0, Math.min(999999, p.coins + n));
+    p.coins = Math.max(0, Math.min(COIN_MAX, p.coins + n));
     p.updatedAt = new Date().toISOString();
     renderCoinBadge(n);
   }
@@ -6203,6 +6276,9 @@
     if (sc) sc.innerHTML = coinSvg() + ' <b>' + fmtNum(prof().coins) + '</b>';
   }
 
+  /* 오늘 처음 체크한 항목인지(first)를 같이 돌려줘요.
+     코인은 풀었다 다시 체크해도 잔액이 정확히 돌아오지만, 안내 말풍선(+10 코인!)은
+     처음 체크할 때만 띄워요. 두 번째부터 또 뜨면 코인을 또 받은 줄 알 수 있으니까요. */
   function awardCheckCoins(itemId) {
     var a = prof().award;
     if (!a.refunded || typeof a.refunded !== 'object') a.refunded = {};
@@ -6212,13 +6288,13 @@
       if (a.refunded[itemId]) {
         delete a.refunded[itemId];
         coinAdd(COIN_CHECK);
-        return COIN_CHECK;
+        return { coin: COIN_CHECK, first: false };
       }
-      return 0;
+      return { coin: 0, first: false };
     }
     a.checks[itemId] = 1;
     coinAdd(COIN_CHECK);
-    return COIN_CHECK;
+    return { coin: COIN_CHECK, first: true };
   }
   function revokeCheckCoins(itemId) {
     var a = prof().award;
@@ -6568,7 +6644,7 @@
         '<span class="ar-icon" style="--ic:' + esc(it.color || '#ffd9a0') + '">' + (it.icon || '🎁') + '</span>' +
         '<span class="ar-name">' + esc(it.name) +
           '<small>' + esc({ pet: '펫 케어', room: '가구', wall: '벽지', decor: '벽 장식', theme: '층 컨셉', avatar: '아바타' }[it.cat] || it.cat) + '</small></span>' +
-        '<label class="ar-price">' + coinSvg() + '<input type="number" min="0" max="9999" step="1" value="' + (parseInt(it.price, 10) || 0) + '" data-field="shopPrice" data-id="' + esc(it.id) + '"></label>' +
+        '<label class="ar-price">' + coinSvg() + '<input type="number" min="0" step="1" value="' + (parseInt(it.price, 10) || 0) + '" data-field="shopPrice" data-id="' + esc(it.id) + '"></label>' +
         '<button type="button" class="ghost-btn tiny" data-act="shop-hide" data-id="' + esc(it.id) + '">' + (it.hidden ? '보이기' : '숨기기') + '</button>' +
         '<button type="button" class="ghost-btn tiny danger" data-act="shop-del" data-id="' + esc(it.id) + '">삭제</button>' +
         '</div>';
@@ -6590,7 +6666,7 @@
           '<option value="decor"' + (d.cat === 'decor' ? ' selected' : '') + '>🖼 벽 장식</option>' +
           '<option value="avatar"' + (d.cat === 'avatar' ? ' selected' : '') + '>👕 아바타</option>' +
         '</select></label>' +
-        '<label>가격(코인)<input class="inp inp-sm" type="number" min="0" max="9999" data-field="newShopPrice" value="' + esc(d.price == null ? '30' : String(d.price)) + '"></label>' +
+        '<label>가격(코인)<input class="inp inp-sm" type="number" min="0" data-field="newShopPrice" value="' + esc(d.price == null ? '30' : String(d.price)) + '"></label>' +
         '<label>효과<select class="inp inp-sm" data-field="newShopEffect">' +
           '<option value="exp"' + (d.cat === 'pet' || !d.cat ? ' selected' : '') + '>먹이 (+EXP)</option>' +
           '<option value="furni"' + (d.cat === 'room' ? ' selected' : '') + '>가구로 놓기</option>' +
@@ -6641,6 +6717,13 @@
     '</div>';
 
     h += '<p class="lf-note">루틴 체크 +' + COIN_CHECK + ' · 그룹 완료 +' + COIN_GROUP + ' · 칭찬 스티커 +' + COIN_STICKER + ' 코인! 모은 코인으로 먹이를 주고 방을 꾸며요.</p>';
+
+    if (shopUi.tab === 'pet') {
+      h += '<div class="pet-gacha shop">' +
+        '<span class="pg-txt"><b>🥚 랜덤 알 뽑기</b><small>' + fmtNum(PET_DRAW_COST) + '코인 · 18속성 54종 중 하나가 나와요</small></span>' +
+        '<button type="button" class="pill-btn warm" data-act="pet-gacha">🥚 알 뽑기 (' + fmtNum(PET_DRAW_COST) + '코인)</button>' +
+        '</div>';
+    }
 
     var cats = [];
     if (shopUi.tab === 'pet') cats = ['pet'];
@@ -6751,7 +6834,7 @@
     if (!it) return;
     var n = parseInt(price, 10);
     if (isNaN(n) || n < 0) n = 0;
-    it.price = Math.min(9999, n);
+    it.price = Math.min(COIN_MAX, n);
     state.shop.updatedAt = new Date().toISOString();
     saveState();
     if (!document.getElementById('shopModal').hidden) {
@@ -6788,7 +6871,7 @@
     if (!name) { shopUi.msg = '아이템 이름을 적어 주세요.'; renderShop(); return; }
     var cat = ['pet', 'room', 'wall', 'decor', 'avatar'].indexOf(d.cat) >= 0 ? d.cat : 'pet';
     var eff = String(d.effect || '');
-    var price = Math.max(0, Math.min(9999, parseInt(d.price, 10) || 0));
+    var price = Math.max(0, Math.min(COIN_MAX, parseInt(d.price, 10) || 0));
     var icon = String(d.icon || '🎁').slice(0, 4) || '🎁';
     var color = String(d.color || '#ffd9a0');
     var it = { id: 'custom-' + Date.now().toString(36), cat: cat, name: name.slice(0, 16), icon: icon, price: price, color: color, desc: '' };
@@ -6818,6 +6901,307 @@
     var p = prof();
     if (!p.pet || typeof p.pet !== 'object') p.pet = defaultProfile().pet;
     return p.pet;
+  }
+
+  /* ======================================================================
+     여러 마리 펫 — 알 뽑기(30코인) · 내 펫 목록 · 키울 친구 고르기
+     - prof().pet        : 지금 키우는 친구 (그림·도감·케어가 모두 이 친구를 봐요)
+     - prof().pets[]     : 아직 키우지 않는 알·친구들 (각자 stage·exp·종족을 가져요)
+     - prof().activePetId: 지금 키우는 친구의 id
+     ====================================================================== */
+  var PET_DRAW_COST = 30;      /* 랜덤 알 뽑기 1회 */
+
+  function petNewId() {
+    return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  /* currentEgg↔speciesId, exp↔xp 를 같이 맞춰 둬요 (예전 기록·새 기록 모두 읽을 수 있게) */
+  function petAlias(p) {
+    if (!p || typeof p !== 'object') return p;
+    if (typeof p.currentEgg === 'string') p.speciesId = p.currentEgg;
+    else if (typeof p.speciesId === 'string') p.currentEgg = p.speciesId;
+    p.xp = Number(p.exp) || 0;
+    return p;
+  }
+
+  /* 저장용(목록용) 친구 기록 — 자리마다 필요한 값만 담아요 (도감·그림은 지금 키우는 친구가 가져요) */
+  function petSpecific(src) {
+    var sp = String((src && (src.currentEgg || src.speciesId)) || PET_SPECIES[0].id);
+    var st = parseInt(src && src.stage, 10);
+    if (isNaN(st) || st < 0) st = 0;
+    if (st > 3) st = 3;
+    var ex = parseInt(src && (src.exp != null ? src.exp : src.xp), 10);
+    if (isNaN(ex) || ex < 0) ex = 0;
+    if (st >= 3) ex = 0;
+    if (ex > EXP_MAX) ex = EXP_MAX;
+    return {
+      id: (src && typeof src.id === 'string' && src.id) ? src.id : petNewId(),
+      currentEgg: sp, speciesId: sp,
+      stage: st, exp: ex, xp: ex,
+      hatchAt: (st === 0 && src && Number(src.hatchAt)) ? Number(src.hatchAt) : 0,
+      hatchedAt: (src && Number(src.hatchedAt)) ? Number(src.hatchedAt) : 0,
+      gotAt: (src && Number(src.gotAt)) ? Number(src.gotAt) : 0,
+      from: (src && typeof src.from === 'string') ? src.from.slice(0, 12) : ''
+    };
+  }
+
+  /* 저장된 기록 하나를 안전하게 다듬어요 (종족이 없거나 이상하면 버려요) */
+  function petCleanInstance(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    var sp = (typeof raw.currentEgg === 'string') ? raw.currentEgg : ((typeof raw.speciesId === 'string') ? raw.speciesId : '');
+    if (!sp || speciesById(sp).id !== sp) return null;
+    return petSpecific(raw);
+  }
+
+  function petEnsureList(q) {
+    q = q || prof();
+    if (!q.pet || typeof q.pet !== 'object') q.pet = defaultProfile().pet;
+    if (Object.prototype.toString.call(q.pets) !== '[object Array]') q.pets = [];
+    if (typeof q.pet.id !== 'string' || !q.pet.id) q.pet.id = petNewId();
+    var dirty = false;
+    for (var i = 0; i < q.pets.length; i++) {
+      var one = q.pets[i];
+      if (!one || typeof one !== 'object' || typeof one.id !== 'string' || !one.id ||
+          one.speciesId !== one.currentEgg || Number(one.xp) !== Number(one.exp)) { dirty = true; break; }
+    }
+    if (dirty) {
+      var out = [];
+      var seen = {};
+      seen[q.pet.id] = 1;
+      for (var j = 0; j < q.pets.length; j++) {
+        var c = petCleanInstance(q.pets[j]);
+        if (!c || seen[c.id]) continue;
+        seen[c.id] = 1;
+        out.push(c);
+      }
+      q.pets = out;
+    }
+    petAlias(q.pet);
+    q.activePetId = q.pet.id;
+    return q;
+  }
+
+  function petLeftMs(one) {
+    if (!one || Number(one.stage) !== 0 || !one.hatchAt) return 0;
+    return Math.max(0, Number(one.hatchAt) - Date.now());
+  }
+
+  /* 지금 키우는 친구를 앞에 두고, 가진 알·친구를 모두 돌려줘요 */
+  function petOwnedList(q) {
+    q = petEnsureList(q || prof());
+    var out = [];
+    var act = petSpecific(q.pet);
+    act.active = true;
+    out.push(act);
+    for (var i = 0; i < q.pets.length; i++) {
+      var one = petSpecific(q.pets[i]);
+      one.active = false;
+      out.push(one);
+    }
+    return out;
+  }
+
+  /* 예전에 키우던 친구는 목록에 그대로 두고, 고른 친구를 '지금 키우는' 자리로 올려요 */
+  function petMakeActive(q, target) {
+    var next = petSpecific(target);
+    var cur = petSpecific(q.pet);
+    var keep = [];
+    for (var i = 0; i < q.pets.length; i++) {
+      var one = q.pets[i];
+      if (!one || one.id === next.id) continue;
+      keep.push(petSpecific(one));
+    }
+    keep.push(cur);
+    /* 도감·그림·오늘 받은 기록은 한 벌만 있어요 — 새로 키우는 친구가 이어받아요 */
+    next.collection = (Object.prototype.toString.call(q.pet.collection) === '[object Array]') ? q.pet.collection : [];
+    next.art = (q.pet.art && typeof q.pet.art === 'object') ? q.pet.art : {};
+    next.awarded = (q.pet.awarded && typeof q.pet.awarded === 'object') ? q.pet.awarded : {};
+    next.clearedAt = Number(q.pet.clearedAt) || 0;
+    next.updatedAt = q.pet.updatedAt || '';
+    q.pets = keep;
+    q.pet = next;
+    q.activePetId = next.id;
+    return q.pet;
+  }
+
+  /* 🥚 랜덤 알 뽑기 — 30코인이면 언제든지 (다 자라기를 기다리지 않아요) */
+  function petDrawEgg() {
+    var q = petEnsureList(prof());
+    if (q.coins < PET_DRAW_COST) {
+      snd('uncheck');
+      showToast(coinSvg() + ' 코인이 ' + fmtNum(PET_DRAW_COST - q.coins) + '개 모자라요. 루틴을 체크해서 모아 보세요!', true);
+      return null;
+    }
+    q.coins -= PET_DRAW_COST;
+    q.updatedAt = new Date().toISOString();
+    var sp = PET_SPECIES[Math.floor(Math.random() * PET_SPECIES.length)];
+    var egg = petSpecific({
+      id: petNewId(), currentEgg: sp.id, stage: 0, exp: 0,
+      hatchAt: Date.now() + HATCH_MS, hatchedAt: 0, gotAt: Date.now(), from: 'gacha'
+    });
+    q.pets.push(egg);
+    saveState();
+    renderCoinBadge(-PET_DRAW_COST);
+    renderPet();
+    renderPetHomeExtra();
+    var sm = document.getElementById('shopModal');
+    if (sm && !sm.hidden) renderShop();
+    confetti(40, document.getElementById('petVisual') || document.getElementById('petBar'));
+    snd('win');
+    showToast('🥚 새 알을 뽑았어요! ‘내 펫’에서 골라 키워 보세요.');
+    return egg;
+  }
+
+  /* ‘이 펫 키우기’ — 고른 알·친구에게 먹이(EXP)와 진화가 가요 */
+  function petSelect(id) {
+    var q = petEnsureList(prof());
+    if (!id || id === q.pet.id) return false;
+    var target = null;
+    for (var i = 0; i < q.pets.length; i++) if (q.pets[i].id === id) target = q.pets[i];
+    if (!target) return false;
+    var sp = speciesById(target.currentEgg);
+    petMakeActive(q, target);
+    /* 고른 알의 부화 시간이 이미 지났으면 바로 부화해요 */
+    if (q.pet.stage === 0 && q.pet.hatchAt && Date.now() >= q.pet.hatchAt) petTryHatch(false);
+    saveState();
+    renderPet();
+    renderPetHomeExtra();
+    if (!document.getElementById('careModal').hidden) renderCare();
+    if (!document.getElementById('roomModal').hidden) renderRoom();
+    try { renderRoutineTargets(); } catch (e) { /* 무시 */ }
+    snd('check');
+    var nm = (q.pet.stage === 0) ? '수수께끼 알' : sp.names[Math.max(0, q.pet.stage - 1)];
+    showToast('🐾 ' + josa(nm, '을', '를') + ' 키우기 시작해요!');
+    return true;
+  }
+
+  /* ---- 🏃 목표 시간 바에서 달릴 친구 고르기 ---- */
+  function petRunnerPick(q) {
+    q = petEnsureList(q || prof());
+    var id = (typeof q.runnerPetId === 'string') ? q.runnerPetId : '';
+    if (id && id !== q.pet.id) {
+      for (var i = 0; i < q.pets.length; i++) if (q.pets[i].id === id) return petSpecific(q.pets[i]);
+    }
+    /* 고른 적이 없거나 그 친구가 지금 키우는 친구가 되었으면 지금 키우는 친구가 달려요 */
+    return petSpecific(q.pet);
+  }
+
+  function petSetRunner(id) {
+    var q = petEnsureList(prof());
+    q.runnerPetId = (typeof id === 'string') ? id : '';
+    saveState();
+    renderPetHomeExtra();
+    try { renderRoutineTargets(); } catch (e) { /* 무시 */ }
+    try { renderTargetBars(); } catch (e) { /* 무시 */ }
+    snd('check');
+    var pick = petRunnerPick(q);
+    var sp = speciesById(pick.currentEgg);
+    var nm = pick.stage === 0 ? '수수께끼 알' : sp.names[Math.max(0, pick.stage - 1)];
+    showToast('🏃 목표 시간 바에서 ' + josa(nm, '이', '가') + ' 달려요!');
+  }
+
+  function petRunnerRowHtml() {
+    var list = petOwnedList(prof());
+    var chosen = petRunnerPick(prof());
+    var h = '<h3 class="pet-sec-title">🏃 목표 시간 달리기 펫</h3>';
+    h += '<div class="runner-grid">';
+    for (var i = 0; i < list.length; i++) {
+      var one = list[i];
+      var sp = speciesById(one.currentEgg);
+      var nm = one.stage === 0 ? '수수께끼 알' : sp.names[Math.max(0, one.stage - 1)];
+      var on = (one.id === chosen.id);
+      h += '<button type="button" class="runner-card' + (on ? ' on' : '') + '" data-act="pet-runner" data-id="' + esc(one.id) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
+        '<span class="rc-art">' + petArt(sp, one.stage, 0) + '</span>' +
+        '<b>' + esc(nm) + '</b>' +
+        '<small>' + (on ? '달리는 중' : (one.stage === 0 ? '알' : PET_STAGE_LABEL[one.stage])) + '</small>' +
+        '</button>';
+    }
+    h += '</div>';
+    h += '<p class="lf-note">고른 친구가 목표 시간 바에서 결승선까지 달려요. 고르지 않으면 지금 키우는 친구가 달려요.</p>';
+    return h;
+  }
+
+  /* 목록에 있지만 아직 고르지 않은 알도 24시간이 지나면 부화해요 */
+  function petHatchInactiveDue() {
+    var q = prof();
+    if (Object.prototype.toString.call(q.pets) !== '[object Array]') return false;
+    var changed = false;
+    for (var i = 0; i < q.pets.length; i++) {
+      var one = q.pets[i];
+      if (!one || Number(one.stage) !== 0 || !one.hatchAt) continue;
+      if (Date.now() < Number(one.hatchAt)) continue;
+      one.stage = 1;
+      one.hatchAt = 0;
+      one.hatchedAt = Date.now();
+      one.exp = 0;
+      one.xp = 0;
+      changed = true;
+    }
+    if (!changed) return false;
+    saveState();
+    renderPet();
+    renderPetHomeExtra();
+    return true;
+  }
+
+  /* ---- 🥚 내 펫 화면: 알 뽑기 버튼 + 가진 알·친구 목록 ---- */
+  function petMineRowHtml(one, idx) {
+    var sp = speciesById(one.currentEgg);
+    var stage = Number(one.stage) || 0;
+    var need = petNeed(stage);
+    var pct = need ? Math.min(100, Math.round((one.exp || 0) / need * 100)) : 100;
+    var name;
+    var sub;
+    if (stage === 0) {
+      name = '수수께끼 알';
+      sub = one.hatchAt ? ('부화까지 ' + fmtLeft(petLeftMs(one)) + ' · 먹이로도 부화') : '먹이를 주면 부화해요';
+    } else if (stage >= 3) {
+      name = sp.names[2];
+      sub = '2차 진화 완성 · 마이룸에서 함께 놀아요';
+    } else {
+      name = sp.names[stage - 1];
+      sub = 'EXP ' + (one.exp || 0) + ' / ' + need + ' · ' + PET_STAGE_LABEL[stage + 1] + '까지 ' + Math.max(0, need - (one.exp || 0));
+    }
+    var art = petArt(sp, stage, (one.exp || 0) / Math.max(1, need));
+    var right = one.active
+      ? '<span class="pm-now">키우는 중</span>'
+      : '<button type="button" class="pill-btn warm" data-act="pet-select" data-id="' + esc(one.id) + '">이 펫 키우기</button>';
+    return '<div class="pet-mine' + (one.active ? ' now' : '') + '" data-pet="' + esc(one.id) + '">' +
+      '<span class="pm-art">' + art + '</span>' +
+      '<span class="pm-meta">' +
+        '<span class="pm-name">' + esc(name) + (one.active ? '' : '<small class="pm-no">' + (idx + 1) + '번째</small>') +
+          (stage === 0 ? '<span class="egg-badge">알</span>' : typeBadgeHtml(sp) + rarityBadgeHtml(sp)) + '</span>' +
+        '<span class="pm-sub">' + esc(sub) + '</span>' +
+        (stage < 3 ? '<span class="pm-gauge"><i style="width:' + pct + '%"></i></span>' : '') +
+      '</span>' +
+      right +
+    '</div>';
+  }
+
+  function petHomeExtraHtml() {
+    var q = petEnsureList(prof());
+    var list = petOwnedList(q);
+    var eggs = 0;
+    for (var i = 0; i < list.length; i++) if (list[i].stage === 0) eggs++;
+    var h = '<div class="pet-gacha">' +
+      '<span class="pg-txt"><b>🥚 랜덤 알 뽑기</b><small>' + fmtNum(PET_DRAW_COST) + '코인 · 18속성 54종 중 하나가 나와요</small></span>' +
+      '<button type="button" class="pill-btn warm" data-act="pet-gacha">🥚 알 뽑기 (' + fmtNum(PET_DRAW_COST) + '코인)</button>' +
+      '</div>';
+    h += '<h3 class="pet-sec-title">🐾 내 펫 <b>' + list.length + '</b>마리' + (eggs ? ' · 알 ' + eggs + '개' : '') + '</h3>';
+    h += '<div class="pet-mine-list">';
+    for (var j = 0; j < list.length; j++) h += petMineRowHtml(list[j], j);
+    h += '</div>';
+    h += petRunnerRowHtml();
+    h += '<p class="lf-note">키울 친구를 고르면 먹이(🍖)와 진화가 그 친구에게 가요. 30코인으로 새 알을 언제든 뽑을 수 있어요!</p>';
+    return h;
+  }
+
+  function renderPetHomeExtra() {
+    var box = document.getElementById('petHomeExtra');
+    if (!box) return;
+    var m = document.getElementById('petHomeModal');
+    if (m && m.hidden) return;
+    box.innerHTML = petHomeExtraHtml();
   }
   function petNeed(stage) { return stage >= 0 && stage < 3 ? EXP_MAX : 0; }
 
@@ -6905,7 +7289,7 @@
     var p = petState();
     if (!n) return p.exp;
     if (p.stage >= 3) {
-      showToast('🌟 2차 진화를 완성했어요. 새 알을 받으면 다시 키울 수 있어요!');
+      showToast('🌟 2차 진화를 완성했어요! 다른 친구를 골라 키우거나 새 알을 뽑아 보세요!');
       return p.exp;
     }
     if (!opts.quiet) petPop(n, 'EXP');
@@ -6977,18 +7361,21 @@
   }
 
   function petNewEgg() {
-    var p = petState();
+    var q = petEnsureList(prof());
+    var p = q.pet;
     if (p.stage < 3) { showToast('2차 진화를 완성하면 새 알을 받을 수 있어요!'); return; }
-    p.currentEgg = petNextEgg(p);
-    p.stage = 0;
-    p.exp = 0;
-    p.hatchAt = Date.now() + HATCH_MS;
-    p.hatchedAt = 0;
-    p.updatedAt = new Date().toISOString();
+    var sp = petNextEgg(p);
+    var egg = petSpecific({
+      id: petNewId(), currentEgg: sp, stage: 0, exp: 0,
+      hatchAt: Date.now() + HATCH_MS, hatchedAt: 0, gotAt: Date.now(), from: 'free'
+    });
+    petMakeActive(q, egg);
     saveState();
     renderPet();
+    renderPetHomeExtra();
+    if (!document.getElementById('careModal').hidden) renderCare();
     snd('win');
-    showToast('🥚 새 알이 도착했어요! 24시간 뒤에 부화해요.');
+    showToast('🥚 새 알이 도착했어요! 24시간 뒤에 부화해요. 다 자란 친구는 ‘내 펫’에 그대로 있어요.');
   }
 
   /* ---------------- 그림 ---------------- */
@@ -7682,6 +8069,7 @@
 
     var modal = document.getElementById('petModal');
     if (modal && !modal.hidden) renderPetDex();
+    renderPetHomeExtra();
   }
 
   function rarityBadgeHtml(sp) {
@@ -7887,7 +8275,7 @@
       '<button type="button" class="pill-btn" data-act="shop-open" data-shop-tab="pet">🛒 상점에서 먹이 사기</button>' +
       '<button type="button" class="ghost-btn" data-act="care-close">닫기</button>' +
       '</div>';
-    h += '<p class="lf-note">루틴 체크 +' + COIN_CHECK + '코인, 그룹 완료 +' + COIN_GROUP + '코인, 칭찬 스티커 +' + COIN_STICKER + '코인. 하루를 다 채우면 먹이 10개 = 100 EXP!</p>';
+    h += '<p class="lf-note">루틴 체크 +' + COIN_CHECK + '코인, 그룹 완료 +' + COIN_GROUP + '코인, 칭찬 스티커 +' + COIN_STICKER + '코인. 하루를 다 채우면 먹이 10개 = 100 EXP! ‘내 펫’에서 키울 친구를 바꿀 수 있어요.</p>';
     return h;
   }
 
@@ -7902,7 +8290,7 @@
     var p = prof();
     if (bagCount(id) <= 0) { showToast('가방에 없어요.'); return; }
     var pet = petState();
-    if (pet.stage >= 3) { showToast('이미 다 자랐어요! 새 알을 받아 주세요.'); return; }
+    if (pet.stage >= 3) { showToast('이미 다 자랐어요! ‘내 펫’에서 다른 친구를 골라 주세요.'); return; }
     if (it.kind !== 'exp') { showToast('지금은 먹이(경험치 물약)만 줄 수 있어요.'); return; }
     /* 먹이 하나로 알은 부화 EXP를, 친구는 진화 EXP를 채워요 */
     var gain = parseInt(it.n, 10) || 10;
@@ -9036,7 +9424,7 @@
   function allowAmountOf(v) {
     var n = parseInt(v, 10);
     if (isNaN(n) || n < 0) n = 0;
-    return Math.min(999999, n);
+    return Math.min(COIN_MAX, n);
   }
   function allowKnownBal() {
     return (allowUi.to && allowUi.balFor === allowUi.to && allowUi.bal != null) ? allowUi.bal : null;
@@ -9088,7 +9476,7 @@
     var seq = ++allowUi.balSeq;
     var mine = !!(cloud.me && to === cloud.me.id);
     allowUi.balFor = mine ? to : '';
-    allowUi.bal = mine ? Math.max(0, Math.min(999999, parseInt(prof().coins, 10) || 0)) : null;
+    allowUi.bal = mine ? Math.max(0, Math.min(COIN_MAX, parseInt(prof().coins, 10) || 0)) : null;
     allowUi.balErr = '';
     paintAllowBalance();
     var res = await ghGet(profilePath(to));
@@ -9101,7 +9489,7 @@
       allowUi.bal = 0;          /* 아직 프로필이 없는 계정 = 코인 0 */
       allowUi.balErr = '';
     } else {
-      allowUi.bal = Math.max(0, Math.min(999999, parseInt(normalizeProfile(res.data, to).coins, 10) || 0));
+      allowUi.bal = Math.max(0, Math.min(COIN_MAX, parseInt(normalizeProfile(res.data, to).coins, 10) || 0));
       allowUi.balErr = '';
     }
     paintAllowBalance();
@@ -9145,7 +9533,7 @@
       var d = (mode === 'sub' ? -1 : 1) * n;
       h = name + '에게 ' + coinSvg() + ' <b>' + (d > 0 ? '+' : '-') + fmtNum(Math.abs(d)) + '</b> 코인';
       if (bal != null) {
-        h += ' <span class="allow-diff">(지금 ' + fmtNum(bal) + ' → ' + fmtNum(Math.max(0, Math.min(999999, bal + d))) + ')</span>';
+        h += ' <span class="allow-diff">(지금 ' + fmtNum(bal) + ' → ' + fmtNum(Math.max(0, Math.min(COIN_MAX, bal + d))) + ')</span>';
       }
     }
     if (allowUi.reason) h += '<br>“' + esc(allowUi.reason) + '”';
@@ -9194,7 +9582,7 @@
     h += '</div>';
 
     h += '<div class="allow-line">' + (mode === 'set' ? '맞출 코인' : '코인 수') +
-      ' <input class="inp" type="number" min="' + (mode === 'set' ? 0 : 1) + '" max="' + (mode === 'set' ? 999999 : 9999) + '" step="1" inputmode="numeric" data-field="allowAmount" value="' + n + '" aria-label="' + (mode === 'set' ? '맞출 코인' : '코인 수') + '">' +
+      ' <input class="inp" type="number" min="' + (mode === 'set' ? 0 : 1) + '" max="' + COIN_MAX + '" step="1" inputmode="numeric" data-field="allowAmount" value="' + n + '" aria-label="' + (mode === 'set' ? '맞출 코인' : '코인 수') + '">' +
       (mode === 'set' ? '' : ' 코인') + '</div>';
     h += '<div class="allow-line">' + (mode === 'add' ? '한마디' : '메모') +
       ' <input class="inp" type="text" maxlength="40" data-field="allowReason" value="' + esc(allowUi.reason) + '" placeholder="' +
@@ -9244,11 +9632,11 @@
       raw.coins = 0;
       raw.clearedAt = 0;
     }
-    var before = Math.max(0, Math.min(999999, parseInt(raw.coins, 10) || 0));
+    var before = Math.max(0, Math.min(COIN_MAX, parseInt(raw.coins, 10) || 0));
     var after;
     if (mode === 'set') after = n;
     else if (mode === 'sub') after = Math.max(0, before - n);
-    else after = Math.min(999999, before + n);
+    else after = Math.min(COIN_MAX, before + n);
     var delta = after - before;
     raw.coins = after;
     raw.updatedAt = new Date().toISOString();
@@ -10253,6 +10641,11 @@
       var pickIds = [];
       /* 지금 키우는 친구는 부화한 순간(1단계)부터 바로 부를 수 있어요 */
       if (prof().pet.stage >= 1 && prof().pet.currentEgg) pickIds.push(prof().pet.currentEgg);
+      /* 내 펫 목록에 있는 친구들도 부화했으면 함께 놀 수 있어요 */
+      var ownPick = petOwnedList(prof());
+      for (var c1 = 0; c1 < ownPick.length; c1++) {
+        if (ownPick[c1].stage >= 1 && ownPick[c1].currentEgg && pickIds.indexOf(ownPick[c1].currentEgg) < 0) pickIds.push(ownPick[c1].currentEgg);
+      }
       for (var c0 = 0; c0 < prof().pet.collection.length; c0++) if (pickIds.indexOf(prof().pet.collection[c0].id) < 0) pickIds.push(prof().pet.collection[c0].id);
       for (var c2 = 0; c2 < prof().room.floors.length; c2++) {
         var fp2 = prof().room.floors[c2].pets || [];
@@ -10358,6 +10751,7 @@
     var m = document.getElementById('petHomeModal');
     renderPet();
     if (m) m.hidden = false;
+    renderPetHomeExtra();
     raiseModal('petHomeModal');
     lockScroll();
   }
@@ -10752,6 +11146,10 @@
       if (fl.pets.length >= roomPetMax(fl.size)) { showToast('이 방은 친구 ' + roomPetMax(fl.size) + '명까지예요. 방을 넓히면 더 불러요!'); return; }
       var have = (prof().pet.stage >= 1 && prof().pet.currentEgg === id);
       for (var i = 0; i < prof().pet.collection.length; i++) if (prof().pet.collection[i].id === id) have = true;
+      if (!have) {
+        var ownNow = petOwnedList(prof());
+        for (var i2 = 0; i2 < ownNow.length; i2++) if (ownNow[i2].stage >= 1 && ownNow[i2].currentEgg === id) have = true;
+      }
       if (!have) { showToast('아직 알 속에 있는 친구예요.'); return; }
       /* 친구는 한 층에서만 놀아요 — 다른 층에 있으면 이 층으로 옮겨 와요 */
       for (var j = 0; j < prof().room.floors.length; j++) {
@@ -10777,7 +11175,8 @@
   function profileSignature() {
     var p = prof();
     return JSON.stringify({
-      c: p.coins, pt: p.pet, b: p.bag, o: p.owned, r: p.room, a: p.avatar, al: p.allowanceNotices
+      c: p.coins, pt: p.pet, pe: p.pets, ap: p.activePetId, rp: p.runnerPetId,
+      b: p.bag, o: p.owned, r: p.room, a: p.avatar, al: p.allowanceNotices
     });
   }
 
@@ -10792,6 +11191,9 @@
       updatedAt: p.updatedAt || new Date().toISOString(),
       coins: p.coins,
       pet: p.pet,
+      pets: p.pets,
+      activePetId: p.activePetId,
+      runnerPetId: p.runnerPetId || '',
       bag: p.bag,
       owned: p.owned,
       room: p.room,
@@ -10870,6 +11272,17 @@
           if (!has) a.push(bcol[i]);
         }
         pick.pet.collection = a;
+        /* 여러 마리 펫 목록도 합쳐요 — 다른 기기에서 뽑아 둔 알을 잃지 않게 */
+        var ap = (Object.prototype.toString.call(pick.pets) === '[object Array]') ? pick.pets : (pick.pets = []);
+        var bp = (other && Object.prototype.toString.call(other.pets) === '[object Array]') ? other.pets : [];
+        for (var pui = 0; pui < bp.length; pui++) {
+          var puid = bp[pui] && bp[pui].id;
+          if (!puid || puid === (pick.pet && pick.pet.id)) continue;
+          var havePut = false;
+          for (var puj = 0; puj < ap.length; puj++) if (ap[puj] && ap[puj].id === puid) havePut = true;
+          if (!havePut) ap.push(bp[pui]);
+        }
+        if (!pick.runnerPetId && other && other.runnerPetId) pick.runnerPetId = other.runnerPetId;
       }
     } else if (local && !wiped) {
       pick = local;
@@ -10903,6 +11316,8 @@
         state.profile.pet.stage = 0;
         state.profile.pet.exp = 0;
         state.profile.pet.hatchedAt = 0;
+        state.profile.pets = [];
+        state.profile.runnerPetId = '';
       }
     }
     if (!pick && !wiped) state.profile.updatedAt = new Date().toISOString();
@@ -10999,6 +11414,7 @@
     if (p.stage === 0 && p.hatchAt && Date.now() >= p.hatchAt) {
       if (petTryHatch(true)) { saveState(); return; }
     }
+    try { petHatchInactiveDue(); } catch (e) { /* 무시 */ }
     var timer = document.getElementById('petTimer');
     if (timer && p.stage === 0) timer.textContent = fmtLeft(petHatchLeft());
   }
@@ -11108,10 +11524,12 @@
     var ck = checksFor(currentKey);
     var now = nowMinuteFloat();
     var dow = keyDayIndex(currentKey);
-    var p = petState();
-    var sp = speciesById(p.currentEgg);
-    var petStage = p.stage;
+    /* 목표 시간 바에서 달릴 친구 — 아이가 고른 친구(없으면 지금 키우는 친구) */
+    var runP = petRunnerPick();
+    var sp = speciesById(runP.currentEgg);
+    var petStage = runP.stage;
     var petIcon = petArt(sp, petStage, 0);
+    var runName = petStage === 0 ? '알' : sp.names[Math.max(0, petStage - 1)];
     var html = '';
     for (var i = 0; i < state.categories.length; i++) {
       var cat = state.categories[i];
@@ -11137,15 +11555,15 @@
       if (complete) {
         status = '✓ ' + esc(cat.title) + ' 제시간에 완료! 🎉';
         big = '목표 달성!';
-        sub = '알이 결승선에 도착했어요 🎊';
+        sub = josa(runName, '이', '가') + ' 결승선에 도착했어요 🎊';
       } else if (left > 0) {
         status = esc(cat.title) + ' 완료까지';
         big = leftText(left);
-        sub = hot ? '알이 오른쪽으로 가고 있어요! 🥚→🏁' : '목표 ' + hhmmLabel(cat.targetTime) + ' · 1시간 전부터 알이 출발해요';
+        sub = hot ? josa(runName, '이', '가') + ' 오른쪽으로 달려요! 🏁' : '목표 ' + hhmmLabel(cat.targetTime) + ' · 1시간 전부터 ' + josa(runName, '이', '가') + ' 출발해요';
       } else {
         status = esc(cat.title) + ' 목표 시간이 지났어요! 서두르자 💪';
         big = '목표 ' + hhmmLabel(cat.targetTime) + ' 지남';
-        sub = '알이 결승선에 도착했어요';
+        sub = josa(runName, '이', '가') + ' 결승선에 도착했어요';
       }
       var who = complete ? '🎉' : (late ? '🏃' : cat.emoji);
       html += '<div class="rt-target' + (complete ? ' done' : '') + (late ? ' late' : '') + (hot ? ' hot' : '') + '" style="--c:' + esc(cat.color) + '">' +
@@ -13001,7 +13419,7 @@
     saveState();
     if (on) {
       var got = awardCheckCoins(itemId);
-      if (got) showToast(coinSvg() + ' +' + got + ' 코인!', true);
+      if (got.coin && got.first) showToast(coinSvg() + ' +' + got.coin + ' 코인!', true);
       var cat = findCat(catId);
       if (cat && cat.items.length) {
         var allDone = true;
@@ -14007,14 +14425,17 @@
     var hot = !complete && left > 0 && left <= TARGET_WINDOW_MIN;
     var late = !complete && left <= 0;
     var status, big, sub;
+    var runP = petRunnerPick();
+    var runSp = speciesById(runP.currentEgg);
+    var runName = runP.stage === 0 ? '알' : runSp.names[Math.max(0, runP.stage - 1)];
     if (complete) {
       status = '✓ ' + esc(cat.title) + ' 제시간에 완료! 🎉';
       big = '목표 달성!';
-      sub = '알이 결승선에 도착했어요 🎊';
+      sub = josa(runName, '이', '가') + ' 결승선에 도착했어요 🎊';
     } else if (left > 0) {
       status = esc(cat.title) + ' 완료까지';
       big = leftText(left);
-      sub = '목표 ' + hhmmLabel(cat.targetTime) + (hot ? ' · 알이 오른쪽으로 가고 있어요!' : ' · 1시간 전부터 알이 출발해요');
+      sub = '목표 ' + hhmmLabel(cat.targetTime) + (hot ? ' · ' + josa(runName, '이', '가') + ' 오른쪽으로 달려요!' : ' · 1시간 전부터 ' + josa(runName, '이', '가') + ' 출발해요');
     } else {
       status = esc(cat.title) + ' 목표 시간이 지났어요! 서두르자 💪';
       big = '목표 ' + hhmmLabel(cat.targetTime) + ' 지남';
@@ -14022,7 +14443,7 @@
     }
     var who = complete ? '🎉' : (late ? '🏃' : cat.emoji);
     var petIcon = '';
-    try { petIcon = petArt(speciesById(petState().currentEgg), petState().stage, 0); } catch (e) { petIcon = ''; }
+    try { petIcon = petArt(runSp, runP.stage, 0); } catch (e) { petIcon = ''; }
     var iconPct = 4 + pct * 0.92;
     return '<div class="rt-target' + (complete ? ' done' : '') + (late ? ' late' : '') + (hot ? ' hot' : '') + '" style="--c:' + esc(cat.color) + '">' +
       '<div class="rtt-head">' +
@@ -15627,6 +16048,9 @@
     if (act === 'pet-art-apply') { applyPetArtUrl(); return; }
     if (act === 'pet-art-reset') { resetPetArt(); return; }
     if (act === 'pet-open') { openPet(); return; }
+    if (act === 'pet-gacha') { petDrawEgg(); return; }
+    if (act === 'pet-select') { petSelect(el.getAttribute('data-id')); return; }
+    if (act === 'pet-runner') { petSetRunner(el.getAttribute('data-id')); return; }
     if (act === 'pet-filter') { petFilter = el.getAttribute('data-t') || ''; renderPetDex(); return; }
     if (act === 'pet-close') { closePet(); return; }
     if (act === 'pet-new-egg') { petNewEgg(); return; }
