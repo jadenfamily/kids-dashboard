@@ -1165,7 +1165,8 @@
   .bulk-preview b{ color:#0f7a55; }
   .bulk-actions{ display:flex; gap:8px; margin-top:4px; }
   .bulk-actions .pill-btn{ flex:1 1 auto; min-height:52px; font-size:16px; }
-  .reason-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:9px; }
+  .reason-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+  .reason-custom-btn{ width:100%; margin-top:9px; }
   .reason-chip{
     min-height:58px; border-radius:16px; border:2px solid #ffe0a0; background:#fffaea;
     color:#8a5200; font-size:15px; font-weight:900; cursor:pointer; touch-action:manipulation;
@@ -1261,6 +1262,18 @@
   .win-line{ font-size:13px; font-weight:800; color:var(--ink-2); margin:0 0 16px; }
   .ep-sub{ margin-top:14px; padding-top:12px; border-top:2px dashed #e2e9f5; }
   .ep-sub h3{ margin:0 0 8px; font-size:14px; font-weight:900; letter-spacing:-.01em; }
+  .as-list{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; margin:2px 0 10px; }
+  .as-actions > *{ flex:0 0 auto; white-space:nowrap; }
+  .as-chip{ border:1.5px solid #e3e8f2; background:#fff; color:#5f5877; border-radius:12px; padding:8px 10px; font-size:12px; font-weight:900; cursor:pointer; font-family:inherit; text-align:left; }
+  .as-chip-wrap .as-chip{ width:100%; }
+  .as-chip.on{ border-color:#f0a500; background:#fff7e6; color:#8a5b00; box-shadow:0 2px 8px rgba(240,165,0,.18); }
+  .as-chip-wrap{ display:flex; align-items:stretch; min-width:0; }
+  .as-chip-wrap .as-chip{ border-top-right-radius:0; border-bottom-right-radius:0; }
+  .as-del{ border:1.5px solid #ffd6dd; border-left:0; background:#fff7f8; color:#c6415a; border-radius:0 12px 12px 0; padding:8px 9px; font-size:12px; font-weight:900; cursor:pointer; font-family:inherit; }
+  .as-actions{ display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+  .as-add{ display:inline-flex; align-items:center; cursor:pointer; }
+  .as-url{ display:grid; grid-template-columns:minmax(90px,1fr) minmax(120px,1.6fr) auto; gap:6px; margin-top:8px; }
+  @media (max-width:520px){ .as-url{ grid-template-columns:1fr; } }
   .sec-order{ display:flex; flex-direction:column; gap:6px; }
   .sec-order-row{ display:flex; align-items:center; gap:7px; background:#fff; border:2px solid #f0e6d8; border-radius:12px; padding:5px 8px; font-size:13px; font-weight:900; color:#6d6484; }
   .sec-order-row .so-name{ flex:1 1 auto; }
@@ -2773,11 +2786,72 @@
     return out;
   }
 
+  /* 알림 소리 목록 — 모두 PCM .wav로 만들어 <audio>로 재생해요 (아이폰 무음 스위치에서도 소리) */
+  var ALERT_SOUNDS = [
+    { id: 'hawaii', name: '🎺 하와이 파이브오' },
+    { id: 'chime', name: '🔔 맑은 차임벨' },
+    { id: 'game', name: '🎮 게임 레벨업 팡파르' },
+    { id: 'musicbox', name: '✨ 부드러운 오르골' },
+    { id: 'classic', name: '⏰ 클래식 모닝 알람' },
+    { id: 'retro_coin', name: '🪙 8비트 코인' },
+    { id: 'retro_powerup', name: '⭐ 8비트 파워업' },
+    { id: 'retro_clear', name: '🏁 8비트 스테이지 클리어' }
+  ];
+  var ALERT_SOUND_DEFAULT = 'hawaii';
+  var ALERT_CUSTOM_MAX = 5;              /* 내 알림음은 5개까지 */
+  var ALERT_CUSTOM_BYTES = 500 * 1024;   /* 오디오 파일 500KB까지 */
+
+  /* 칭찬 스티커 이유 기본값 — 부모님이 편집에서 바꿀 수 있어요 */
+  var STICKER_REASON_PRESETS = ['환경관리', '특별기여', '기본심부름', '가족돕기'];
+
+  /* 예전 기본값(심부름 · 착한 일)은 새 4가지로 옮겨요 */
+  function migrateStickerReasons(reasons) {
+    var legacyMap = { '심부름': '기본심부름', '착한 일': '가족돕기' };
+    var anyLegacy = false, moved = [], seenR = {};
+    for (var rj = 0; rj < reasons.length; rj++) {
+      var rname = reasons[rj];
+      if (legacyMap[rname]) { anyLegacy = true; rname = legacyMap[rname]; }
+      if (!seenR[rname]) { seenR[rname] = 1; moved.push(rname); }
+    }
+    if (anyLegacy) {
+      var merged = STICKER_REASON_PRESETS.slice(0);
+      for (var rm = 0; rm < moved.length; rm++) if (merged.indexOf(moved[rm]) < 0) merged.push(moved[rm]);
+      moved = merged;
+    }
+    return moved;
+  }
+
+  function alertSoundPreset(id) {
+    for (var i = 0; i < ALERT_SOUNDS.length; i++) if (ALERT_SOUNDS[i].id === id) return ALERT_SOUNDS[i];
+    return null;
+  }
+  function customAlertSounds() {
+    var list = (state && state.settings && state.settings.customAlertSounds) ? state.settings.customAlertSounds : [];
+    return Object.prototype.toString.call(list) === '[object Array]' ? list : [];
+  }
+  function customAlertSound(id) {
+    var list = customAlertSounds();
+    for (var i = 0; i < list.length; i++) if (list[i] && list[i].id === id) return list[i];
+    return null;
+  }
+  function alertSoundId() {
+    var v = (state && state.settings) ? String(state.settings.alertSound || '') : '';
+    if (alertSoundPreset(v) || customAlertSound(v)) return v;
+    return ALERT_SOUND_DEFAULT;
+  }
+  function alertSoundName(id) {
+    var p = alertSoundPreset(id);
+    if (p) return p.name;
+    var c = customAlertSound(id);
+    return c ? String(c.name || '내 알림음') : ALERT_SOUNDS[0].name;
+  }
+
   function defaultState() {
     return {
       version: 1,
       settings: {
         childName: '지우', greeting: GREETING_DEFAULT, city: 'seoul', soundOn: true,
+        alertSound: ALERT_SOUND_DEFAULT, customAlertSounds: [],
         sectionTitles: { routine: '하루 루틴', sticker: '칭찬 스티커', academy: '오늘의 학원', week: '학원 시간표' },
         dashboardSections: defaultSections()
       },
@@ -2828,7 +2902,7 @@
         slots: 10, goal: '', stickers: [], celebrated: false,
         clearedAt: 0,
         unit: 1000,
-        reasons: ['루틴 완료', '독서', '심부름', '문제집', '착한 일']
+        reasons: STICKER_REASON_PRESETS.slice(0)
       },
       schedule: {
         mon: [makeEvent('태권도', '16:30–17:30'), makeEvent('피아노', '18:00–18:40')],
@@ -3003,6 +3077,23 @@
     s.settings.childName = (typeof s.settings.childName === 'string') ? s.settings.childName : d.settings.childName;
     s.settings.greeting = (typeof s.settings.greeting === 'string') ? s.settings.greeting : d.settings.greeting;
     s.settings.soundOn = (typeof s.settings.soundOn === 'boolean') ? s.settings.soundOn : true;
+    var rawCustom = (Object.prototype.toString.call(s.settings.customAlertSounds) === '[object Array]') ? s.settings.customAlertSounds : [];
+    var customs = [];
+    for (var ci = 0; ci < rawCustom.length && customs.length < ALERT_CUSTOM_MAX; ci++) {
+      var one = rawCustom[ci];
+      if (!one || typeof one !== 'object') continue;
+      var cid = String(one.id || '').slice(0, 16);
+      var cnm = String(one.name || '').slice(0, 24).trim();
+      var csrc = String(one.src || '');
+      if (!cid || !cnm) continue;
+      if (!/^(data:audio\/[a-z0-9.+-]+;base64,|https?:\/\/)/i.test(csrc) || csrc.length > 900000) continue;
+      customs.push({ id: cid, name: cnm, src: csrc });
+    }
+    s.settings.customAlertSounds = customs;
+    var knownSound = false;
+    for (var ai = 0; ai < ALERT_SOUNDS.length; ai++) if (ALERT_SOUNDS[ai].id === s.settings.alertSound) knownSound = true;
+    for (var cj = 0; cj < customs.length; cj++) if (customs[cj].id === s.settings.alertSound) knownSound = true;
+    if (!knownSound) s.settings.alertSound = ALERT_SOUND_DEFAULT;
     var knownCity = false;
     for (var c = 0; c < CITIES.length; c++) if (CITIES[c].id === s.settings.city) knownCity = true;
     if (!knownCity) s.settings.city = d.settings.city;
@@ -3075,6 +3166,7 @@
       var rr = rawReasons[ri];
       if (typeof rr === 'string' && rr.trim()) reasons.push(rr.trim().slice(0, 20));
     }
+    reasons = migrateStickerReasons(reasons);
     s.sticker.reasons = reasons.length ? reasons : d.sticker.reasons.slice(0);
 
     if (!s.schedule || typeof s.schedule !== 'object') s.schedule = {};
@@ -5176,7 +5268,13 @@
     try { return (window.Notification && window.Notification.permission) ? window.Notification.permission : 'default'; }
     catch (e) { return 'denied'; }
   }
-  function notifyOn() { return lsGet(NOTIFY_KEY) === '1' && notifySupported() && notifyPermission() === 'granted'; }
+  /* 이 기기에서 알림을 켰는지 — 아이폰 사파리처럼 Notification이 없어도
+     화면 안 10분 전 알림 + 소리로 켤 수 있어요. */
+  function notifyOn() { return lsGet(NOTIFY_KEY) === '1'; }
+  function notifyNative() { return notifySupported() && notifyPermission() === 'granted'; }
+  function notifyInPageText() {
+    return "화면 내 10분 전 알림을 켰어요! (아이폰 잠금화면 알림은 '공유 → 홈 화면에 추가' 후 열면 돼요)";
+  }
 
   function renderNotifyBtns() {
     var on = notifyOn();
@@ -5200,19 +5298,26 @@
 
   function toggleScheduleNotify() {
     if (notifyOn()) { setNotifyOn(false); showToast('🔕 일과표 알림을 껐어요.'); return; }
-    if (!notifySupported()) { showToast('이 브라우저에서는 알림을 쓸 수 없어요.'); return; }
-    if (notifyPermission() === 'denied') { showToast('브라우저 설정에서 이 사이트 알림을 허용해 주세요.'); return; }
-    if (notifyPermission() === 'granted') {
+    primeTargetMelody();
+    /* 알림을 쓰는 브라우저(아이폰 홈 화면 앱 등)면 잠금화면 알림까지 함께 켜요 */
+    if (notifyNative()) {
       setNotifyOn(true);
       showToast('🔔 일과표 10분 전 알림을 켰어요!');
+      return;
+    }
+    /* Notification이 없거나 막혀 있어도 화면 안 알림 + 소리로 켤 수 있어요 */
+    if (!notifySupported() || notifyPermission() === 'denied') {
+      setNotifyOn(true);
+      showToast(notifyInPageText(), false, 6000);
       return;
     }
     var done = false;
     var finish = function (res) {
       if (done) return;
       done = true;
-      if (res === 'granted') { setNotifyOn(true); showToast('🔔 일과표 10분 전 알림을 켰어요!'); }
-      else showToast('알림을 허용하지 않아 켤 수 없어요.');
+      setNotifyOn(true);
+      if (res === 'granted') showToast('🔔 일과표 10분 전 알림을 켰어요!');
+      else showToast(notifyInPageText(), false, 6000);
       renderNotifyBtns();
     };
     try {
@@ -5222,12 +5327,18 @@
   }
 
   function showNotify(title, body) {
+    var native = false;
     try {
-      if (notifySupported() && notifyPermission() === 'granted') {
+      if (notifyNative()) {
         new window.Notification(title, { body: body, tag: 'kids-schedule', lang: 'ko' });
+        native = true;
       }
-    } catch (e) { /* 알림을 못 띄우면 화면 안 알림으로 */ }
-    if (document.visibilityState !== 'hidden') showToast(body);
+    } catch (e) { native = false; }
+    /* 잠금화면 알림을 못 쓰는 브라우저(아이폰 사파리)는 화면 안 알림 + 소리로 */
+    if (document.visibilityState !== 'hidden') {
+      showToast((native ? '' : '🔔 ') + body, false, native ? 2800 : 9000);
+      alertChime();
+    }
   }
 
   function testScheduleNotify() {
@@ -5432,6 +5543,11 @@
         fieldWrap('스티커 1개 금액(원)', '<input class="inp" type="number" data-field="stickerUnit" min="100" max="100000" step="100" value="' + (state.sticker.unit || 1000) + '">') +
         fieldWrap('스티커 한 줄 소개', '<input class="inp" data-field="stickerGoal" value="' + esc(state.sticker.goal) + '" placeholder="비워 두면 안 보여요 (예: 모아서 원하는 선물에 써요)" maxlength="40">') +
         fieldWrap('스티커 이유 (콤마로 구분)', '<input class="inp" data-field="stickerReasons" value="' + esc((state.sticker.reasons || []).join(', ')) + '" placeholder="루틴 완료, 독서, 심부름">') +
+      '</div>' +
+      '<div class="ep-sub alert-picker">' +
+        '<h3>🔔 알림 소리 고르기</h3>' +
+        '<p class="ep-hint">목표 시간·일과표 알림에 쓸 소리예요. 눌러서 바로 들어 보고, 우리 집 소리를 직접 담을 수도 있어요. (가족 기기에 같이 저장돼요)</p>' +
+        alertPickerHtml() +
       '</div>' +
       '<div class="ep-sub diy-editor">' +
         '<h3>🧩 섹션 · 블록 조립 (DIY)</h3>' +
@@ -11127,14 +11243,14 @@
     raiseModal('targetAlertModal');
     lockScroll();
     if (window.navigator && window.navigator.vibrate) { try { window.navigator.vibrate([90, 60, 90]); } catch (e) { /* 무시 */ } }
-    h50Start();
+    playTargetMelody(true, 0);
   }
 
   function closeTargetAlert() {
     var m = document.getElementById('targetAlertModal');
     if (m) m.hidden = true;
     tamOpen = null;
-    h50Stop();
+    stopTargetMelody();
     if (isOnlyModal('targetAlertModal')) unlockScroll();
   }
 
@@ -11147,13 +11263,31 @@
     if (hit) fireTargetAlert(hit);
   }
 
-  /* ---- 하와이 파이브오 주제가 (신시사이저 편곡) ---- */
+  /* ---- 알림 소리: 하와이 파이브오 멜로디를 .wav로 만들어 재생 ----
+     · 아이폰은 무음 스위치를 켜면 Web Audio(AudioContext) 소리가 나지 않아요.
+     · 그래서 멜로디를 16비트 모노 22050Hz PCM .wav로 직접 만들어 <audio>로 재생해요.
+       <audio>로 재생하는 소리는 무음 스위치와 상관없이 미디어 볼륨으로 나와요.
+     · Web Audio 신시사이저는 .wav 재생이 막혔을 때만 두 번째 순서로 써요. */
   var H50_STEP = 0.215;       /* 8분음표 한 칸 (약 140 BPM) */
   var H50_LOOP = 8;           /* 2마디 = 8칸마다 반복 */
+  var H50_BARS = 3;           /* .wav는 3마디 ≈ 5.6초 */
+  var H50_SR = 22050;         /* 16비트 모노 22050Hz */
   var h50 = { on: false, timer: 0, gain: null, nextAt: 0, tries: 0 };
+
+  /* 악보 (8분음표 칸 단위) — 신시사이저와 .wav가 같은 악보를 써요 */
+  var H50_LEAD = [
+    [0, 392.00, .22], [0.5, 392.00, .22], [0.75, 392.00, .2], [1, 466.16, .22], [1.25, 523.25, .2], [1.5, 587.33, .42],
+    [2.5, 587.33, .2], [2.75, 523.25, .2], [3, 466.16, .2], [3.25, 523.25, .2], [3.5, 392.00, .45],
+    [4, 392.00, .22], [4.5, 392.00, .22], [4.75, 466.16, .2], [5, 523.25, .2], [5.25, 587.33, .2], [5.5, 622.25, .42],
+    [6.5, 587.33, .2], [6.75, 523.25, .2], [7, 587.33, .2], [7.25, 523.25, .2], [7.5, 392.00, .45]
+  ];
+  var H50_BASS = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5];
+  var H50_TOM = [0, 0.5, 1.25, 1.75, 2.5, 3, 3.75, 4, 4.5, 5.25, 5.75, 6.5, 7, 7.75];
+  var H50_HAT = 16;
 
   function h50SetState(v) {
     try { document.documentElement.setAttribute('data-tam-audio', v); } catch (e) { /* 무시 */ }
+    try { document.documentElement.setAttribute('data-h50-audio', v); } catch (e) { /* 무시 */ }
     var s = document.getElementById('tamSound');
     if (s) {
       s.textContent = (v === 'on')
@@ -11235,28 +11369,21 @@
 
   /* 두 마디 한 번에 예약 — 빠른 리드 · 낮은 금관 · 탐 · 하이햇 */
   function h50Bar(ctx, t0, dest) {
-    var lead = [
-      [0, 392.00, .22], [0.5, 392.00, .22], [0.75, 392.00, .2], [1, 466.16, .22], [1.25, 523.25, .2], [1.5, 587.33, .42],
-      [2.5, 587.33, .2], [2.75, 523.25, .2], [3, 466.16, .2], [3.25, 523.25, .2], [3.5, 392.00, .45],
-      [4, 392.00, .22], [4.5, 392.00, .22], [4.75, 466.16, .2], [5, 523.25, .2], [5.25, 587.33, .2], [5.5, 622.25, .42],
-      [6.5, 587.33, .2], [6.75, 523.25, .2], [7, 587.33, .2], [7.25, 523.25, .2], [7.5, 392.00, .45]
-    ];
-    for (var i = 0; i < lead.length; i++) {
+    var lead = H50_LEAD, bass = H50_BASS, tom = H50_TOM, i;
+    for (i = 0; i < lead.length; i++) {
       var at = t0 + lead[i][0] * H50_STEP;
       h50Tone(ctx, at, lead[i][1], lead[i][2], 0.075, 'brass', dest);
       h50Tone(ctx, at, lead[i][1] / 2, lead[i][2] * 0.9, 0.028, 'square', dest);
     }
-    var bass = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5];
-    for (var b = 0; b < bass.length; b++) {
-      var bt = t0 + bass[b] * H50_STEP;
+    for (i = 0; i < bass.length; i++) {
+      var bt = t0 + bass[i] * H50_STEP;
       h50Tone(ctx, bt, 98.00, H50_STEP * 0.8, 0.055, 'square', dest);
       h50Tone(ctx, bt, 196.00, H50_STEP * 0.45, 0.022, 'square', dest);
     }
-    var tom = [0, 0.5, 1.25, 1.75, 2.5, 3, 3.75, 4, 4.5, 5.25, 5.75, 6.5, 7, 7.75];
-    for (var k = 0; k < tom.length; k++) {
-      h50Tom(ctx, t0 + tom[k] * H50_STEP, k % 2 ? 215 : 175, k % 2 ? 122 : 92, 0.07, dest);
+    for (i = 0; i < tom.length; i++) {
+      h50Tom(ctx, t0 + tom[i] * H50_STEP, i % 2 ? 215 : 175, i % 2 ? 122 : 92, 0.07, dest);
     }
-    for (var hx = 0; hx < 16; hx++) {
+    for (var hx = 0; hx < H50_HAT; hx++) {
       h50Noise(ctx, t0 + hx * H50_STEP / 2, 0.028, hx % 2 ? 0.012 : 0.02, 7200, dest);
     }
   }
@@ -11284,7 +11411,7 @@
       /* 아이가 화면을 한 번 누르면 소리가 켜져요 (아이패드·안드로이드 자동재생 제한) */
       if (h50.tries < 12) {
         h50.tries += 1;
-        window.setTimeout(function () { if (tamOpen && !h50.on) h50Start(); }, 300);
+        window.setTimeout(function () { if (tamOpen && !melodyPlaying()) h50Start(); }, 300);
       }
       return false;
     }
@@ -11318,18 +11445,585 @@
     h50SetState('off');
   }
 
-  /* 알림 소리 미리 듣기 — 6초만 울려요 */
-  function h50Test() {
-    var ok = h50Start();
-    if (!ok) { showToast('🔔 화면을 한 번 누른 뒤 다시 눌러 주세요.'); h50Start(); return; }
-    showToast('🎵 하와이 파이브오 알림 소리를 들려드려요!');
-    window.setTimeout(function () { if (!tamOpen) h50Stop(); }, 6000);
+  /* ---------- .wav로 굽기 (아이폰 무음 스위치에서도 들리는 쪽) ---------- */
+
+  /* 톱니·사각 파형에 낮은 통과 필터를 걸어 금관 느낌으로 */
+  function pcmBrass(out, sr, t0, freq, dur, vol, kind) {
+    var i0 = Math.round(t0 * sr), len = Math.max(1, Math.round(dur * sr));
+    var i1 = Math.min(out.length, i0 + len);
+    if (i0 >= i1) return;
+    var inc = freq / sr, phase = 0, lp = 0;
+    var cut = (kind === 'square') ? 1500 : 2600;
+    var a = 1 - Math.exp(-2 * Math.PI * cut / sr);
+    var atk = 0.012, hold = Math.max(0.02, dur * 0.55);
+    for (var i = i0; i < i1; i++) {
+      phase += inc;
+      if (phase >= 1) phase -= 1;
+      var raw = (kind === 'square') ? (phase < 0.5 ? 0.72 : -0.72) : (2 * phase - 1);
+      lp += a * (raw - lp);
+      var t = (i - i0) / sr, e;
+      if (t < atk) e = t / atk;
+      else if (t < hold) e = 1;
+      else {
+        var k = (t - hold) / Math.max(0.001, dur - hold);
+        e = (k >= 1) ? 0 : Math.exp(-3.4 * k) * (1 - k);
+      }
+      out[i] += lp * vol * e;
+    }
   }
 
-  /* 소리가 막혀 있으면 첫 터치에 다시 켜기 */
+  /* 톰·큰북 (사인 + 빠른 음높이 내림) */
+  function pcmDrum(out, sr, t0, f0, f1, dur, vol) {
+    var i0 = Math.round(t0 * sr), len = Math.max(1, Math.round(dur * sr));
+    var i1 = Math.min(out.length, i0 + len);
+    if (i0 >= i1) return;
+    var phase = 0;
+    for (var i = i0; i < i1; i++) {
+      var t = (i - i0) / sr, p = Math.min(1, t / dur);
+      phase += (f0 * Math.pow(f1 / f0, p)) / sr;
+      var e = (t < 0.004 ? t / 0.004 : 1) * Math.exp(-6.5 * p);
+      out[i] += Math.sin(phase * 2 * Math.PI) * vol * e;
+    }
+  }
+
+  /* 하이햇 (아주 짧은 잡음) */
+  function pcmHiss(out, sr, t0, dur, vol) {
+    var i0 = Math.round(t0 * sr), len = Math.max(1, Math.round(dur * sr));
+    var i1 = Math.min(out.length, i0 + len);
+    if (i0 >= i1) return;
+    var prev = 0;
+    for (var i = i0; i < i1; i++) {
+      var t = (i - i0) / sr, n = Math.random() * 2 - 1, hp = n - prev * 0.86;
+      prev = n;
+      out[i] += hp * vol * Math.exp(-75 * t);
+    }
+  }
+
+  /* Float32 샘플 → 16비트 모노 WAV(RIFF) */
+  function wavFile(samples, sr) {
+    var n = samples.length, buf = new ArrayBuffer(44 + n * 2), dv = new DataView(buf);
+    function tag(off, s) { for (var i = 0; i < s.length; i++) dv.setUint8(off + i, s.charCodeAt(i)); }
+    tag(0, 'RIFF'); dv.setUint32(4, 36 + n * 2, true); tag(8, 'WAVE');
+    tag(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+    dv.setUint32(24, sr, true); dv.setUint32(28, sr * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+    tag(36, 'data'); dv.setUint32(40, n * 2, true);
+    var p = 44;
+    for (var i = 0; i < n; i++) {
+      var v = samples[i];
+      if (v > 1) v = 1; else if (v < -1) v = -1;
+      dv.setInt16(p, Math.round(v < 0 ? v * 32768 : v * 32767), true);
+      p += 2;
+    }
+    return new Uint8Array(buf);
+  }
+
+  /* 너무 작거나 찢어지지 않게 크기를 맞추고, 시작·끝을 부드럽게 */
+  function pcmPolish(out, sr) {
+    var peak = 0, i, v;
+    for (i = 0; i < out.length; i++) { v = out[i] < 0 ? -out[i] : out[i]; if (v > peak) peak = v; }
+    var g = peak > 0.0001 ? 0.9 / peak : 1;
+    for (i = 0; i < out.length; i++) out[i] = Math.tanh(out[i] * g * 1.15) * 0.92;
+    var fade = Math.round(sr * 0.05);
+    for (i = 0; i < fade && i < out.length; i++) {
+      var k = i / fade;
+      out[i] *= k;
+      out[out.length - 1 - i] *= k;
+    }
+  }
+
+  /* 멜로디 3마디 (약 5.6초) */
+  function h50PcmSamples() {
+    var sr = H50_SR, step = H50_STEP, bar = step * 8;
+    var out = new Float32Array(Math.round(sr * (bar * H50_BARS + 0.45)));
+    for (var b = 0; b < H50_BARS; b++) {
+      var t0 = b * bar, i;
+      for (i = 0; i < H50_LEAD.length; i++) {
+        var at = t0 + H50_LEAD[i][0] * step;
+        pcmBrass(out, sr, at, H50_LEAD[i][1], H50_LEAD[i][2], 0.30, 'brass');
+        pcmBrass(out, sr, at, H50_LEAD[i][1] / 2, H50_LEAD[i][2] * 0.9, 0.11, 'square');
+      }
+      for (i = 0; i < H50_BASS.length; i++) {
+        var bt = t0 + H50_BASS[i] * step;
+        pcmBrass(out, sr, bt, 98.00, step * 0.8, 0.22, 'square');
+        pcmBrass(out, sr, bt, 196.00, step * 0.45, 0.09, 'square');
+      }
+      for (i = 0; i < H50_TOM.length; i++) {
+        pcmDrum(out, sr, t0 + H50_TOM[i] * step, i % 2 ? 215 : 175, i % 2 ? 122 : 92, 0.2, 0.20);
+      }
+      for (i = 0; i < H50_HAT; i++) pcmHiss(out, sr, t0 + i * step / 2, 0.028, i % 2 ? 0.035 : 0.055);
+    }
+    pcmPolish(out, sr);
+    return out;
+  }
+
+  /* --- 소리별 PCM (.wav로 구워 <audio>로 재생해요) --- */
+
+  /* 쨍그랑 울리는 종소리 한 음 */
+  function pcmBell(out, sr, t0, freq, dur, vol) {
+    var i0 = Math.round(t0 * sr), len = Math.max(1, Math.round(dur * sr));
+    var i1 = Math.min(out.length, i0 + len);
+    if (i0 >= i1) return;
+    var parts = [[1, 1], [2.0, 0.42], [3.01, 0.22], [4.17, 0.11], [5.43, 0.05]];
+    for (var i = i0; i < i1; i++) {
+      var t = (i - i0) / sr, e = (t < 0.004 ? t / 0.004 : 1) * Math.exp(-3.1 * t);
+      var v = 0;
+      for (var p = 0; p < parts.length; p++) v += Math.sin(2 * Math.PI * freq * parts[p][0] * t + p) * parts[p][1];
+      out[i] += v * vol * e;
+    }
+  }
+
+  /* 🔔 맑은 차임벨 — 도·미·솔·도 차례로 */
+  function chimePcmSamples() {
+    var sr = H50_SR, out = new Float32Array(Math.round(sr * 3.3));
+    var notes = [0, 523.25, 0.3, 659.25, 0.6, 783.99, 0.9, 1046.50];
+    for (var i = 0; i < notes.length; i += 2) pcmBell(out, sr, notes[i], notes[i + 1], 2.3, 0.34);
+    pcmPolish(out, sr);
+    return out;
+  }
+
+  /* 🎮 게임 레벨업 팡파르 — 빠른 상승음 + 화음 */
+  function gamePcmSamples() {
+    var sr = H50_SR, out = new Float32Array(Math.round(sr * 2.8));
+    var up = [523.25, 659.25, 783.99, 1046.50], i;
+    for (i = 0; i < up.length; i++) pcmBrass(out, sr, i * 0.1, up[i], 0.13, 0.42, 'square');
+    pcmBell(out, sr, 0.44, 1567.98, 0.7, 0.28);
+    var chord = [523.25, 659.25, 783.99, 1046.50];
+    for (i = 0; i < chord.length; i++) {
+      pcmBrass(out, sr, 0.46, chord[i], 1.5, 0.24, 'brass');
+      pcmBrass(out, sr, 0.46, chord[i] / 2, 1.5, 0.09, 'square');
+    }
+    pcmDrum(out, sr, 0.46, 220, 90, 0.35, 0.3);
+    pcmPolish(out, sr);
+    return out;
+  }
+
+  /* ✨ 부드러운 오르골 — 미·솔·도·시·라·솔·미·도 */
+  function musicboxPcmSamples() {
+    var sr = H50_SR, out = new Float32Array(Math.round(sr * 4.4));
+    var mel = [659.25, 783.99, 1046.50, 987.77, 880.00, 783.99, 659.25, 523.25];
+    for (var i = 0; i < mel.length; i++) {
+      pcmBell(out, sr, i * 0.42, mel[i], 2.0, 0.26);
+      pcmBell(out, sr, i * 0.42, mel[i] * 2, 0.9, 0.05);
+    }
+    pcmPolish(out, sr);
+    return out;
+  }
+
+  /* ⏰ 클래식 모닝 알람 — 두 종이 같이 울리는 소리 */
+  function classicPcmSamples() {
+    var sr = H50_SR, out = new Float32Array(Math.round(sr * 2.9));
+    for (var k = 0; k < 4; k++) {
+      var t = k * 0.62;
+      pcmBrass(out, sr, t, 880.00, 0.26, 0.34, 'square');
+      pcmBrass(out, sr, t, 1108.73, 0.26, 0.28, 'square');
+      pcmBell(out, sr, t, 1760.00, 0.3, 0.1);
+    }
+    pcmPolish(out, sr);
+    return out;
+  }
+
+  /* 8비트 사각파 (칩튠) — 살짝만 부드럽게 해서 찌르는 소리 없이 */
+  function pcmChip(out, sr, t0, freq, dur, vol, duty) {
+    var i0 = Math.round(t0 * sr), len = Math.max(1, Math.round(dur * sr));
+    var i1 = Math.min(out.length, i0 + len);
+    if (i0 >= i1) return;
+    var inc = freq / sr, phase = 0, lp = 0, a = 1 - Math.exp(-2 * Math.PI * 7000 / sr);
+    var d = (duty == null) ? 0.5 : duty, atk = 0.003;
+    for (var i = i0; i < i1; i++) {
+      phase += inc;
+      if (phase >= 1) phase -= 1;
+      var raw = (phase < d) ? 0.8 : -0.8;
+      lp += a * (raw - lp);
+      var t = (i - i0) / sr, e = (t < atk) ? t / atk : 1;
+      if (dur > 0.12) e *= Math.exp(-1.6 * Math.max(0, t - atk));
+      out[i] += lp * vol * e;
+    }
+  }
+
+  /* 🪙 8비트 코인 — 시(B5) → 미(E6) 딸랑, 세 번 */
+  function retroCoinPcmSamples() {
+    var sr = H50_SR, out = new Float32Array(Math.round(sr * 2.1));
+    for (var k = 0; k < 3; k++) {
+      var t = k * 0.62;
+      pcmChip(out, sr, t, 987.77, 0.06, 0.5, 0.5);
+      pcmChip(out, sr, t + 0.06, 1318.51, 0.34, 0.5, 0.5);
+      pcmChip(out, sr, t + 0.06, 659.25, 0.1, 0.12, 0.25);
+    }
+    pcmPolish(out, sr);
+    return out;
+  }
+
+  /* ⭐ 8비트 파워업 — 빠르게 올라가는 아르페지오 */
+  function retroPowerupPcmSamples() {
+    var sr = H50_SR, out = new Float32Array(Math.round(sr * 2.0));
+    var up = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51, 1567.98, 2093.00];
+    for (var i = 0; i < up.length; i++) pcmChip(out, sr, i * 0.058, up[i], 0.07, 0.42, 0.25);
+    pcmChip(out, sr, 0.60, 2093.00, 0.5, 0.46, 0.5);
+    pcmChip(out, sr, 0.60, 1046.50, 0.5, 0.26, 0.25);
+    pcmChip(out, sr, 0.78, 2637.02, 0.32, 0.3, 0.5);
+    pcmPolish(out, sr);
+    return out;
+  }
+
+  /* 🏁 8비트 스테이지 클리어 — 밝게 올라가서 끝나는 팡파르 */
+  function retroClearPcmSamples() {
+    var sr = H50_SR, out = new Float32Array(Math.round(sr * 2.6));
+    var mel = [[0, 523.25, 0.1], [0.11, 523.25, 0.1], [0.22, 523.25, 0.1], [0.33, 523.25, 0.16],
+               [0.52, 659.25, 0.12], [0.66, 783.99, 0.12], [0.80, 1046.50, 0.3],
+               [1.14, 1318.51, 0.16], [1.32, 1046.50, 0.16], [1.50, 1318.51, 0.5]];
+    var i;
+    for (i = 0; i < mel.length; i++) pcmChip(out, sr, mel[i][0], mel[i][1], mel[i][2], 0.44, 0.5);
+    for (i = 0; i < mel.length; i++) pcmChip(out, sr, mel[i][0], mel[i][1] / 2, mel[i][2] * 0.9, 0.16, 0.25);
+    pcmChip(out, sr, 1.5, 659.25, 0.5, 0.2, 0.25);
+    pcmDrum(out, sr, 1.5, 180, 80, 0.3, 0.26);
+    pcmPolish(out, sr);
+    return out;
+  }
+
+  function alertSoundSamples(id) {
+    if (id === 'chime') return chimePcmSamples();
+    if (id === 'game') return gamePcmSamples();
+    if (id === 'musicbox') return musicboxPcmSamples();
+    if (id === 'classic') return classicPcmSamples();
+    if (id === 'retro_coin') return retroCoinPcmSamples();
+    if (id === 'retro_powerup') return retroPowerupPcmSamples();
+    if (id === 'retro_clear') return retroClearPcmSamples();
+    return h50PcmSamples();
+  }
+
+  var alertWavCache = {};
+
+  /* 기본 알림음 → Blob URL (.wav). 한 번 구우면 다시 써요 */
+  function alertWavUrl(id) {
+    if (alertWavCache[id] && alertWavCache[id].url) return alertWavCache[id].url;
+    try {
+      if (!window.Blob || !window.URL || !window.URL.createObjectURL) return '';
+      var bytes = wavFile(alertSoundSamples(id), H50_SR);
+      var url = window.URL.createObjectURL(new Blob([bytes], { type: 'audio/wav' }));
+      alertWavCache[id] = { url: url, bytes: bytes.length, dur: (bytes.length - 44) / 2 / H50_SR };
+      return url;
+    } catch (e) { return ''; }
+  }
+
+  /* 알림음 재생 주소 — 내 알림음은 올린 소리·주소를 그대로, 기본은 Blob .wav */
+  function alertSoundSrc(id) {
+    var c = customAlertSound(id);
+    if (c && c.src) return String(c.src);
+    return alertWavUrl(id);
+  }
+
+  function alertSoundMaxMs(id) {
+    var hit = alertWavCache[id];
+    if (hit && hit.dur) return Math.round((hit.dur + 0.4) * 1000);
+    return 9000;           /* 내 알림음은 끝날 때까지(최대 9초) */
+  }
+
+  var h50AudioEl = null, h50AudioOn = false, h50AudioStop = 0;
+  var chimeAudioEl = null;
+
+  function makeAudioEl() {
+    if (!window.Audio) return null;
+    var el = new Audio();
+    try { el.preload = 'auto'; } catch (e) { /* 무시 */ }
+    try { el.setAttribute('playsinline', ''); } catch (e) { /* 무시 */ }
+    return el;
+  }
+
+  function h50Audio() {
+    if (!h50AudioEl) {
+      h50AudioEl = makeAudioEl();
+      if (h50AudioEl) {
+        h50AudioEl.addEventListener('ended', function () {
+          if (h50AudioEl.loop) return;
+          h50AudioOn = false;
+          if (!h50.on) h50SetState('off');
+        });
+        h50AudioEl.addEventListener('error', function () {
+          h50AudioOn = false;
+          if (!h50.on) h50SetState('off');
+        });
+      }
+    }
+    return h50AudioEl;
+  }
+
+  function chimeAudio() {
+    if (!chimeAudioEl) chimeAudioEl = makeAudioEl();
+    return chimeAudioEl;
+  }
+
+  function playWav(el, src, loop) {
+    if (!el || !src) return null;
+    try {
+      if (el.getAttribute('src') !== src) el.src = src;
+      el.loop = !!loop;
+      try { el.currentTime = 0; } catch (e0) { /* 아직 준비 전이면 그냥 재생 */ }
+      return el.play();
+    } catch (e) { return null; }
+  }
+
+  /* .wav 재생 → 안 되면 false (부르는 쪽이 신시사이저로 넘어가요) */
+  function h50PlayWav(loop, maxMs, id) {
+    id = id || alertSoundId();
+    var el = h50Audio(), src = alertSoundSrc(id);
+    if (!el || !src) return false;
+    if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
+    var p = playWav(el, src, loop);
+    if (p === null) return false;
+    h50AudioOn = true;
+    h50SetState('on');
+    try {
+      document.documentElement.setAttribute('data-h50-play', 'playing');
+      document.documentElement.setAttribute('data-h50-sound', id);
+      if (src.indexOf('blob:') === 0) document.documentElement.setAttribute('data-h50-wav', src);
+    } catch (e) { /* 무시 */ }
+    if (p && p.then) {
+      p.then(function () {
+        try { document.documentElement.setAttribute('data-h50-play', 'playing'); } catch (e) { /* 무시 */ }
+      }, function () {
+        h50AudioOn = false;
+        try { document.documentElement.setAttribute('data-h50-play', 'blocked'); } catch (e) { /* 무시 */ }
+        if (!h50.on) h50Start();
+      });
+    }
+    if (maxMs) {
+      h50AudioStop = window.setTimeout(function () {
+        h50AudioStop = 0;
+        if (!tamOpen) stopWavMelody();
+      }, maxMs);
+    }
+    return true;
+  }
+
+  function stopWavMelody() {
+    if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
+    h50AudioOn = false;
+    var el = h50AudioEl;
+    if (el) {
+      try { el.pause(); } catch (e) { /* 무시 */ }
+      try { el.currentTime = 0; } catch (e) { /* 무시 */ }
+      try { el.loop = false; } catch (e) { /* 무시 */ }
+    }
+    try { document.documentElement.setAttribute('data-h50-play', 'stopped'); } catch (e) { /* 무시 */ }
+  }
+
+  function melodyPlaying() { return h50AudioOn || h50.on; }
+
+  /* 알림 멜로디 재생 — 1순위 .wav/올린 소리, 2순위 신시사이저 */
+  function playTargetMelody(loop, maxMs) {
+    if (h50PlayWav(loop, maxMs, alertSoundId())) return true;
+    return h50Start();
+  }
+
+  /* 알림 멜로디 정지 — <audio>와 신시사이저를 모두 멈춰요 */
+  function stopTargetMelody() {
+    stopWavMelody();
+    h50Stop();
+  }
+
+  /* 아이폰이 '터치 없이 재생'을 막지 않도록 처음 몇 번의 터치에 살짝 준비해 둬요 */
+  var h50Primed = false;
+  function primeTargetMelody() {
+    if (h50Primed || h50AudioOn) return;
+    var el = h50Audio(), src = alertSoundSrc(alertSoundId());
+    if (!el || !src) return;
+    h50Primed = true;
+    try {
+      if (el.getAttribute('src') !== src) el.src = src;
+      el.muted = true;
+      var done = function () {
+        if (h50AudioOn) { try { el.muted = false; } catch (e) { /* 무시 */ } return; }
+        try { el.pause(); el.currentTime = 0; } catch (e) { /* 무시 */ }
+        el.muted = false;
+      };
+      var p = el.play();
+      if (p && p.then) p.then(done, function () { try { el.muted = false; } catch (e) { /* 무시 */ } });
+      else done();
+    } catch (e) {
+      try { el.muted = false; } catch (e2) { /* 무시 */ }
+    }
+  }
+
+  /* 일과표 알림 종소리 (화면 안 알림) — 고른 알림음을 3초만 */
+  function alertChime() {
+    if (!state.settings.soundOn) return;
+    var id = alertSoundId(), el = chimeAudio(), src = alertSoundSrc(id);
+    if (el && src) {
+      try {
+        var p = playWav(el, src, false);
+        if (p && p.catch) p.catch(function () { snd('chime'); });
+        if (p) {
+          if (alertChime.timer) window.clearTimeout(alertChime.timer);
+          alertChime.timer = window.setTimeout(function () {
+            try { el.pause(); el.currentTime = 0; } catch (e) { /* 무시 */ }
+          }, 3000);
+          return;
+        }
+      } catch (e) { /* 신시사이저로 */ }
+    }
+    snd('chime');
+  }
+
+  /* 미리 듣기 — 고른 소리를 한 번 들려줘요 */
+  function previewAlertSound(id) {
+    id = id || alertSoundId();
+    stopWavMelody();
+    if (!h50PlayWav(false, alertSoundMaxMs(id), id)) {
+      showToast('🔔 소리를 들려드리지 못했어요. 화면을 한 번 누른 뒤 다시 눌러 주세요.');
+      return false;
+    }
+    showToast('🎵 ' + alertSoundName(id) + ' 알림 소리를 들려드려요!');
+    return true;
+  }
+
+  /* 하루 일과표의 🎵 알림 소리 — 지금 고른 소리로 */
+  function h50Test() {
+    if (!can('edit')) return;
+    previewAlertSound(alertSoundId());
+  }
+
+  /* 소리가 막혀 있으면 첫 터치에 다시 켜고, 처음엔 .wav를 미리 만들어 둬요 */
   document.addEventListener('pointerdown', function () {
-    if (tamOpen && !h50.on) h50Start();
+    if (tamOpen && !melodyPlaying()) { playTargetMelody(true, 0); return; }
+    if (!alertWavCache[alertSoundId()]) {
+      window.setTimeout(function () { try { alertWavUrl(alertSoundId()); } catch (e) { /* 무시 */ } }, 0);
+      return;
+    }
+    primeTargetMelody();
   }, { capture: true, passive: true });
+
+  /* ---------- 🔔 알림 소리 고르기 (부모님용) ---------- */
+  function alertPickerHtml() {
+    var cur = alertSoundId(), i, h = '<div class="as-list">';
+    for (i = 0; i < ALERT_SOUNDS.length; i++) {
+      var p = ALERT_SOUNDS[i];
+      h += '<button type="button" class="as-chip' + (p.id === cur ? ' on' : '') + '" data-act="alert-sound-pick" data-sound="' + p.id +
+        '" aria-pressed="' + (p.id === cur ? 'true' : 'false') + '">' + esc(p.name) + '</button>';
+    }
+    var list = customAlertSounds();
+    for (i = 0; i < list.length; i++) {
+      var c = list[i];
+      h += '<span class="as-chip-wrap">' +
+        '<button type="button" class="as-chip' + (c.id === cur ? ' on' : '') + '" data-act="alert-sound-pick" data-sound="' + esc(c.id) +
+        '" aria-pressed="' + (c.id === cur ? 'true' : 'false') + '">' + esc(c.name) + '</button>' +
+        '<button type="button" class="as-del" data-act="alert-sound-del" data-sound="' + esc(c.id) +
+        '" aria-label="' + esc(c.name) + ' 지우기">✕</button></span>';
+    }
+    h += '</div>' +
+      '<div class="as-actions">' +
+        '<button type="button" class="ghost-btn tiny" data-act="alert-sound-test">▶ 미리 듣기 · ' + esc(alertSoundName(cur).replace(/^\S+\s/, '')) + '</button>' +
+        '<label class="ghost-btn tiny as-add">＋ 내 알림음 추가<input type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" data-act="alert-sound-file" hidden></label>' +
+      '</div>' +
+      '<div class="as-url">' +
+        '<input class="inp inp-sm" data-field="customSoundName" maxlength="24" placeholder="이름 (예: 할머니 목소리)" aria-label="내 알림음 이름">' +
+        '<input class="inp inp-sm" data-field="customSoundUrl" placeholder="소리 주소 (https://...)" aria-label="내 알림음 주소">' +
+        '<button type="button" class="ghost-btn tiny" data-act="alert-sound-url-add">＋ 주소로 추가</button>' +
+      '</div>';
+    return h;
+  }
+
+  function setAlertSound(id) {
+    if (!alertSoundPreset(id) && !customAlertSound(id)) return false;
+    state.settings.alertSound = id;
+    saveState();
+    return true;
+  }
+
+  function addCustomAlertSound(name, src) {
+    var list = customAlertSounds().slice(0);
+    if (list.length >= ALERT_CUSTOM_MAX) {
+      showToast('내 알림음은 ' + ALERT_CUSTOM_MAX + '개까지 담을 수 있어요.');
+      return null;
+    }
+    var id = 'c' + String(Date.now()).slice(-6) + String(Math.floor(Math.random() * 90) + 10);
+    var item = { id: id, name: String(name || '내 알림음').slice(0, 24) || '내 알림음', src: src };
+    list.push(item);
+    state.settings.customAlertSounds = list;
+    state.settings.alertSound = id;
+    saveState();
+    return item;
+  }
+
+  function removeCustomAlertSound(id) {
+    var list = customAlertSounds(), out = [];
+    for (var i = 0; i < list.length; i++) if (list[i].id !== id) out.push(list[i]);
+    state.settings.customAlertSounds = out;
+    if (state.settings.alertSound === id) state.settings.alertSound = ALERT_SOUND_DEFAULT;
+    delete alertWavCache[id];
+    saveState();
+  }
+
+  function pickAlertSound(id) {
+    if (!can('edit')) return;
+    if (!setAlertSound(id)) return;
+    renderEditPanel();
+    previewAlertSound(id);
+  }
+
+  function deleteAlertSound(id) {
+    if (!can('edit')) return;
+    var c = customAlertSound(id);
+    if (!c) return;
+    var was = (state.settings.alertSound === id);
+    removeCustomAlertSound(id);
+    renderEditPanel();
+    showToast('🗑️ "' + c.name + '"을(를) 지웠어요.' + (was ? ' 알림 소리는 ' + alertSoundName(alertSoundId()) + '(으)로 바뀌었어요.' : ''));
+  }
+
+  function readAlertSoundFile(file) {
+    if (!file) return;
+    if (!can('edit')) return;
+    if (file.size > ALERT_CUSTOM_BYTES) {
+      showToast('소리 파일이 너무 커요(' + Math.round(file.size / 1024) + 'KB). 500KB 이하 짧은 소리로 올려 주세요.');
+      return;
+    }
+    if (typeof window.FileReader !== 'function') {
+      showToast('이 브라우저에서는 파일을 불러올 수 없어요.');
+      return;
+    }
+    var reader = new window.FileReader();
+    reader.onload = function () {
+      var src = String(reader.result || '');
+      if (src.indexOf('data:audio/') !== 0) {
+        showToast('오디오 파일(mp3·m4a·wav·ogg)만 올릴 수 있어요.');
+        return;
+      }
+      var nm = String(file.name || '내 알림음').replace(/\.[a-z0-9]+$/i, '').slice(0, 24) || '내 알림음';
+      var item = addCustomAlertSound(nm, src);
+      if (!item) return;
+      renderEditPanel();
+      showToast('➕ "' + nm + '"을(를) 내 알림음에 담았어요.');
+      previewAlertSound(item.id);
+    };
+    reader.onerror = function () { showToast('소리 파일을 읽지 못했어요. 다시 시도해 주세요.'); };
+    reader.readAsDataURL(file);
+  }
+
+  function addAlertSoundFromUrl() {
+    if (!can('edit')) return;
+    var panel = document.getElementById('editPanel') || document;
+    var nameEl = panel.querySelector('[data-field="customSoundName"]');
+    var urlEl = panel.querySelector('[data-field="customSoundUrl"]');
+    var name = nameEl ? String(nameEl.value || '').trim().slice(0, 24) : '';
+    var url = urlEl ? String(urlEl.value || '').trim() : '';
+    if (!url) { showToast('소리 주소(URL)를 넣어 주세요.'); return; }
+    if (!/^(https?:\/\/|data:audio\/)/i.test(url)) { showToast('http(s) 주소나 data:audio 소리만 쓸 수 있어요.'); return; }
+    if (!name) name = '내 알림음 ' + (customAlertSounds().length + 1);
+    var item = addCustomAlertSound(name, url);
+    if (!item) return;
+    renderEditPanel();
+    showToast('➕ "' + name + '"을(를) 내 알림음에 담았어요.');
+    previewAlertSound(item.id);
+  }
+
+  document.addEventListener('change', function (e) {
+    var el = e.target;
+    if (!el || !el.getAttribute) return;
+    if (el.getAttribute('data-act') !== 'alert-sound-file') return;
+    var f = el.files && el.files[0];
+    el.value = '';
+    readAlertSoundFile(f);
+  });
 
   /* ============ 전체 렌더 ============ */
   function renderAll() {
@@ -12330,8 +13024,8 @@
       var r = state.sticker.reasons[i];
       h += '<button type="button" class="reason-chip" data-act="reason-pick" data-r="' + esc(r) + '">' + esc(r) + '</button>';
     }
-    h += '<button type="button" class="reason-chip custom" data-act="reason-custom">✏️ 직접 입력</button>';
     h += '</div>';
+    h += '<button type="button" class="reason-chip custom reason-custom-btn" data-act="reason-custom">✏️ 직접 입력</button>';
     if (reasonState.custom) {
       h += '<div class="reason-custom"><input id="reasonInput" maxlength="20" placeholder="예: 피아노 연습">' +
         '<button class="lf-btn" type="button" data-act="reason-save" style="width:auto;padding:0 18px;min-height:48px;font-size:15px">붙이기</button></div>';
@@ -13576,7 +14270,7 @@
       for (var i = 0; i < d.reasons.length && rs.length < 12; i++) {
         if (typeof d.reasons[i] === 'string' && d.reasons[i].trim()) rs.push(d.reasons[i].trim().slice(0, 20));
       }
-      if (rs.length) state.sticker.reasons = rs;
+      if (rs.length) state.sticker.reasons = migrateStickerReasons(rs);
     }
     var seen = {};
     for (var a = 0; a < state.stickerLog.length; a++) {
@@ -14495,7 +15189,7 @@
     return homePortalUrl() + '#connect=' + b64urlEncodeUtf8(JSON.stringify(payload));
   }
 
-  function showToast(text, asHtml) {
+  function showToast(text, asHtml, ms) {
     var el = document.getElementById('dashToast');
     if (!el) {
       el = document.createElement('div');
@@ -14507,7 +15201,7 @@
     if (asHtml) el.innerHTML = text; else el.textContent = text;
     el.classList.add('show');
     if (showToast.timer) window.clearTimeout(showToast.timer);
-    showToast.timer = window.setTimeout(function () { el.classList.remove('show'); }, 2800);
+    showToast.timer = window.setTimeout(function () { el.classList.remove('show'); }, ms || 2800);
   }
 
   function copyText(text) {
@@ -14736,6 +15430,10 @@
     if (act === 'item-down') { moveItem(el.getAttribute('data-cat'), el.getAttribute('data-item'), 1); return; }
     if (act === 'target-alert-ok') { closeTargetAlert(); return; }
     if (act === 'target-sound-test') { h50Test(); return; }
+    if (act === 'alert-sound-pick') { pickAlertSound(el.getAttribute('data-sound')); return; }
+    if (act === 'alert-sound-test') { h50Test(); return; }
+    if (act === 'alert-sound-del') { deleteAlertSound(el.getAttribute('data-sound')); return; }
+    if (act === 'alert-sound-url-add') { addAlertSoundFromUrl(); return; }
     if (act === 'sticker-add') { openReason(); return; }
     if (act === 'sticker-bulk-open') { openBulkStickers(); return; }
     if (act === 'sticker-bulk-close') { closeBulkStickers(); return; }
