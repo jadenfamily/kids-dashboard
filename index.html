@@ -11726,11 +11726,10 @@
     return alertWavUrl(id);
   }
 
-  /* 음원(MP3)을 먼저 틀 때는 길이를 몰라도 되게 넉넉히 (미리 듣기는 9초까지) */
+  /* 알림음은 끝까지 재생해요 — 인위적으로 끊는 시간(maxMs)은 두지 않아요.
+     미리 듣기·🎵 알림 소리·10분 전 알림 모두 소리가 다 끝날 때(ended)까지 울려요. */
   function alertSoundMaxMs(id) {
-    var hit = alertWavCache[id];
-    if (hit && hit.dur) return Math.round((hit.dur + 0.4) * 1000);
-    return 9000;           /* 내 알림음·MP3는 끝날 때까지(최대 9초) */
+    return 0;              /* 0 = 시간 제한 없음 (소리가 끝날 때까지) */
   }
 
   var h50AudioEl = null, h50AudioOn = false, h50AudioStop = 0;
@@ -11754,6 +11753,8 @@
           if (h50AudioEl.loop) return;
           h50AudioOn = false;
           h50Want = null;
+          /* 끝까지 다 울렸어요 (멈춤은 currentTime 0, 끝까지 울린 건 끝 위치에 머물러요) */
+          try { document.documentElement.setAttribute('data-h50-play', 'stopped'); } catch (e) { /* 무시 */ }
           if (!h50.on) h50SetState('off');
         });
         h50AudioEl.addEventListener('loadedmetadata', function () {
@@ -11781,6 +11782,8 @@
         duration: el ? Number(el.duration || 0) : 0, on: h50AudioOn
       };
     };
+    /* 점검용: 소리 멈추기 (화면에는 안 보여요) */
+    document.documentElement.h50Stop = function () { stopTargetMelody(); };
   } catch (e) { /* 무시 */ }
 
   function h50MarkFallback(v) {
@@ -11807,9 +11810,40 @@
   }
 
   function chimeAudio() {
-    if (!chimeAudioEl) chimeAudioEl = makeAudioEl();
+    if (!chimeAudioEl) {
+      chimeAudioEl = makeAudioEl();
+      if (chimeAudioEl) {
+        chimeAudioEl.addEventListener('playing', function () {
+          try { document.documentElement.setAttribute('data-h50-chime-play', 'playing'); } catch (e) { /* 무시 */ }
+        });
+        chimeAudioEl.addEventListener('ended', function () {
+          try { document.documentElement.setAttribute('data-h50-chime-play', 'stopped'); } catch (e) { /* 무시 */ }
+        });
+      }
+    }
     return chimeAudioEl;
   }
+
+  /* 일과표 알림 소리 멈추기 (다른 소리를 들려줄 때 겹치지 않게) */
+  function stopChimeSound() {
+    var el = chimeAudioEl;
+    if (!el) return;
+    try { el.pause(); el.currentTime = 0; } catch (e) { /* 무시 */ }
+    try { document.documentElement.setAttribute('data-h50-chime-play', 'stopped'); } catch (e) { /* 무시 */ }
+  }
+
+  /* 점검용 읽기 전용 상태 (화면에는 안 보여요) */
+  try {
+    document.documentElement.h50ChimeStatus = function () {
+      var el = chimeAudioEl;
+      return {
+        src: el ? String(el.src || '') : '', paused: el ? !!el.paused : true,
+        currentTime: el ? Number(el.currentTime || 0) : 0,
+        duration: el ? Number(el.duration || 0) : 0,
+        play: document.documentElement.getAttribute('data-h50-chime-play') || ''
+      };
+    };
+  } catch (e) { /* 무시 */ }
 
   function playWav(el, src, loop) {
     if (!el || !src) return null;
@@ -11911,9 +11945,10 @@
     return h50Start();
   }
 
-  /* 알림 멜로디 정지 — <audio>와 신시사이저를 모두 멈춰요 */
+  /* 알림 멜로디 정지 — <audio>와 신시사이저, 일과표 알림 소리까지 모두 멈춰요 */
   function stopTargetMelody() {
     stopWavMelody();
+    stopChimeSound();
     h50Stop();
   }
 
@@ -11940,22 +11975,17 @@
     }
   }
 
-  /* 일과표 알림 종소리 (화면 안 알림) — 고른 알림음을 3초만 */
+  /* 일과표 알림 종소리 (화면 안 알림) — 고른 알림음을 끝까지 울려요 */
   function alertChime() {
     if (!state.settings.soundOn) return;
     var id = alertSoundId(), el = chimeAudio(), src = alertSoundSrc(id);
-    var stopIn3 = function (one) {
-      if (alertChime.timer) window.clearTimeout(alertChime.timer);
-      alertChime.timer = window.setTimeout(function () {
-        try { one.pause(); one.currentTime = 0; } catch (e) { /* 무시 */ }
-      }, 3000);
-    };
     /* 진짜 음원(MP3)·올린 소리가 안 되면 직접 만든 .wav로 이어서, 그것도 안 되면 신시사이저 */
     var chimeMark = function (one) {
       try {
         document.documentElement.setAttribute('data-h50-chime', String(one).indexOf('blob:') === 0 ? 'wav' : 'audio');
         document.documentElement.setAttribute('data-h50-chime-src', String(one));
         document.documentElement.setAttribute('data-h50-chime-at', String(Date.now()));
+        document.documentElement.setAttribute('data-h50-chime-play', 'playing');
       } catch (e) { /* 무시 */ }
     };
     var wavTry = function () {
@@ -11963,7 +11993,7 @@
       if (el && wav) {
         try {
           var p2 = playWav(el, wav, false);
-          if (p2) { chimeMark(wav); stopIn3(el); return true; }
+          if (p2) { chimeMark(wav); return true; }
         } catch (e) { /* 신시사이저로 */ }
       }
       snd('chime');
@@ -11975,7 +12005,6 @@
         if (p && p.catch) p.catch(wavTry);
         if (p) {
           chimeMark(src);
-          stopIn3(el);
           return;
         }
       } catch (e) { /* 신시사이저로 */ }
@@ -11983,10 +12012,11 @@
     wavTry();
   }
 
-  /* 미리 듣기 — 고른 소리를 한 번 들려줘요 */
+  /* 미리 듣기 — 고른 소리를 한 번 끝까지 들려줘요 (다시 누르면 처음부터) */
   function previewAlertSound(id) {
     id = id || alertSoundId();
     stopWavMelody();
+    stopChimeSound();
     if (!h50PlayWav(false, alertSoundMaxMs(id), id)) {
       showToast('🔔 소리를 들려드리지 못했어요. 화면을 한 번 누른 뒤 다시 눌러 주세요.');
       return false;
