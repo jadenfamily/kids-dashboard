@@ -11310,7 +11310,7 @@
       '<label>어떤 칭찬인가요?' +
         '<select id="bulkReason" class="inp">' +
           '<option value="">이유 없이 붙이기</option>' +
-          state.sticker.reasons.map(function (r) {
+          (state.sticker.reasons || []).map(function (r) {
             return '<option value="' + esc(r) + '"' + (bulkState.reason === r ? ' selected' : '') + '>' + esc(r) + '</option>';
           }).join('') +
         '</select>' +
