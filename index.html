@@ -597,7 +597,7 @@
   .evo-next svg, .evo-next img{ width:46px; height:46px; opacity:.6; filter:grayscale(.55); }
   .evo-next b{ color:#b3a696; letter-spacing:.12em; }
 
-  /* 친구 그림 바꾸기 (편집 모드) */
+  /* 친구 그림 바꾸기 (몬스터 도감 · 부모님·관리자) */
   .art-edit{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
   .art-edit .inp{ width:auto; flex:1 1 150px; min-height:42px; font-size:13px; }
   .art-edit select{ flex:0 1 auto; }
@@ -895,6 +895,41 @@
   }
   .toast.show{ opacity:1; transform:translate(-50%,0); }
   .acct-role-note{ font-size:11.5px; font-weight:700; color:#8a93a8; line-height:1.6; }
+  /* 계정 관리 안 탭 — 계정 목록 · 코인 관리 · 스티커 관리 */
+  .acct-tabs{ display:flex; gap:5px; margin:0 0 12px; background:#f7f1e9; border-radius:15px; padding:5px; }
+  .acct-tab{
+    flex:1 1 0; min-width:0; min-height:40px; border:0; border-radius:11px; background:transparent;
+    color:#8a7f70; font-family:inherit; font-size:12px; font-weight:900; white-space:nowrap;
+    cursor:pointer; touch-action:manipulation; padding:8px 3px;
+  }
+  .acct-tab.on{ background:#fff; color:#2c2440; box-shadow:0 3px 9px rgba(80,60,30,.13); }
+  .acct-tab:active{ transform:scale(.97); }
+  .acct-pane{ display:flex; flex-direction:column; gap:11px; }
+  .acct-pane[hidden]{ display:none; }
+  .acct-pane-title{ margin:0; display:flex; align-items:center; gap:6px; font-size:14px; font-weight:900; color:#2c2440; }
+  .acct-pane-title svg.coin-ico{ width:18px; height:18px; }
+  .acct-sub{ display:flex; flex-direction:column; gap:8px; background:#fffdf9; border:2px solid #f4eadd; border-radius:16px; padding:11px 12px; }
+  .acct-sub > h4{ margin:0; font-size:13px; font-weight:900; color:#2c2440; }
+  .acct-sum{ display:flex; flex-wrap:wrap; gap:6px; }
+  .acct-sum .lchip{ display:inline-flex; align-items:center; gap:4px; border-radius:999px; padding:5px 10px; font-size:12px; font-weight:900; color:#8a7f70; background:#f7f1e9; }
+  .acct-sum .lchip b{ color:var(--ink); }
+  .acct-sum .lchip.rem{ background:#eafaf1; color:#0f7a55; }
+  .acct-sum .lchip.use{ background:#fff0f3; color:#b4436c; }
+  .acct-pane .care-actions{ display:flex; gap:7px; }
+  .acct-pane .care-actions .pill-btn{ flex:1 1 auto; }
+  .acct-tools{ display:flex; flex-wrap:wrap; gap:7px; }
+  .acct-tools .ghost-btn, .acct-tools .del-btn{ width:auto; min-height:40px; padding:0 13px; font-size:12.5px; }
+  @media (max-width:420px){
+    .acct-tab{ font-size:11px; padding:8px 1px; }
+    .acct-sub{ padding:10px 10px; }
+  }
+  /* 친구 그림 바꾸기 — 몬스터 도감 안 (부모님·관리자) */
+  .dex-art{ display:flex; flex-direction:column; gap:8px; margin-top:14px; padding:12px; border-radius:18px;
+    background:linear-gradient(135deg,#f7f2ff 0%,#eef5ff 100%); border:2px solid #e3d9ff; }
+  .dex-art h3{ margin:0; display:flex; align-items:center; gap:6px; font-size:13.5px; font-weight:900; color:#4b3f7a; }
+  .dex-art .art-tag{ margin-left:auto; font-size:10px; font-weight:900; color:#7a63c9; background:#fff; border-radius:999px; padding:3px 8px; }
+  .dex-art .art-preview{ width:56px; height:56px; border-radius:14px; }
+  .dex-art .lf-note{ margin:0; }
   .check-row.locked{ cursor:default; }
   .check-row.locked .box{ border-style:dashed; opacity:.75; }
   .hcal-load{ font-size:12.5px; font-weight:800; color:#8a93a8; background:#f7f9ff; border-radius:12px; padding:8px 11px; margin-bottom:8px; }
@@ -1959,8 +1994,6 @@
         <h2 id="secTitleSticker">칭찬 스티커</h2>
         <div class="head-tools">
           <span class="rt-percent"><strong id="stickerCount">0</strong> / <span id="stickerSlots">10</span></span>
-          <button class="pill-btn bulk" id="bulkStickerBtn" data-act="sticker-bulk-open" hidden>＋ 여러 개</button>
-          <button class="pill-btn" id="spendBtn" data-act="spend-open" hidden>🎁 쓰기</button>
           <button class="pill-btn warm" id="newBoardBtn" data-act="sticker-new" hidden>🎉 새 판 시작</button>
         </div>
       </div>
@@ -2061,26 +2094,6 @@
       <button class="hist-close" data-act="reason-close" aria-label="닫기">✕</button>
     </div>
     <div class="hist-body" id="reasonBody"></div>
-  </div>
-</div>
-
-<div class="hist" id="spendModal" hidden role="dialog" aria-modal="true" aria-labelledby="spendTitle">
-  <div class="hist-card" style="max-width:560px">
-    <div class="hist-head">
-      <h2 id="spendTitle">🎁 스티커 쓰기</h2>
-      <button class="hist-close" data-act="spend-close" aria-label="닫기">✕</button>
-    </div>
-    <div class="hist-body" id="spendBody"></div>
-  </div>
-</div>
-
-<div class="hist" id="bulkModal" hidden role="dialog" aria-modal="true" aria-labelledby="bulkTitle">
-  <div class="hist-card" style="max-width:520px">
-    <div class="hist-head">
-      <h2 id="bulkTitle">⭐ 칭찬 스티커 여러 개 붙이기</h2>
-      <button class="hist-close" data-act="sticker-bulk-close" aria-label="닫기">✕</button>
-    </div>
-    <div class="hist-body" id="bulkBody"></div>
   </div>
 </div>
 
@@ -2192,16 +2205,6 @@
   </div>
 </div>
 
-<div class="hist" id="allowModal" hidden role="dialog" aria-modal="true" aria-labelledby="allowTitle">
-  <div class="hist-card" style="max-width:540px">
-    <div class="hist-head">
-      <h2 id="allowTitle">코인 용돈 주기</h2>
-      <button class="hist-close" data-act="allow-close" aria-label="용돈 주기 닫기">✕</button>
-    </div>
-    <div class="hist-body" id="allowBody"></div>
-  </div>
-</div>
-
 <div class="modal" id="allowNoticeModal" hidden role="dialog" aria-modal="true" aria-labelledby="allowNoticeTitle">
   <div class="modal-card allow-note-card">
     <div class="modal-emoji">🎁</div>
@@ -2275,7 +2278,7 @@
     lastProfileSig: '',
     timer: 0, saving: false, again: false, lastSig: ''
   };
-  var acct = { pwFor: '', msg: '', busy: false, link: '' };
+  var acct = { pwFor: '', msg: '', busy: false, link: '', tab: 'list' };
 
   function isAdmin() {
     return !!(cloud && cloud.me && cloud.me.role === 'admin');
@@ -3897,8 +3900,6 @@
       var full = list.length >= st.slots;
       btn.hidden = !(full && can('sticker'));
     }
-    var bulkBtn = document.getElementById('bulkStickerBtn');
-    if (bulkBtn) bulkBtn.hidden = !can('stickerManage');
     /* 알림 소리 미리 듣기는 보호자·관리자만 (아이 화면을 깔끔하게) */
     var soundTest = document.querySelector('[data-act="target-sound-test"]');
     if (soundTest) soundTest.hidden = !can('edit');
@@ -3906,7 +3907,7 @@
     if (hint) {
       if (!can('stickerManage')) hint.textContent = '부모님이 붙여 주신 스티커예요 · 적립·사용·남은 개수를 볼 수 있어요 👀';
       else if (list.length >= st.slots) hint.textContent = '판을 다 채웠어요! 🎉 새 판을 시작해 보세요';
-      else hint.textContent = '빈 칸을 누르면 스티커가 붙어요 · 붙인 스티커를 누르면 뗄 수 있어요';
+      else hint.textContent = '빈 칸을 누르면 스티커가 붙어요 · 떼려면 붙은 스티커를 누르세요 · 여러 개·쓰기는 👥 계정';
     }
     renderLedger();
   }
@@ -3928,8 +3929,6 @@
 
   function renderLedger() {
     var el = document.getElementById('stickerLedger');
-    var btn = document.getElementById('spendBtn');
-    if (btn) btn.hidden = !can('stickerManage');
     if (!el) return;
     var unit = state.sticker.unit || 1000;
     var earned = stickerTotal();
@@ -4003,6 +4002,7 @@
     state.sticker.celebrated = false;
     saveState();
     renderStickers();
+    refreshAcctStickerPane();
   }
 
   function openGoalModal() {
@@ -4543,8 +4543,19 @@
     if (isOnlyModal('evoModal')) unlockScroll();
   }
 
-  /* ---- 친구 그림 바꾸기 (편집 모드) ---- */
+  /* ---- 친구 그림 바꾸기 (몬스터 도감 · 부모님·관리자 전용) ---- */
   var artEdit = { sp: '', stage: '1' };
+
+  function canPetArt() {
+    return !!(cloud.me && cloud.me.role !== 'child' && can('edit'));
+  }
+
+  /* 그림 바꾸기 칸이 보이는 곳(도감)을 다시 그려요 */
+  function renderArtHosts() {
+    var pm = document.getElementById('petModal');
+    if (pm && !pm.hidden) renderPetDex();
+    renderEditPanel();
+  }
 
   function petArtEditorHtml() {
     var p = petState();
@@ -4580,7 +4591,7 @@
     petArtSet(artEdit.sp, artEdit.stage, u);
     saveState();
     renderPet();
-    renderEditPanel();
+    renderArtHosts();
     showToast('그림을 바꿨어요! 🖼');
   }
 
@@ -4588,7 +4599,7 @@
     petArtSet(artEdit.sp, artEdit.stage, '');
     saveState();
     renderPet();
-    renderEditPanel();
+    renderArtHosts();
     showToast('기본 그림으로 돌아갔어요');
   }
 
@@ -4614,7 +4625,7 @@
           petArtSet(artEdit.sp, artEdit.stage, url);
           saveState();
           renderPet();
-          renderEditPanel();
+          renderArtHosts();
           showToast('그림을 바꿨어요! 🖼');
         } catch (e) {
           showToast('그림을 바꾸지 못했어요.');
@@ -4928,11 +4939,6 @@
         '<h3>📚 문제지 목록</h3>' +
         '<div class="wb-edit">' + wbEditHtml() + '</div>' +
         '<button class="ghost-btn" data-act="wb-add" style="margin-top:8px">+ 문제지 추가</button>' +
-      '</div>' +
-      '<div class="ep-sub">' +
-        '<h3>🐾 친구 그림 바꾸기 (선택)</h3>' +
-        petArtEditorHtml() +
-        '<p class="ep-hint" style="margin-top:7px">기본은 직접 그린 몬스터 그림이에요. 아이 사진이나 원하는 그림으로 바꾸면 카드·도감·진화 팝업에 바로 보여요.</p>' +
       '</div>' +
       '<div class="ep-actions">' +
         '<button class="ghost-btn" data-act="sticker-clear">스티커 보드 비우기</button>' +
@@ -5914,9 +5920,8 @@
   function shopAdminHtml() {
     var list = shopAll();
     var h = '<div class="shop-admin">' +
-      '<div class="allow-row"><button type="button" class="pill-btn warm" data-act="allow-open">' + coinSvg() + ' 코인 용돈 주기</button>' +
-      '<span class="lf-note">코인을 용돈처럼 주거나, 빼거나, 지금 숫자로 맞출 수 있어요.</span></div>' +
-      '<p class="lf-note">가격을 바꾸면 바로 저장돼요. 아이템을 숨기거나 지울 수도 있어요. (config/settings.json)</p>';
+      '<p class="lf-note">코인은 <b>👥 계정 → 🪙 코인 관리</b>에서 주거나 뺀 수 있어요.</p>' +
+      '<p class="lf-note">가격을 바꾸면 바로 저장돼요. 아이템을 숨기거나 지울 수도 있어요.</p>';
     if (shopUi.msg) h += '<p class="shop-msg">' + esc(shopUi.msg) + '</p>';
     h += '<div class="admin-list">';
     for (var i = 0; i < list.length; i++) {
@@ -7030,8 +7035,15 @@
       '<div class="pet-gauge"><i style="width:' + pct + '%"></i></div>' +
       '</div>';
 
-    h += '<h3 class="pet-sec-title">🐾 몬스터 도감 <b>' + p.collection.length + '</b> / ' + SPECIES_MAX + '</h3>';
-    h += '<div class="dex-sum">';
+    if (canPetArt()) {
+      h += '<div class="dex-art" id="dexArt">' +
+        '<h3>🖼️ 친구 그림 바꾸기<span class="art-tag">부모님·관리자</span></h3>' +
+        petArtEditorHtml() +
+        '<p class="lf-note">기본은 직접 그린 몬스터 그림이에요. 아이 사진이나 원하는 그림으로 바꾸면 카드·도감·진화 팝업에 바로 보여요.</p>' +
+        '</div>';
+    }
+
+    h += '<h3 class="pet-sec-title">🐾 몬스터 도감 <b>' + p.collection.length + '</b> / ' + SPECIES_MAX + '</h3>';    h += '<div class="dex-sum">';
     for (var r = 0; r < RARITY.length; r++) {
       var cnt = 0;
       for (var q = 0; q < PET_SPECIES.length; q++) if (PET_SPECIES[q].rarity === r && have[PET_SPECIES[q].id]) cnt++;
@@ -8293,20 +8305,11 @@
     allowUi.balErr = '';
     allowUi.balSeq++;
     if (!(allowUi.amount > 0)) allowUi.amount = 50;
-    var ttl = document.getElementById('allowTitle');
-    if (ttl) ttl.innerHTML = coinSvg() + ' 코인 용돈 조절';
-    var m = document.getElementById('allowModal');
-    renderAllowance();
-    if (m) m.hidden = false;
-    raiseModal('allowModal');
-    lockScroll();
-    loadAllowBalance();
+    openAccounts('coin');
   }
   function closeAllowance() {
     allowUi.balSeq++;
-    var m = document.getElementById('allowModal');
-    if (m) m.hidden = true;
-    if (isOnlyModal('allowModal')) unlockScroll();
+    closeAccounts();
   }
 
   function allowPrevHtml() {
@@ -9330,7 +9333,6 @@
       pill('storage', '🧺 보관함 ' + Math.max(0, ownedFurni - placed)) +
       pill('pets', '🐾 친구 ' + pets.length + '/' + roomPetMax(fl.size)) +
       pill('size', '📐 방 확장') +
-      (can('edit') ? '<button type="button" class="tool-pill wide" data-act="allow-open">' + coinSvg() + ' 코인 용돈</button>' : '') +
       '</div>';
     if (decoN && roomUi.panel !== 'studio') h += '<p class="room-hint slim">벽에 건 장식 ' + decoN + '개 · 벽에 걸린 장식을 누르면 치울 수 있어요</p>';
     return h;
@@ -10885,6 +10887,7 @@
       flushSync();
     }
     renderStickers();
+    refreshAcctStickerPane();
     var st = document.getElementById('statsModal');
     if (st && !st.hidden) renderStats();
     showToast('스티커 기록을 모두 0으로 지웠어요 🧹');
@@ -11470,17 +11473,12 @@
   function openBulkStickers() {
     if (!can('stickerManage')) return;
     bulkState = { count: bulkState.count || 5, reason: '', msg: '' };
-    renderBulkStickers();
-    var m = document.getElementById('bulkModal');
-    if (m) m.hidden = false;
-    raiseModal('bulkModal');
-    lockScroll();
+    openAccounts('sticker');
+    acctScrollTo('bulkBody');
   }
 
   function closeBulkStickers() {
-    var m = document.getElementById('bulkModal');
-    if (m) m.hidden = true;
-    if (isOnlyModal('bulkModal')) unlockScroll();
+    /* 여러 개 붙이기는 계정 창 안으로 옮겨서 따로 닫을 창이 없어요 */
   }
 
   function bulkHtml() {
@@ -11507,7 +11505,6 @@
     h += '<div class="bulk-preview" id="bulkPreview"></div>';
     h += '<div class="bulk-actions">' +
       '<button type="button" class="pill-btn warm" data-act="bulk-save">스티커 붙이기</button>' +
-      '<button type="button" class="ghost-btn" data-act="sticker-bulk-close">취소</button>' +
       '</div>';
     h += '<p class="lf-msg" id="bulkMsg">' + esc(bulkState.msg || '') + '</p>';
     return h;
@@ -11591,8 +11588,10 @@
       if (msg) msg.textContent = bulkState.msg;
       return;
     }
+    bulkState.msg = '스티커 ' + n + '개를 붙였어요!';
     grantBulkStickers(n, bulkState.reason);
-    closeBulkStickers();
+    renderBulkStickers();
+    refreshAcctStickerPane();
   }
 
   /* ---- 스티커 적립 이유 ---- */
@@ -11645,16 +11644,12 @@
   function openSpend() {
     if (!can('stickerManage')) return;
     spendState = { item: '', count: 1, date: dateKey(), msg: '' };
-    renderSpend();
-    var m = document.getElementById('spendModal');
-    if (m) m.hidden = false;
-    lockScroll();
+    openAccounts('sticker');
+    acctScrollTo('spendBody');
   }
 
   function closeSpend() {
-    var m = document.getElementById('spendModal');
-    if (m) m.hidden = true;
-    if (isOnlyModal('spendModal')) unlockScroll();
+    /* 스티커 쓰기는 계정 창 안으로 옮겨서 따로 닫을 창이 없어요 */
   }
 
   function spendPreviewHtml() {
@@ -11710,7 +11705,9 @@
     saveState();
     if (cloud.me) scheduleSync('stickers');
     renderStickers();
-    closeSpend();
+    spendState = { item: '', count: 1, date: day, msg: '스티커 ' + cnt + '개를 썼어요.' };
+    renderSpend();
+    refreshAcctStickerPane();
     snd('sticker');
   }
 
@@ -12969,7 +12966,7 @@
     var editBtn = document.getElementById('editBtn');
     if (editBtn) editBtn.hidden = !can('edit');
     var accBtn = document.getElementById('accountsBtn');
-    if (accBtn) accBtn.hidden = !can('accounts');
+    if (accBtn) accBtn.hidden = !acctCanOpen();
     var statsBtn = document.getElementById('statsBtn');
     if (statsBtn) statsBtn.hidden = !can('edit');
     var soundBtn = document.getElementById('soundBtn');
@@ -12983,22 +12980,126 @@
     renderSyncPill();
   }
 
-  /* ---- 계정 관리 ---- */
-  function openAccounts() {
-    if (!can('accounts')) return;
+  /* ---- 계정 관리 (계정 목록 · 코인 관리 · 스티커 관리) ---- */
+  var ACCT_TABS = [
+    { id: 'list', label: '👥 계정 목록' },
+    { id: 'coin', label: '🪙 코인 관리' },
+    { id: 'sticker', label: '⭐ 스티커 관리' }
+  ];
+
+  /* 관리자·보호자가 계정 창을 연다 (아이는 안 돼요) */
+  function acctCanOpen() {
+    return can('accounts') || can('stickerManage');
+  }
+
+  function acctTabAllowed(id) {
+    if (id === 'list') return can('accounts');
+    if (id === 'coin') return can('edit') && !!(cloud.me && cloud.me.role !== 'child');
+    if (id === 'sticker') return can('stickerManage');
+    return false;
+  }
+
+  function acctTabsVisible() {
+    var out = [];
+    for (var i = 0; i < ACCT_TABS.length; i++) if (acctTabAllowed(ACCT_TABS[i].id)) out.push(ACCT_TABS[i]);
+    return out;
+  }
+
+  function acctTabsHtml() {
+    var list = acctTabsVisible();
+    if (list.length < 2) return '';
+    var h = '<div class="acct-tabs" role="tablist" aria-label="계정 관리 항목">';
+    for (var i = 0; i < list.length; i++) {
+      var on = (acct.tab === list[i].id);
+      h += '<button type="button" class="acct-tab' + (on ? ' on' : '') + '" role="tab" data-act="acct-tab" data-tab="' + list[i].id +
+        '" aria-selected="' + (on ? 'true' : 'false') + '">' + list[i].label + '</button>';
+    }
+    return h + '</div>';
+  }
+
+  function acctSumHtml() {
+    var unit = state.sticker.unit || 1000;
+    var earned = stickerTotal(), spent = spentCount(), left = remainStickers();
+    return '<div class="acct-sum">' +
+      '<span class="lchip">적립 <b>' + fmtNum(earned) + '개</b></span>' +
+      '<span class="lchip use">사용 <b>' + fmtNum(spent) + '개</b></span>' +
+      '<span class="lchip rem">남은 <b>' + fmtNum(left) + '개 · ' + fmtNum(left * unit) + '원</b></span>' +
+      '</div>';
+  }
+
+  /* 🪙 코인 관리 — 전에 마이룸에 있던 + 주기 · - 빼기 · = 맞추기를 그대로 여기로 */
+  function acctCoinPaneHtml() {
+    return '<h3 class="acct-pane-title" id="allowTitle">' + coinSvg() + ' 코인 용돈 조절</h3>' +
+      '<div id="allowBody"></div>';
+  }
+
+  /* ⭐ 스티커 관리 — 여러 개 붙이기 · 쓰기 · 기록 */
+  function acctStickerPaneHtml() {
+    var h = '<div class="acct-sum-wrap">' + acctSumHtml() + '</div>';
+    h += '<div class="acct-sub"><h4>＋ 여러 개 붙이기</h4><div id="bulkBody"></div></div>';
+    h += '<div class="acct-sub"><h4>🎁 스티커 쓰기</h4><div id="spendBody"></div></div>';
+    h += '<div class="acct-tools">' +
+      '<button type="button" class="ghost-btn" data-act="stats-open">📊 기록·통계</button>' +
+      '<button type="button" class="ghost-btn" data-act="sticker-clear">스티커 판 비우기</button>' +
+      (isAdmin() ? '<button type="button" class="ghost-btn danger" data-act="stickers-reset-logs">🧹 기록 초기화</button>' : '') +
+      '</div>';
+    h += '<p class="lf-note">여러 개 붙이기와 쓰기는 여기서, 한 개씩 붙이는 건 <b>칭찬 스티커 판</b>에서 바로 할 수 있어요.</p>';
+    return h;
+  }
+
+  function openAccounts(tab) {
+    if (!acctCanOpen()) return;
     acct.pwFor = '';
     acct.msg = '';
     acct.link = '';
+    if (tab && acctTabAllowed(tab)) acct.tab = tab;
+    if (!acctTabAllowed(acct.tab)) acct.tab = (acctTabsVisible()[0] || { id: 'coin' }).id;
     renderAccounts();
     var m = document.getElementById('acctModal');
     if (m) m.hidden = false;
+    raiseModal('acctModal');
     lockScroll();
   }
 
   function closeAccounts() {
     var m = document.getElementById('acctModal');
     if (m) m.hidden = true;
-    if (!document.getElementById('histModal') || document.getElementById('histModal').hidden) unlockScroll();
+    if (isOnlyModal('acctModal')) unlockScroll();
+  }
+
+  function acctShowTab(id) {
+    if (!acctTabAllowed(id)) return;
+    acct.tab = id;
+    acct.pwFor = '';
+    acct.msg = '';
+    renderAccounts();
+    var m = document.getElementById('acctModal');
+    if (m) m.hidden = false;
+  }
+
+  /* 계정 창 안 특정 칸으로 스크롤 (여러 개 붙이기·쓰기 바로가기) */
+  function acctScrollTo(id) {
+    var el = document.getElementById(id);
+    if (!el || !el.scrollIntoView) return;
+    try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { /* 무시 */ }
+  }
+
+  /* 스티커를 붙이거나 쓴 뒤 — 계정 창의 요약·미리보기 숫자를 바로 맞춰요 */
+  function refreshAcctStickerPane() {
+    var sum = document.querySelector('#acctPane-sticker .acct-sum-wrap');
+    if (sum) sum.innerHTML = acctSumHtml();
+    var bpv = document.getElementById('bulkPreview');
+    if (bpv) bpv.innerHTML = bulkPreviewText();
+    var left = remainStickers();
+    var cnt = document.getElementById('spendCount');
+    if (cnt) {
+      cnt.disabled = left < 1;
+      cnt.setAttribute('max', String(Math.max(1, left)));
+    }
+    var spv = document.getElementById('spendPreview');
+    if (spv) spv.innerHTML = spendPreviewHtml();
+    var sbtn = document.querySelector('#spendForm button[type="submit"]');
+    if (sbtn) sbtn.disabled = left < 1;
   }
 
   function acctCountAdmins() {
@@ -13009,6 +13110,18 @@
   }
 
   function accountsHtml() {
+    var tab = acctTabAllowed(acct.tab) ? acct.tab : (acctTabsVisible()[0] || { id: 'list' }).id;
+    acct.tab = tab;
+    var h = acctTabsHtml();
+    if (can('accounts')) {
+      h += '<div class="acct-pane" id="acctPane-list"' + (tab === 'list' ? '' : ' hidden') + '>' + accountsListHtml() + '</div>';
+    }
+    h += '<div class="acct-pane" id="acctPane-coin"' + (tab === 'coin' ? '' : ' hidden') + '>' + acctCoinPaneHtml() + '</div>';
+    h += '<div class="acct-pane" id="acctPane-sticker"' + (tab === 'sticker' ? '' : ' hidden') + '>' + acctStickerPaneHtml() + '</div>';
+    return h;
+  }
+
+  function accountsListHtml() {
     var users = (cloud.users && cloud.users.users) || [];
     var h = '<p class="acct-note">계정과 권한은 비공개 저장소의 <b>config/users.json</b>에 저장돼요. 비밀번호는 솔트가 붙은 SHA-256 해시로만 보관합니다.</p>';
     h += '<div class="acct-connect">' +
@@ -13051,6 +13164,14 @@
     var body = document.getElementById('acctBody');
     if (!body) return;
     body.innerHTML = accountsHtml();
+    if (acct.tab === 'coin') {
+      if (!allowUi.to) allowUi.to = defaultAllowTarget();
+      renderAllowance();
+      loadAllowBalance();
+    } else if (acct.tab === 'sticker') {
+      renderBulkStickers();
+      renderSpend();
+    }
   }
 
   function acctFail(msg) {
@@ -13398,6 +13519,7 @@
     if (act === 'gate-direct') { renderLoginBody(el.getAttribute('data-mode') || (cloud.conn ? 'login' : 'setup'), true); return; }
     if (act === 'accounts-open') { openAccounts(); return; }
     if (act === 'accounts-close') { closeAccounts(); return; }
+    if (act === 'acct-tab') { acctShowTab(el.getAttribute('data-tab') || ''); return; }
     if (act === 'acct-pw') { acct.pwFor = el.getAttribute('data-id') || ''; acct.msg = ''; renderAccounts(); return; }
     if (act === 'acct-pw-cancel') { acct.pwFor = ''; renderAccounts(); return; }
     if (act === 'acct-del') { deleteAccount(el.getAttribute('data-id')); return; }
@@ -13415,6 +13537,7 @@
          act === 'cat-add' || act === 'cat-del' || act === 'cat-left' || act === 'cat-right' || act === 'cat-color' || act === 'cat-target-clear' ||
          act === 'cat-day' || act === 'cat-day-preset' || act === 'item-up' || act === 'item-down') && !can('edit')) return;
     if (act === 'reset-all' && !can('reset')) return;
+    if ((act === 'pet-art-apply' || act === 'pet-art-reset') && !canPetArt()) return;
     if (act === 'stickers-reset-logs' && !isAdmin()) return;
 
     if (act === 'toggle-check') { onToggleCheck(el); return; }
@@ -13905,8 +14028,8 @@
       else shopUi.draft.effect = el.value;
       return;
     }
-    if (field === 'petArtSp') { artEdit.sp = el.value; renderEditPanel(); return; }
-    if (field === 'petArtStage') { artEdit.stage = el.value; renderEditPanel(); return; }
+    if (field === 'petArtSp') { artEdit.sp = el.value; renderArtHosts(); return; }
+    if (field === 'petArtStage') { artEdit.stage = el.value; renderArtHosts(); return; }
     if (field === 'allowTarget') {
       allowUi.to = el.value;
       allowUi.msg = '';
