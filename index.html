@@ -1061,6 +1061,9 @@
   }
   .sections > .sec{ grid-column:1 / -1; min-width:0; }
   .sections > .sec.sec-half{ grid-column:span 1; }
+  /* 반 폭 카드 안에서는 요일 칸이 좁으니 글자가 깨지지 않게 폭에 맞춰 접어요 */
+  .sections > .sec.sec-half .week-grid{ grid-template-columns:repeat(auto-fit, minmax(96px, 1fr)); }
+  .sections > .sec.sec-half .day{ min-width:0; }
   .sec-pair{ align-self:stretch; display:flex; flex-direction:column; }
   .sec-pair .board{ align-content:start; }
   /* 720px 미만(아이폰·작은 폰)에서만 한 줄로 쌓고, 태블릿·아이패드·PC는 두 칸 */
@@ -12923,7 +12926,7 @@
   function blockInnerHtml(sec, blk) {
     if (blk.type === 'routine') return routineBlockInner(blk);
     if (blk.type === 'sticker_board') return stickerBlockInner(blk);
-    if (blk.type === 'today_schedule') return '<div id="todayBox" data-part="box"></div>';
+    if (blk.type === 'today_schedule') return '<div' + (isFirstBlock(blk) ? ' id="todayBox"' : '') + ' data-part="box"></div>';
     if (blk.type === 'weekly_schedule') return weekBlockInner(blk);
     if (blk.type === 'target_bar') return '<div class="rt-targets" data-part="box" hidden></div>';
     if (blk.type === 'notice_board') return noticeBlockInner(blk);
