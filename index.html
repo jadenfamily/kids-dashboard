@@ -269,6 +269,22 @@
     white-space:nowrap; touch-action:manipulation;
   }
   .rt-view-btn:active{ transform:scale(.97); }
+  /* 알림 소리가 울리는 동안에만 나타나는 🔇 알림 끄기 */
+  .rt-mute-btn{
+    display:flex; width:100%; align-items:center; justify-content:center; gap:6px;
+    min-height:44px; margin:0 0 12px; padding:0 14px;
+    border-radius:14px; border:2px solid #ff9aa8; background:#fff3f5; color:#c62b3f;
+    font-family:inherit; font-size:14px; font-weight:900; cursor:pointer; white-space:nowrap;
+    touch-action:manipulation; animation:rtMutePulse 1.2s ease-in-out infinite;
+  }
+  .rt-mute-btn:active{ transform:scale(.97); }
+  .rt-mute-btn[hidden]{ display:none !important; }
+  @keyframes rtMutePulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(198,43,63,.30); }
+    50%{ box-shadow:0 0 0 7px rgba(198,43,63,0); }
+  }
+  @media (prefers-reduced-motion:reduce){ .rt-mute-btn{ animation:none; } }
+  .ghost-btn.stop{ background:#fff3f5; border-color:#ff9aa8; color:#c62b3f; }
   .add-group{ display:block; width:100%; margin-top:12px; min-height:50px; }
   .routine-empty{
     margin:0; padding:22px 16px; border-radius:18px; border:2px dashed #e6dccd; background:#fffdf9;
@@ -5298,7 +5314,6 @@
 
   function toggleScheduleNotify() {
     if (notifyOn()) { setNotifyOn(false); showToast('🔕 일과표 알림을 껐어요.'); return; }
-    primeTargetMelody();
     /* 알림을 쓰는 브라우저(아이폰 홈 화면 앱 등)면 잠금화면 알림까지 함께 켜요 */
     if (notifyNative()) {
       setNotifyOn(true);
@@ -5334,10 +5349,10 @@
         native = true;
       }
     } catch (e) { native = false; }
-    /* 잠금화면 알림을 못 쓰는 브라우저(아이폰 사파리)는 화면 안 알림 + 소리로 */
+    /* 잠금화면 알림을 못 쓰는 브라우저(아이폰 사파리)는 화면 안 알림으로만 알려요.
+       하루 일과표 알림은 소리를 내지 않아요 — 소리는 루틴 '목표시간' 알림에서만 울려요. */
     if (document.visibilityState !== 'hidden') {
       showToast((native ? '' : '🔔 ') + body, false, native ? 2800 : 9000);
-      alertChime();
     }
   }
 
@@ -11291,10 +11306,11 @@
     var s = document.getElementById('tamSound');
     if (s) {
       s.textContent = (v === 'on')
-        ? '♪ 하와이 파이브오 알림 소리가 울리는 중 — 확인을 누르면 멈춰요'
+        ? '♪ ' + alertSoundName(alertSoundId()) + ' 알림 소리가 울리는 중 — 확인을 누르면 멈춰요'
         : '🔇 소리를 들으려면 화면을 한 번 눌러 주세요';
       s.hidden = (v !== 'on' && v !== 'blocked');
     }
+    try { updateSoundUi(); } catch (e) { /* 무시 */ }
   }
 
   function h50Ctx() {
@@ -11945,72 +11961,25 @@
     return h50Start();
   }
 
-  /* 알림 멜로디 정지 — <audio>와 신시사이저, 일과표 알림 소리까지 모두 멈춰요 */
+  /* 알림 멜로디 정지 — <audio>·신시사이저·일과표 알림 소리까지 모두 멈춰요 */
   function stopTargetMelody() {
     stopWavMelody();
     stopChimeSound();
     h50Stop();
+    try { updateSoundUi(); } catch (e) { /* 무시 */ }
   }
 
-  /* 아이폰이 '터치 없이 재생'을 막지 않도록 처음 몇 번의 터치에 살짝 준비해 둬요 */
-  var h50Primed = false;
-  function primeTargetMelody() {
-    if (h50Primed || h50AudioOn) return;
-    var el = h50Audio(), src = alertSoundSrc(alertSoundId());
-    if (!el || !src) return;
-    h50Primed = true;
+  /* 진입·첫 터치에 소리를 몰래 틀지 않아요 (예전엔 muted 로 한 번 틀어 봤지만,
+     아이폰 사파리에서 소리가 새어 나올 수 있어 아예 없앴어요).
+     소리가 막힌 알림창에서는 화면을 누를 때 아래 pointerdown 이 다시 틀어 줘요. */
+  function preloadTargetMelody() {
     try {
-      if (el.getAttribute('src') !== src) el.src = src;
-      el.muted = true;
-      var done = function () {
-        if (h50AudioOn) { try { el.muted = false; } catch (e) { /* 무시 */ } return; }
-        try { el.pause(); el.currentTime = 0; } catch (e) { /* 무시 */ }
-        el.muted = false;
-      };
-      var p = el.play();
-      if (p && p.then) p.then(done, function () { try { el.muted = false; } catch (e) { /* 무시 */ } });
-      else done();
-    } catch (e) {
-      try { el.muted = false; } catch (e2) { /* 무시 */ }
-    }
+      if (!alertWavCache[alertSoundId()]) alertWavUrl(alertSoundId());
+    } catch (e) { /* 무시 */ }
   }
 
-  /* 일과표 알림 종소리 (화면 안 알림) — 고른 알림음을 끝까지 울려요 */
-  function alertChime() {
-    if (!state.settings.soundOn) return;
-    var id = alertSoundId(), el = chimeAudio(), src = alertSoundSrc(id);
-    /* 진짜 음원(MP3)·올린 소리가 안 되면 직접 만든 .wav로 이어서, 그것도 안 되면 신시사이저 */
-    var chimeMark = function (one) {
-      try {
-        document.documentElement.setAttribute('data-h50-chime', String(one).indexOf('blob:') === 0 ? 'wav' : 'audio');
-        document.documentElement.setAttribute('data-h50-chime-src', String(one));
-        document.documentElement.setAttribute('data-h50-chime-at', String(Date.now()));
-        document.documentElement.setAttribute('data-h50-chime-play', 'playing');
-      } catch (e) { /* 무시 */ }
-    };
-    var wavTry = function () {
-      var wav = el ? alertWavUrl(id) : '';
-      if (el && wav) {
-        try {
-          var p2 = playWav(el, wav, false);
-          if (p2) { chimeMark(wav); return true; }
-        } catch (e) { /* 신시사이저로 */ }
-      }
-      snd('chime');
-      return false;
-    };
-    if (el && src) {
-      try {
-        var p = playWav(el, src, false);
-        if (p && p.catch) p.catch(wavTry);
-        if (p) {
-          chimeMark(src);
-          return;
-        }
-      } catch (e) { /* 신시사이저로 */ }
-    }
-    wavTry();
-  }
+  /* 하루 일과표 알림은 소리를 내지 않아요 (checkScheduleAlerts → showNotify 는 화면 안 알림만).
+     알림 소리는 루틴 '목표시간' 30분·10분 전 알림과 🎵 미리 듣기에서만 울려요. */
 
   /* 미리 듣기 — 고른 소리를 한 번 끝까지 들려줘요 (다시 누르면 처음부터) */
   function previewAlertSound(id) {
@@ -12022,6 +11991,7 @@
       return false;
     }
     showToast('🎵 ' + alertSoundName(id) + ' 알림 소리를 들려드려요!');
+    updateSoundUi();
     return true;
   }
 
@@ -12031,15 +12001,60 @@
     previewAlertSound(alertSoundId());
   }
 
-  /* 소리가 막혀 있으면 첫 터치에 다시 켜고, 처음엔 .wav를 미리 만들어 둬요 */
+  /* 🔇 알림 끄기 — 울리는 소리를 바로 멈춰요 */
+  function stopAlertSoundByUser() {
+    stopTargetMelody();
+    updateSoundUi();
+    showToast('🔇 알림 소리를 껐어요.');
+  }
+
+  /* 🎵 알림 소리 · ▶ 미리 듣기 — 울리는 중이면 바로 끄고, 멈춰 있으면 들려줘요 */
+  function toggleAlertSoundTest() {
+    if (alertSoundPlaying()) { stopAlertSoundByUser(); return; }
+    h50Test();
+    updateSoundUi();
+  }
+
+  /* 소리가 막혀 있으면 알림창을 누를 때 다시 켜고, 처음엔 .wav를 미리 만들어 둬요.
+     (진입·첫 터치에 소리를 미리 틀지 않아요 — 그 순간 소리가 새어 나오면 안 되니까요) */
   document.addEventListener('pointerdown', function () {
     if (tamOpen && !melodyPlaying()) { playTargetMelody(true, 0); return; }
-    if (!alertWavCache[alertSoundId()]) {
-      window.setTimeout(function () { try { alertWavUrl(alertSoundId()); } catch (e) { /* 무시 */ } }, 0);
-      return;
-    }
-    primeTargetMelody();
+    preloadTargetMelody();
   }, { capture: true, passive: true });
+
+  /* 🔇 알림 끄기 / 🎵 버튼 상태 — 소리가 울리는 동안만 루틴 머리에 버튼이 보이고,
+     🎵 알림 소리·▶ 미리 듣기는 ⏹ 알림음 끄기로 바뀌어요. */
+  function chimeSoundPlaying() {
+    var el = chimeAudioEl;
+    if (!el || el.paused) return false;
+    return Number(el.currentTime || 0) > 0;
+  }
+  function alertSoundPlaying() { return !!(h50AudioOn || h50.on || chimeSoundPlaying()); }
+
+  function soundUiNames() { return alertSoundName(alertSoundId()).replace(/^\S+\s/, ''); }
+
+  function updateSoundUi() {
+    var playing = alertSoundPlaying();
+    try { document.documentElement.setAttribute('data-alert-sound', playing ? 'on' : 'off'); } catch (e) { /* 무시 */ }
+    var mutes = document.querySelectorAll('[data-act="alert-mute"]');
+    for (var i = 0; i < mutes.length; i++) {
+      mutes[i].hidden = !playing;
+      mutes[i].setAttribute('aria-pressed', playing ? 'true' : 'false');
+    }
+    var tests = document.querySelectorAll('[data-act="target-sound-test"], [data-act="alert-sound-test"]');
+    for (var k = 0; k < tests.length; k++) {
+      var b = tests[k];
+      b.setAttribute('aria-pressed', playing ? 'true' : 'false');
+      if (playing) b.classList.add('stop'); else b.classList.remove('stop');
+      if (b.getAttribute('data-act') === 'target-sound-test') {
+        b.textContent = playing ? '⏹ 알림음 끄기' : '🎵 알림 소리';
+        b.setAttribute('aria-label', playing ? '울리는 알림음 끄기' : '목표 시간 알림 소리 미리 듣기');
+      } else {
+        b.textContent = playing ? '⏹ 알림음 끄기' : '▶ 미리 듣기 · ' + soundUiNames();
+        b.setAttribute('aria-label', playing ? '울리는 알림음 끄기' : '알림 소리 미리 듣기');
+      }
+    }
+  }
 
   /* ---------- 🔔 알림 소리 고르기 (부모님용) ---------- */
   function alertPickerHtml() {
@@ -13839,6 +13854,7 @@
           '<span class="rt-rocket"' + id('overallRocket') + ' data-part="rocket">🚀</span></div>' +
         '<button class="rt-view-btn" data-act="routine-view-toggle"' + id('routineViewBtn') + ' data-part="viewBtn" aria-label="루틴 가로로 보기">↔️ 가로 보기</button>' +
       '</div></div>' +
+      '<button type="button" class="rt-mute-btn" data-act="alert-mute" data-part="mute" aria-label="울리는 알림 소리 끄기" aria-pressed="false" hidden>🔇 알림 끄기</button>' +
       '<div class="rt-targets" data-part="targets"' + id('routineTargets') + ' hidden></div>' +
       '<div class="rt-jump" data-part="jump"' + id('routineJump') + ' role="group" aria-label="루틴 그룹 바로가기"></div>' +
       '<div class="routine-grid" data-part="grid"' + id('routineGrid') + ' data-view="grid"></div>' +
@@ -15585,9 +15601,10 @@
     if (act === 'item-up') { moveItem(el.getAttribute('data-cat'), el.getAttribute('data-item'), -1); return; }
     if (act === 'item-down') { moveItem(el.getAttribute('data-cat'), el.getAttribute('data-item'), 1); return; }
     if (act === 'target-alert-ok') { closeTargetAlert(); return; }
-    if (act === 'target-sound-test') { h50Test(); return; }
+    if (act === 'alert-mute') { stopAlertSoundByUser(); return; }
+    if (act === 'target-sound-test') { toggleAlertSoundTest(); return; }
     if (act === 'alert-sound-pick') { pickAlertSound(el.getAttribute('data-sound')); return; }
-    if (act === 'alert-sound-test') { h50Test(); return; }
+    if (act === 'alert-sound-test') { toggleAlertSoundTest(); return; }
     if (act === 'alert-sound-del') { deleteAlertSound(el.getAttribute('data-sound')); return; }
     if (act === 'alert-sound-url-add') { addAlertSoundFromUrl(); return; }
     if (act === 'sticker-add') { openReason(); return; }
@@ -16198,6 +16215,8 @@
   loadWeatherCache();
   renderAll();
   startNotifyLoop();
+  /* 소리가 울리는 동안 🔇 알림 끄기 버튼·🎵 버튼 상태를 맞춰 둬요 */
+  window.setInterval(function () { try { updateSoundUi(); } catch (e) { /* 무시 */ } }, 1000);
   window.setTimeout(function () { try { checkTargetAlerts(); } catch (e) { /* 무시 */ } }, 2500);
   loadWeather();
   initAuth();
