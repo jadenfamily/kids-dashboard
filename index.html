@@ -2235,6 +2235,60 @@
     #shopBody .shop-prev-foot{ min-height:38px; }
   }
 
+  /* ---------- 첫 로딩 스플래시 (데이터를 다 받을 때까지 이 화면) ---------- */
+  .splash-wrap{ display:flex; flex-direction:column; align-items:center; gap:12px; padding:16px 6px 8px; text-align:center; }
+  .splash-spin{ width:46px; height:46px; border-radius:50%; border:4px solid #ffe7c4; border-top-color:#ff9f1c; animation:splashSpin .9s linear infinite; }
+  @keyframes splashSpin{ to{ transform:rotate(360deg); } }
+  .splash-note{ margin:0; font-size:15px; font-weight:900; color:#5b4a2e; letter-spacing:-.01em; }
+  .splash-sub{ margin:0; font-size:12px; font-weight:800; color:#b3a696; }
+
+  /* ---------- 편집 모드: 평소 화면 프레임을 그대로 두고 도구만 얹어요 ---------- */
+  .edit-panel{ display:flex; flex-direction:column; gap:10px; }
+  .ep-head{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .ep-head h2{ margin:0; font-size:16px; font-weight:900; color:#5b4a2e; }
+  .ep-head .ep-hint{ flex:1 1 150px; }
+  .ep-head .done-btn{ margin-left:auto; }
+  .ep-tools{ display:flex; flex-wrap:wrap; gap:7px; }
+  .ep-tool{ display:inline-flex; align-items:center; gap:5px; min-height:34px; padding:0 12px; border-radius:12px;
+    border:1.5px solid #f0e2cf; background:#fff; color:#6d5a44; font-size:12.5px; font-weight:900;
+    font-family:inherit; cursor:pointer; touch-action:manipulation; }
+  .ep-tool.on{ background:#fff3d6; border-color:#ffc46b; color:#a86600; }
+  .ep-sheet{ position:fixed; inset:0; z-index:120; display:flex; align-items:flex-start; justify-content:center;
+    background:rgba(60,45,25,.42); padding:14px 10px 26px; overflow:auto; -webkit-overflow-scrolling:touch; }
+  .ep-sheet[hidden]{ display:none; }
+  .ep-sheet-card{ width:min(720px,100%); background:#fffdf8; border-radius:22px; border:2px solid #f1e3cd;
+    box-shadow:0 18px 50px rgba(80,55,20,.28); padding:14px 14px 18px; }
+  .ep-sheet-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .ep-sheet-head h2{ margin:0; font-size:17px; font-weight:900; color:#5b4a2e; flex:1 1 auto; }
+  .ep-sheet-body{ display:flex; flex-direction:column; gap:12px; }
+  .ep-sub{ display:flex; flex-direction:column; gap:7px; }
+  .ep-sub h3{ margin:0; font-size:13.5px; font-weight:900; color:#6d5a44; }
+
+  /* 카드 모서리 편집 바 (평소 카드 위에 작게 얹기만 해요) */
+  .sec{ position:relative; }
+  .sec .sec-tools.sec-ovl{ gap:3px; padding:3px 4px; border-radius:12px; background:rgba(255,255,255,.92);
+    border:1.5px solid #ecdcc6; box-shadow:0 3px 10px rgba(120,90,40,.12); }
+  .sec-ovl .sec-tool{ min-height:26px; min-width:28px; padding:0 6px; font-size:11.5px; border-width:1.2px; background:#fff; }
+  .sec.edit-on{ outline:2px dashed #e6d5ba; outline-offset:2px; }
+  .sec.has-h{ display:flex; flex-direction:column; }
+  .sec.has-h .sec-blocks{ flex:1 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain; }
+  .sec-resize{ position:absolute; right:0; bottom:0; z-index:7; width:36px; height:36px; padding:0; border:0;
+    border-radius:10px 0 14px 0; background:rgba(255,255,255,.9); color:#a8907a; font-size:14px; font-weight:900;
+    line-height:1; cursor:nwse-resize; touch-action:none; box-shadow:-2px -2px 8px rgba(150,120,80,.10); }
+  .sec-resize[hidden]{ display:none; }
+  .sec.dragging{ outline:2px solid #ffc46b; outline-offset:2px; }
+
+  /* ---------- 🎛️ 변수 설정 ---------- */
+  .var-list{ display:flex; flex-direction:column; gap:7px; }
+  .var-row{ display:flex; align-items:center; gap:10px; background:#fff; border:1.6px solid #f0e2cf; border-radius:13px; padding:8px 10px; }
+  .var-txt{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .var-txt b{ font-size:13px; font-weight:900; color:#5b4a2e; }
+  .var-txt small{ font-size:11px; font-weight:800; color:#a2937f; }
+  .var-in{ display:flex; align-items:center; gap:5px; flex:0 0 auto; }
+  .var-inp{ width:88px; text-align:right; font-weight:900; -moz-appearance:textfield; appearance:textfield; }
+  .var-inp::-webkit-outer-spin-button, .var-inp::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  .var-unit{ font-size:11px; font-weight:900; color:#a2937f; min-width:24px; }
+
 </style>
 </head>
 <body>
@@ -2541,6 +2595,8 @@
   };
   var BLOCK_MAX_PER_SEC = 8;
   var SEC_MAX = 10;
+  var SEC_H_MIN = 140;      /* 카드 높이 드래그 최소 px */
+  var SEC_H_MAX = 1200;     /* 카드 높이 드래그 최대 px */
 
   var ROLES = {
     admin: { label: '관리자', perms: { check: 1, sticker: 1, stickerManage: 1, edit: 1, reset: 1, history: 1, accounts: 1 } },
@@ -2868,7 +2924,7 @@
       out.push({
         id: base, base: base,
         emoji: SEC_DEFAULT_EMOJI[base], title: SEC_NAMES[base],
-        width: SEC_DEFAULT_WIDTH[base], hidden: false,
+        width: SEC_DEFAULT_WIDTH[base], w: SEC_DEFAULT_WIDTH[base], h: 0, hidden: false,
         blocks: [{ id: 'blk-' + base, type: SEC_PRIMARY_BLOCK[base], group: '' }]
       });
     }
@@ -2935,6 +2991,66 @@
     return c ? String(c.name || '내 알림음') : ALERT_SOUNDS[0].name;
   }
 
+  /* ============ 조절 가능한 변수 (🎛️ 변수 설정) ============
+     화면 규칙에 쓰는 숫자를 state.settings.vars 한곳에 모아 두고,
+     config/settings.json 으로 가족 기기끼리 같이 맞춰요. */
+  var VAR_DEFS = [
+    { k: 'coinCheck', def: 10, min: 0, max: 999, step: 1, label: '루틴 1개 체크 코인', unit: '코인', hint: '루틴을 하나 체크할 때마다 주는 코인' },
+    { k: 'coinGroup', def: 20, min: 0, max: 999, step: 1, label: '루틴 그룹 완료 보너스', unit: '코인', hint: '한 그룹의 루틴을 다 끝냈을 때 한 번 더 주는 코인' },
+    { k: 'coinSticker', def: 10, min: 0, max: 999, step: 1, label: '칭찬 스티커 1개', unit: '코인', hint: '칭찬 스티커를 한 개 붙일 때 주는 코인' },
+    { k: 'coinStart', def: 120, min: 0, max: 99999, step: 10, label: '새 계정 시작 코인', unit: '코인', hint: '새로 만든 계정이 처음 갖고 시작하는 코인' },
+    { k: 'petDrawCost', def: 30, min: 0, max: 9999, step: 1, label: '랜덤 알 뽑기 비용', unit: '코인', hint: '🥚 알 뽑기 한 번에 내는 코인' },
+    { k: 'hatchHours', def: 24, min: 0, max: 720, step: 1, label: '알 부화 시간', unit: '시간', hint: '새 알이 부화하기까지 걸리는 시간' },
+    { k: 'expMax', def: 100, min: 1, max: 9999, step: 10, label: '진화에 필요한 기운', unit: 'EXP', hint: '부화·1차·2차 진화 단계마다 필요한 경험치' },
+    { k: 'stickerUnit', def: 1000, min: 100, max: 100000, step: 100, label: '스티커 1개 금액 가치', unit: '원', hint: '스티커 한 개를 돈으로 계산할 때의 값' },
+    { k: 'stickerSlots', def: 10, min: 3, max: 30, step: 1, label: '스티커 한 판 칸 수', unit: '칸', hint: '한 판에 붙일 수 있는 스티커 칸 수' },
+    { k: 'alertFirstMin', def: 30, min: 1, max: 180, step: 1, label: '목표 시간 첫 알림', unit: '분 전', hint: '루틴 목표 시간 몇 분 전에 처음 알려 줄까요' },
+    { k: 'alertSecondMin', def: 10, min: 1, max: 180, step: 1, label: '목표 시간 두 번째 알림', unit: '분 전', hint: '한 번 더 알려 줄 때 몇 분 전인지' }
+  ];
+
+  function varDef(k) {
+    for (var i = 0; i < VAR_DEFS.length; i++) if (VAR_DEFS[i].k === k) return VAR_DEFS[i];
+    return null;
+  }
+  function clampVarValue(k, v) {
+    var d = varDef(k);
+    if (!d) return 0;
+    var n = parseInt(v, 10);
+    if (isNaN(n)) n = d.def;
+    if (n < d.min) n = d.min;
+    if (n > d.max) n = d.max;
+    return n;
+  }
+  function defaultVars() {
+    var out = {};
+    for (var i = 0; i < VAR_DEFS.length; i++) out[VAR_DEFS[i].k] = VAR_DEFS[i].def;
+    return out;
+  }
+  function normVars(raw) {
+    var out = defaultVars();
+    if (raw && typeof raw === 'object') {
+      for (var i = 0; i < VAR_DEFS.length; i++) {
+        var d = VAR_DEFS[i];
+        if (raw[d.k] == null || raw[d.k] === '') continue;
+        out[d.k] = clampVarValue(d.k, raw[d.k]);
+      }
+    }
+    return out;
+  }
+  function varsOf(st) {
+    st = st || state;
+    if (!st || typeof st !== 'object') return defaultVars();
+    if (!st.settings || typeof st.settings !== 'object') st.settings = {};
+    st.settings.vars = normVars(st.settings.vars);
+    return st.settings.vars;
+  }
+  function vnum(k) {
+    var d = varDef(k);
+    var v = varsOf(state)[k];
+    if (v == null && d) v = d.def;
+    return Number(v) || 0;
+  }
+
   function defaultState() {
     return {
       version: 1,
@@ -2942,7 +3058,8 @@
         childName: '', greeting: GREETING_DEFAULT, city: 'seoul', soundOn: true,   /* 이름은 보호자가 넣기 전까지 비워 둬요 (샘플 이름이 화면에 비치지 않게) */
         alertSound: ALERT_SOUND_DEFAULT, customAlertSounds: [],
         sectionTitles: { routine: '하루 루틴', sticker: '칭찬 스티커', academy: '오늘의 학원', week: '학원 시간표' },
-        dashboardSections: defaultSections()
+        dashboardSections: defaultSections(),
+        vars: defaultVars()
       },
       categories: [
         {
@@ -3083,6 +3200,19 @@
       if (e) return e;
       return base ? SEC_DEFAULT_EMOJI[base] : '🧩';
     }
+    /* 카드 폭 — width가 기준이고, 예전 기기의 w도 받아 줘요 */
+    function cleanWidth(r, base) {
+      var v = (r.width === 'full' || r.width === 'half') ? r.width
+        : ((r.w === 'full' || r.w === 'half') ? r.w : '');
+      if (v) return v;
+      return base ? SEC_DEFAULT_WIDTH[base] : 'half';
+    }
+    /* 카드 높이 — 드래그로 맞춘 px (0이면 내용에 맞춤) */
+    function cleanHeight(v) {
+      var n = parseInt(v, 10);
+      if (isNaN(n) || n < SEC_H_MIN || n > SEC_H_MAX) return 0;
+      return n;
+    }
 
     var list = [], seen = {}, usedBase = {};
     if (raw) {
@@ -3104,11 +3234,14 @@
         if (base && !blocks.length && Object.prototype.toString.call(r.blocks) !== '[object Array]') {
           blocks = [{ id: 'blk-' + base, type: SEC_PRIMARY_BLOCK[base], group: '' }];
         }
+        var wid = cleanWidth(r, base);
         list.push({
           id: id, base: base,
           emoji: cleanEmoji(r.emoji, base),
           title: cleanTitle(r.title, base),
-          width: (r.width === 'full') ? 'full' : (r.width === 'half' ? 'half' : (base ? SEC_DEFAULT_WIDTH[base] : 'half')),
+          width: wid,
+          w: wid,
+          h: cleanHeight(r.h),
           hidden: r.hidden === true,
           blocks: blocks
         });
@@ -3125,7 +3258,7 @@
         var df = defByBase[b2];
         list.push({
           id: b2, base: b2, emoji: df.emoji, title: cleanTitle('', b2),
-          width: df.width, hidden: false, blocks: clone(df.blocks)
+          width: df.width, w: df.width, h: 0, hidden: false, blocks: clone(df.blocks)
         });
       }
     }
@@ -3137,7 +3270,7 @@
       var df3 = defByBase[baseId];
       list.push({
         id: baseId, base: baseId, emoji: df3.emoji, title: cleanTitle('', baseId),
-        width: df3.width, hidden: false, blocks: clone(df3.blocks)
+        width: df3.width, w: df3.width, h: 0, hidden: false, blocks: clone(df3.blocks)
       });
     }
     return list;
@@ -3202,6 +3335,9 @@
       titles[tid] = (typeof tv === 'string' && tv.trim()) ? tv.trim().slice(0, 16) : d.settings.sectionTitles[tid];
     }
     s.settings.sectionTitles = titles;
+
+    /* 조절 가능한 변수 (🎛️ 변수 설정) */
+    s.settings.vars = normVars(s.settings.vars);
 
     var cats = [];
     if (Object.prototype.toString.call(s.categories) === '[object Array]') {
@@ -3972,7 +4108,8 @@
       btn.setAttribute('aria-label', v === 'row' ? '루틴 세로로 보기' : '루틴 가로로 보기');
     }
     var addBtn = bpart(root, 'add');
-    if (addBtn) addBtn.hidden = !(ui.editing && can('edit'));
+    /* 그룹 추가는 편집 팝업(🧩 그룹·할 일)에서 해요 — 카드 안에는 두지 않아요 */
+    if (addBtn) addBtn.hidden = true;
     var empty = bpart(root, 'empty');
     if (empty) empty.hidden = state.categories.length > 0 || !!(blk && blk.group);
   }
@@ -4138,13 +4275,13 @@
 
   function renderRoutine() {
     eachBlockOfType('routine', function (root, blk) { renderRoutineBlock(root, blk); });
+    /* 편집 팝업의 그룹·할 일도 같이 맞춰요 */
+    if (epUi.tab === 'groups') { try { renderEditSheetBody(); } catch (e) { /* 무시 */ } }
   }
 
-  function renderRoutineBlock(root, blk) {
-    var grid = bpart(root, 'grid');
-    if (!grid) return;
-    var groupId = blk.group || '';
-    var prevScroll = grid.scrollLeft || 0;
+  /* 루틴 카드 HTML — 대시보드(보기)와 편집 팝업(edit=true)이 같은 배치를 써요.
+     보기 화면은 늘 평소 모양 그대로이고, 폼으로 바꾸는 건 편집 팝업 안에서만 해요. */
+  function routineCardsHtml(groupId, edit) {
     var ck = checksFor(currentKey);
     var dow = keyDayIndex(currentKey);
     var html = '';
@@ -4155,8 +4292,8 @@
       var cat = state.categories[i];
       if (groupId && cat.id !== groupId) continue;
       var catOn = activeDay(cat, dow);
-      /* 보기 화면에서는 오늘 요일의 그룹만, 편집 화면에서는 전부 보여 줘요 */
-      if (!catOn && !ui.editing) continue;
+      /* 보기 화면은 오늘 요일의 그룹만, 편집 팝업에서는 오늘 쉬는 그룹도 보여 줘요 */
+      if (!catOn && !edit) continue;
       shownCats++;
       var done = 0;
       var k;
@@ -4165,14 +4302,14 @@
       var pct = total ? Math.round(done / total * 100) : 0;
       var complete = total > 0 && done === total;
 
-      html += '<article class="routine-card' + (complete ? ' complete' : '') + (ui.editing ? ' editing' : '') +
-        (ui.editing && !catOn ? ' offday' : '') +
+      html += '<article class="routine-card' + (complete && !edit ? ' complete' : '') + (edit ? ' editing' : '') +
+        (edit && !catOn ? ' offday' : '') +
         '" data-cat="' + esc(cat.id) + '" style="--c:' + esc(cat.color) + ';--ct:' + esc(cat.tint) + '">';
 
       html += '<div class="rc-head">';
       html += '<span class="rc-emoji" aria-hidden="true">' + cat.emoji + '</span>';
       html += '<div class="rc-titles">';
-      if (ui.editing) {
+      if (edit) {
         html += '<input class="inp title-inp" data-field="catTitle" data-cat="' + esc(cat.id) +
           '" value="' + esc(cat.title) + '" aria-label="카테고리 이름">';
       } else {
@@ -4186,12 +4323,12 @@
         (complete ? '완료 🎉' : done + '/' + total) + '</span>';
       html += '</div>';
 
-      if (ui.editing) html += catEditBarHtml(cat, i, last);
+      if (edit) html += catEditBarHtml(cat, i, last);
 
       html += '<div class="rc-bar"><i style="width:' + pct + '%"></i></div>';
       html += '<ul class="rc-list">';
 
-      if (!total && !ui.editing) {
+      if (!total && !edit) {
         html += '<li class="empty-hint">아직 할 일이 없어요.</li>';
       }
 
@@ -4199,7 +4336,7 @@
         var item = cat.items[k];
         var isDone = !!ck[item.id];
         var wbItem = isWbItemText(item.text);
-        if (ui.editing) {
+        if (edit) {
           html += '<li class="check-row edit">';
           html += '<span class="box" aria-hidden="true"></span>';
           html += '<input class="item-input" data-field="itemText" data-cat="' + esc(cat.id) +
@@ -4234,21 +4371,29 @@
 
       if (cat.id === 'study') html += wbBoxHtml();
 
-      if (complete && !ui.editing) html += '<div class="rc-bonus">✨ 그룹 완료 보너스 <span>' + coinSvg() + ' +20 코인</span></div>';
+      if (complete && !edit) html += '<div class="rc-bonus">✨ 그룹 완료 보너스 <span>' + coinSvg() + ' +' + COIN_GROUP + ' 코인</span></div>';
 
-      if (ui.editing) {
+      if (edit) {
         html += '<button class="add-item" data-act="add-item" data-cat="' + esc(cat.id) + '">+ 할 일 추가</button>';
       }
       html += '</article>';
     }
+    return { html: html, shown: shownCats };
+  }
 
-    grid.innerHTML = html;
+  function renderRoutineBlock(root, blk) {
+    var grid = bpart(root, 'grid');
+    if (!grid) return;
+    var groupId = blk.group || '';
+    var prevScroll = grid.scrollLeft || 0;
+    var made = routineCardsHtml(groupId, false);
+    grid.innerHTML = made.html;
     applyRoutineViewFor(root, blk);
     renderRoutineJumpFor(root, blk);
     /* 오늘 요일에 하는 그룹이 하나도 없을 때 */
     var dayEmpty = bpart(root, 'dayEmpty');
     if (dayEmpty) {
-      dayEmpty.hidden = ui.editing || !groupId ? (ui.editing || state.categories.length === 0 || shownCats > 0) : shownCats > 0;
+      dayEmpty.hidden = groupId ? (made.shown > 0) : (state.categories.length === 0 || made.shown > 0);
       var msg = dayEmpty.querySelector('span');
       if (msg) msg.textContent = groupId ? '이 그룹은 오늘 쉬는 날이에요 🌤️' : '오늘 요일에는 하는 루틴이 없어요 🌤️';
       var editBtn = bpart(root, 'dayEmptyEdit');
@@ -4257,6 +4402,19 @@
     if (prevScroll && grid.scrollLeft !== prevScroll) grid.scrollLeft = prevScroll;
     updateOverallForBlock(root, blk, true);
     renderRoutineTargetsForBlock(root, blk);
+  }
+
+  /* 이름·설명을 고치는 동안 대시보드 카드의 머리 글자도 같이 맞춰요 */
+  function syncCatHead(catId) {
+    var cat = findCat(catId);
+    if (!cat) return;
+    var cards = document.querySelectorAll('#sections .routine-card[data-cat="' + catId + '"]');
+    for (var i = 0; i < cards.length; i++) {
+      var h3 = cards[i].querySelector('.rc-titles h3');
+      if (h3) h3.textContent = cat.title;
+      var sub = cards[i].querySelector('.rc-sub');
+      if (sub) sub.textContent = cat.sub || '';
+    }
   }
 
   function updateCardStats(catId) {
@@ -4288,7 +4446,7 @@
         if (!bonus) {
           bonus = document.createElement('div');
           bonus.className = 'rc-bonus';
-          bonus.innerHTML = '✨ 그룹 완료 보너스 <span>' + coinSvg() + ' +20 코인</span>';
+          bonus.innerHTML = '✨ 그룹 완료 보너스 <span>' + coinSvg() + ' +' + COIN_GROUP + ' 코인</span>';
           card.appendChild(bonus);
         }
       } else if (bonus && bonus.parentNode) {
@@ -5363,11 +5521,11 @@
 
   function renderWeek() {
     eachBlockOfType('weekly_schedule', function (root) { renderWeekInto(root); });
+    if (epUi.tab === 'week') { try { renderEditSheetBody(); } catch (e) { /* 무시 */ } }
   }
 
-  function renderWeekInto(root) {
-    var grid = bpart(root, 'grid');
-    if (!grid) return;
+  /* 일과표 7일 칸 — 대시보드는 보기 전용, 편집 팝업(edit=true)에서만 입력칸이 돼요 */
+  function weekGridHtml(edit) {
     var todayIdx = new Date().getDay();
     var html = '';
     for (var n = 0; n < 7; n++) {
@@ -5380,7 +5538,7 @@
       html += '<div class="day-head"><span class="day-name">' + DAY_NAMES[idx] + '요일</span>' +
         (isToday ? '<span class="today-badge">오늘</span>' : '') + '</div>';
 
-      if (ui.editing) {
+      if (edit) {
         for (var i = 0; i < evs.length; i++) {
           var e = evs[i];
           var tp = evTimeParts(e.time);
@@ -5409,9 +5567,15 @@
             '</div>';
         }
       }
-        html += '</div>';
+      html += '</div>';
     }
-    grid.innerHTML = html;
+    return html;
+  }
+
+  function renderWeekInto(root) {
+    var grid = bpart(root, 'grid');
+    if (!grid) return;
+    grid.innerHTML = weekGridHtml(false);
   }
 
   function addEvent(dayKey) {
@@ -5701,6 +5865,183 @@
     return h;
   }
 
+  /* ============ 편집 패널 ============
+     ✏️ 편집을 눌러도 대시보드 카드의 크기·배치는 그대로 두고,
+     위쪽에는 짧은 도구 줄만 얹어요. 상세 수정은 팝업(ep-sheet)에서 해요. */
+  var epUi = { tab: '' };
+  var EP_TABS = [
+    { id: 'groups', icon: '🧩', label: '그룹·할 일' },
+    { id: 'sections', icon: '🧱', label: '섹션·블록' },
+    { id: 'week', icon: '🗓️', label: '일과표' },
+    { id: 'sticker', icon: '⭐', label: '스티커' },
+    { id: 'notice', icon: '💬', label: '한마디' },
+    { id: 'basic', icon: '⚙️', label: '기본 설정' },
+    { id: 'vars', icon: '🎛️', label: '변수 설정' }
+  ];
+
+  function epTabDef(id) {
+    for (var i = 0; i < EP_TABS.length; i++) if (EP_TABS[i].id === id) return EP_TABS[i];
+    return EP_TABS[0];
+  }
+  function epTabLabel(id) { return id ? epTabDef(id).label : '편집'; }
+
+  function epGroupsHtml() {
+    var h = '<p class="ep-hint">평소 화면과 똑같은 카드 모양이에요. 이름·요일·할 일을 여기서 고치면 대시보드에 바로 반영돼요.</p>';
+    h += '<div class="ep-groups">' + routineCardsHtml('', true).html + '</div>';
+    h += '<button class="ghost-btn" type="button" data-act="cat-add">+ 루틴 그룹 추가</button>';
+    return h;
+  }
+
+  function epSectionsHtml() {
+    return '<p class="ep-hint">카드를 만들고 그 안에 기능 블록을 넣어 우리 집에 맞게 바꿔 보세요. 카드 오른쪽 아래 ↘를 끌면 크기도 바뀌어요.</p>' +
+      diyEditorHtml() +
+      '<button class="ghost-btn diy-add-sec" type="button" data-act="diy-sec-add">＋ 새 섹션 만들기</button>';
+  }
+
+  function epWeekHtml() {
+    return '<p class="ep-hint">요일마다 학원·일정을 적어 두면 오늘의 일정과 🔔 10분 전 알림에 쓰여요.</p>' +
+      '<div class="week-grid" id="epWeekGrid">' + weekGridHtml(true) + '</div>';
+  }
+
+  function epStickerHtml() {
+    var st = state.sticker;
+    var h = '<div class="ep-grid">' +
+      fieldWrap('스티커 한 판 칸 수', '<input class="inp" type="number" inputmode="numeric" min="3" max="30" step="1" data-field="stickerSlots" value="' + (st.slots || 10) + '">') +
+      fieldWrap('스티커 1개 금액(원)', '<input class="inp" type="number" inputmode="numeric" min="100" max="100000" step="100" data-field="stickerUnit" value="' + (st.unit || 1000) + '">') +
+      fieldWrap('스티커 한 줄 소개', '<input class="inp" data-field="stickerGoal" value="' + esc(st.goal || '') + '" placeholder="비워 두면 안 보여요 (예: 모아서 원하는 선물에 써요)" maxlength="40">') +
+      fieldWrap('스티커 이유 (콤마로 구분)', '<input class="inp" data-field="stickerReasons" value="' + esc((st.reasons || []).join(', ')) + '" placeholder="루틴 완료, 독서, 심부름">') +
+      '</div>' +
+      '<div class="ep-actions">' +
+      '<button class="ghost-btn" type="button" data-act="sticker-clear">스티커 보드 비우기</button>' +
+      (isAdmin() ? '<button class="ghost-btn danger" type="button" data-act="stickers-reset-logs">🧹 스티커 기록 초기화</button>' : '') +
+      '</div>';
+    return h;
+  }
+
+  function epNoticeHtml() {
+    var list = [];
+    var secs = secList();
+    for (var i = 0; i < secs.length; i++) {
+      var bs = secs[i].blocks || [];
+      for (var k = 0; k < bs.length; k++) if (bs[k].type === 'notice_board') list.push(bs[k]);
+    }
+    if (!list.length) {
+      return '<p class="ep-hint">아직 한마디 게시판이 없어요. 🧱 섹션·블록에서 💬 한마디 블록을 넣어 보세요.</p>';
+    }
+    var h = '<p class="ep-hint">가족에게 남길 한마디예요. 저장하면 대시보드 게시판에 바로 보여요.</p>';
+    for (var j = 0; j < list.length; j++) {
+      var b = list[j];
+      h += '<div class="ep-sub nb-row">' +
+        '<div class="nb-form-row">' +
+        '<input class="inp inp-sm nb-emo" data-field="diyNbEmoji" data-blk="' + esc(b.id) + '" value="' + esc(b.emoji || '💬') + '" maxlength="4" aria-label="게시판 아이콘">' +
+        '<input class="inp inp-sm" data-field="diyNbTitle" data-blk="' + esc(b.id) + '" value="' + esc(b.title || '') + '" maxlength="24" placeholder="제목" aria-label="게시판 제목">' +
+        '</div>' +
+        '<textarea class="inp nb-text-inp" data-field="diyNbText" data-blk="' + esc(b.id) + '" rows="3" maxlength="400" placeholder="가족에게 남길 한마디를 적어 주세요">' + esc(b.text || '') + '</textarea>' +
+        '</div>';
+    }
+    return h;
+  }
+
+  function epBasicHtml() {
+    var s = state.settings;
+    var h = '<div class="ep-grid">' +
+      fieldWrap('아이 이름', '<input class="inp" data-field="childName" value="' + esc(s.childName) + '" placeholder="예: 지우" maxlength="12">') +
+      fieldWrap('인사말', '<input class="inp" data-field="greeting" value="' + esc(s.greeting) + '" placeholder="예: 오늘도 화이팅! 🌟" maxlength="40">') +
+      fieldWrap('동네 (날씨)', '<select class="inp" data-field="city">' + cityOptions(s.city) + '</select>') +
+      '</div>';
+    h += '<div class="ep-sub alert-picker"><h3>🔔 알림 소리 고르기</h3>' +
+      '<p class="ep-hint">목표 시간·일과표 알림에 쓸 소리예요. 눌러서 바로 들어 보고, 우리 집 소리를 직접 담을 수도 있어요. (가족 기기에 같이 저장돼요)</p>' +
+      alertPickerHtml() + '</div>';
+    h += '<div class="ep-sub"><h3>📚 문제지 목록</h3><div class="wb-edit">' + wbEditHtml() + '</div>' +
+      '<button class="ghost-btn" type="button" data-act="wb-add">+ 문제지 추가</button></div>';
+    h += '<div class="ep-actions">' +
+      '<button class="ghost-btn danger" type="button" data-act="reset-all">모두 처음 상태로</button>' +
+      '<span class="ep-hint">바꾼 내용은 바로 저장돼요.</span></div>';
+    return h;
+  }
+
+  /* 🎛️ 변수 하나 바꾸기 — 화면 규칙과 스티커 값에 바로 반영하고 저장해요 */
+  function setVarValue(k, raw) {
+    if (!can('edit')) return;
+    var d = varDef(k);
+    if (!d) return;
+    var v = varsOf(state);
+    v[k] = clampVarValue(k, raw);
+    if (k === 'stickerUnit' && state.sticker) state.sticker.unit = v[k];
+    if (k === 'stickerSlots' && state.sticker) {
+      var n = Math.max(v[k], state.sticker.stickers.length);
+      state.sticker.slots = n;
+      state.sticker.celebrated = state.sticker.stickers.length >= n;
+      v.stickerSlots = n;
+    }
+    applyVars();
+    saveState();
+    /* 숫자를 계속 올리고 내려도 입력칸 포커스가 안 풀리게, 팝업은 다시 그리지 않아요 */
+    try { renderHeader(); } catch (e1) { /* 무시 */ }
+    try { renderStickers(); } catch (e2) { /* 무시 */ }
+    try { renderRoutine(); } catch (e3) { /* 무시 */ }
+    try { renderTargetBars(); } catch (e4) { /* 무시 */ }
+    if (epUi.tab === 'vars') {
+      var hint = document.querySelector('#editSheetBody .ep-actions .ep-hint');
+      if (hint) {
+        var vv = varsOf(state);
+        hint.textContent = '지금은 루틴 체크 ' + vv.coinCheck + '코인 · 그룹 보너스 ' + vv.coinGroup + '코인 · 알 뽑기 ' + vv.petDrawCost + '코인이에요.';
+      }
+    } else {
+      renderEditPanel();
+    }
+  }
+
+  function resetVars() {
+    if (!can('edit')) return;
+    state.settings.vars = defaultVars();
+    if (state.sticker) {
+      state.sticker.unit = state.settings.vars.stickerUnit;
+      var n = Math.max(state.settings.vars.stickerSlots, state.sticker.stickers.length);
+      state.sticker.slots = n;
+      state.sticker.celebrated = state.sticker.stickers.length >= n;
+      state.settings.vars.stickerSlots = n;
+    }
+    applyVars();
+    saveState();
+    renderAll();
+    if (epUi.tab === 'vars') renderEditSheetBody();
+    showToast('🎛️ 변수를 기본값으로 돌렸어요.');
+  }
+
+  /* 🎛️ 변수 설정 — 규칙 숫자를 항목별 설명과 함께 직접 바꿔요 */
+  function epVarsHtml() {
+    var v = varsOf(state);
+    var h = '<p class="ep-hint">코인·기운·스티커 같은 규칙 숫자를 여기서 바꿔요. 바꾸면 바로 저장되고 가족 기기에도 같이 맞춰져요.</p>';
+    h += '<div class="var-list">';
+    for (var i = 0; i < VAR_DEFS.length; i++) {
+      var d = VAR_DEFS[i];
+      h += '<label class="var-row">' +
+        '<span class="var-txt"><b>' + esc(d.label) + '</b><small>' + esc(d.hint) + '</small></span>' +
+        '<span class="var-in"><input class="inp var-inp" type="number" inputmode="numeric" min="' + d.min + '" max="' + d.max + '" step="' + d.step +
+        '" data-field="varNum" data-var="' + d.k + '" value="' + v[d.k] + '" aria-label="' + esc(d.label) + '">' +
+        '<span class="var-unit">' + esc(d.unit) + '</span></span></label>';
+    }
+    h += '</div>';
+    h += '<div class="ep-actions">' +
+      '<button class="ghost-btn" type="button" data-act="vars-reset">기본값으로 되돌리기</button>' +
+      '<span class="ep-hint">지금은 루틴 체크 ' + v.coinCheck + '코인 · 그룹 보너스 ' + v.coinGroup + '코인 · 알 뽑기 ' + v.petDrawCost + '코인이에요.</span></div>';
+    return h;
+  }
+
+  function epSheetBodyHtml(tab) {
+    if (!tab) return '';
+    if (!can('edit')) return '<p class="ep-hint">편집 권한이 없어요.</p>';
+    if (tab === 'groups') return epGroupsHtml();
+    if (tab === 'sections') return epSectionsHtml();
+    if (tab === 'week') return epWeekHtml();
+    if (tab === 'sticker') return epStickerHtml();
+    if (tab === 'notice') return epNoticeHtml();
+    if (tab === 'basic') return epBasicHtml();
+    if (tab === 'vars') return epVarsHtml();
+    return '';
+  }
+
   function renderEditPanel() {
     var p = document.getElementById('editPanel');
     if (!p) return;
@@ -5708,46 +6049,61 @@
     if (!ui.editing) {
       p.hidden = true;
       p.innerHTML = '';
+      epUi.tab = '';
       return;
     }
     p.hidden = false;
-    var s = state.settings;
-    p.innerHTML =
-      '<div class="ep-head">' +
-        '<h2>✏️ 편집 모드</h2>' +
-        '<button class="done-btn" data-act="edit-toggle">편집 완료</button>' +
-      '</div>' +
-      '<div class="ep-grid">' +
-        fieldWrap('아이 이름', '<input class="inp" data-field="childName" value="' + esc(s.childName) + '" placeholder="예: 지우" maxlength="12">') +
-        fieldWrap('인사말', '<input class="inp" data-field="greeting" value="' + esc(s.greeting) + '" placeholder="예: 오늘도 화이팅! 🌟" maxlength="40">') +
-        fieldWrap('동네 (날씨)', '<select class="inp" data-field="city">' + cityOptions(s.city) + '</select>') +
-        fieldWrap('스티커 칸 수', '<select class="inp" data-field="stickerSlots">' + slotsOptions(state.sticker.slots) + '</select>') +
-        fieldWrap('스티커 1개 금액(원)', '<input class="inp" type="number" data-field="stickerUnit" min="100" max="100000" step="100" value="' + (state.sticker.unit || 1000) + '">') +
-        fieldWrap('스티커 한 줄 소개', '<input class="inp" data-field="stickerGoal" value="' + esc(state.sticker.goal) + '" placeholder="비워 두면 안 보여요 (예: 모아서 원하는 선물에 써요)" maxlength="40">') +
-        fieldWrap('스티커 이유 (콤마로 구분)', '<input class="inp" data-field="stickerReasons" value="' + esc((state.sticker.reasons || []).join(', ')) + '" placeholder="루틴 완료, 독서, 심부름">') +
-      '</div>' +
-      '<div class="ep-sub alert-picker">' +
-        '<h3>🔔 알림 소리 고르기</h3>' +
-        '<p class="ep-hint">목표 시간·일과표 알림에 쓸 소리예요. 눌러서 바로 들어 보고, 우리 집 소리를 직접 담을 수도 있어요. (가족 기기에 같이 저장돼요)</p>' +
-        alertPickerHtml() +
-      '</div>' +
-      '<div class="ep-sub diy-editor">' +
-        '<h3>🧩 섹션 · 블록 조립 (DIY)</h3>' +
-        '<p class="ep-hint">카드를 만들고, 그 안에 기능 블록을 넣어 우리 집에 맞게 바꿔 보세요.</p>' +
-        diyEditorHtml() +
-        '<button class="ghost-btn diy-add-sec" data-act="diy-sec-add" style="margin-top:9px">＋ 새 섹션 만들기</button>' +
-      '</div>' +
-      '<div class="ep-sub">' +
-        '<h3>📚 문제지 목록</h3>' +
-        '<div class="wb-edit">' + wbEditHtml() + '</div>' +
-        '<button class="ghost-btn" data-act="wb-add" style="margin-top:8px">+ 문제지 추가</button>' +
-      '</div>' +
-      '<div class="ep-actions">' +
-        '<button class="ghost-btn" data-act="sticker-clear">스티커 보드 비우기</button>' +
-        (isAdmin() ? '<button class="ghost-btn danger" data-act="stickers-reset-logs">🧹 스티커 기록 초기화</button>' : '') +
-        '<button class="ghost-btn danger" data-act="reset-all">모두 처음 상태로</button>' +
-        '<span class="ep-hint">바꾼 내용은 바로 저장돼요. 루틴 항목과 학원 시간은 아래 카드에서 고치거나 지울 수 있어요.</span>' +
+    var h = '<div class="ep-head">' +
+      '<h2>✏️ 편집 모드</h2>' +
+      '<span class="ep-hint">평소 화면 그대로예요. 카드의 도구로 순서·크기를 바꾸고, 자세한 건 팝업에서 고쳐요.</span>' +
+      '<button class="done-btn" type="button" data-act="edit-toggle">편집 완료</button>' +
       '</div>';
+    h += '<div class="ep-tools">';
+    for (var i = 0; i < EP_TABS.length; i++) {
+      var t = EP_TABS[i];
+      h += '<button type="button" class="ep-tool' + (epUi.tab === t.id ? ' on' : '') + '" data-act="edit-open" data-tab="' + t.id + '">' +
+        '<span aria-hidden="true">' + t.icon + '</span>' + esc(t.label) + '</button>';
+    }
+    h += '</div>';
+    h += '<div class="ep-sheet" id="editSheet"' + (epUi.tab ? '' : ' hidden') + ' role="dialog" aria-modal="true" aria-label="' + esc(epTabLabel(epUi.tab)) + '">' +
+      '<div class="ep-sheet-card">' +
+      '<div class="ep-sheet-head"><h2 id="editSheetTitle">' + (epUi.tab ? esc(epTabDef(epUi.tab).icon) + ' ' : '') + esc(epTabLabel(epUi.tab)) + '</h2>' +
+      '<button class="hist-close" type="button" data-act="edit-sheet-close" aria-label="닫기">✕</button></div>' +
+      '<div class="ep-sheet-body" id="editSheetBody">' + epSheetBodyHtml(epUi.tab) + '</div>' +
+      '</div></div>';
+    p.innerHTML = h;
+  }
+
+  /* 팝업 안쪽만 다시 그려요 (카드·목록을 고칠 때 화면 깜빡임 없이) */
+  function renderEditSheetBody() {
+    if (!epUi.tab) return;
+    var body = document.getElementById('editSheetBody');
+    if (!body) return;
+    body.innerHTML = epSheetBodyHtml(epUi.tab);
+  }
+
+  function openEditSheet(tab, focusSec) {
+    if (!can('edit')) return;
+    epUi.tab = tab || 'groups';
+    renderEditPanel();
+    var sheet = document.getElementById('editSheet');
+    if (sheet) sheet.hidden = false;
+    try { lockScroll(); } catch (e) { /* 무시 */ }
+    if (focusSec) {
+      var row = document.querySelector('#editSheetBody .diy-sec[data-sec="' + focusSec + '"]');
+      if (row && row.scrollIntoView) { try { row.scrollIntoView({ block: 'center' }); } catch (e2) { /* 무시 */ } }
+    }
+  }
+
+  function closeEditSheet() {
+    epUi.tab = '';
+    var sheet = document.getElementById('editSheet');
+    if (sheet) sheet.hidden = true;
+    var body = document.getElementById('editSheetBody');
+    if (body) body.innerHTML = '';
+    var tools = document.querySelectorAll('#editPanel .ep-tool');
+    for (var i = 0; i < tools.length; i++) tools[i].classList.remove('on');
+    try { unlockScroll(); } catch (e) { /* 무시 */ }
   }
 
   /* ======================================================================
@@ -5761,10 +6117,34 @@
   var COIN_STICKER = 10;    /* 칭찬 스티커 */
   var COIN_START = 120;     /* 새 계정 시작 코인 */
   var COIN_MAX = 999999999;  /* 코인 상한 — 사실상 무제한 (입력·잔액 모두 여기까지만 잘라요) */
-  var HATCH_MS = 24 * 60 * 60 * 1000;  /* 새 알 기본 부화 시간 24시간 */
-  var EXP_MAX = 100;        /* 단계마다 필요한 경험치 */
+  var HATCH_MS = 24 * 60 * 60 * 1000;  /* 새 알 기본 부화 시간 24시간 (🎛️ hatchHours 변수로 바뀌어요) */
+  var EXP_MAX = 100;        /* 단계마다 필요한 경험치 (🎛️ expMax 변수로 바뀌어요) */
 
   PET_NEED = [EXP_MAX, EXP_MAX, EXP_MAX];
+
+  /* 🎛️ 변수 설정 값 → 실제 규칙에 쓰는 값.
+     renderAll()·설정 수신·변수 수정 때마다 다시 맞춰서 화면과 계산이 늘 같게 해요. */
+  function applyVars() {
+    var v = varsOf(state);
+    /* 스티커 금액·칸 수는 화면(state.sticker)이 기준이에요 — 변수 화면에는 같은 값을 비춰 줘요 */
+    if (state.sticker) {
+      if (state.sticker.unit) v.stickerUnit = clampVarValue('stickerUnit', state.sticker.unit);
+      if (state.sticker.slots) {
+        var keepSlots = Math.max(state.sticker.slots, (state.sticker.stickers || []).length);
+        v.stickerSlots = clampVarValue('stickerSlots', keepSlots);
+      }
+    }
+    COIN_CHECK = v.coinCheck;
+    COIN_GROUP = v.coinGroup;
+    COIN_STICKER = v.coinSticker;
+    COIN_START = v.coinStart;
+    PET_DRAW_COST = v.petDrawCost;
+    EXP_MAX = v.expMax;
+    PET_NEED = [EXP_MAX, EXP_MAX, EXP_MAX];
+    HATCH_MS = v.hatchHours * 60 * 60 * 1000;
+    var a = v.alertFirstMin, b = v.alertSecondMin;
+    TAM_MARKS = (a >= b) ? [a, b] : [b, a];
+  }
 
   var RARITY = [
     { id: 'common', label: '일반', color: '#94a3b8' },
@@ -12870,6 +13250,7 @@
 
   /* ============ 전체 렌더 ============ */
   function renderAll() {
+    try { applyVars(); } catch (e) { /* 무시 */ }
     renderHeader();
     renderWeather();
     renderSections();
@@ -12889,6 +13270,8 @@
   function toggleEdit() {
     if (!can('edit')) return;
     ui.editing = !ui.editing;
+    epUi.tab = '';
+    try { unlockScroll(); } catch (e0) { /* 무시 */ }
     var btn = document.getElementById('editBtn');
     if (btn) {
       setBtnLabel(btn, ui.editing ? '✅' : '✏️', ui.editing ? '편집 완료' : '편집');
@@ -14258,6 +14641,7 @@
     var sec = findSec(id);
     if (!sec) return;
     sec.width = (w === 'full') ? 'full' : 'half';
+    sec.w = sec.width;
     afterSectionsChanged();
   }
 
@@ -14384,19 +14768,13 @@
   }
 
   function sectionTitleInnerHtml(sec) {
-    if (ui.editing && can('edit')) {
-      return '<input class="inp inp-sm sec-emo-inp" data-field="secEmoji" data-sec="' + esc(sec.id) + '" value="' + esc(sec.emoji || '') +
-        '" maxlength="4" aria-label="섹션 아이콘">' +
-        '<input class="inp inp-sm sec-title-inp" data-field="secTitle" data-sec="' + esc(sec.id) + '" value="' + esc(sec.title || '') +
-        '" maxlength="16" placeholder="' + esc(sec.base ? SEC_NAMES[sec.base] : '섹션 이름') + '" aria-label="섹션 이름">';
-    }
+    /* 제목·아이콘은 카드의 ✏️ 상세 팝업에서 바꿔요 (평소 카드 모양은 그대로) */
     return '<span class="sec-emo" aria-hidden="true">' + esc(sec.emoji || '') + '</span><span class="sec-name">' + esc(sec.title || '') + '</span>';
   }
 
   function syncSectionTitleNode(sec) {
     var el = document.getElementById('secTitle-' + sec.id);
     if (!el) return;
-    if (ui.editing && can('edit')) return;      /* 편집 중에는 입력칸을 건드리지 않아요 */
     el.innerHTML = '<span class="sec-emo" aria-hidden="true">' + esc(sec.emoji || '') + '</span><span class="sec-name">' + esc(sec.title || '') + '</span>';
   }
 
@@ -14458,44 +14836,151 @@
     }
   }
 
+  /* ---- 카드 크기 드래그 (편집 모드의 ↘ 손잡이) ----
+     가로로 끌면 반 폭 ↔ 전체 폭, 세로로 끌면 카드 높이가 바뀌고,
+     놓는 순간 dashboardSections의 w·h에 저장돼 가족 기기와 함께 맞춰져요. */
+  var secDrag = null;
+
+  function secApplyHeight(card, px) {
+    if (!card) return;
+    if (px) {
+      card.style.height = px + 'px';
+      card.classList.add('has-h');
+    } else {
+      card.style.height = '';
+      card.classList.remove('has-h');
+    }
+  }
+
+  function secSetWidthLive(card, full) {
+    if (!card) return;
+    card.setAttribute('data-width', full ? 'full' : 'half');
+    card.classList.toggle('sec-half', !full);
+    card.classList.toggle('sec-full', full);
+    applyLayoutOrder();
+  }
+
+  function secResizeMove(ev) {
+    var d = secDrag;
+    if (!d) return;
+    var dx = ev.clientX - d.x0;
+    var dy = ev.clientY - d.y0;
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) d.moved = true;
+    if (d.wide && d.canWidth) {
+      if (dx > 44 && d.width !== 'full') { d.width = 'full'; secSetWidthLive(d.card, true); }
+      else if (dx < -44 && d.width !== 'half') { d.width = 'half'; secSetWidthLive(d.card, false); }
+    }
+    var nh = Math.round(d.h0 + dy);
+    if (nh < SEC_H_MIN) nh = SEC_H_MIN;
+    if (nh > SEC_H_MAX) nh = SEC_H_MAX;
+    d.h = nh;
+    secApplyHeight(d.card, nh);
+  }
+
+  function secResizeEnd() {
+    var d = secDrag;
+    secDrag = null;
+    document.removeEventListener('pointermove', secResizeMove);
+    document.removeEventListener('pointerup', secResizeEnd);
+    document.removeEventListener('pointercancel', secResizeEnd);
+    if (!d) return;
+    if (d.card) d.card.classList.remove('dragging');
+    if (!d.moved) return;
+    var sec = findSec(d.secId);
+    if (!sec) { renderSections(); return; }
+    sec.width = d.width === 'full' ? 'full' : 'half';
+    sec.w = sec.width;
+    sec.h = (d.h >= SEC_H_MIN && d.h <= SEC_H_MAX) ? d.h : 0;
+    syncSectionMirrors(state);
+    saveState();
+    renderSections();
+    renderEditPanel();
+  }
+
+  function installSectionResize() {
+    document.addEventListener('pointerdown', function (e) {
+      var handle = (e.target && e.target.closest) ? e.target.closest('[data-resize]') : null;
+      if (!handle || !ui.editing || !can('edit')) return;
+      var card = handle.closest('.sec');
+      var secId = handle.getAttribute('data-resize');
+      if (!card || !secId) return;
+      e.preventDefault();
+      var rect = card.getBoundingClientRect();
+      var sec = findSec(secId);
+      secDrag = {
+        secId: secId, card: card, x0: e.clientX, y0: e.clientY,
+        h0: rect.height, h: Math.round(rect.height), moved: false,
+        wide: window.innerWidth >= 720,
+        canWidth: true,
+        width: card.getAttribute('data-width') === 'full' ? 'full' : 'half'
+      };
+      card.classList.add('dragging');
+      try { handle.setPointerCapture(e.pointerId); } catch (e0) { /* 무시 */ }
+      document.addEventListener('pointermove', secResizeMove);
+      document.addEventListener('pointerup', secResizeEnd);
+      document.addEventListener('pointercancel', secResizeEnd);
+    }, { passive: false });
+  }
+
+  /* 카드 크기를 처음 크기로 — 가로는 섹션 기본 폭, 세로는 내용에 맞춤 */
+  function resetSectionSize(secId) {
+    if (!can('edit')) return;
+    var sec = findSec(secId);
+    if (!sec) return;
+    sec.width = sec.base ? SEC_DEFAULT_WIDTH[sec.base] : 'half';
+    sec.w = sec.width;
+    sec.h = 0;
+    syncSectionMirrors(state);
+    saveState();
+    renderSections();
+    renderEditPanel();
+    showToast('카드 크기를 처음 크기로 돌렸어요.');
+  }
+
   function sectionShellHtml(sec, idx) {
-    var cls = 'card sec ' + (SEC_CLASS[sec.base] || 'sec-custom') + ' sec-' + (sec.width === 'half' ? 'half' : 'full');
+    var editing = ui.editing && can('edit');
+    var width = sec.width === 'half' ? 'half' : 'full';
+    var hpx = (sec.h >= SEC_H_MIN && sec.h <= SEC_H_MAX) ? sec.h : 0;
+    var cls = 'card sec ' + (SEC_CLASS[sec.base] || 'sec-custom') + ' sec-' + width +
+      (editing ? ' edit-on' : '') + (hpx ? ' has-h' : '');
     var domId = sec.base ? ('sec' + sec.base.charAt(0).toUpperCase() + sec.base.slice(1)) : '';
     var h = '<section class="' + cls + '"' + (domId ? ' id="' + domId + '"' : '') +
-      ' data-sec="' + esc(sec.id) + '" data-base="' + esc(sec.base || '') + '" data-width="' + (sec.width === 'half' ? 'half' : 'full') + '"' +
+      ' data-sec="' + esc(sec.id) + '" data-base="' + esc(sec.base || '') + '" data-width="' + width + '"' +
+      (hpx ? ' style="height:' + hpx + 'px"' : '') +
       (sec.hidden ? ' hidden' : '') + '>';
     h += '<div class="card-head sec-head">';
     h += '<h2 class="sec-title" id="secTitle-' + esc(sec.id) + '">' + sectionTitleInnerHtml(sec) + '</h2>';
-    h += '<div class="head-tools sec-tools">';
-    if (ui.editing && can('edit')) {
+    h += '<div class="head-tools sec-tools' + (editing ? ' sec-ovl' : '') + '">';
+    if (editing) {
+      /* 작은 반투명 오버레이 편집 바 — 카드 배치와 크기는 그대로예요 */
+      h += '<button type="button" class="sec-tool" data-act="diy-sec-up" data-sec="' + esc(sec.id) + '" aria-label="앞으로 이동" title="순서 앞으로">▲</button>';
+      h += '<button type="button" class="sec-tool" data-act="diy-sec-down" data-sec="' + esc(sec.id) + '" aria-label="뒤로 이동" title="순서 뒤로">▼</button>';
+      h += '<button type="button" class="sec-tool" data-act="sec-detail" data-sec="' + esc(sec.id) + '" aria-label="상세 수정" title="상세 수정">✏️</button>';
+      h += '<button type="button" class="sec-tool" data-act="sec-blk-add" data-sec="' + esc(sec.id) + '" aria-label="블록 넣기" title="블록 넣기">＋</button>';
       h += '<button type="button" class="sec-tool' + (sec.hidden ? ' on' : '') + '" data-act="diy-sec-hide" data-sec="' + esc(sec.id) +
-        '" aria-pressed="' + (sec.hidden ? 'true' : 'false') + '" title="숨기기/보이기">' + (sec.hidden ? '🙈 숨김' : '👁 보임') + '</button>';
-      h += '<button type="button" class="sec-tool" data-act="diy-sec-up" data-sec="' + esc(sec.id) + '" aria-label="위로">▲</button>';
-      h += '<button type="button" class="sec-tool" data-act="diy-sec-down" data-sec="' + esc(sec.id) + '" aria-label="아래로">▼</button>';
-      if (!sec.base) h += '<button type="button" class="sec-tool danger" data-act="diy-sec-del" data-sec="' + esc(sec.id) + '" aria-label="섹션 삭제">🗑</button>';
+        '" aria-pressed="' + (sec.hidden ? 'true' : 'false') + '" aria-label="숨기기" title="숨기기">' + (sec.hidden ? '🙈' : '👁') + '</button>';
+      h += '<button type="button" class="sec-tool" data-act="sec-size-reset" data-sec="' + esc(sec.id) + '" aria-label="크기 초기화" title="크기 원래대로">↺</button>';
+      if (!sec.base) h += '<button type="button" class="sec-tool danger" data-act="diy-sec-del" data-sec="' + esc(sec.id) + '" aria-label="섹션 삭제" title="섹션 삭제">🗑</button>';
     }
     h += '</div></div>';
     h += '<div class="sec-blocks">';
     var blocks = sec.blocks || [];
     if (!blocks.length) {
-      h += '<p class="blk-empty">아직 블록이 없어요.' + (ui.editing && can('edit') ? ' 편집에서 블록을 넣어 보세요.' : '') + '</p>';
+      h += '<p class="blk-empty">아직 블록이 없어요.' + (editing ? ' ✏️ 로 블록을 넣어 보세요.' : '') + '</p>';
     }
     for (var i = 0; i < blocks.length; i++) h += blockShellHtml(sec, blocks[i], i, blocks.length);
     h += '</div>';
+    if (editing) {
+      h += '<button type="button" class="sec-resize" data-resize="' + esc(sec.id) + '" aria-label="카드 크기 조절">↘</button>';
+    }
     h += '</section>';
     return h;
   }
 
   function blockShellHtml(sec, blk, idx, total) {
+    /* 편집 모드에서도 블록은 평소 모양 그대로 — 블록 순서·추가는 카드의 ✏️ 상세 팝업에서 해요 */
     var h = '<div class="blk blk-' + esc(blk.type) + '" data-block="' + esc(blk.id) + '" data-block-type="' + esc(blk.type) + '">';
-    if (ui.editing && can('edit')) {
-      h += '<div class="blk-tools">' +
-        '<span class="blk-tag">' + esc(blockLabelOf(blk)) + '</span>' +
-        '<button type="button" class="sec-tool" data-act="diy-blk-up" data-blk="' + esc(blk.id) + '"' + (idx === 0 ? ' disabled' : '') + ' aria-label="블록 위로">▲</button>' +
-        '<button type="button" class="sec-tool" data-act="diy-blk-down" data-blk="' + esc(blk.id) + '"' + (idx === total - 1 ? ' disabled' : '') + ' aria-label="블록 아래로">▼</button>' +
-        '<button type="button" class="sec-tool danger" data-act="diy-blk-del" data-blk="' + esc(blk.id) + '" aria-label="블록 빼기">✕</button>' +
-        '</div>';
-    } else if (total > 1) {
+    if (total > 1) {
       h += '<div class="blk-h">' + esc(blockLabelOf(blk)) + '</div>';
     }
     h += '<div class="blk-body">' + blockInnerHtml(sec, blk) + '</div>';
@@ -15644,11 +16129,72 @@
     if (stEl && !stEl.hidden) renderStats();
   }
 
+  /* ---- 첫 로딩 스플래시 ----
+     새로고침·진입 때 클라우드에서 첫 데이터(프로필·설정·오늘 기록·스티커)를 다 받을 때까지
+     로그인 화면(🏠 Jaden's Today)을 그대로 보여 주고, 끝나면 한 번에 대시보드로 넘어가요.
+     오프라인·로컬 전용·오래 걸림(6초)일 때는 멈추지 않고 기기에 있던 것으로 바로 열어요. */
+  var splash = { on: false, timer: 0, startedAt: 0 };
+  var SPLASH_TIMEOUT_MS = 6000;
+
+  function splashHtml() {
+    return '<div class="splash-wrap">' +
+      '<div class="splash-spin" aria-hidden="true"></div>' +
+      '<p class="splash-note">가족 데이터를 불러오는 중...</p>' +
+      '<p class="splash-sub">잠시만 기다려 주세요 ☁️</p>' +
+      '</div>';
+  }
+
+  function showSplash() {
+    if (splash.on) return;
+    var login = document.getElementById('loginScreen');
+    var app = document.getElementById('appRoot');
+    var lock = document.getElementById('lockScreen');
+    if (lock) lock.hidden = true;
+    if (app) app.hidden = true;
+    if (login) login.hidden = false;
+    var body = document.getElementById('loginBody');
+    if (body) body.innerHTML = splashHtml();
+    splash.on = true;
+    splash.startedAt = Date.now();
+    if (splash.timer) window.clearTimeout(splash.timer);
+    splash.timer = window.setTimeout(function () {
+      splash.timer = 0;
+      /* 응답이 너무 늦으면 기다리지 않고 기기에 있던 값으로 열어요 */
+      try { endSplash(true); } catch (e) { /* 무시 */ }
+    }, SPLASH_TIMEOUT_MS);
+    try { unlockScroll(); } catch (e) { /* 무시 */ }
+    renderSyncPill();
+  }
+
+  /* 스플래시를 걷고 완성된 대시보드를 한 번에 보여 줘요.
+     force = 응답이 너무 늦을 때 — 로그인 정보가 아직 없어도 기기에 있던 값으로 열어요 */
+  function endSplash(force) {
+    var was = splash.on;
+    splash.on = false;
+    if (splash.timer) { window.clearTimeout(splash.timer); splash.timer = 0; }
+    if (!cloud.me && !force) return;             /* 로그인이 안 된 상태면 그대로 */
+    var login = document.getElementById('loginScreen');
+    var app = document.getElementById('appRoot');
+    var lock = document.getElementById('lockScreen');
+    if (lock && !lock.hidden) return;            /* 권한 없음 화면은 그대로 */
+    /* 화면을 보여 주기 "전에" 다 그려 두어, 열리는 순간 120코인 같은 기본값이 비치지 않게 해요 */
+    if (was) {
+      try { renderAll(); } catch (e) { /* 무시 */ }
+      if (cloud.me) { try { applyPermissions(); } catch (e2) { /* 무시 */ } }
+    }
+    if (login) login.hidden = true;
+    if (app) app.hidden = false;
+    if (was) { try { applyLayoutOrder(); } catch (e3) { /* 무시 */ } }
+    renderSyncPill();
+  }
+
   /* ---- 로그인 화면 ---- */
   function showLogin(mode) {
     var login = document.getElementById('loginScreen');
     var app = document.getElementById('appRoot');
     var lock = document.getElementById('lockScreen');
+    splash.on = false;
+    if (splash.timer) { window.clearTimeout(splash.timer); splash.timer = 0; }
     if (lock) lock.hidden = true;
     if (login) login.hidden = false;
     if (app) app.hidden = true;
@@ -15839,7 +16385,7 @@
       lastProfileSig = '';
       saveSession(cloud.me, remember, null);
       if (!dashAllowed(cloud.me)) { showLock(); return; }
-      await enterDashboard();
+      await enterDashboard({ splash: true });
     } catch (e) {
       fail('로그인 중 문제가 생겼어요. ' + (e && e.message ? e.message : ''));
     } finally {
@@ -15847,14 +16393,21 @@
     }
   }
 
-  async function enterDashboard() {
+  async function enterDashboard(opts) {
     lsSet(HUB_LAST_KEY, 'kids'); /* 가족 허브(/home/)의 '최근 사용' 표시용 */
     var login = document.getElementById('loginScreen');
     var app = document.getElementById('appRoot');
     var lock = document.getElementById('lockScreen');
     if (lock) lock.hidden = true;
-    if (login) login.hidden = true;
-    if (app) app.hidden = false;
+    /* 첫 데이터를 다 받을 때까지 🏠 Jaden's Today 화면을 그대로 보여 줘요
+       (오프라인이거나 로컬 전용이면 기다리지 않고 바로 열어요) */
+    var wantSplash = !!(opts && opts.splash) && !!cloud.conn && navigator.onLine !== false;
+    if (wantSplash) {
+      showSplash();
+    } else {
+      if (login) login.hidden = true;
+      if (app) app.hidden = false;
+    }
     /* 화면을 보여 주는 순간, 저장된 이름·코인으로 헤더를 먼저 그려요.
        (네트워크 응답을 기다리는 동안 정적 HTML의 '-'가 보이지 않게) */
     try {
@@ -15911,6 +16464,7 @@
     } catch (e) { /* 무시 */ }
     /* 엄마·아빠가 보낸 코인 용돈이 있으면 축하 알림을 띄워요 */
     try { maybeAllowanceNotice(); } catch (e) { /* 무시 */ }
+    if (wantSplash) endSplash();
   }
 
   async function doLogout(silent) {
@@ -15974,6 +16528,8 @@
     var login = document.getElementById('loginScreen');
     var app = document.getElementById('appRoot');
     var lock = document.getElementById('lockScreen');
+    splash.on = false;
+    if (splash.timer) { window.clearTimeout(splash.timer); splash.timer = 0; }
     if (login) login.hidden = true;
     if (app) app.hidden = true;
     if (lock) lock.hidden = false;
@@ -15987,6 +16543,11 @@
 
   async function restoreSession(sess) {
     var u = findUserById(sess.id);
+    /* 세션이 있으면 로그인 화면 대신 🏠 Jaden's Today 불러오는 화면을 먼저 보여 줘요.
+       (오프라인이면 기기에 있던 것으로 바로 열려고 기다리지 않아요) */
+    if (navigator.onLine !== false) {
+      try { showSplash(); } catch (e0) { /* 무시 */ }
+    }
     /* 갈 수 있는 대시보드 권한은 저장소의 최신 계정 파일로 확인해요 (관리자가 방금 바꿨을 수 있어요) */
     var fresh = await ghGet('config/users.json');
     if (fresh && fresh.ok && fresh.data && Object.prototype.toString.call(fresh.data.users) === '[object Array]') {
@@ -16003,7 +16564,7 @@
     cloud.me = { id: u.id, name: u.name || u.id, role: ROLES[u.role] ? u.role : 'viewer', dashboards: dashboardsFor(u) };
     saveSession(cloud.me, sess.store === 'local', sess);
     if (!dashAllowed(cloud.me)) { showLock(); return; }
-    await enterDashboard();
+    await enterDashboard({ splash: true });
     verifySession();
   }
 
@@ -16605,6 +17166,18 @@
   }
 
   /* ============ 이벤트 ============ */
+  /* 편집 팝업: 바깥을 누르거나 Esc 를 누르면 닫혀요 */
+  document.addEventListener('click', function (e) {
+    var sheet = document.getElementById('editSheet');
+    if (!sheet || sheet.hidden) return;
+    if (e.target === sheet) closeEditSheet();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' && e.key !== 'Esc') return;
+    var sheet = document.getElementById('editSheet');
+    if (sheet && !sheet.hidden) { closeEditSheet(); }
+  });
+
   document.addEventListener('click', function (e) {
     var el = (e.target && e.target.closest) ? e.target.closest('[data-act]') : null;
     if (!el) return;
@@ -16680,6 +17253,12 @@
     if (act === 'evo-dex') { closeEvo(); openPet(); return; }
     if (act === 'evo-new') { closeEvo(); petNewEgg(); return; }
     if (act === 'edit-toggle') { toggleEdit(); return; }
+    if (act === 'edit-open') { if (!can('edit')) return; openEditSheet(el.getAttribute('data-tab') || 'groups'); return; }
+    if (act === 'edit-sheet-close') { closeEditSheet(); return; }
+    if (act === 'sec-detail') { if (!can('edit')) return; openEditSheet('sections', el.getAttribute('data-sec') || ''); return; }
+    if (act === 'sec-blk-add') { if (!can('edit')) return; openEditSheet('sections', el.getAttribute('data-sec') || ''); return; }
+    if (act === 'sec-size-reset') { resetSectionSize(el.getAttribute('data-sec') || ''); return; }
+    if (act === 'vars-reset') { resetVars(); return; }
     if (act === 'sound-toggle') { toggleSound(); return; }
     if (act === 'fullscreen-toggle') { toggleFullscreen(); return; }
     if (act === 'weather-refresh') { loadWeather(); return; }
@@ -17104,6 +17683,7 @@
         c.title = el.value.slice(0, 16);
         saveState();
         renderRoutineJump();
+        syncCatHead(c.id);
       }
       return;
     }
@@ -17113,6 +17693,7 @@
       if (cs) {
         cs.sub = el.value.slice(0, 50);
         saveState();
+        syncCatHead(cs.id);
       }
       return;
     }
@@ -17222,6 +17803,7 @@
     }
     if (field === 'evTimeStart' || field === 'evTimeEnd') { setEventTime(el); return; }
     if (field === 'catTarget') { setCatTarget(el.getAttribute('data-cat'), el.value); return; }
+    if (field === 'varNum') { setVarValue(el.getAttribute('data-var') || '', el.value); return; }
     if (field === 'stickerSlots') {
       var n = parseInt(el.value, 10);
       if (isNaN(n) || n < 3) n = 10;
@@ -17307,6 +17889,7 @@
   /* ============ 시작 ============ */
   installAudioUnlock();
   installRoomDrag();
+  installSectionResize();
   loadWeatherCache();
   /* 첫 화면을 그리기 전에, 이 기기에 저장해 둔 코인·펫을 먼저 붙여요.
      (안 붙이면 새로고침 직후 새 계정 기본 코인 120이 잠깐 비쳐요) */
