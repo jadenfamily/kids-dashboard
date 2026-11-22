@@ -983,6 +983,8 @@
     overscroll-behavior:contain;
     display:flex; flex-direction:column; gap:13px;
   }
+  /* 스크롤 컨테이너 안의 카드는 절대 찌그러지지 않게 — 태블릿·모바일에서 펫 카드가 납작해지던 문제 */
+  .hist-body > *{ flex-shrink:0; }
   .hsum{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:9px; }
   .hsum-card{ border-radius:18px; padding:11px 13px 10px; background:#fff7ea; border:2px solid #ffe7c2; min-width:0; }
   .hsum-card.mint{ background:#eefaf3; border-color:#c9f0dc; }
@@ -1614,6 +1616,7 @@
   /* 마이룸 안 펫바 — 방 그림을 가리지 않게 일반 흐름 + 한 줄짜리 압축 배치 */
   .petbar.in-room{
     position:static; top:auto; bottom:auto; z-index:auto;
+    flex-shrink:0;   /* .hist-body(flex column) 안에서 높이 0으로 눌리지 않게 */
     display:grid; grid-template-columns:46px minmax(0,1fr) auto;
     grid-template-areas:"art meta acts" "sub sub sub" "grow grow grow";
     align-items:center; gap:4px 8px; padding:7px 10px; border-radius:18px;
@@ -1692,6 +1695,22 @@
   .pet-pick small{ font-size:9.5px; font-weight:800; color:#a2937f; }
   .pp-check{ font-size:9.5px; font-weight:900; color:#b4436c; }
   .shop-jump{ align-self:flex-start; }
+
+  /* 🍖 내 펫 — 먹이 개수와 바로 주기 버튼 */
+  .pet-feedbar{
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+    background:linear-gradient(135deg,#fff8e6,#fdefff); border:2px solid #ffcf7a;
+    border-radius:18px; padding:9px 11px;
+  }
+  .pet-feedbar .pf-ic{
+    flex:0 0 auto; width:34px; height:34px; border-radius:11px; display:grid; place-items:center;
+    background:#ffe3a8; font-size:18px;
+  }
+  .pet-feedbar .pf-txt{ flex:1 1 130px; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .pet-feedbar .pf-txt b{ font-size:12.5px; font-weight:900; }
+  .pet-feedbar .pf-txt small{ font-size:11px; font-weight:800; color:#a2937f; line-height:1.35; }
+  .pet-feedbar .pf-txt small b{ font-size:11.5px; color:#b4436c; }
+  .pet-feedbar .pill-btn{ flex:0 0 auto; }
 
   /* 🥚 내 펫 — 알 뽑기 · 여러 마리 키우기 · 목표시간 달리기 펫 */
   .pet-gacha{
@@ -2231,13 +2250,13 @@
 
   <header class="topbar">
     <div class="hello">
-      <h1 class="hello-title" id="helloTitle">지우야, 오늘도 화이팅! 🌟</h1>
+      <h1 class="hello-title" id="helloTitle">오늘도 화이팅! 🌟</h1>
       <p class="hello-sub">
-        <span id="dateLine">11월 19일 수요일</span>
+        <span id="dateLine">-</span>
         <span class="dot">·</span>
-        <span id="clockLine">오전 10:55</span>
+        <span id="clockLine">-</span>
         <span class="sync-pill" id="syncPill" title="저장 상태">☁️ 준비</span>
-        <span class="coin-badge" id="coinBadge" title="내 코인"><svg class="coin-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11.4" fill="url(#coinRim)"/><circle cx="12" cy="12" r="9.3" fill="url(#coinGold)"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#c98b00" stroke-width="1" opacity=".45"/><text x="12" y="15.4" text-anchor="middle" font-size="8.6" font-weight="900" fill="#a8690a" font-family="inherit">C</text><ellipse cx="8.4" cy="7.2" rx="3.2" ry="1.8" fill="#fffbe8" opacity=".8" transform="rotate(-30 8.4 7.2)"/></svg> <b>120</b></span>
+        <span class="coin-badge" id="coinBadge" title="내 코인"><svg class="coin-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11.4" fill="url(#coinRim)"/><circle cx="12" cy="12" r="9.3" fill="url(#coinGold)"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#c98b00" stroke-width="1" opacity=".45"/><text x="12" y="15.4" text-anchor="middle" font-size="8.6" font-weight="900" fill="#a8690a" font-family="inherit">C</text><ellipse cx="8.4" cy="7.2" rx="3.2" ry="1.8" fill="#fffbe8" opacity=".8" transform="rotate(-30 8.4 7.2)"/></svg> <b>-</b></span>
       </p>
     </div>
 
@@ -7373,12 +7392,48 @@
     '</div>';
   }
 
+  /* 🍖 먹이 바로가기 — '내 펫'에서 먹이를 못 찾지 않게 가방 개수와 주기 버튼을 함께 보여 줘요 */
+  function petFoodInfo() {
+    var all = shopAll(), n = 0, first = '', gain = 0;
+    for (var i = 0; i < all.length; i++) {
+      var it = all[i];
+      if (!it || it.cat !== 'pet' || it.hidden) continue;
+      if (isLegacyPetItem(it) || it.kind !== 'exp') continue;
+      var c = bagCount(it.id);
+      if (c <= 0) continue;
+      n += c;
+      if (!first) { first = it.id; gain = parseInt(it.n, 10) || 10; }
+    }
+    return { n: n, first: first, gain: gain };
+  }
+
+  function petFeedBarHtml() {
+    var f = petFoodInfo();
+    var p = petState();
+    var line, btn;
+    if (p.stage >= 3) {
+      line = '2차 진화 완성! 새 알을 뽑아 다시 키워 보세요';
+      btn = '<button type="button" class="pill-btn warm" data-act="pet-new-egg">🥚 새 알 받기</button>';
+    } else if (f.n > 0) {
+      line = '가방에 먹이 <b>' + f.n + '</b>개 · 하나 주면 +' + f.gain + ' EXP';
+      btn = '<button type="button" class="pill-btn warm" data-act="feed" data-id="' + esc(f.first) + '">🍖 먹이 주기</button>';
+    } else {
+      line = '가방이 비었어요 · 상점에서 먹이를 사면 여기서 바로 줄 수 있어요';
+      btn = '<button type="button" class="pill-btn warm" data-act="shop-open" data-shop-tab="pet">🛒 먹이 사러 가기</button>';
+    }
+    return '<div class="pet-feedbar">' +
+      '<span class="pf-ic" aria-hidden="true">🍖</span>' +
+      '<span class="pf-txt"><b>먹이 주기</b><small>' + line + '</small></span>' +
+      btn +
+      '</div>';
+  }
+
   function petHomeExtraHtml() {
     var q = petEnsureList(prof());
     var list = petOwnedList(q);
     var eggs = 0;
     for (var i = 0; i < list.length; i++) if (list[i].stage === 0) eggs++;
-    var h = '<div class="pet-gacha">' +
+    var h = petFeedBarHtml() + '<div class="pet-gacha">' +
       '<span class="pg-txt"><b>🥚 랜덤 알 뽑기</b><small>' + fmtNum(PET_DRAW_COST) + '코인 · 18속성 54종 중 하나가 나와요</small></span>' +
       '<button type="button" class="pill-btn warm" data-act="pet-gacha">🥚 알 뽑기 (' + fmtNum(PET_DRAW_COST) + '코인)</button>' +
       '</div>';
@@ -8253,7 +8308,6 @@
           (stage === 0 ? '<span class="egg-badge">부화 중</span>' : typeBadgeHtml(sp) + rarityBadgeHtml(sp)) + '</div>' +
         '</div>' +
       '<div class="pet-sub">' + sub + '</div>' +
-      '</div>' +
       '<div class="pet-grow">' +
         '<div class="pet-gauge"><i style="width:' + pct + '%"></i></div>' +
         '<div class="pet-growline"><span>EXP <b>' + p.exp + '</b> / ' + (need || 'MAX') + '</span>' + (nextMini || '<span>✨ MAX</span>') + '</div>' +
@@ -15801,6 +15855,13 @@
     if (lock) lock.hidden = true;
     if (login) login.hidden = true;
     if (app) app.hidden = false;
+    /* 화면을 보여 주는 순간, 저장된 이름·코인으로 헤더를 먼저 그려요.
+       (네트워크 응답을 기다리는 동안 정적 HTML의 '-'가 보이지 않게) */
+    try {
+      var cachedProf = readProfileCache(cloud.me && cloud.me.id);
+      if (cachedProf) state.profile = normalizeProfile(cachedProf, cloud.me && cloud.me.id);
+    } catch (e0) { /* 무시 */ }
+    renderHeader();
     renderSyncPill();
     applyUserUi();
     setSync('syncing');
@@ -17247,6 +17308,13 @@
   installAudioUnlock();
   installRoomDrag();
   loadWeatherCache();
+  /* 첫 화면을 그리기 전에, 이 기기에 저장해 둔 코인·펫을 먼저 붙여요.
+     (안 붙이면 새로고침 직후 새 계정 기본 코인 120이 잠깐 비쳐요) */
+  try {
+    var bootUid = lsGet(LAST_ID_KEY);
+    var bootProf = bootUid ? readProfileCache(bootUid) : null;
+    if (bootProf) state.profile = normalizeProfile(bootProf, bootUid);
+  } catch (eBoot) { /* 무시 */ }
   renderAll();
   startNotifyLoop();
   /* 소리가 울리는 동안 🔇 알림 끄기 버튼·🎵 버튼 상태를 맞춰 둬요 */
