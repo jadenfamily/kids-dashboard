@@ -878,22 +878,23 @@
   /* ---------- 계정 관리 ---------- */
   .acct-card{ max-width:700px; }
   .acct-list{ display:flex; flex-direction:column; gap:8px; }
-  .acct-row{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; background:#fff; border:2px solid #f4eadd; border-radius:16px; padding:9px 11px; }
-  .acct-id{ display:flex; flex-direction:column; min-width:104px; }
-  .acct-id b{ font-size:14px; font-weight:900; }
-  .acct-id span{ font-size:11.5px; font-weight:800; color:#a2937f; }
+  .acct-row{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; min-width:0; max-width:100%; background:#fff; border:2px solid #f4eadd; border-radius:16px; padding:9px 11px; }
+  .acct-id{ display:flex; flex-direction:column; min-width:104px; max-width:100%; }
+  .acct-id b{ font-size:14px; font-weight:900; overflow-wrap:anywhere; }
+  .acct-id span{ font-size:11.5px; font-weight:800; color:#a2937f; overflow-wrap:anywhere; }
   .acct-row select{
-    margin-left:auto; min-height:40px; padding:4px 8px; border-radius:11px; border:2px solid #e6dccf;
+    margin-left:auto; min-width:0; max-width:100%; min-height:40px; padding:4px 8px; border-radius:11px; border:2px solid #e6dccf;
     background:#fffdf9; color:var(--ink); font-size:13px; font-weight:800;
   }
   .acct-row .ghost-btn{ min-height:40px; padding:6px 12px; }
   .acct-row .del-btn{ width:auto; height:40px; padding:0 12px; font-size:12.5px; }
-  .acct-pw{ display:flex; flex:1 1 100%; align-items:center; gap:7px; }
-  .acct-pw input{ flex:1 1 auto; min-height:42px; padding:6px 11px; border-radius:11px; border:2px solid #e6dccf; font-size:14px; font-weight:800; }
+  .acct-pw{ display:flex; flex:1 1 100%; align-items:center; gap:7px; min-width:0; max-width:100%; }
+  .acct-pw input{ flex:1 1 auto; min-width:0; width:100%; box-sizing:border-box; min-height:42px; padding:6px 11px; border-radius:11px; border:2px solid #e6dccf; font-size:14px; font-weight:800; }
   .acct-pw button{ width:auto; min-height:42px; padding:0 16px; font-size:13.5px; }
-  .acct-add{ display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:4px; padding-top:12px; border-top:2px dashed #f0e4d6; }
-  .acct-add label{ display:flex; flex-direction:column; gap:4px; font-size:12px; font-weight:900; color:#6d6484; }
-  .acct-add input, .acct-add select{ min-height:44px; padding:8px 11px; border-radius:12px; border:2px solid #e6dccf; font-size:14px; font-weight:800; background:#fffdf9; color:var(--ink); }
+  /* minmax(0,1fr) — 입력칸의 기본 최소 폭 때문에 390px에서 그리드가 모달 폭을 넘기던 문제 */
+  .acct-add{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:9px; margin-top:4px; padding-top:12px; border-top:2px dashed #f0e4d6; min-width:0; max-width:100%; }
+  .acct-add label{ display:flex; flex-direction:column; gap:4px; min-width:0; font-size:12px; font-weight:900; color:#6d6484; }
+  .acct-add input, .acct-add select{ width:100%; min-width:0; box-sizing:border-box; min-height:44px; padding:8px 11px; border-radius:12px; border:2px solid #e6dccf; font-size:14px; font-weight:800; background:#fffdf9; color:var(--ink); }
   .acct-add .full{ grid-column:1 / -1; }
   .acct-note{ margin:0; font-size:11.5px; font-weight:700; color:#a2937f; line-height:1.55; }
   .acct-connect{ display:flex; flex-direction:column; gap:9px; background:linear-gradient(135deg,#fff6e6 0%,#f1f6ff 100%); border:2px solid #ffe7c2; border-radius:18px; padding:12px 13px 13px; }
@@ -922,7 +923,8 @@
   }
   .acct-tab.on{ background:#fff; color:#2c2440; box-shadow:0 3px 9px rgba(80,60,30,.13); }
   .acct-tab:active{ transform:scale(.97); }
-  .acct-pane{ display:flex; flex-direction:column; gap:11px; }
+  .acct-pane{ display:flex; flex-direction:column; gap:11px; min-width:0; max-width:100%; }
+  #acctBody{ overflow-x:hidden; }
   .acct-pane[hidden]{ display:none; }
   .acct-pane-title{ margin:0; display:flex; align-items:center; gap:6px; font-size:14px; font-weight:900; color:#2c2440; }
   .acct-pane-title svg.coin-ico{ width:18px; height:18px; }
@@ -1898,6 +1900,12 @@
   .rc-target{ font-size:10px; font-weight:900; color:#8a5a00; background:#fff3d1; border-radius:999px; padding:2px 7px; white-space:nowrap; }
   .rce-target{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:900; color:#8a7f70; flex-wrap:wrap; }
   .rce-target .inp{ max-width:140px; }
+  .rce-wb{
+    display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:900; color:#8a6430;
+    background:#fff8ec; border:1.6px dashed #ffdca8; border-radius:11px; padding:6px 9px; cursor:pointer;
+  }
+  .rce-wb input{ width:20px; height:20px; flex:0 0 auto; accent-color:#ffb01f; margin:0; }
+  .rce-wb span{ line-height:1.35; }
   @media (max-width:560px){
     .rtt-goal{ margin-left:0; }
     .rtt-big{ font-size:17px; }
@@ -2331,6 +2339,7 @@
   /* ---------- 🎛️ 변수 설정 ---------- */
   .var-list{ display:flex; flex-direction:column; gap:7px; }
   .var-row{ display:flex; align-items:center; gap:10px; background:#fff; border:1.6px solid #f0e2cf; border-radius:13px; padding:8px 10px; }
+  .var-switch-row{ display:flex; align-items:center; gap:10px; border:1.6px solid #ffe0b0; border-radius:13px; padding:8px 10px; background:linear-gradient(135deg,#fff8ec 0%,#f6f1ff 100%); }
   .var-txt{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px; }
   .var-txt b{ font-size:13px; font-weight:900; color:#5b4a2e; }
   .var-txt small{ font-size:11px; font-weight:800; color:#a2937f; }
@@ -2338,6 +2347,18 @@
   .var-inp{ width:88px; text-align:right; font-weight:900; -moz-appearance:textfield; appearance:textfield; }
   .var-inp::-webkit-outer-spin-button, .var-inp::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
   .var-unit{ font-size:11px; font-weight:900; color:#a2937f; min-width:24px; }
+  .var-switch{
+    flex:0 0 auto; position:relative; box-sizing:border-box; width:56px; height:32px; padding:0;
+    border-radius:999px; border:2px solid #e6dccf; background:#efe7dc; cursor:pointer;
+    touch-action:manipulation; transition:background .18s, border-color .18s;
+  }
+  .var-switch .sw-knob{
+    position:absolute; top:2px; left:2px; width:24px; height:24px; border-radius:50%;
+    background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.2); transition:left .18s;
+  }
+  .var-switch.on{ background:#ffb01f; border-color:#f0a000; }
+  .var-switch.on .sw-knob{ left:26px; }
+  .var-switch:active{ transform:scale(.97); }
 
 </style>
 </head>
@@ -3054,8 +3075,8 @@
     { k: 'expMax', def: 100, min: 1, max: 9999, step: 10, label: '진화에 필요한 기운', unit: 'EXP', hint: '부화·1차·2차 진화 단계마다 필요한 경험치' },
     { k: 'stickerUnit', def: 1000, min: 100, max: 100000, step: 100, label: '스티커 1개 금액 가치', unit: '원', hint: '스티커 한 개를 돈으로 계산할 때의 값' },
     { k: 'stickerSlots', def: 10, min: 3, max: 30, step: 1, label: '스티커 한 판 칸 수', unit: '칸', hint: '한 판에 붙일 수 있는 스티커 칸 수' },
-    { k: 'alertFirstMin', def: 30, min: 1, max: 180, step: 1, label: '목표 시간 첫 알림', unit: '분 전', hint: '루틴 목표 시간 몇 분 전에 처음 알려 줄까요' },
-    { k: 'alertSecondMin', def: 10, min: 1, max: 180, step: 1, label: '목표 시간 두 번째 알림', unit: '분 전', hint: '한 번 더 알려 줄 때 몇 분 전인지' }
+    { k: 'alertFirstMin', def: 30, min: 0, max: 180, step: 1, label: '목표 시간 첫 알림', unit: '분 전', hint: '루틴 목표 시간 몇 분 전에 처음 알려 줄까요 (0 = 정각)' },
+    { k: 'alertSecondMin', def: 10, min: 0, max: 180, step: 1, label: '목표 시간 두 번째 알림', unit: '분 전', hint: '한 번 더 알려 줄 때 몇 분 전인지 (0 = 정각)' }
   ];
 
   function varDef(k) {
@@ -3100,12 +3121,17 @@
     if (v == null && d) v = d.def;
     return Number(v) || 0;
   }
+  /* 목표 시간 알림 켜기/끄기 — 값이 없으면 켜진 것으로 봐요 */
+  function targetAlertOn() {
+    return !(state && state.settings && state.settings.alertEnabled === false);
+  }
 
   function defaultState() {
     return {
       version: 1,
       settings: {
         childName: '', greeting: GREETING_DEFAULT, city: 'seoul', soundOn: true,   /* 이름은 보호자가 넣기 전까지 비워 둬요 (샘플 이름이 화면에 비치지 않게) */
+        alertEnabled: true,   /* 목표 시간 알림 켜기/끄기 */
         alertSound: ALERT_SOUND_DEFAULT, customAlertSounds: [],
         sectionTitles: { routine: '하루 루틴', sticker: '칭찬 스티커', academy: '오늘의 학원', week: '학원 시간표' },
         dashboardSections: defaultSections(),
@@ -3355,6 +3381,7 @@
     s.settings.childName = (typeof s.settings.childName === 'string') ? s.settings.childName : d.settings.childName;
     s.settings.greeting = (typeof s.settings.greeting === 'string') ? s.settings.greeting : d.settings.greeting;
     s.settings.soundOn = (typeof s.settings.soundOn === 'boolean') ? s.settings.soundOn : true;
+    s.settings.alertEnabled = (typeof s.settings.alertEnabled === 'boolean') ? s.settings.alertEnabled : true;
     var rawCustom = (Object.prototype.toString.call(s.settings.customAlertSounds) === '[object Array]') ? s.settings.customAlertSounds : [];
     var customs = [];
     for (var ci = 0; ci < rawCustom.length && customs.length < ALERT_CUSTOM_MAX; ci++) {
@@ -3401,6 +3428,7 @@
           sub: typeof rawCat.sub === 'string' ? rawCat.sub.slice(0, 50) : '',
           emoji: typeof rawCat.emoji === 'string' && rawCat.emoji ? rawCat.emoji.slice(0, 8) : '✅',
           targetTime: hhmmValid(rawCat.targetTime) ? rawCat.targetTime : '',
+          showWorkbooks: (typeof rawCat.showWorkbooks === 'boolean') ? rawCat.showWorkbooks : undefined,
           days: normDays(rawCat.days),
           color: typeof rawCat.color === 'string' && rawCat.color ? rawCat.color : defCat.color,
           tint: typeof rawCat.tint === 'string' && rawCat.tint ? rawCat.tint : defCat.tint,
@@ -4235,6 +4263,9 @@
         '<input class="inp inp-sm" type="time" data-field="catTarget" data-cat="' + esc(cat.id) + '" value="' + esc(cat.targetTime || '') + '" aria-label="완료 목표 시간">' +
         (cat.targetTime ? '<button type="button" class="ghost-btn tiny" data-act="cat-target-clear" data-cat="' + esc(cat.id) + '">지우기</button>' : '') +
         '</div>' +
+      '<label class="rce-wb"><input type="checkbox" data-field="catShowWb" data-cat="' + esc(cat.id) + '"' +
+        (catWbOn(cat) ? ' checked' : '') + ' aria-label="' + esc(cat.title || '이 그룹') + '에 문제지 고르기 표시">' +
+        '<span>📚 문제지 고르기 표시</span></label>' +
       '<input class="inp inp-sm rce-sub" data-field="catSub" data-cat="' + esc(cat.id) + '" value="' + esc(cat.sub || '') +
         '" placeholder="설명 (예: 위클래스, 방과후 로봇)" maxlength="50" aria-label="그룹 설명">' +
       '</div>';
@@ -4421,7 +4452,7 @@
       }
       html += '</ul>';
 
-      if (cat.id === 'study') html += wbBoxHtml();
+      if (catWbOn(cat)) html += wbBoxHtml();
 
       if (complete && !edit) html += '<div class="rc-bonus">✨ 그룹 완료 보너스 <span>' + coinSvg() + ' +' + COIN_GROUP + ' 코인</span></div>';
 
@@ -6049,6 +6080,7 @@
   function resetVars() {
     if (!can('edit')) return;
     state.settings.vars = defaultVars();
+    state.settings.alertEnabled = true;
     if (state.sticker) {
       state.sticker.unit = state.settings.vars.stickerUnit;
       var n = Math.max(state.settings.vars.stickerSlots, state.sticker.stickers.length);
@@ -6064,12 +6096,30 @@
   }
 
   /* 🎛️ 변수 설정 — 규칙 숫자를 항목별 설명과 함께 직접 바꿔요 */
+  function toggleTargetAlertOn() {
+    if (!can('edit')) return;
+    state.settings.alertEnabled = !targetAlertOn();
+    saveState();
+    if (epUi.tab === 'vars') renderEditSheetBody();
+    showToast(state.settings.alertEnabled ? '🔔 목표 시간 알림을 켰어요.' : '🔕 목표 시간 알림을 껐어요.');
+  }
+
   function epVarsHtml() {
     var v = varsOf(state);
     var h = '<p class="ep-hint">코인·기운·스티커 같은 규칙 숫자를 여기서 바꿔요. 바꾸면 바로 저장되고 가족 기기에도 같이 맞춰져요.</p>';
     h += '<div class="var-list">';
+    var switchDone = false;
     for (var i = 0; i < VAR_DEFS.length; i++) {
       var d = VAR_DEFS[i];
+      /* 목표 시간 알림 항목 위에 알림 켜기/끄기 스위치 */
+      if (!switchDone && d.k.indexOf('alert') === 0) {
+        switchDone = true;
+        var tamOn = targetAlertOn();
+        h += '<div class="var-switch-row">' +
+          '<span class="var-txt"><b>목표 시간 알림</b><small>목표 시간이 다가오면 화면 가운데 알림과 소리로 알려 줘요</small></span>' +
+          '<button class="var-switch' + (tamOn ? ' on' : '') + '" type="button" role="switch" aria-checked="' + (tamOn ? 'true' : 'false') +
+          '" aria-label="목표 시간 알림 ' + (tamOn ? '끄기' : '켜기') + '" data-act="alert-toggle"><span class="sw-knob"></span></button></div>';
+      }
       h += '<label class="var-row">' +
         '<span class="var-txt"><b>' + esc(d.label) + '</b><small>' + esc(d.hint) + '</small></span>' +
         '<span class="var-in"><input class="inp var-inp" type="number" inputmode="numeric" min="' + d.min + '" max="' + d.max + '" step="' + d.step +
@@ -6198,7 +6248,7 @@
     PET_NEED = [EXP_MAX, EXP_MAX, EXP_MAX];
     HATCH_MS = v.hatchHours * 60 * 60 * 1000;
     var a = v.alertFirstMin, b = v.alertSecondMin;
-    TAM_MARKS = (a >= b) ? [a, b] : [b, a];
+    TAM_MARKS = (a === b) ? [a] : ((a > b) ? [a, b] : [b, a]);
   }
 
   var RARITY = [
@@ -12331,7 +12381,7 @@
       for (var k = 0; k < total; k++) if (ck[cat.items[k].id]) done++;
       if (total > 0 && done === total) continue;      /* 다 끝낸 그룹은 알리지 않아요 */
       var left = hhmmMinutes(cat.targetTime) - now;
-      if (left <= 0) continue;
+      if (left <= -TAM_GRACE) continue;   /* 정각(0분) 알림도 울리게 — 유예 시간을 넘긴 것만 건너뜀 */
       for (var mi = 0; mi < TAM_MARKS.length; mi++) {
         var mark = TAM_MARKS[mi];
         if (left > mark || left <= mark - TAM_GRACE) continue;
@@ -12354,12 +12404,19 @@
     var title = document.getElementById('tamTitle');
     var text = document.getElementById('tamText');
     var emo = document.getElementById('tamEmoji');
-    if (badge) badge.textContent = hit.mark + '분';
-    if (title) title.textContent = '목표 시간 ' + hit.mark + '분 전이에요!';
-    if (emo) emo.textContent = hit.mark === 10 ? '⏰' : '🔔';
+    if (badge) badge.textContent = hit.mark === 0 ? '정각' : hit.mark + '분';
+    if (title) title.textContent = hit.mark === 0 ? '목표 시간이에요!' : '목표 시간 ' + hit.mark + '분 전이에요!';
+    if (emo) emo.textContent = hit.mark === 0 ? '⏰' : (hit.mark === 10 ? '⏰' : '🔔');
     if (text) {
+      var whenText;
+      if (hit.mark === 0) {
+        var pastMin = -hit.left;
+        whenText = (pastMin < 1) ? '지금 정각이에요' : Math.round(pastMin) + '분 지났어요';
+      } else {
+        whenText = leftText(hit.left) || '곧 목표 시간이에요';
+      }
       text.innerHTML = (hit.cat.emoji || '') + ' <b>' + esc(hit.cat.title || '루틴') + '</b> · 목표 ' + hhmmLabel(hit.cat.targetTime) +
-        '<br>' + leftText(hit.left) + ' · 서두르자! 💪';
+        '<br>' + whenText + ' · 서두르자! 💪';
     }
     m.hidden = false;
     raiseModal('targetAlertModal');
@@ -12378,6 +12435,7 @@
 
   function checkTargetAlerts() {
     if (tamOpen) return;
+    if (!targetAlertOn()) return;      /* 🎛️ 변수 설정에서 알림을 꺼 두면 울리지 않아요 */
     if (!cloud || !cloud.me) return;
     if (document.hidden) return;
     var hit = null;
@@ -14002,6 +14060,46 @@
     }
     h += '</span>';
     return h;
+  }
+
+  /* 📚 문제지 고르기 상자 — 그룹마다 켜고 끄기 (예전엔 '저녁 공부' 그룹에만 고정) */
+  function catWbOn(cat) {
+    if (!cat) return false;
+    if (cat.showWorkbooks === true) return true;
+    if (cat.showWorkbooks === false) return false;
+    return cat.id === 'study';      /* 예전 설정과 같은 모습: 저녁 공부는 기본으로 보여요 */
+  }
+
+  function setCatShowWb(id, on) {
+    if (!can('edit')) return;
+    var c = findCat(id);
+    if (!c) return;
+    var was = catWbOn(c);
+    c.showWorkbooks = !!on;
+    saveState();
+    if (was !== !!on) syncWbBoxIn(id, !!on);
+    renderRoutine();
+    showToast(on ? '📚 문제지 고르기를 보여 줄게요.' : '📚 문제지 고르기를 숨겼어요.');
+  }
+
+  /* 편집 창 안 카드도 새로 그리지 않고 상자만 바로 붙였다 뗐다 해요 */
+  function syncWbBoxIn(id, on) {
+    var cards = document.querySelectorAll('.routine-card[data-cat="' + id + '"]');
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var box = card.querySelector('.wb-box');
+      if (on && !box) {
+        var holder = document.createElement('div');
+        holder.innerHTML = wbBoxHtml();
+        var node = holder.firstChild;
+        if (!node) continue;
+        var anchor = card.querySelector('.rc-bonus') || card.querySelector('.add-item');
+        if (anchor) card.insertBefore(node, anchor);
+        else card.appendChild(node);
+      } else if (!on && box) {
+        box.parentNode.removeChild(box);
+      }
+    }
   }
 
   function wbBoxHtml() {
@@ -17678,6 +17776,7 @@
     if (act === 'sec-blk-add') { if (!can('edit')) return; openEditSheet('sections', el.getAttribute('data-sec') || ''); return; }
     if (act === 'sec-size-reset') { resetSectionSize(el.getAttribute('data-sec') || ''); return; }
     if (act === 'vars-reset') { resetVars(); return; }
+    if (act === 'alert-toggle') { toggleTargetAlertOn(); return; }
     if (act === 'sound-toggle') { toggleSound(); return; }
     if (act === 'fullscreen-toggle') { toggleFullscreen(); return; }
     if (act === 'weather-refresh') { loadWeather(); return; }
@@ -18167,6 +18266,10 @@
     }
     var field = el.getAttribute('data-field');
 
+    if (field === 'catShowWb') {
+      setCatShowWb(el.getAttribute('data-cat') || '', !!el.checked);
+      return;
+    }
 
     if (field === 'newShopCat' || field === 'newShopEffect') {
       shopUi.draft = shopUi.draft || {};
