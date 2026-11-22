@@ -2991,6 +2991,10 @@
       dayUpdated: {},
       stickerLog: [],
       stickerSpends: [],
+      /* deletedSpends: 지운 사용 기록 표시 — 다른 기기에도 삭제를 알려요 (열쇠 → 지운 시각) */
+      deletedSpends: {},
+      /* spendSyncAt: 사용 내역을 마지막으로 저장소에 올린 시각 — 구름에서 사라진 기록을 가려낼 때 씀 */
+      spendSyncAt: 0,
       boardLog: [],
       workbooks: [
         { id: 'wb-1', name: '초등 수학' },
@@ -3307,6 +3311,7 @@
 
     /* 스티커 사용 기록 */
     var spends = [];
+    var spendSeen = {};
     if (Object.prototype.toString.call(s.stickerSpends) === '[object Array]') {
       for (var sp = 0; sp < s.stickerSpends.length && sp < 3000; sp++) {
         var se2 = s.stickerSpends[sp] || {};
@@ -3315,17 +3320,38 @@
         if (!spD || !spT) continue;
         var cnt = parseInt(se2.count, 10);
         if (isNaN(cnt) || cnt <= 0) continue;
-        spends.push({
-          id: (typeof se2.id === 'string' && se2.id) ? se2.id : uid('sp'),
+        var spendOne = {
+          /* 이름표가 없으면 읽을 때마다 새로 만들지 않고 고정 이름표를 붙여요 */
+          id: (typeof se2.id === 'string' && se2.id) ? se2.id : spendFixedId(spT, cnt),
           d: spD, t: spT,
           item: (typeof se2.item === 'string' ? se2.item : '').slice(0, 40),
           count: cnt,
           amount: Math.max(0, parseInt(se2.amount, 10) || (cnt * s.sticker.unit)),
           by: (typeof se2.by === 'string') ? se2.by.slice(0, 24) : ''
-        });
+        };
+        /* 이름표만 달라 겹쳐 들어간 같은 기록은 하나만 남겨요 */
+        var spendSg = spendSig(spendOne);
+        if (spendSeen[spendSg]) continue;
+        spendSeen[spendSg] = true;
+        spends.push(spendOne);
       }
     }
     s.stickerSpends = spends;
+
+    /* 지운 사용 기록 표시 · 마지막으로 저장소에 올린 시각 */
+    var dels = {};
+    if (s.deletedSpends && typeof s.deletedSpends === 'object' && Object.prototype.toString.call(s.deletedSpends) !== '[object Array]') {
+      var dn = 0;
+      for (var dk in s.deletedSpends) {
+        if (!Object.prototype.hasOwnProperty.call(s.deletedSpends, dk)) continue;
+        if (dn++ > 2000) break;
+        var dat = Number(s.deletedSpends[dk]) || 0;
+        if (!dat || !/^(id|sig):/.test(dk) || dk.length > 80) continue;
+        dels[dk] = dat;
+      }
+    }
+    s.deletedSpends = dels;
+    s.spendSyncAt = Math.max(0, Number(s.spendSyncAt) || 0);
 
     /* 문제지 목록 */
     var wbs = [];
@@ -13024,6 +13050,13 @@
     var sp = [];
     for (i = 0; i < state.stickerSpends.length; i++) if (Number(state.stickerSpends[i].t) > ts) sp.push(state.stickerSpends[i]);
     state.stickerSpends = sp;
+    /* 이 초기화보다 오래된 삭제 표시는 더 볼 필요가 없어요 */
+    if (state.deletedSpends) {
+      for (var dk in state.deletedSpends) {
+        if (!Object.prototype.hasOwnProperty.call(state.deletedSpends, dk)) continue;
+        if ((Number(state.deletedSpends[dk]) || 0) <= ts) delete state.deletedSpends[dk];
+      }
+    }
     var bl = [];
     for (i = 0; i < state.boardLog.length; i++) if (Number(state.boardLog[i].t) > ts) bl.push(state.boardLog[i]);
     state.boardLog = bl;
@@ -13041,6 +13074,7 @@
     state.sticker.clearedAt = now;
     state.stickerLog = [];
     state.stickerSpends = [];
+    state.deletedSpends = {};
     state.boardLog = [];
     state.sticker.stickers = [];
     state.sticker.celebrated = false;
@@ -13904,15 +13938,29 @@
 
   function deleteSpend(id) {
     if (!can('stickerManage') || !id) return;
-    var idx = -1;
-    for (var i = 0; i < state.stickerSpends.length; i++) if (state.stickerSpends[i].id === id) { idx = i; break; }
-    if (idx < 0) return;
+    var target = null;
+    for (var i = 0; i < state.stickerSpends.length; i++) if (state.stickerSpends[i].id === id) { target = state.stickerSpends[i]; break; }
+    if (!target) return;
     if (!window.confirm('이 사용 기록을 지울까요? 스티커도 다시 남은 개수로 돌아가요.')) return;
-    state.stickerSpends.splice(idx, 1);
+    var now = Date.now();
+    if (!state.deletedSpends || typeof state.deletedSpends !== 'object') state.deletedSpends = {};
+    /* 다른 기기에 다른 이름표로 남아 있어도 같이 지워지게 — 이름표·내용 열쇠 둘 다 남겨요 */
+    var delKeys = spendDeleteKeys(target);
+    for (var k = 0; k < delKeys.length; k++) state.deletedSpends[delKeys[k]] = now;
+    var goneSig = spendSig(target);
+    var left = [];
+    for (var j = 0; j < state.stickerSpends.length; j++) {
+      var cur = state.stickerSpends[j];
+      if (cur.id === id || spendSig(cur) === goneSig) continue; /* 혹시 겹쳐 있던 같은 기록도 함께 */
+      left.push(cur);
+    }
+    state.stickerSpends = left;
+    pruneSpendDeletions();
     saveState();
     if (cloud.me) scheduleSync('stickers');
     renderStickers();
     renderStats();
+    try { refreshAcctStickerPane(); } catch (e) { /* 무시 */ }
   }
 
   /* ---- 통계 ---- */
@@ -14915,6 +14963,107 @@
     };
   }
 
+  /* ============ 스티커 사용 내역 — 겹침·삭제 정리 ============
+     기기마다 이름표(id)가 달라도 시각·개수·내용이 같으면 같은 사용 기록이에요.
+     통계 창이 날짜 파일을 읽으며 임시 이름표를 새로 붙이던 바람에, 새로고침하면
+     같은 기록이 둘로 보이던 문제를 이 열쇠 하나로 막아요. */
+  function spendSig(s) {
+    s = s || {};
+    var n = parseInt(s.count, 10);
+    if (isNaN(n) || n < 1) n = 1;
+    return (Number(s.t) || 0) + '|' + n + '|' + String(s.item || '');
+  }
+
+  /* 이름표가 없는 예전 기록에도 늘 같은 이름표를 붙여요 (읽을 때마다 새로 만들지 않음) */
+  function spendFixedId(t, count) {
+    var n = parseInt(count, 10);
+    if (isNaN(n) || n < 1) n = 1;
+    return 's' + (Number(t) || 0) + '-' + n;
+  }
+
+  /* 삭제 표시는 이름표와 내용 열쇠 둘 다 남겨요 — 다른 기기가 다른 이름표를 갖고 있어도 지워지게 */
+  function spendDeleteKeys(s) {
+    var keys = [];
+    if (s && typeof s.id === 'string' && s.id) keys.push('id:' + s.id);
+    keys.push('sig:' + spendSig(s));
+    return keys;
+  }
+
+  function spendDeleted(s, del) {
+    if (!s) return false;
+    del = del || state.deletedSpends || {};
+    var keys = spendDeleteKeys(s);
+    var t = Number(s.t) || 0;
+    for (var i = 0; i < keys.length; i++) {
+      var at = Number(del[keys[i]]);
+      /* 지운 뒤에 새로 쓴 기록(t가 더 큼)은 남겨요 */
+      if (at && t <= at) return true;
+    }
+    return false;
+  }
+
+  function pruneSpendDeletions() {
+    if (!state.deletedSpends || typeof state.deletedSpends !== 'object') state.deletedSpends = {};
+    var keepUntil = Date.now() - 45 * 86400000;
+    var pairs = [];
+    for (var k in state.deletedSpends) {
+      if (!Object.prototype.hasOwnProperty.call(state.deletedSpends, k)) continue;
+      var at = Number(state.deletedSpends[k]) || 0;
+      if (!at || at < keepUntil) continue;
+      pairs.push([k, at]);
+    }
+    /* 너무 많이 쌓이지 않게 최근 400개만 남겨요 */
+    if (pairs.length > 400) {
+      pairs.sort(function (a, b) { return b[1] - a[1]; });
+      pairs = pairs.slice(0, 400);
+    }
+    var out = {};
+    for (var i = 0; i < pairs.length; i++) out[pairs[i][0]] = pairs[i][1];
+    state.deletedSpends = out;
+  }
+
+  /* 구름의 삭제 표시를 이 기기에도 합쳐요 */
+  function mergeSpendDeletions(incoming) {
+    if (!incoming || typeof incoming !== 'object' || Object.prototype.toString.call(incoming) === '[object Array]') return false;
+    if (!state.deletedSpends || typeof state.deletedSpends !== 'object') state.deletedSpends = {};
+    var changed = false;
+    var n = 0;
+    for (var k in incoming) {
+      if (!Object.prototype.hasOwnProperty.call(incoming, k)) continue;
+      if (n++ > 2000) break;
+      var at = Number(incoming[k]) || 0;
+      if (!at || !/^(id|sig):/.test(k) || k.length > 80) continue;
+      if (!state.deletedSpends[k]) { state.deletedSpends[k] = at; changed = true; }
+    }
+    if (changed) pruneSpendDeletions();
+    return changed;
+  }
+
+  /* 이름표만 달라 겹쳐 들어간 같은 기록을 하나로 — 구름에 있는 원래 이름표를 남겨요 */
+  function dedupeSpends(cloudIds) {
+    var order = [], bySig = {}, changed = false;
+    for (var i = 0; i < state.stickerSpends.length; i++) {
+      var s = state.stickerSpends[i];
+      var sig = spendSig(s);
+      if (!bySig[sig]) { bySig[sig] = s; order.push(sig); continue; }
+      changed = true;
+      var kept = bySig[sig];
+      if (cloudIds && !cloudIds[kept.id] && cloudIds[s.id]) bySig[sig] = s;
+    }
+    if (changed) {
+      var out = [];
+      for (var k = 0; k < order.length; k++) out.push(bySig[order[k]]);
+      state.stickerSpends = out;
+    }
+    return changed;
+  }
+
+  function spendsSignature() {
+    var parts = [];
+    for (var i = 0; i < state.stickerSpends.length && i < 400; i++) parts.push(spendSig(state.stickerSpends[i]) + '#' + state.stickerSpends[i].id);
+    return parts.join(',');
+  }
+
   function stickersPayload() {
     return {
       version: 1,
@@ -14928,7 +15077,8 @@
       boardUpdatedAt: Number(state.sticker.boardUpdatedAt) || 0,
       log: state.stickerLog,
       boardLog: state.boardLog,
-      spends: state.stickerSpends
+      spends: state.stickerSpends,
+      deletedSpends: state.deletedSpends || {}
     };
   }
 
@@ -14953,7 +15103,7 @@
     }
     for (var sp = 0; sp < state.stickerSpends.length; sp++) {
       var sd = state.stickerSpends[sp];
-      if (sd.d === key) spends.push({ t: sd.t, item: sd.item, count: sd.count, amount: sd.amount, by: sd.by });
+      if (sd.d === key) spends.push({ id: sd.id || '', t: sd.t, item: sd.item, count: sd.count, amount: sd.amount, by: sd.by });
     }
     return {
       version: 1,
@@ -14991,8 +15141,11 @@
       }
       if (cloud.dirty.stickers) {
         cloud.dirty.stickers = false;
+        /* 이 시점까지의 사용 내역이 저장소에 올라가요 — 구름에 없는 기록을 가려낼 때 씁니다 */
+        var spendMark = Date.now();
         var kres = await ghPut('config/stickers.json', stickersPayload(), '스티커 원장 업데이트');
         if (!kres.ok) { ok = false; cloud.dirty.stickers = true; cloud.lastError = kres.error || ''; }
+        else if ((Number(state.spendSyncAt) || 0) < spendMark) { state.spendSyncAt = spendMark; saveLocalOnly(); }
       }
       if (cloud.dirty.profile && cloud.me) {
         var blocked = false;
@@ -15032,9 +15185,9 @@
       var res = await ghGet('config/stickers.json');
       if (!res || !res.ok || !res.data) return false;
       if (cloud.dirty.stickers || cloud.saving) return false;
-      var before = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length;
+      var before = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature();
       applyStickersPayload(res.data, { notify: true });
-      var after = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length;
+      var after = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature();
       if (before !== after) saveLocalOnly();
       return before !== after;
     } catch (e) {
@@ -15176,17 +15329,20 @@
       if (boardTouched) state.boardLog.sort(function (q, w) { return q.t - w.t; });
     }
 
-    var ids = {};
-    for (var b = 0; b < state.stickerSpends.length; b++) ids[state.stickerSpends[b].id] = true;
-    if (Object.prototype.toString.call(d.spends) === '[object Array]') {
+    /* ---- 스티커 사용 내역: 겹침 정리 · 삭제 반영 ---- */
+    var spendsChanged = false;
+    if (!state.deletedSpends || typeof state.deletedSpends !== 'object') state.deletedSpends = {};
+    if (mergeSpendDeletions(d.deletedSpends)) spendsChanged = true;
+
+    var cloudSpends = [];
+    var isCloudList = (Object.prototype.toString.call(d.spends) === '[object Array]');
+    if (isCloudList) {
       for (var c = 0; c < d.spends.length && c < 2000; c++) {
         var se = d.spends[c] || {};
         if (!se.t || !se.count) continue;
         if (Number(se.t) <= clr) continue;
-        var sid = (typeof se.id === 'string' && se.id) ? se.id : ('s' + se.t + '-' + se.count);
-        if (ids[sid]) continue;
-        ids[sid] = true;
-        state.stickerSpends.push({
+        var sid = (typeof se.id === 'string' && se.id) ? se.id : spendFixedId(se.t, se.count);
+        cloudSpends.push({
           id: sid,
           d: (typeof se.d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(se.d)) ? se.d : dateKey(new Date(Number(se.t))),
           t: Number(se.t),
@@ -15196,6 +15352,68 @@
           by: (typeof se.by === 'string') ? se.by : ''
         });
       }
+    }
+    var cloudIds = {}, cloudSigs = {}, cloudBySig = {};
+    for (var cc = 0; cc < cloudSpends.length; cc++) {
+      var csig = spendSig(cloudSpends[cc]);
+      cloudIds[cloudSpends[cc].id] = true;
+      cloudSigs[csig] = true;
+      if (!cloudBySig[csig]) cloudBySig[csig] = cloudSpends[cc];
+    }
+
+    /* 1) 다른 기기에서 지운 기록은 여기서도 지워요 */
+    var keptSpends = [];
+    for (var p0 = 0; p0 < state.stickerSpends.length; p0++) {
+      if (spendDeleted(state.stickerSpends[p0], state.deletedSpends)) { spendsChanged = true; continue; }
+      /* 같은 기록인데 이름표만 다르면 구름의 원래 이름표로 맞춰요 */
+      var psig = spendSig(state.stickerSpends[p0]);
+      var pmatch = cloudBySig[psig];
+      if (pmatch && pmatch.id && pmatch.id !== state.stickerSpends[p0].id && !cloudIds[state.stickerSpends[p0].id]) {
+        state.stickerSpends[p0].id = pmatch.id;
+        spendsChanged = true;
+      }
+      keptSpends.push(state.stickerSpends[p0]);
+    }
+    state.stickerSpends = keptSpends;
+
+    /* 2) 이름표만 달라 겹친 같은 기록은 하나로 (구름의 원래 이름표를 남김) */
+    if (dedupeSpends(cloudIds)) spendsChanged = true;
+
+    /* 3) 구름에 있는 기록 중 이 기기에 없는 것은 더해요 */
+    var hasId = {}, hasSig = {};
+    for (var hs = 0; hs < state.stickerSpends.length; hs++) {
+      hasId[state.stickerSpends[hs].id] = true;
+      hasSig[spendSig(state.stickerSpends[hs])] = true;
+    }
+    for (var ca = 0; ca < cloudSpends.length; ca++) {
+      var ce = cloudSpends[ca];
+      if (hasId[ce.id] || hasSig[spendSig(ce)]) continue;
+      if (spendDeleted(ce, state.deletedSpends)) continue;
+      state.stickerSpends.push(ce);
+      hasId[ce.id] = true;
+      hasSig[spendSig(ce)] = true;
+      spendsChanged = true;
+    }
+
+    /* 4) 이 기기에서 이미 저장소에 올렸던 기록이 구름에서 사라졌으면(다른 기기에서 삭제)
+          이 기기에서도 지워요. 아직 올린 적 없는 기록은 건드리지 않아요. */
+    var syncedAt = Number(state.spendSyncAt) || 0;
+    if (isCloudList && syncedAt && !(cloud && cloud.dirty && cloud.dirty.stickers)) {
+      var leftSpends = [];
+      for (var rs = 0; rs < state.stickerSpends.length; rs++) {
+        var rsp = state.stickerSpends[rs];
+        if (!cloudSigs[spendSig(rsp)] && (Number(rsp.t) || 0) < syncedAt) { spendsChanged = true; continue; }
+        leftSpends.push(rsp);
+      }
+      state.stickerSpends = leftSpends;
+    }
+    if (spendsChanged) {
+      try { renderStickers(); } catch (e7) { /* 무시 */ }
+      try { refreshAcctStickerPane(); } catch (e8) { /* 무시 */ }
+      try {
+        var stm = document.getElementById('statsModal');
+        if (stm && !stm.hidden) renderStats();
+      } catch (e9) { /* 무시 */ }
     }
     if (d.total != null) {
       var tt = parseInt(d.total, 10);
@@ -15264,17 +15482,46 @@
     if (Object.prototype.toString.call(d.spends) === '[object Array]') {
       var ks = [];
       for (var ss = 0; ss < state.stickerSpends.length; ss++) if (state.stickerSpends[ss].d !== key) ks.push(state.stickerSpends[ss]);
+      /* 이 기기에 이미 있는 같은 기록의 이름표를 다시 쓸 수 있게 미리 모아 둬요 */
+      var sigId = {};
+      for (var s0 = 0; s0 < state.stickerSpends.length; s0++) {
+        var lk = spendSig(state.stickerSpends[s0]);
+        if (!sigId[lk] && state.stickerSpends[s0].id) sigId[lk] = state.stickerSpends[s0].id;
+      }
+      var daySeen = {};
       for (var sn = 0; sn < d.spends.length && sn < 200; sn++) {
         var sp = d.spends[sn] || {};
         if (!sp.t || !sp.count) continue;
         if (Number(sp.t) <= (Number(state.sticker.clearedAt) || 0)) continue;
-        ks.push({
-          id: uid('sp'), d: key, t: Number(sp.t),
+        var one = {
+          id: (typeof sp.id === 'string' && sp.id) ? sp.id : '',
+          d: key, t: Number(sp.t),
           item: (typeof sp.item === 'string' ? sp.item : '').slice(0, 40),
           count: Math.max(1, parseInt(sp.count, 10) || 1),
           amount: Math.max(0, parseInt(sp.amount, 10) || 0),
           by: (typeof sp.by === 'string') ? sp.by : ''
-        });
+        };
+        var osig = spendSig(one);
+        if (daySeen[osig]) continue;
+        daySeen[osig] = true;
+        /* 날짜 파일에 이름표가 없으면(예전 기록) 고정 이름표 — 이 기기의 이름표가 있으면 그걸 그대로 */
+        if (!one.id) one.id = sigId[osig] || spendFixedId(one.t, one.count);
+        if (spendDeleted(one, state.deletedSpends)) continue;
+        ks.push(one);
+      }
+      /* 방금 이 기기에서 쓴 기록이 아직 날짜 파일에 안 올라갔으면 지우지 않아요 */
+      var dayAtMs = Date.parse(d.updatedAt || '') || 0;
+      if (dayAtMs) {
+        for (var sl = 0; sl < state.stickerSpends.length; sl++) {
+          var loc = state.stickerSpends[sl];
+          if (loc.d !== key) continue;
+          var lsig = spendSig(loc);
+          if (daySeen[lsig]) continue;
+          if ((Number(loc.t) || 0) <= dayAtMs) continue;
+          if (spendDeleted(loc, state.deletedSpends)) continue;
+          daySeen[lsig] = true;
+          ks.push(loc);
+        }
       }
       state.stickerSpends = ks;
     }
