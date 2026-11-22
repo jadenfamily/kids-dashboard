@@ -1201,6 +1201,35 @@
   .reason-chip.custom{ border-color:#e0d7f5; background:#f8f4ff; color:#5b4bb0; }
   .reason-custom{ display:flex; gap:8px; margin-top:11px; }
   .reason-custom input{ flex:1 1 auto; min-height:48px; border-radius:13px; border:2px solid #e6dccf; padding:8px 12px; font-size:15px; font-weight:800; }
+  /* ⭐ 칭찬 이유 고치기 — 칩 목록 + 새 이유 넣기 (✏️ 편집 창·카드 인라인 공통) */
+  .sre{ display:flex; flex-direction:column; gap:8px; margin-top:4px; min-width:0; }
+  .sre-head{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:900; color:#6d6484; }
+  .sre-n{ margin-left:auto; font-size:11px; font-weight:900; color:#a99cb6; }
+  .sre-chips{ display:flex; flex-wrap:wrap; gap:7px; }
+  .sre-chip{
+    display:inline-flex; align-items:center; gap:5px; max-width:100%;
+    border:2px solid #ffe0a0; background:#fffaea; color:#8a5200; border-radius:999px;
+    padding:4px 4px 4px 11px; font-size:13px; font-weight:900; line-height:1.3;
+  }
+  .sre-name{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sre-x{
+    flex:0 0 auto; width:26px; height:26px; padding:0; border:none; border-radius:999px;
+    background:#fff1cf; color:#a8802b; font-size:15px; font-weight:900; line-height:1;
+    cursor:pointer; touch-action:manipulation;
+  }
+  .sre-x:active{ transform:scale(.94); }
+  .sre-empty{ font-size:11.5px; font-weight:800; color:#b3a696; }
+  .sre-add{ display:flex; align-items:stretch; gap:7px; }
+  .sre-inp{ flex:1 1 auto; width:auto; min-width:0; min-height:44px; font-size:16px; }
+  .sre-btn{
+    flex:0 0 auto; min-height:44px; padding:0 15px; border:none; border-radius:13px;
+    background:linear-gradient(135deg,#ffcf70,#ffb03a); color:#5b3a00; font-size:13.5px; font-weight:900;
+    cursor:pointer; touch-action:manipulation;
+  }
+  .sre-btn:active{ transform:scale(.97); }
+  .sre-msg{ margin:0; font-size:11.5px; font-weight:900; color:#0f7a55; }
+  .sre-msg.err{ color:#c2410c; }
+  .sre-msg:empty{ display:none; }
   .wb-box{ margin-top:9px; padding-top:9px; border-top:2px dashed rgba(255,255,255,.95); }
   .wb-head{ display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:900; color:#6d6484; }
   .wb-pick{
@@ -6075,8 +6104,9 @@
       fieldWrap('스티커 한 판 칸 수', '<input class="inp" type="number" inputmode="numeric" min="3" max="30" step="1" data-field="stickerSlots" value="' + (st.slots || 10) + '">') +
       fieldWrap('스티커 1개 금액(원)', '<input class="inp" type="number" inputmode="numeric" min="100" max="100000" step="100" data-field="stickerUnit" value="' + (st.unit || 1000) + '">') +
       fieldWrap('스티커 한 줄 소개', '<input class="inp" data-field="stickerGoal" value="' + esc(st.goal || '') + '" placeholder="비워 두면 안 보여요 (예: 모아서 원하는 선물에 써요)" maxlength="40">') +
-      fieldWrap('스티커 이유 (콤마로 구분)', '<input class="inp" data-field="stickerReasons" value="' + esc((st.reasons || []).join(', ')) + '" placeholder="루틴 완료, 독서, 심부름">') +
       '</div>' +
+      '<p class="ep-hint">스티커를 붙일 때 고르는 칭찬 이유예요. 아래 칸에 적고 ＋ 추가를 누르면 바로 저장되고, 칩 옆 ×로 지울 수 있어요.</p>' +
+      stickerReasonEditorHtml('panel') +
       '<div class="ep-actions">' +
       '<button class="ghost-btn" type="button" data-act="sticker-clear">스티커 보드 비우기</button>' +
       (isAdmin() ? '<button class="ghost-btn danger" type="button" data-act="stickers-reset-logs">🧹 스티커 기록 초기화</button>' : '') +
@@ -14491,6 +14521,117 @@
     refreshAcctStickerPane();
   }
 
+  /* ---- ⭐ 칭찬 이유 목록 고치기 (✏️ 스티커 편집 창 · 카드 인라인 편집 공통) ----
+     칩으로 보여 주고 ×로 지우고, 아래 칸에 적어 ＋ 추가(또는 엔터)로 넣어요.
+     바꾸면 바로 state.sticker.reasons에 들어가고 저장·동기화돼서, 스티커 붙일 때 고르는 목록에도
+     곧바로 보여요. */
+  var STICKER_REASON_MAX = 12;   /* 한 번에 고를 수 있는 이유 개수 (읽을 때도 12개까지) */
+  var STICKER_REASON_LEN = 20;   /* 이유 하나의 최대 글자 수 */
+
+  function stickerReasons() {
+    if (!state.sticker) return [];
+    if (Object.prototype.toString.call(state.sticker.reasons) !== '[object Array]') state.sticker.reasons = [];
+    return state.sticker.reasons;
+  }
+
+  function stickerReasonChipsHtml() {
+    var list = stickerReasons();
+    var h = '';
+    for (var i = 0; i < list.length; i++) {
+      h += '<span class="sre-chip"><span class="sre-name">' + esc(list[i]) + '</span>' +
+        '<button type="button" class="sre-x" data-act="sticker-reason-del" data-i="' + i +
+        '" aria-label="' + esc(list[i]) + ' 지우기" title="지우기">×</button></span>';
+    }
+    if (!list.length) h += '<span class="sre-empty">아직 칭찬 이유가 없어요.</span>';
+    return h;
+  }
+
+  function stickerReasonEditorHtml(where) {
+    var n = stickerReasons().length;
+    return '<div class="sre" data-sre="' + esc(where) + '">' +
+      '<div class="sre-head"><span>⭐ 칭찬 이유</span><span class="sre-n" data-sre-n>' + n + ' / ' + STICKER_REASON_MAX + '</span></div>' +
+      '<div class="sre-chips" data-sre-chips>' + stickerReasonChipsHtml() + '</div>' +
+      '<div class="sre-add">' +
+      '<input class="inp sre-inp" data-sre-inp maxlength="' + STICKER_REASON_LEN + '" placeholder="예: 피아노 연습" aria-label="새 칭찬 이유" autocomplete="off">' +
+      '<button type="button" class="sre-btn" data-act="sticker-reason-add">+ 추가</button></div>' +
+      '<p class="sre-msg" data-sre-msg aria-live="polite"></p>' +
+      '</div>';
+  }
+
+  function sreBoxOf(el) {
+    return (el && el.closest) ? el.closest('.sre') : null;
+  }
+
+  /* 누른 버튼이 칩 목록을 다시 그리며 사라져도 안내는 남도록, 칸(.sre)을 먼저 찾아 두고 써요 */
+  function sreMsgIn(box, text, bad) {
+    if (!box) return;
+    var m = box.querySelector('[data-sre-msg]');
+    if (!m) return;
+    m.className = 'sre-msg' + (bad ? ' err' : '');
+    m.textContent = text || '';
+  }
+
+  /* 열려 있는 칩 목록(편집 창·카드 인라인)을 모두 같은 내용으로 다시 그려요 */
+  function refreshStickerReasonEditors() {
+    var boxes = document.querySelectorAll('.sre');
+    for (var i = 0; i < boxes.length; i++) {
+      var chips = boxes[i].querySelector('[data-sre-chips]');
+      if (chips) chips.innerHTML = stickerReasonChipsHtml();
+      var n = boxes[i].querySelector('[data-sre-n]');
+      if (n) n.textContent = stickerReasons().length + ' / ' + STICKER_REASON_MAX;
+    }
+  }
+
+  function addStickerReason(el) {
+    if (!can('edit')) return;
+    var box = sreBoxOf(el);
+    var inp = box ? box.querySelector('[data-sre-inp]') : null;
+    var name = inp ? String(inp.value || '').replace(/\s+/g, ' ').trim() : '';
+    if (name.length > STICKER_REASON_LEN) name = name.slice(0, STICKER_REASON_LEN);
+    var list = stickerReasons();
+    if (!name) {
+      sreMsgIn(box, '칭찬 이유를 먼저 적어 주세요.', true);
+      if (inp) { try { inp.focus(); } catch (e) { /* 무시 */ } }
+      return;
+    }
+    if (list.length >= STICKER_REASON_MAX) {
+      sreMsgIn(box, '칭찬 이유는 ' + STICKER_REASON_MAX + '개까지 넣을 수 있어요. 하나 지우고 넣어 주세요.', true);
+      return;
+    }
+    for (var i = 0; i < list.length; i++) {
+      if (String(list[i]).trim() === name) {
+        sreMsgIn(box, '‘' + name + '’는 이미 있어요. 다른 이유를 적어 주세요.', true);
+        if (inp) { try { inp.select(); } catch (e) { /* 무시 */ } }
+        return;
+      }
+    }
+    list.push(name);
+    saveState();
+    refreshStickerReasonEditors();
+    if (inp) {
+      inp.value = '';
+      try { inp.focus(); } catch (e) { /* 무시 */ }
+    }
+    sreMsgIn(box, '‘' + name + '’를 넣었어요.');
+  }
+
+  function delStickerReason(el) {
+    if (!can('edit')) return;
+    var box = sreBoxOf(el);   /* 칩을 다시 그리면 누른 ×가 사라지니 안내를 쓸 칸을 미리 잡아 둬요 */
+    var i = parseInt(el.getAttribute('data-i'), 10);
+    var list = stickerReasons();
+    if (isNaN(i) || i < 0 || i >= list.length) return;
+    if (list.length <= 1) {
+      sreMsgIn(box, '칭찬 이유는 하나는 남겨 두세요. 새 이유를 먼저 넣고 지우면 돼요.', true);
+      return;
+    }
+    var gone = list[i];
+    list.splice(i, 1);
+    saveState();
+    refreshStickerReasonEditors();
+    sreMsgIn(box, '‘' + gone + '’를 지웠어요.');
+  }
+
   /* ---- 스티커 적립 이유 ---- */
   function openReason() {
     if (!can('stickerManage')) return;
@@ -15408,7 +15549,9 @@
         fieldWrap('스티커 1개 금액(원)', '<input class="inp" type="number" inputmode="numeric" min="100" max="100000" step="100" data-field="stickerUnit" value="' + (st.unit || 1000) + '">') +
         fieldWrap('한 줄 소개', '<input class="inp" data-field="stickerGoal" value="' + esc(st.goal || '') + '" maxlength="40" placeholder="비워 두면 안 보여요">') +
         '</div>' +
-        '<p class="il-count">지금 ' + ((st.stickers || []).length) + ' / ' + (st.slots || 10) + '칸 채웠어요.</p>';
+        '<p class="il-count">지금 ' + ((st.stickers || []).length) + ' / ' + (st.slots || 10) + '칸 채웠어요.</p>' +
+        '<p class="il-note">스티커를 붙일 때 고르는 칭찬 이유예요. 여기서 더하고 지우면 바로 저장되고 아이 화면에도 그대로 보여요.</p>' +
+        stickerReasonEditorHtml('inline');
     }
     h += '</div>';
     return h;
@@ -18092,6 +18235,8 @@
     if (act === 'sticker-clear') { clearBoard(); return; }
     if (act === 'stickers-reset-logs') { clearStickerHistory(); return; }
     if (act === 'sticker-slot-add') { openReason(); return; }
+    if (act === 'sticker-reason-add') { addStickerReason(el); return; }
+    if (act === 'sticker-reason-del') { delStickerReason(el); return; }
     if (act === 'pet-art-apply') { applyPetArtUrl(); return; }
     if (act === 'pet-art-reset') { resetPetArt(); return; }
     if (act === 'pet-open') { openPet(); return; }
@@ -18592,6 +18737,15 @@
       renderTodayAcademy();
       return;
     }
+  });
+
+  /* ⭐ 칭찬 이유 칸에서 엔터를 치면 바로 넣어요 (한글 조합 중의 엔터는 무시) */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229) return;
+    var el = e.target;
+    if (!el || !el.getAttribute || !el.hasAttribute('data-sre-inp')) return;
+    e.preventDefault();
+    addStickerReason(el);
   });
 
   document.addEventListener('change', function (e) {
