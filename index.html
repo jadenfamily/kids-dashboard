@@ -2278,6 +2278,56 @@
   .sec-resize[hidden]{ display:none; }
   .sec.dragging{ outline:2px solid #ffc46b; outline-offset:2px; }
 
+  /* ⠿ 카드 끌어서 옮기기 — 손끝을 따라오는 고스트 + 자석 자리표시 */
+  .sec-grip{
+    display:inline-flex; align-items:center; justify-content:center; min-height:26px; min-width:28px; padding:0 6px;
+    border-radius:10px; border:1.2px solid #f0e2cf; background:#fff; color:#a8907a;
+    font-size:13px; font-weight:900; font-family:inherit; cursor:grab; touch-action:none;
+    user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
+  }
+  .sec-grip:active{ cursor:grabbing; }
+  .sec.drag-hide{ display:none !important; }
+  .sec.sec-drop{
+    border:2.5px dashed #ffb84d !important; border-radius:18px !important;
+    background:rgba(255,214,140,.16) !important; box-shadow:inset 0 0 0 3px rgba(255,255,255,.55) !important;
+    pointer-events:none; display:flex; align-items:center; justify-content:center;
+  }
+  .sec.sec-drop .blk-empty{ margin:0; }
+  .sec-ghost{
+    position:fixed; z-index:140; pointer-events:none; border-radius:18px; border:2px solid #ffc46b;
+    background:linear-gradient(160deg,#fffdf7,#fff6e4); box-shadow:0 22px 44px rgba(120,80,20,.30);
+    padding:11px 13px; font-family:inherit; color:#5b4a2e; opacity:.96;
+    max-height:120px; overflow:hidden;
+  }
+  .sec-ghost b{ display:flex; align-items:center; gap:7px; font-size:15px; font-weight:900; letter-spacing:-.02em; }
+  .sec-ghost small{ display:block; margin-top:4px; font-size:11px; font-weight:800; color:#a8907a; }
+  body.sec-drag-live, body.sec-drag-live *{ cursor:grabbing !important; }
+
+  /* ✏️ 카드 안 인라인 편집 */
+  .sec.inline-now{ outline:3px solid #ffc46b; outline-offset:2px; }
+  .sec .sec-head .il-head{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-width:0; }
+  .il-emo{ width:62px; text-align:center; }
+  .il-title-inp{ max-width:210px; font-size:16px; font-weight:900; }
+  .il-body{ display:flex; flex-direction:column; gap:11px; }
+  .il-note{ margin:0; font-size:11.5px; font-weight:800; color:#a8907a; line-height:1.5; }
+  .il-blk{ border:2px dashed #f0dfc8; border-radius:16px; background:#fffdf9; padding:10px 11px;
+    display:flex; flex-direction:column; gap:9px; min-width:0; }
+  .il-blk-head{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .il-blk-name{ flex:1 1 auto; font-size:12.5px; font-weight:900; color:#8a6a3f; }
+  .il-tools{ display:flex; gap:4px; }
+  .il-field{ display:flex; flex-direction:column; gap:4px; font-size:11.5px; font-weight:900; color:#a2937f; }
+  .il-grid2{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
+  .il-day{ display:flex; flex-direction:column; gap:7px; }
+  .il-done{ display:flex; justify-content:flex-end; }
+  .il-count{ font-size:11.5px; font-weight:900; color:#a8907a; }
+  @media (max-width:719px){
+    .il-title-inp{ max-width:150px; }
+    .il-blk{ padding:9px 9px; }
+    /* 폰에서는 편집 바가 한 줄에 들어가게 ▲▼는 숨겨요 (⠿ 끌기·인라인 편집으로 옮길 수 있어요) */
+    #sections .sec-ovl [data-act="diy-sec-up"],
+    #sections .sec-ovl [data-act="diy-sec-down"]{ display:none; }
+  }
+
   /* ---------- 🎛️ 변수 설정 ---------- */
   .var-list{ display:flex; flex-direction:column; gap:7px; }
   .var-row{ display:flex; align-items:center; gap:10px; background:#fff; border:1.6px solid #f0e2cf; border-radius:13px; padding:8px 10px; }
@@ -3627,7 +3677,7 @@
 
   /* ============ 상태 ============ */
   var state = loadState();
-  var ui = { editing: false };
+  var ui = { editing: false, inlineEditSecId: '' };
   var weather = { status: 'idle', data: null, at: 0, error: '', fetchedAt: 0, stale: false };
   var currentKey = dateKey();
   var freshIdx = -1;
@@ -4277,6 +4327,8 @@
     eachBlockOfType('routine', function (root, blk) { renderRoutineBlock(root, blk); });
     /* 편집 팝업의 그룹·할 일도 같이 맞춰요 */
     if (epUi.tab === 'groups') { try { renderEditSheetBody(); } catch (e) { /* 무시 */ } }
+    /* 카드 안 인라인 편집 중이면 그 카드의 그룹·할 일 칸도 다시 그려요 */
+    refreshInlineSec();
   }
 
   /* 루틴 카드 HTML — 대시보드(보기)와 편집 팝업(edit=true)이 같은 배치를 써요.
@@ -5585,6 +5637,7 @@
     saveState();
     renderWeek();
     renderTodayAcademy();
+    refreshInlineSec();
     var inp = document.querySelector('input[data-field="evName"][data-id="' + e.id + '"]');
     if (inp) inp.focus();
   }
@@ -5600,6 +5653,7 @@
     saveState();
     renderWeek();
     renderTodayAcademy();
+    refreshInlineSec();
   }
 
   /* ============ 일과표 알림 (이 기기에서만) ============ */
@@ -6047,6 +6101,7 @@
     if (!p) return;
     if (ui.editing && !can('edit')) ui.editing = false;
     if (!ui.editing) {
+      ui.inlineEditSecId = '';
       p.hidden = true;
       p.innerHTML = '';
       epUi.tab = '';
@@ -6055,7 +6110,7 @@
     p.hidden = false;
     var h = '<div class="ep-head">' +
       '<h2>✏️ 편집 모드</h2>' +
-      '<span class="ep-hint">평소 화면 그대로예요. 카드의 도구로 순서·크기를 바꾸고, 자세한 건 팝업에서 고쳐요.</span>' +
+      '<span class="ep-hint">카드의 ✏️로 그 카드만 고치고, ⠿를 끌어 순서를 바꿔요. 자세한 건 위 버튼에서.</span>' +
       '<button class="done-btn" type="button" data-act="edit-toggle">편집 완료</button>' +
       '</div>';
     h += '<div class="ep-tools">';
@@ -13270,6 +13325,7 @@
   function toggleEdit() {
     if (!can('edit')) return;
     ui.editing = !ui.editing;
+    ui.inlineEditSecId = '';
     epUi.tab = '';
     try { unlockScroll(); } catch (e0) { /* 무시 */ }
     var btn = document.getElementById('editBtn');
@@ -14583,7 +14639,8 @@
   function afterSectionsChanged(opt) {
     syncSectionMirrors(state);
     saveState();
-    renderSections();
+    /* 인라인 편집 중이면 그 카드만 다시 그려 포커스·스크롤을 지켜요 */
+    if (!refreshInlineSec()) renderSections();
     renderEditPanel();
     if (opt && opt.focusSel) {
       var el = document.querySelector(opt.focusSel);
@@ -14623,6 +14680,7 @@
     if (!sec) return;
     if (sec.base) { showToast('기본 섹션은 지우지 않고 숨길 수 있어요.'); return; }
     if (!window.confirm('"' + (sec.title || '섹션') + '" 섹션을 지울까요?\n안에 넣은 블록도 함께 사라져요. (체크·스티커 기록은 그대로예요)')) return;
+    if (ui.inlineEditSecId === id) ui.inlineEditSecId = '';
     var list = secList();
     for (var i = 0; i < list.length; i++) if (list[i].id === id) { list.splice(i, 1); break; }
     afterSectionsChanged();
@@ -14633,6 +14691,8 @@
     var sec = findSec(id);
     if (!sec) return;
     sec.hidden = !sec.hidden;
+    /* 숨긴 카드는 보이지 않으니 인라인 편집도 함께 닫아요 */
+    if (sec.hidden && ui.inlineEditSecId === id) ui.inlineEditSecId = '';
     afterSectionsChanged();
   }
 
@@ -14773,6 +14833,8 @@
   }
 
   function syncSectionTitleNode(sec) {
+    /* 인라인 편집 중인 카드는 제목 입력칸을 쓰고 있어요 */
+    if (ui.inlineEditSecId === sec.id) return;
     var el = document.getElementById('secTitle-' + sec.id);
     if (!el) return;
     el.innerHTML = '<span class="sec-emo" aria-hidden="true">' + esc(sec.emoji || '') + '</span><span class="sec-name">' + esc(sec.title || '') + '</span>';
@@ -14809,6 +14871,8 @@
     var pending = null;
     for (var i = 0; i < nodes.length; i++) {
       var el = nodes[i];
+      /* 끌고 있는 카드는 자리를 비워 두고, 자리표시가 그 자리를 대신해요 */
+      if (el.classList.contains('drag-hide')) continue;
       var half = wide && el.getAttribute('data-width') !== 'full';
       if (half) {
         if (pending) { pending.push(el); pending = null; }
@@ -14922,6 +14986,344 @@
     }, { passive: false });
   }
 
+  /* ---- ✏️ 카드 안 인라인 편집 ----
+     편집 모드에서 카드 모서리의 ✏️를 누르면 팝업 대신 그 카드 안에서만 편집해요.
+     다른 카드는 평소 프레임 그대로 두고, ✓(또는 ✏️ 다시)를 누르면 닫히며 저장돼요. */
+  function inlineSecOn(sec) {
+    return !!(sec && ui.inlineEditSecId === sec.id && ui.editing && can('edit'));
+  }
+
+  function toggleInlineSec(id) {
+    if (!can('edit') || !ui.editing) return;
+    var sec = findSec(id);
+    if (!sec) return;
+    var closeIt = (ui.inlineEditSecId === id);
+    var card = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    var top0 = card ? card.getBoundingClientRect().top : 0;
+    ui.inlineEditSecId = closeIt ? '' : id;
+    renderSections();
+    /* 카드가 화면에서 보이던 자리를 그대로 지켜요 */
+    var now = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    if (card && now) {
+      var diff = now.getBoundingClientRect().top - top0;
+      if (Math.abs(diff) > 0.5) { try { window.scrollBy(0, diff); } catch (e) { /* 무시 */ } }
+    }
+    if (!closeIt) {
+      showToast('✏️ 이 카드만 고치는 중이에요. ✓로 마치면 저장돼요.');
+    } else {
+      showToast('✓ 카드 편집을 마쳤어요.');
+    }
+  }
+
+  function closeInlineSec() {
+    var id = ui.inlineEditSecId;
+    if (!id) return;
+    var card = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    var top0 = card ? card.getBoundingClientRect().top : 0;
+    ui.inlineEditSecId = '';
+    renderSections();
+    var now = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    if (card && now) {
+      var diff = now.getBoundingClientRect().top - top0;
+      if (Math.abs(diff) > 0.5) { try { window.scrollBy(0, diff); } catch (e) { /* 무시 */ } }
+    }
+    showToast('✓ 카드 편집을 마쳤어요.');
+  }
+
+  /* 인라인 편집 중인 카드 한 장만 다시 그려요 (블록 추가/삭제처럼 구조가 바뀔 때) */
+  function refreshInlineSec() {
+    var id = ui.inlineEditSecId;
+    if (!id || secPainting) return false;
+    var sec = findSec(id);
+    var el = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    if (!sec || !el || !el.parentNode) { renderSections(); return true; }
+    var tmp = document.createElement('div');
+    tmp.innerHTML = sectionShellHtml(sec);
+    var fresh = tmp.firstElementChild;
+    if (!fresh) { renderSections(); return true; }
+    el.parentNode.replaceChild(fresh, el);
+    applyLayoutOrder();
+    return true;
+  }
+
+  /* 인라인 편집 카드의 머리 — 아이콘·이름을 그 자리에서 바꾸고 ✓로 닫아요 */
+  function inlineSecHeadHtml(sec) {
+    var h = '<div class="card-head sec-head">';
+    h += '<div class="il-head">' +
+      '<select class="inp inp-sm il-emo" data-field="diySecEmoji" data-sec="' + esc(sec.id) + '" aria-label="카드 아이콘">' + diyEmojiOptions(sec.emoji) + '</select>' +
+      '<input class="inp inp-sm il-title-inp" data-field="diySecTitle" data-sec="' + esc(sec.id) + '" value="' + esc(sec.title || '') +
+        '" maxlength="16" placeholder="카드 이름" aria-label="카드 이름">' +
+      '</div>';
+    h += '<div class="head-tools sec-tools sec-ovl">';
+    h += '<button type="button" class="sec-tool on" data-act="sec-inline" data-sec="' + esc(sec.id) + '" aria-label="편집 마치기" title="편집 마치기">✓</button>';
+    h += '<button type="button" class="sec-grip" data-drag-sec="' + esc(sec.id) + '" aria-label="끌어서 옮기기" title="끌어서 옮기기">⠿</button>';
+    h += '<button type="button" class="sec-tool" data-act="diy-sec-up" data-sec="' + esc(sec.id) + '" aria-label="앞으로 이동" title="순서 앞으로">▲</button>';
+    h += '<button type="button" class="sec-tool" data-act="diy-sec-down" data-sec="' + esc(sec.id) + '" aria-label="뒤로 이동" title="순서 뒤로">▼</button>';
+    h += '<button type="button" class="sec-tool" data-act="sec-detail" data-sec="' + esc(sec.id) + '" aria-label="팝업에서 전체 관리" title="팝업에서 전체 관리">🧱</button>';
+    h += '<button type="button" class="sec-tool' + (sec.hidden ? ' on' : '') + '" data-act="diy-sec-hide" data-sec="' + esc(sec.id) +
+      '" aria-pressed="' + (sec.hidden ? 'true' : 'false') + '" aria-label="숨기기" title="숨기기">' + (sec.hidden ? '🙈' : '👁') + '</button>';
+    h += '<button type="button" class="sec-tool" data-act="sec-size-reset" data-sec="' + esc(sec.id) + '" aria-label="크기 초기화" title="크기 원래대로">↺</button>';
+    if (!sec.base) h += '<button type="button" class="sec-tool danger" data-act="diy-sec-del" data-sec="' + esc(sec.id) + '" aria-label="섹션 삭제" title="섹션 삭제">🗑</button>';
+    h += '</div></div>';
+    return h;
+  }
+
+  /* 하루 일정 칸 편집 — 그 날 학원 이름·시간을 그 자리에서 */
+  function inlineDayEditorHtml(key) {
+    var evs = state.schedule[key] || [];
+    var h = '<div class="il-day">';
+    if (!evs.length) h += '<p class="il-note">아직 적어 둔 일정이 없어요. 아래 [＋ 일정]으로 넣어 보세요.</p>';
+    for (var i = 0; i < evs.length; i++) {
+      var e = evs[i];
+      var tp = evTimeParts(e.time);
+      h += '<div class="ev-edit">' +
+        '<input class="inp inp-sm" data-field="evName" data-day="' + key + '" data-id="' + esc(e.id) + '" value="' + esc(e.name) + '" placeholder="일정 이름">' +
+        '<div class="ev-times">' +
+          '<label class="ev-t"><span>시작</span><input class="inp inp-sm" type="time" data-field="evTimeStart" data-day="' + key + '" data-id="' + esc(e.id) + '" value="' + esc(tp.start) + '" aria-label="시작 시간"></label>' +
+          '<label class="ev-t"><span>종료</span><input class="inp inp-sm" type="time" data-field="evTimeEnd" data-day="' + key + '" data-id="' + esc(e.id) + '" value="' + esc(tp.end) + '" aria-label="종료 시간"></label>' +
+        '</div>' +
+        '<button class="del-btn" type="button" data-act="del-event" data-day="' + key + '" data-id="' + esc(e.id) + '" aria-label="삭제">✕</button>' +
+        '</div>';
+    }
+    h += '<button class="add-item add-sm" type="button" data-act="add-event" data-day="' + key + '">+ 일정 추가</button></div>';
+    return h;
+  }
+
+  /* 블록 하나를 카드 안에서 고치는 칸 */
+  function inlineBlockEditorHtml(sec, blk, idx, total) {
+    var h = '<div class="il-blk" data-il-blk="' + esc(blk.id) + '">';
+    h += '<div class="il-blk-head"><span class="il-blk-name">' +
+      esc((BLOCK_ICON[blk.type] || '🧩') + ' ' + (BLOCK_LABEL[blk.type] || blk.type)) + '</span>' +
+      '<span class="il-tools">' +
+      '<button type="button" class="sec-tool" data-act="diy-blk-up" data-blk="' + esc(blk.id) + '"' + (idx === 0 ? ' disabled' : '') + ' aria-label="블록 위로">▲</button>' +
+      '<button type="button" class="sec-tool" data-act="diy-blk-down" data-blk="' + esc(blk.id) + '"' + (idx === total - 1 ? ' disabled' : '') + ' aria-label="블록 아래로">▼</button>' +
+      '<button type="button" class="sec-tool danger" data-act="diy-blk-del" data-blk="' + esc(blk.id) + '" aria-label="블록 빼기">✕</button>' +
+      '</span></div>';
+
+    if (blk.type === 'routine') {
+      h += '<label class="il-field"><span>보여 줄 루틴 그룹</span><select class="inp inp-sm" data-field="diyBlkGroup" data-blk="' + esc(blk.id) + '">' +
+        diyGroupOptions(blk.group, '오늘의 모든 루틴') + '</select></label>';
+      h += '<div class="il-groups">' + routineCardsHtml(blk.group || '', true).html + '</div>';
+      h += '<button class="add-item" type="button" data-act="cat-add">+ 루틴 그룹 추가</button>';
+    } else if (blk.type === 'target_bar') {
+      h += '<label class="il-field"><span>어느 목표를 보여 줄까요</span><select class="inp inp-sm" data-field="diyBlkGroup" data-blk="' + esc(blk.id) + '">' +
+        diyGroupOptions(blk.group, '다음 다가오는 목표') + '</select></label>';
+      h += '<p class="il-note">목표 시간은 🧩 그룹·할 일에서 정해요. 여기서는 이 카드에 보여 줄 목표를 골라요.</p>';
+    } else if (blk.type === 'notice_board') {
+      h += '<div class="nb-form-row">' +
+        '<input class="inp inp-sm nb-emo" data-field="diyNbEmoji" data-blk="' + esc(blk.id) + '" value="' + esc(blk.emoji || '💬') + '" maxlength="4" aria-label="게시판 아이콘">' +
+        '<input class="inp inp-sm" data-field="diyNbTitle" data-blk="' + esc(blk.id) + '" value="' + esc(blk.title || '') + '" maxlength="24" placeholder="제목" aria-label="게시판 제목">' +
+        '</div>' +
+        '<textarea class="inp nb-text-inp" data-field="diyNbText" data-blk="' + esc(blk.id) + '" rows="3" maxlength="400" placeholder="가족에게 남길 한마디를 적어 주세요">' + esc(blk.text || '') + '</textarea>';
+    } else if (blk.type === 'today_schedule') {
+      var ti = new Date().getDay();
+      h += '<p class="il-note">' + DAY_NAMES[ti] + '요일 일정이에요. 적은 내용은 오늘의 일정 카드에 바로 보여요.</p>';
+      h += inlineDayEditorHtml(DAY_KEYS[ti]);
+    } else if (blk.type === 'weekly_schedule') {
+      h += '<p class="il-note">요일마다 학원·일정을 적어 두면 일과표와 🔔 10분 전 알림에 쓰여요.</p>';
+      h += '<div class="week-grid">' + weekGridHtml(true) + '</div>';
+    } else if (blk.type === 'sticker_board') {
+      var st = state.sticker || {};
+      h += '<div class="il-grid2">' +
+        fieldWrap('한 판 칸 수', '<input class="inp" type="number" inputmode="numeric" min="3" max="30" step="1" data-field="stickerSlots" value="' + (st.slots || 10) + '">') +
+        fieldWrap('스티커 1개 금액(원)', '<input class="inp" type="number" inputmode="numeric" min="100" max="100000" step="100" data-field="stickerUnit" value="' + (st.unit || 1000) + '">') +
+        fieldWrap('한 줄 소개', '<input class="inp" data-field="stickerGoal" value="' + esc(st.goal || '') + '" maxlength="40" placeholder="비워 두면 안 보여요">') +
+        '</div>' +
+        '<p class="il-count">지금 ' + ((st.stickers || []).length) + ' / ' + (st.slots || 10) + '칸 채웠어요.</p>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function inlineSecBodyHtml(sec) {
+    var blocks = sec.blocks || [];
+    var h = '<div class="sec-blocks il-body">';
+    h += '<p class="il-note">이 카드만 고치는 중이에요. 바꾼 내용은 바로 저장되고 가족 기기에도 같이 맞춰져요.</p>';
+    if (!blocks.length) h += '<p class="blk-empty">아직 블록이 없어요. 아래에서 골라 넣어 보세요.</p>';
+    for (var i = 0; i < blocks.length; i++) h += inlineBlockEditorHtml(sec, blocks[i], i, blocks.length);
+    h += diyBlockAddHtml(sec);
+    h += '<div class="il-done"><button class="pill-btn" type="button" data-act="sec-inline" data-sec="' + esc(sec.id) + '">✓ 편집 마치기</button></div>';
+    h += '</div>';
+    return h;
+  }
+
+  /* ---- ⠿ 카드 끌어서 옮기기 (자석 스냅) ----
+     끌고 있는 카드는 손끝을 따라오는 반투명 고스트로 보이고, 가장 가까운 자리에
+     점선 자리표시가 자석처럼 붙어요. 놓으면 그 슬롯으로 들어가 순서가 저장돼요. */
+  var secMove = null;
+  var secPainting = false;
+
+  function secMoveCards() {
+    var box = document.getElementById('sections');
+    var out = [];
+    if (!box) return out;
+    for (var i = 0; i < box.children.length; i++) {
+      var el = box.children[i];
+      if (!el.classList || !el.classList.contains('sec')) continue;
+      if (el === secMove.card || el === secMove.drop) continue;
+      if (el.classList.contains('drag-hide') || el.classList.contains('sec-drop') || el.hidden) continue;
+      out.push(el);
+    }
+    return out;
+  }
+
+  /* 포인터에 가장 가까운 카드의 앞/뒤 — 그 자리가 자석이 붙을 슬롯이에요 */
+  function secDropTarget(px, py) {
+    var cards = secMoveCards();
+    if (!cards.length) return { ref: null };
+    var best = -1, bd = Infinity, br = null;
+    for (var i = 0; i < cards.length; i++) {
+      var r = cards[i].getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      var dx = px - (r.left + r.width / 2);
+      var dy = py - (r.top + r.height / 2);
+      var d = dx * dx + dy * dy;
+      if (d < bd) { bd = d; best = i; br = r; }
+    }
+    if (best < 0) return { ref: null };
+    var wide = br.width > (window.innerWidth * 0.62);
+    var after = wide ? (py > br.top + br.height / 2) : (px > br.left + br.width / 2);
+    return { ref: after ? (cards[best + 1] || null) : cards[best] };
+  }
+
+  function secPaintGhost() {
+    var d = secMove;
+    if (!d || !d.ghost) return;
+    d.ghost.style.left = Math.round(d.left + d.dx) + 'px';
+    d.ghost.style.top = Math.round(d.top + d.dy) + 'px';
+  }
+
+  function secPlaceDrop(px, py) {
+    var d = secMove;
+    if (!d || !d.drop) return;
+    var box = document.getElementById('sections');
+    if (!box) return;
+    var t = secDropTarget(px, py);
+    if (t.ref === d.drop) return;
+    if (t.ref) box.insertBefore(d.drop, t.ref);
+    else box.appendChild(d.drop);
+    applyLayoutOrder();
+  }
+
+  function secMoveMove(ev) {
+    var d = secMove;
+    if (!d) return;
+    if (ev.cancelable) ev.preventDefault();
+    var dx = ev.clientX - d.x0;
+    var dy = ev.clientY - d.y0;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) d.moved = true;
+    d.dx = dx; d.dy = dy;
+    d.lastX = ev.clientX; d.lastY = ev.clientY;
+    secPaintGhost();
+    secPlaceDrop(ev.clientX, ev.clientY);
+  }
+
+  /* 화면 가장자리로 끌면 긴 목록도 스스로 스크롤해요 (모바일 대비) */
+  function secMoveTick() {
+    var d = secMove;
+    if (!d) return;
+    var vh = window.innerHeight;
+    var y = d.lastY || 0;
+    var speed = 0;
+    if (y && y < 90) speed = -Math.min(20, (90 - y) / 3 + 4);
+    else if (y && y > vh - 90) speed = Math.min(20, (y - (vh - 90)) / 3 + 4);
+    if (speed) {
+      var before = window.pageYOffset;
+      window.scrollBy(0, speed);
+      if (window.pageYOffset !== before) secPlaceDrop(d.lastX || 0, d.lastY || 0);
+    }
+    d.raf = window.requestAnimationFrame(secMoveTick);
+  }
+
+  function secMoveEnd() {
+    var d = secMove;
+    if (!d) return;
+    secMove = null;
+    window.removeEventListener('pointermove', secMoveMove);
+    window.removeEventListener('pointerup', secMoveEnd);
+    window.removeEventListener('pointercancel', secMoveEnd);
+    if (d.raf) window.cancelAnimationFrame(d.raf);
+    if (d.ghost && d.ghost.parentNode) d.ghost.parentNode.removeChild(d.ghost);
+    document.body.classList.remove('sec-drag-live');
+
+    /* 자리표시가 놓인 곳에서 새 순서를 읽어요 */
+    var order = [];
+    var placed = false;
+    var box = document.getElementById('sections');
+    var kids = box ? box.children : [];
+    for (var i = 0; i < kids.length; i++) {
+      var el = kids[i];
+      if (el === d.card) continue;
+      if (el === d.drop) { order.push(d.secId); placed = true; continue; }
+      if (el.hidden || !el.getAttribute) continue;
+      var sid = el.getAttribute('data-sec');
+      if (sid) order.push(sid);
+    }
+    if (!placed) order.push(d.secId);
+
+    d.card.classList.remove('drag-hide');
+    if (d.drop && d.drop.parentNode) d.drop.parentNode.removeChild(d.drop);
+    if (!d.moved) { applyLayoutOrder(); return; }
+
+    /* 숨긴 섹션은 원래 자리에 두고, 보이는 섹션만 새 순서로 채워요 */
+    var list = secList();
+    var slots = [];
+    for (var k = 0; k < list.length; k++) if (!list[k].hidden) slots.push(k);
+    if (order.length === slots.length) {
+      var next = [];
+      for (var m = 0; m < order.length; m++) next.push(findSec(order[m]));
+      for (var n = 0; n < slots.length; n++) if (next[n]) list[slots[n]] = next[n];
+    }
+    syncSectionMirrors(state);
+    saveState();
+    renderSections();
+    renderEditPanel();
+    showToast('카드 순서를 바꿨어요.');
+  }
+
+  function secStartMove(e) {
+    var handle = (e.target && e.target.closest) ? e.target.closest('[data-drag-sec]') : null;
+    if (!handle || !ui.editing || !can('edit') || secMove) return;
+    var secId = handle.getAttribute('data-drag-sec');
+    var card = handle.closest('.sec');
+    var sec = findSec(secId);
+    if (!card || !sec) return;
+    e.preventDefault();
+    try { handle.setPointerCapture(e.pointerId); } catch (e0) { /* 무시 */ }
+    var rect = card.getBoundingClientRect();
+    var drop = document.createElement('div');
+    drop.className = 'sec sec-drop' + (sec.width === 'half' ? ' sec-half' : ' sec-full');
+    drop.setAttribute('data-width', sec.width === 'half' ? 'half' : 'full');
+    drop.setAttribute('aria-hidden', 'true');
+    drop.style.height = Math.round(rect.height) + 'px';
+    drop.innerHTML = '<p class="blk-empty">여기로 옮겨요</p>';
+    var ghost = document.createElement('div');
+    ghost.className = 'sec-ghost';
+    ghost.style.width = Math.round(rect.width) + 'px';
+    ghost.innerHTML = '<b><span aria-hidden="true">' + esc(sec.emoji || '🧩') + '</span>' + esc(sec.title || '카드') + '</b>' +
+      '<small>⠿ 끌어서 옮기는 중</small>';
+    document.body.appendChild(ghost);
+    card.parentNode.insertBefore(drop, card);
+    card.classList.add('drag-hide');
+    document.body.classList.add('sec-drag-live');
+    secMove = {
+      secId: secId, card: card, drop: drop, ghost: ghost,
+      x0: e.clientX, y0: e.clientY, dx: 0, dy: 0,
+      left: rect.left, top: rect.top, moved: false, raf: 0,
+      lastX: e.clientX, lastY: e.clientY
+    };
+    secPaintGhost();
+    applyLayoutOrder();
+    window.addEventListener('pointermove', secMoveMove, { passive: false });
+    window.addEventListener('pointerup', secMoveEnd);
+    window.addEventListener('pointercancel', secMoveEnd);
+    secMove.raf = window.requestAnimationFrame(secMoveTick);
+  }
+
+  function installSectionMove() {
+    document.addEventListener('pointerdown', secStartMove, { passive: false });
+  }
+
   /* 카드 크기를 처음 크기로 — 가로는 섹션 기본 폭, 세로는 내용에 맞춤 */
   function resetSectionSize(secId) {
     if (!can('edit')) return;
@@ -14939,23 +15341,33 @@
 
   function sectionShellHtml(sec, idx) {
     var editing = ui.editing && can('edit');
+    var inline = inlineSecOn(sec);
     var width = sec.width === 'half' ? 'half' : 'full';
     var hpx = (sec.h >= SEC_H_MIN && sec.h <= SEC_H_MAX) ? sec.h : 0;
     var cls = 'card sec ' + (SEC_CLASS[sec.base] || 'sec-custom') + ' sec-' + width +
-      (editing ? ' edit-on' : '') + (hpx ? ' has-h' : '');
+      (editing ? ' edit-on' : '') + (inline ? ' inline-now' : '') + (hpx ? ' has-h' : '');
     var domId = sec.base ? ('sec' + sec.base.charAt(0).toUpperCase() + sec.base.slice(1)) : '';
     var h = '<section class="' + cls + '"' + (domId ? ' id="' + domId + '"' : '') +
       ' data-sec="' + esc(sec.id) + '" data-base="' + esc(sec.base || '') + '" data-width="' + width + '"' +
       (hpx ? ' style="height:' + hpx + 'px"' : '') +
       (sec.hidden ? ' hidden' : '') + '>';
+    if (inline) {
+      /* ✏️ 그 카드 안에서만 고치는 중 — 다른 카드는 평소 프레임 그대로예요 */
+      h += inlineSecHeadHtml(sec);
+      h += inlineSecBodyHtml(sec);
+      h += '</section>';
+      return h;
+    }
     h += '<div class="card-head sec-head">';
     h += '<h2 class="sec-title" id="secTitle-' + esc(sec.id) + '">' + sectionTitleInnerHtml(sec) + '</h2>';
     h += '<div class="head-tools sec-tools' + (editing ? ' sec-ovl' : '') + '">';
     if (editing) {
       /* 작은 반투명 오버레이 편집 바 — 카드 배치와 크기는 그대로예요 */
+      h += '<button type="button" class="sec-grip" data-drag-sec="' + esc(sec.id) + '" aria-label="끌어서 옮기기" title="끌어서 옮기기">⠿</button>';
       h += '<button type="button" class="sec-tool" data-act="diy-sec-up" data-sec="' + esc(sec.id) + '" aria-label="앞으로 이동" title="순서 앞으로">▲</button>';
       h += '<button type="button" class="sec-tool" data-act="diy-sec-down" data-sec="' + esc(sec.id) + '" aria-label="뒤로 이동" title="순서 뒤로">▼</button>';
-      h += '<button type="button" class="sec-tool" data-act="sec-detail" data-sec="' + esc(sec.id) + '" aria-label="상세 수정" title="상세 수정">✏️</button>';
+      h += '<button type="button" class="sec-tool" data-act="sec-inline" data-sec="' + esc(sec.id) + '" aria-label="카드 안에서 고치기" title="카드 안에서 고치기">✏️</button>';
+      h += '<button type="button" class="sec-tool" data-act="sec-detail" data-sec="' + esc(sec.id) + '" aria-label="팝업에서 전체 관리" title="팝업에서 전체 관리">🧱</button>';
       h += '<button type="button" class="sec-tool" data-act="sec-blk-add" data-sec="' + esc(sec.id) + '" aria-label="블록 넣기" title="블록 넣기">＋</button>';
       h += '<button type="button" class="sec-tool' + (sec.hidden ? ' on' : '') + '" data-act="diy-sec-hide" data-sec="' + esc(sec.id) +
         '" aria-pressed="' + (sec.hidden ? 'true' : 'false') + '" aria-label="숨기기" title="숨기기">' + (sec.hidden ? '🙈' : '👁') + '</button>';
@@ -15011,8 +15423,13 @@
     }
     var keepTop = window.pageYOffset || 0;
     box.innerHTML = h;
-    applyLayoutOrder();
-    renderBlockContents();
+    secPainting = true;
+    try {
+      applyLayoutOrder();
+      renderBlockContents();
+    } finally {
+      secPainting = false;
+    }
     try { window.scrollTo(0, keepTop); } catch (e) { /* 무시 */ }
   }
 
@@ -17256,6 +17673,8 @@
     if (act === 'edit-open') { if (!can('edit')) return; openEditSheet(el.getAttribute('data-tab') || 'groups'); return; }
     if (act === 'edit-sheet-close') { closeEditSheet(); return; }
     if (act === 'sec-detail') { if (!can('edit')) return; openEditSheet('sections', el.getAttribute('data-sec') || ''); return; }
+    if (act === 'sec-inline') { if (!can('edit')) return; toggleInlineSec(el.getAttribute('data-sec') || ''); return; }
+    if (act === 'sec-inline-done') { closeInlineSec(); return; }
     if (act === 'sec-blk-add') { if (!can('edit')) return; openEditSheet('sections', el.getAttribute('data-sec') || ''); return; }
     if (act === 'sec-size-reset') { resetSectionSize(el.getAttribute('data-sec') || ''); return; }
     if (act === 'vars-reset') { resetVars(); return; }
@@ -17890,6 +18309,7 @@
   installAudioUnlock();
   installRoomDrag();
   installSectionResize();
+  installSectionMove();
   loadWeatherCache();
   /* 첫 화면을 그리기 전에, 이 기기에 저장해 둔 코인·펫을 먼저 붙여요.
      (안 붙이면 새로고침 직후 새 계정 기본 코인 120이 잠깐 비쳐요) */
