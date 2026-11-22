@@ -1075,23 +1075,27 @@
   }
 
   /* ---------- 섹션 배치 / 스티커 원장 / 문제지 / 통계 ---------- */
-  .sections{
+  /* 카드 배치 — 한 줄(.sec-row)마다 왼칸·오른칸(.sec-col)을 두고 그 안에 카드를 위에서부터 쌓아요.
+     줄 높이는 그 줄에서 가장 긴 칸에 맞춰지고, 짧은 칸의 남는 자리는 비워 둬요.
+     자동으로 빈칸을 메우지 않고, ⠿로 끌어다 놓은 카드만 그 자리에 들어가요. */
+  .sections{ display:block; }
+  .sec-row{
     display:grid;
     grid-template-columns:repeat(2, minmax(0, 1fr));
     gap:clamp(12px,1.5vw,18px);
     align-items:start;
   }
-  .sections > .sec{ grid-column:1 / -1; min-width:0; }
-  .sections > .sec.sec-half{ grid-column:span 1; }
+  .sec-row + .sec-row{ margin-top:clamp(12px,1.5vw,18px); }
+  .sec-row-full{ display:block; }
+  .sec-col{ display:flex; flex-direction:column; gap:clamp(12px,1.5vw,18px); min-width:0; }
+  .sections .sec{ min-width:0; }
   /* 반 폭 카드 안에서는 요일 칸이 좁으니 글자가 깨지지 않게 폭에 맞춰 접어요 */
-  .sections > .sec.sec-half .week-grid{ grid-template-columns:repeat(auto-fit, minmax(96px, 1fr)); }
-  .sections > .sec.sec-half .day{ min-width:0; }
-  .sec-pair{ align-self:stretch; display:flex; flex-direction:column; }
-  .sec-pair .board{ align-content:start; }
+  .sections .sec.sec-half .week-grid{ grid-template-columns:repeat(auto-fit, minmax(96px, 1fr)); }
+  .sections .sec.sec-half .day{ min-width:0; }
   /* 720px 미만(아이폰·작은 폰)에서만 한 줄로 쌓고, 태블릿·아이패드·PC는 두 칸 */
   @media (max-width:719px){
-    .sections{ grid-template-columns:minmax(0,1fr); }
-    .sections > .sec, .sections > .sec.sec-half{ grid-column:1 / -1; }
+    .sec-row{ grid-template-columns:minmax(0,1fr); }
+    .sec-col[data-col="right"]{ display:none; }
   }
 
   /* ---------- DIY 블록 조립 ---------- */
@@ -3245,6 +3249,81 @@
     return b;
   }
 
+  /* 카드 자리 — 어느 줄(row)의 어느 칸(col)에 있는지
+     반 폭 카드(col: 'left'|'right')는 한 줄의 왼칸·오른칸에 위에서부터 쌓여요.
+     전체 폭 카드(w: 'full')는 양쪽 칸을 다 쓰는 한 줄을 혼자 차지해요. */
+  function normColOf(v) { return v === 'right' ? 'right' : 'left'; }
+
+  /* 예전 배치(반 폭 두 장이 한 줄)를 그대로 살려 줄·칸을 잡아 줘요.
+     예전에는 사이에 전체 폭 카드가 있어도 반 폭 두 장을 한 줄로 모았어요 — 그것도 그대로 이어받아요. */
+  function legacySectionRows(list) {
+    var row = -1, pendingRow = -1;
+    for (var i = 0; i < list.length; i++) {
+      var s = list[i];
+      if (s.width === 'full') { row++; s.row = row; s.col = 'left'; continue; }
+      if (pendingRow < 0) { row++; pendingRow = row; s.row = row; s.col = 'left'; }
+      else { s.row = pendingRow; s.col = 'right'; pendingRow = -1; }
+    }
+  }
+
+  /* 줄·칸을 읽어 화면 순서(줄 → 왼칸 → 오른칸)로 가지런히 정리해요.
+     카드가 놓친 줄·칸이 있으면 맨 아래 줄로 붙이고, 빈칸을 자동으로 메우지는 않아요. */
+  function applySectionRows(list) {
+    var i, s, has = false;
+    for (i = 0; i < list.length; i++) {
+      var rv = list[i].row;
+      if (typeof rv === 'number' && isFinite(rv) && rv >= 0) { has = true; break; }
+    }
+    if (!has) legacySectionRows(list);
+    var maxRow = -1;
+    for (i = 0; i < list.length; i++) {
+      s = list[i];
+      s.col = normColOf(s.col);
+      if (typeof s.row === 'number' && isFinite(s.row) && s.row >= 0) s.row = Math.floor(s.row);
+      if (typeof s.row !== 'number' || !isFinite(s.row)) { maxRow++; s.row = maxRow; s.col = 'left'; }
+      if (s.row > maxRow) maxRow = s.row;
+    }
+    /* 줄별로 모아요 (같은 줄 안에서는 들어온 순서 그대로) */
+    var byRow = {}, order = [];
+    for (i = 0; i < list.length; i++) {
+      var k = list[i].row;
+      if (!byRow[k]) { byRow[k] = []; order.push(k); }
+      byRow[k].push(list[i]);
+    }
+    order.sort(function (a, b) { return a - b; });
+    var out = [], rowNo = -1;
+    for (var oi = 0; oi < order.length; oi++) {
+      var members = byRow[order[oi]];
+      /* 한 줄에 전체 폭 카드가 섞여 있으면 전체 폭 카드는 혼자 한 줄을 차지하게 나눠요 */
+      var segs = [], buf = [];
+      for (i = 0; i < members.length; i++) {
+        if (members[i].width === 'full') {
+          if (buf.length) { segs.push(buf); buf = []; }
+          segs.push([members[i]]);
+        } else buf.push(members[i]);
+      }
+      if (buf.length) segs.push(buf);
+      for (var si = 0; si < segs.length; si++) {
+        var seg = segs[si];
+        rowNo++;
+        if (seg.length === 1 && seg[0].width === 'full') {
+          seg[0].row = rowNo; seg[0].col = 'left';
+          out.push(seg[0]);
+          continue;
+        }
+        var lefts = [], rights = [];
+        for (i = 0; i < seg.length; i++) {
+          if (normColOf(seg[i].col) === 'right') rights.push(seg[i]); else lefts.push(seg[i]);
+        }
+        for (i = 0; i < lefts.length; i++) { lefts[i].row = rowNo; lefts[i].col = 'left'; out.push(lefts[i]); }
+        for (i = 0; i < rights.length; i++) { rights[i].row = rowNo; rights[i].col = 'right'; out.push(rights[i]); }
+      }
+    }
+    list.length = 0;
+    for (i = 0; i < out.length; i++) list.push(out[i]);
+    return list;
+  }
+
   function normalizeSections(s) {
     var defs = defaultSections();
     var defByBase = {};
@@ -3318,6 +3397,8 @@
           width: wid,
           w: wid,
           h: cleanHeight(r.h),
+          row: (typeof r.row === 'number' && isFinite(r.row) && r.row >= 0) ? Math.floor(r.row) : null,
+          col: (r.col === 'right' || r.col === 'left') ? r.col : '',
           hidden: r.hidden === true,
           blocks: blocks
         });
@@ -3334,7 +3415,7 @@
         var df = defByBase[b2];
         list.push({
           id: b2, base: b2, emoji: df.emoji, title: cleanTitle('', b2),
-          width: df.width, w: df.width, h: 0, hidden: false, blocks: clone(df.blocks)
+          width: df.width, w: df.width, h: 0, row: null, col: '', hidden: false, blocks: clone(df.blocks)
         });
       }
     }
@@ -3346,10 +3427,10 @@
       var df3 = defByBase[baseId];
       list.push({
         id: baseId, base: baseId, emoji: df3.emoji, title: cleanTitle('', baseId),
-        width: df3.width, w: df3.width, h: 0, hidden: false, blocks: clone(df3.blocks)
+        width: df3.width, w: df3.width, h: 0, row: null, col: '', hidden: false, blocks: clone(df3.blocks)
       });
     }
-    return list;
+    return applySectionRows(list);
   }
 
   /* 예전 화면·다른 기기와 섞여도 보이도록 이름·순서도 맞춰 둡니다 */
@@ -14735,6 +14816,8 @@
 
   /* ---- 섹션/블록 설정 바꾸기 ---- */
   function afterSectionsChanged(opt) {
+    /* 빈칸을 자동으로 메우지 않도록, 줄·칸을 정리만 하고 저장해요 */
+    state.settings.dashboardSections = applySectionRows(state.settings.dashboardSections || []);
     syncSectionMirrors(state);
     saveState();
     /* 인라인 편집 중이면 그 카드만 다시 그려 포커스·스크롤을 지켜요 */
@@ -14754,8 +14837,11 @@
     if (idx < 0) return;
     var to = idx + dir;
     if (to < 0 || to >= list.length) return;
-    var moved = list.splice(idx, 1)[0];
-    list.splice(to, 0, moved);
+    /* 이웃 카드와 자리(줄·칸)를 맞바꿔요 — 반 폭·전체 폭이 섞여도 그 자리에 들어가요 */
+    var a = list[idx], b = list[to];
+    var ar = a.row, ac = a.col;
+    a.row = b.row; a.col = b.col;
+    b.row = ar; b.col = ac;
     afterSectionsChanged();
   }
 
@@ -14765,7 +14851,7 @@
     if (list.length >= SEC_MAX) { showToast('섹션은 ' + SEC_MAX + '개까지 만들 수 있어요.'); return; }
     var id = 'sec-' + uid('');
     list.push({
-      id: id, base: '', emoji: '🧩', title: '새 섹션', width: 'half', hidden: false,
+      id: id, base: '', emoji: '🧩', title: '새 섹션', width: 'half', row: null, col: '', hidden: false,
       blocks: [{ id: uid('blk'), type: 'notice_board', group: '', title: '오늘의 한마디', emoji: '💬', text: '' }]
     });
     afterSectionsChanged({ focusSel: 'input[data-field="diySecTitle"][data-sec="' + id + '"]' });
@@ -14798,9 +14884,41 @@
     if (!can('edit')) return;
     var sec = findSec(id);
     if (!sec) return;
+    var wasFull = sec.width === 'full';
     sec.width = (w === 'full') ? 'full' : 'half';
     sec.w = sec.width;
+    if (wasFull && sec.width === 'half') secPlaceHalf(sec);
     afterSectionsChanged();
+  }
+
+  /* 전체 폭 카드를 반 폭으로 돌렸을 때 — 바로 윗줄·아랫줄에 빈 칸이 있으면 그 옆자리로 가요.
+     자동으로 빈칸을 메우는 게 아니라, 사람이 폭을 바꾼 그 카드만 제자리를 찾는 것이에요. */
+  function secPlaceHalf(sec) {
+    var list = secList();
+    var i, mates = 0;
+    for (i = 0; i < list.length; i++) {
+      if (list[i] === sec || list[i].width === 'full') continue;
+      if (list[i].row === sec.row) mates++;
+    }
+    if (mates) return;
+    var cands = [sec.row + 1, sec.row - 1];
+    for (var ci = 0; ci < cands.length; ci++) {
+      var row = cands[ci], hasL = false, hasR = false, hasFull = false, n = 0;
+      if (row < 0) continue;
+      for (i = 0; i < list.length; i++) {
+        var o = list[i];
+        if (o === sec || o.row !== row) continue;
+        n++;
+        if (o.width === 'full') hasFull = true;
+        else if (normColOf(o.col) === 'right') hasR = true;
+        else hasL = true;
+      }
+      if (!n || hasFull || (hasL && hasR)) continue;
+      sec.row = row;
+      sec.col = hasL ? 'right' : 'left';
+      return;
+    }
+    sec.col = 'left';
   }
 
   function setSectionEmoji(id, v) {
@@ -14958,44 +15076,107 @@
     return out;
   }
 
+  /* ---- 줄·칸 그리기 ----
+     데이터의 row·col을 그대로 화면 줄로 옮겨요. 짧은 칸의 남는 자리를 자동으로 메우지 않으므로
+     사람이 ⠿로 끌어다 놓은 자리에만 카드가 들어가요. */
+  function sectionRowsOf(list) {
+    var rows = [];
+    var wide = window.innerWidth >= 720;
+    if (!wide) {
+      /* 폰은 한 줄로 쌓아요 */
+      rows.push({ full: false, row: 0, left: list.slice(0), right: [] });
+      return rows;
+    }
+    var cur = null, curRow = null;
+    for (var i = 0; i < list.length; i++) {
+      var sec = list[i];
+      if (sec.width === 'full') {
+        rows.push({ full: true, row: sec.row, sec: sec, left: [], right: [] });
+        cur = null; curRow = null;
+        continue;
+      }
+      if (!cur || curRow !== sec.row) {
+        curRow = sec.row;
+        cur = { full: false, row: sec.row, left: [], right: [] };
+        rows.push(cur);
+      }
+      if (normColOf(sec.col) === 'right') cur.right.push(sec); else cur.left.push(sec);
+    }
+    return rows;
+  }
+
+  function layoutSignature(list) {
+    var wide = window.innerWidth >= 720;
+    var sig = [];
+    for (var i = 0; i < list.length; i++) {
+      var s = list[i];
+      if (!wide) sig.push('M:' + s.id);
+      else if (s.width === 'full') sig.push('F:' + s.id);
+      else sig.push('H' + s.row + normColOf(s.col).charAt(0).toUpperCase() + ':' + s.id);
+    }
+    return sig.join('|');
+  }
+
   function applyLayoutOrder() {
     var box = document.getElementById('sections');
     if (!box) return;
-    var nodes = box.querySelectorAll('.sec');
-    var wide = window.innerWidth >= 720;
-    /* 반 폭 섹션은 두 장씩 한 줄에 모아요. 사이에 전체 폭 섹션이 있어도 모아서
-       예전처럼 '오늘의 일정 + 칭찬 스티커'가 나란히 보이게 해요. */
-    var rows = [];
-    var pending = null;
-    for (var i = 0; i < nodes.length; i++) {
-      var el = nodes[i];
-      /* 끌고 있는 카드는 자리를 비워 두고, 자리표시가 그 자리를 대신해요 */
-      if (el.classList.contains('drag-hide')) continue;
-      var half = wide && el.getAttribute('data-width') !== 'full';
-      if (half) {
-        if (pending) { pending.push(el); pending = null; }
-        else { var r = [el]; rows.push(r); pending = r; }
-      } else {
-        rows.push([el]);
-      }
+    var list = visibleSections();
+    if (!list.length) return;
+    var sig = layoutSignature(list);
+    if (box.getAttribute('data-layout-sig') === sig) return;
+
+    /* 지금 화면에 있는 카드를 그대로 옮겨 담아요 (카드 안 내용과 입력 중인 칸을 다시 그리지 않게) */
+    var byId = {};
+    var kids = box.querySelectorAll('.sec');
+    for (var i = 0; i < kids.length; i++) {
+      var sid = kids[i].getAttribute('data-sec');
+      if (sid && !byId[sid]) byId[sid] = kids[i];
     }
+    var wide = window.innerWidth >= 720;
+    var rows = sectionRowsOf(list);
+    var frag = document.createDocumentFragment();
     for (var ri = 0; ri < rows.length; ri++) {
       var row = rows[ri];
-      for (var ci = 0; ci < row.length; ci++) {
-        var one = row[ci];
-        one.style.gridRow = String(ri + 1);
-        if (row.length > 1) {
-          one.style.gridColumn = String(ci + 1);
-          one.classList.add('sec-pair');
-        } else if (one.getAttribute('data-width') !== 'full' && wide) {
-          one.style.gridColumn = '1';
-          one.classList.remove('sec-pair');
-        } else {
-          one.style.gridColumn = '1 / -1';
-          one.classList.remove('sec-pair');
+      var rowEl = document.createElement('div');
+      rowEl.setAttribute('data-row', String(row.row));
+      if (row.full) {
+        rowEl.className = 'sec-row sec-row-full';
+        if (byId[row.sec.id]) rowEl.appendChild(byId[row.sec.id]);
+      } else {
+        rowEl.className = 'sec-row';
+        var cols = wide ? ['left', 'right'] : ['left'];
+        for (var ci = 0; ci < cols.length; ci++) {
+          var colEl = document.createElement('div');
+          colEl.className = 'sec-col';
+          colEl.setAttribute('data-col', cols[ci]);
+          var cards = (cols[ci] === 'right') ? row.right : row.left;
+          for (var k = 0; k < cards.length; k++) {
+            var el = byId[cards[k].id];
+            if (el) colEl.appendChild(el);
+          }
+          rowEl.appendChild(colEl);
         }
       }
+      frag.appendChild(rowEl);
     }
+    /* 목록에 없는 카드(끌어서 놓는 자리표시 등)는 맨 끝 칸에 붙여 둬요 */
+    var keep = [];
+    var all = box.querySelectorAll('.sec');
+    for (i = 0; i < all.length; i++) {
+      var lid = all[i].getAttribute('data-sec');
+      if (lid && byId[lid] === all[i]) continue;
+      keep.push(all[i]);
+    }
+    box.innerHTML = '';
+    box.appendChild(frag);
+    if (keep.length) {
+      var lastRow = box.lastElementChild;
+      var target = null;
+      if (lastRow && lastRow.classList.contains('sec-row') && !lastRow.classList.contains('sec-row-full')) target = lastRow.firstElementChild;
+      if (!target) target = lastRow;
+      for (i = 0; i < keep.length; i++) { if (target) target.appendChild(keep[i]); }
+    }
+    box.setAttribute('data-layout-sig', sig);
   }
 
   /* ---- 카드 크기 드래그 (편집 모드의 ↘ 손잡이) ----
@@ -15096,12 +15277,12 @@
     var sec = findSec(id);
     if (!sec) return;
     var closeIt = (ui.inlineEditSecId === id);
-    var card = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    var card = document.querySelector('#sections .sec[data-sec="' + id + '"]');
     var top0 = card ? card.getBoundingClientRect().top : 0;
     ui.inlineEditSecId = closeIt ? '' : id;
     renderSections();
     /* 카드가 화면에서 보이던 자리를 그대로 지켜요 */
-    var now = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    var now = document.querySelector('#sections .sec[data-sec="' + id + '"]');
     if (card && now) {
       var diff = now.getBoundingClientRect().top - top0;
       if (Math.abs(diff) > 0.5) { try { window.scrollBy(0, diff); } catch (e) { /* 무시 */ } }
@@ -15116,11 +15297,11 @@
   function closeInlineSec() {
     var id = ui.inlineEditSecId;
     if (!id) return;
-    var card = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    var card = document.querySelector('#sections .sec[data-sec="' + id + '"]');
     var top0 = card ? card.getBoundingClientRect().top : 0;
     ui.inlineEditSecId = '';
     renderSections();
-    var now = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    var now = document.querySelector('#sections .sec[data-sec="' + id + '"]');
     if (card && now) {
       var diff = now.getBoundingClientRect().top - top0;
       if (Math.abs(diff) > 0.5) { try { window.scrollBy(0, diff); } catch (e) { /* 무시 */ } }
@@ -15133,7 +15314,7 @@
     var id = ui.inlineEditSecId;
     if (!id || secPainting) return false;
     var sec = findSec(id);
-    var el = document.querySelector('#sections > .sec[data-sec="' + id + '"]');
+    var el = document.querySelector('#sections .sec[data-sec="' + id + '"]');
     if (!sec || !el || !el.parentNode) { renderSections(); return true; }
     var tmp = document.createElement('div');
     tmp.innerHTML = sectionShellHtml(sec);
@@ -15251,37 +15432,107 @@
   var secMove = null;
   var secPainting = false;
 
-  function secMoveCards() {
+  /* ---- ⠿ 카드 끌어서 옮기기 (자석 스냅) ----
+     끌고 있는 카드는 손끝을 따라오는 반투명 고스트로 보이고, 포인터가 가리키는 줄·칸의
+     자리에 점선 자리표시가 자석처럼 붙어요. 놓으면 그 칸(row·col)으로 들어가 저장돼요.
+     왼쪽 카드가 길고 오른쪽 카드가 짧아 생긴 빈자리에도 그대로 넣을 수 있어요. */
+  var secMove = null;
+  var secPainting = false;
+
+  /* 화면에 있는 줄(.sec-row)들 — 끌어서 놓는 자리를 계산할 때 써요 */
+  function secRowEls() {
     var box = document.getElementById('sections');
     var out = [];
     if (!box) return out;
     for (var i = 0; i < box.children.length; i++) {
       var el = box.children[i];
-      if (!el.classList || !el.classList.contains('sec')) continue;
-      if (el === secMove.card || el === secMove.drop) continue;
-      if (el.classList.contains('drag-hide') || el.classList.contains('sec-drop') || el.hidden) continue;
+      if (!el.classList || !el.classList.contains('sec-row')) continue;
+      if (el.getAttribute('data-drop') === '1') continue;
+      if (!el.getBoundingClientRect().height) continue;
       out.push(el);
     }
     return out;
   }
 
-  /* 포인터에 가장 가까운 카드의 앞/뒤 — 그 자리가 자석이 붙을 슬롯이에요 */
-  function secDropTarget(px, py) {
-    var cards = secMoveCards();
-    if (!cards.length) return { ref: null };
-    var best = -1, bd = Infinity, br = null;
-    for (var i = 0; i < cards.length; i++) {
-      var r = cards[i].getBoundingClientRect();
-      if (!r.width || !r.height) continue;
-      var dx = px - (r.left + r.width / 2);
-      var dy = py - (r.top + r.height / 2);
-      var d = dx * dx + dy * dy;
-      if (d < bd) { bd = d; best = i; br = r; }
+  function secRowNo(el) {
+    var n = el ? parseInt(el.getAttribute('data-row'), 10) : NaN;
+    return isNaN(n) ? 0 : n;
+  }
+
+  /* 포인터가 가리키는 자리 — 어느 줄의 어느 칸, 몇 번째에 놓일지 */
+  function secDropSlot(px, py) {
+    var d = secMove;
+    if (!d) return null;
+    var rows = secRowEls();
+    var i, count = rows.length, rects = [];
+    for (i = 0; i < count; i++) rects.push(rows[i].getBoundingClientRect());
+    if (!count) return { kind: 'newrow', rowEl: null, at: 'after', col: 'left' };
+
+    /* 폰(1단)에서는 위아래 순서만 바꿔요 */
+    if (window.innerWidth < 720) {
+      var idx = 0;
+      var cards = rows[0].querySelectorAll('.sec');
+      for (i = 0; i < cards.length; i++) {
+        if (cards[i] === d.card || cards[i] === d.drop) continue;
+        var cr = cards[i].getBoundingClientRect();
+        if (!cr.height) continue;
+        if (py > cr.top + cr.height / 2) idx++;
+      }
+      return { kind: 'flat', index: idx, rowEl: rows[0] };
     }
-    if (best < 0) return { ref: null };
-    var wide = br.width > (window.innerWidth * 0.62);
-    var after = wide ? (py > br.top + br.height / 2) : (px > br.left + br.width / 2);
-    return { ref: after ? (cards[best + 1] || null) : cards[best] };
+
+    /* 포인터가 들어 있는 줄 */
+    var hit = -1;
+    for (i = 0; i < count; i++) {
+      if (py >= rects[i].top && py <= rects[i].bottom) { hit = i; break; }
+    }
+    if (hit < 0) {
+      if (py < rects[0].top) return { kind: 'newrow', rowEl: rows[0], at: 'before', col: (px <= rects[0].left + rects[0].width / 2) ? 'left' : 'right' };
+      if (py > rects[count - 1].bottom) return { kind: 'newrow', rowEl: rows[count - 1], at: 'after', col: (px <= rects[count - 1].left + rects[count - 1].width / 2) ? 'left' : 'right' };
+      /* 줄 사이 빈틈 — 가까운 쪽으로 새 줄을 만들어요 */
+      for (i = 0; i < count - 1; i++) {
+        if (py > rects[i].bottom && py < rects[i + 1].top) {
+          var midGap = (rects[i].bottom + rects[i + 1].top) / 2;
+          return { kind: 'newrow', rowEl: py < midGap ? rows[i + 1] : rows[i], at: py < midGap ? 'before' : 'after',
+                   col: (px <= rects[i].left + rects[i].width / 2) ? 'left' : 'right' };
+        }
+      }
+      return { kind: 'newrow', rowEl: rows[count - 1], at: 'after', col: 'left' };
+    }
+
+    var rowEl = rows[hit], rr = rects[hit];
+    var col = (px <= rr.left + rr.width / 2) ? 'left' : 'right';
+    var mid = (rr.top + rr.bottom) / 2;
+    if (d.isFull) {
+      /* 전체 폭 카드는 한 줄을 혼자 써요 */
+      return { kind: 'newrow', rowEl: rowEl, at: (py < mid ? 'before' : 'after'), col: col };
+    }
+    if (rowEl.classList.contains('sec-row-full')) {
+      /* 전체 폭 카드 위/아래로는 새 줄에 들어가요 */
+      return { kind: 'newrow', rowEl: rowEl, at: (py < mid ? 'before' : 'after'), col: col };
+    }
+    /* 반 폭 줄 — 그 칸의 카드 사이(빈자리 포함) 중 포인터 아래 자리 */
+    var colEl = rowEl.querySelector('.sec-col[data-col="' + col + '"]');
+    var idx2 = 0;
+    if (colEl) {
+      var cs = colEl.children;
+      for (i = 0; i < cs.length; i++) {
+        var c2 = cs[i];
+        if (!c2.classList || !c2.classList.contains('sec')) continue;
+        if (c2 === d.card || c2 === d.drop) continue;
+        var b2 = c2.getBoundingClientRect();
+        if (!b2.height) continue;
+        if (py > b2.top + b2.height / 2) idx2++;
+      }
+    }
+    return { kind: 'stack', rowEl: rowEl, col: col, index: idx2 };
+  }
+
+  function secSlotKey(slot) {
+    if (!slot) return '';
+    if (slot.kind === 'flat') return 'F' + slot.index;
+    if (slot.kind === 'newrow') return 'N' + secRowNo(slot.rowEl) + slot.at + slot.col;
+    return 'S' + secRowNo(slot.rowEl) + slot.col + slot.index;
   }
 
   function secPaintGhost() {
@@ -15296,11 +15547,63 @@
     if (!d || !d.drop) return;
     var box = document.getElementById('sections');
     if (!box) return;
-    var t = secDropTarget(px, py);
-    if (t.ref === d.drop) return;
-    if (t.ref) box.insertBefore(d.drop, t.ref);
-    else box.appendChild(d.drop);
-    applyLayoutOrder();
+    var slot = secDropSlot(px, py);
+    if (!slot) return;
+    d.slot = slot;
+    var key = secSlotKey(slot);
+    if (key === d.slotKey) return;
+    d.slotKey = key;
+    if (d.dropRow && d.dropRow.parentNode) d.dropRow.parentNode.removeChild(d.dropRow);
+    d.dropRow = null;
+
+    if (slot.kind === 'flat') {
+      var colEl0 = slot.rowEl.querySelector('.sec-col') || slot.rowEl;
+      colEl0.insertBefore(d.drop, secNthCard(colEl0, slot.index, d));
+      return;
+    }
+    if (slot.kind === 'newrow') {
+      var rowEl = document.createElement('div');
+      rowEl.className = 'sec-row' + (d.isFull ? ' sec-row-full' : '');
+      rowEl.setAttribute('data-drop', '1');
+      if (d.isFull) rowEl.appendChild(d.drop);
+      else {
+        var l = document.createElement('div'); l.className = 'sec-col'; l.setAttribute('data-col', 'left');
+        var r = document.createElement('div'); r.className = 'sec-col'; r.setAttribute('data-col', 'right');
+        (slot.col === 'right' ? r : l).appendChild(d.drop);
+        rowEl.appendChild(l); rowEl.appendChild(r);
+      }
+      d.drop.classList.toggle('sec-half', !d.isFull);
+      d.drop.classList.toggle('sec-full', d.isFull);
+      if (!slot.rowEl) box.appendChild(rowEl);
+      else if (slot.at === 'before') box.insertBefore(rowEl, slot.rowEl);
+      else box.insertBefore(rowEl, slot.rowEl.nextSibling);
+      d.dropRow = rowEl;
+      return;
+    }
+    /* 같은 줄의 그 칸에 쌓아요 */
+    var colEl = slot.rowEl.querySelector('.sec-col[data-col="' + slot.col + '"]');
+    if (!colEl) {
+      colEl = document.createElement('div');
+      colEl.className = 'sec-col';
+      colEl.setAttribute('data-col', slot.col);
+      slot.rowEl.appendChild(colEl);
+    }
+    d.drop.classList.remove('sec-full');
+    d.drop.classList.add('sec-half');
+    colEl.insertBefore(d.drop, secNthCard(colEl, slot.index, d));
+  }
+
+  /* 칸 안에서 n번째 카드(끌고 있는 카드·자리표시는 빼고) — 그 앞에 끼워 넣어요 */
+  function secNthCard(colEl, n, d) {
+    var kids = colEl.children, seen = 0;
+    for (var i = 0; i < kids.length; i++) {
+      var el = kids[i];
+      if (!el.classList || !el.classList.contains('sec')) continue;
+      if (d && (el === d.card || el === d.drop)) continue;
+      if (seen === n) return el;
+      seen++;
+    }
+    return null;
   }
 
   function secMoveMove(ev) {
@@ -15333,6 +15636,60 @@
     d.raf = window.requestAnimationFrame(secMoveTick);
   }
 
+  /* 놓은 자리를 데이터(row·col·순서)에 반영해요 */
+  function secCommitDrop(secId, slot) {
+    var list = secList();
+    var sec = findSec(secId);
+    if (!sec || !slot) return false;
+    var arr = [], i;
+    for (i = 0; i < list.length; i++) if (list[i] !== sec) arr.push(list[i]);
+
+    if (slot.kind === 'flat') {
+      /* 폰(1단)에서는 위아래 순서만 바뀌어요 — 줄·칸도 그 순서대로 다시 잡아요 */
+      var at = Math.max(0, Math.min(slot.index, arr.length));
+      arr.splice(at, 0, sec);
+      for (i = 0; i < arr.length; i++) { arr[i].row = null; arr[i].col = ''; }
+    } else if (slot.kind === 'newrow') {
+      var target, j;
+      if (!slot.rowEl) {
+        target = 0;
+        for (i = 0; i < arr.length; i++) if (arr[i].row >= target) target = arr[i].row + 1;
+      } else {
+        target = secRowNo(slot.rowEl) + (slot.at === 'after' ? 1 : 0);
+      }
+      for (i = 0; i < arr.length; i++) {
+        var rv = arr[i].row;
+        if (typeof rv === 'number' && rv >= target) arr[i].row = rv + 1;
+      }
+      sec.row = target;
+      sec.col = normColOf(slot.col);
+      arr.push(sec);
+    } else {
+      var wantRow = secRowNo(slot.rowEl);
+      sec.row = wantRow;
+      sec.col = normColOf(slot.col);
+      var idx = -1, seen = 0;
+      for (i = 0; i < arr.length; i++) {
+        if (arr[i].row === wantRow && normColOf(arr[i].col) === sec.col) {
+          if (seen === slot.index) { idx = i; break; }
+          seen++;
+        }
+      }
+      if (idx < 0) {
+        idx = arr.length;
+        for (i = arr.length - 1; i >= 0; i--) {
+          if (typeof arr[i].row !== 'number' || arr[i].row <= wantRow) { idx = i + 1; break; }
+        }
+        if (i < 0) { idx = 0; for (i = 0; i < arr.length; i++) { if (arr[i].row > wantRow) break; idx = i + 1; } }
+      }
+      arr.splice(idx, 0, sec);
+    }
+    applySectionRows(arr);
+    list.length = 0;
+    for (i = 0; i < arr.length; i++) list.push(arr[i]);
+    return true;
+  }
+
   function secMoveEnd() {
     var d = secMove;
     if (!d) return;
@@ -15343,40 +15700,16 @@
     if (d.raf) window.cancelAnimationFrame(d.raf);
     if (d.ghost && d.ghost.parentNode) d.ghost.parentNode.removeChild(d.ghost);
     document.body.classList.remove('sec-drag-live');
-
-    /* 자리표시가 놓인 곳에서 새 순서를 읽어요 */
-    var order = [];
-    var placed = false;
-    var box = document.getElementById('sections');
-    var kids = box ? box.children : [];
-    for (var i = 0; i < kids.length; i++) {
-      var el = kids[i];
-      if (el === d.card) continue;
-      if (el === d.drop) { order.push(d.secId); placed = true; continue; }
-      if (el.hidden || !el.getAttribute) continue;
-      var sid = el.getAttribute('data-sec');
-      if (sid) order.push(sid);
-    }
-    if (!placed) order.push(d.secId);
-
     d.card.classList.remove('drag-hide');
+    if (d.dropRow && d.dropRow.parentNode) d.dropRow.parentNode.removeChild(d.dropRow);
     if (d.drop && d.drop.parentNode) d.drop.parentNode.removeChild(d.drop);
-    if (!d.moved) { applyLayoutOrder(); return; }
-
-    /* 숨긴 섹션은 원래 자리에 두고, 보이는 섹션만 새 순서로 채워요 */
-    var list = secList();
-    var slots = [];
-    for (var k = 0; k < list.length; k++) if (!list[k].hidden) slots.push(k);
-    if (order.length === slots.length) {
-      var next = [];
-      for (var m = 0; m < order.length; m++) next.push(findSec(order[m]));
-      for (var n = 0; n < slots.length; n++) if (next[n]) list[slots[n]] = next[n];
-    }
+    if (!d.moved || !d.slot) { applyLayoutOrder(); return; }
+    if (!secCommitDrop(d.secId, d.slot)) { applyLayoutOrder(); return; }
     syncSectionMirrors(state);
     saveState();
     renderSections();
     renderEditPanel();
-    showToast('카드 순서를 바꿨어요.');
+    showToast('카드를 옮겼어요.');
   }
 
   function secStartMove(e) {
@@ -15406,12 +15739,12 @@
     document.body.classList.add('sec-drag-live');
     secMove = {
       secId: secId, card: card, drop: drop, ghost: ghost,
+      isFull: sec.width === 'full', slot: null, slotKey: '', dropRow: null,
       x0: e.clientX, y0: e.clientY, dx: 0, dy: 0,
       left: rect.left, top: rect.top, moved: false, raf: 0,
       lastX: e.clientX, lastY: e.clientY
     };
     secPaintGhost();
-    applyLayoutOrder();
     window.addEventListener('pointermove', secMoveMove, { passive: false });
     window.addEventListener('pointerup', secMoveEnd);
     window.addEventListener('pointercancel', secMoveEnd);
@@ -15427,9 +15760,12 @@
     if (!can('edit')) return;
     var sec = findSec(secId);
     if (!sec) return;
+    var wasFull = sec.width === 'full';
     sec.width = sec.base ? SEC_DEFAULT_WIDTH[sec.base] : 'half';
     sec.w = sec.width;
     sec.h = 0;
+    if (wasFull && sec.width === 'half') secPlaceHalf(sec);
+    state.settings.dashboardSections = applySectionRows(secList());
     syncSectionMirrors(state);
     saveState();
     renderSections();
@@ -15521,6 +15857,7 @@
     }
     var keepTop = window.pageYOffset || 0;
     box.innerHTML = h;
+    box.removeAttribute('data-layout-sig');
     secPainting = true;
     try {
       applyLayoutOrder();
