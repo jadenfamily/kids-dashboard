@@ -14582,6 +14582,14 @@
     }
   }
 
+  /* 받침에 따라 조사를 골라요 — ‘피아노 연습’을 / ‘환경관리’를 */
+  function josaOf(word, withFinal, noFinal) {
+    var s = String(word || '');
+    var c = s.charCodeAt(s.length - 1);
+    if (c >= 0xAC00 && c <= 0xD7A3) return ((c - 0xAC00) % 28 === 0) ? noFinal : withFinal;
+    return withFinal;
+  }
+
   function addStickerReason(el) {
     if (!can('edit')) return;
     var box = sreBoxOf(el);
@@ -14600,7 +14608,7 @@
     }
     for (var i = 0; i < list.length; i++) {
       if (String(list[i]).trim() === name) {
-        sreMsgIn(box, '‘' + name + '’는 이미 있어요. 다른 이유를 적어 주세요.', true);
+        sreMsgIn(box, '‘' + name + '’' + josaOf(name, '은', '는') + ' 이미 있어요. 다른 이유를 적어 주세요.', true);
         if (inp) { try { inp.select(); } catch (e) { /* 무시 */ } }
         return;
       }
@@ -14612,7 +14620,7 @@
       inp.value = '';
       try { inp.focus(); } catch (e) { /* 무시 */ }
     }
-    sreMsgIn(box, '‘' + name + '’를 넣었어요.');
+    sreMsgIn(box, '‘' + name + '’' + josaOf(name, '을', '를') + ' 넣었어요.');
   }
 
   function delStickerReason(el) {
@@ -14629,7 +14637,7 @@
     list.splice(i, 1);
     saveState();
     refreshStickerReasonEditors();
-    sreMsgIn(box, '‘' + gone + '’를 지웠어요.');
+    sreMsgIn(box, '‘' + gone + '’' + josaOf(gone, '을', '를') + ' 지웠어요.');
   }
 
   /* ---- 스티커 적립 이유 ---- */
