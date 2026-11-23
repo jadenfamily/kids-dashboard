@@ -6776,6 +6776,12 @@
         for (var pk2 = 0; pk2 < col.length; pk2++) if (col[pk2].id === pid2) have2 = true;
         /* 아직 자라는 중인 친구(부화 직후)도 방에 놀 수 있어요 */
         if (!have2 && pet.stage >= 1 && pet.currentEgg === pid2) have2 = true;
+        /* 내 펫 목록에서 부화한 친구도 새로고침 뒤에도 방에 남아 있어요 */
+        if (!have2 && out && out.pets) {
+          for (var pk3 = 0; pk3 < out.pets.length; pk3++) {
+            if (out.pets[pk3] && out.pets[pk3].stage >= 1 && out.pets[pk3].currentEgg === pid2) { have2 = true; break; }
+          }
+        }
         if (have2 && out2.indexOf(pid2) < 0) out2.push(pid2);
       }
       return out2;
@@ -7809,6 +7815,23 @@
       out.push(one);
     }
     return out;
+  }
+
+  /* 마이룸 '함께 놀 친구'는 종족으로만 불러요 — 그 종족이 지금 실제로 몇 단계인지 찾아요
+     · 지금 키우는 친구(q.pet)와 가진 알·친구(q.pets) 중 같은 종족의 부화한 단계(1~3)를 모아 가장 높은 단계
+     · 예전에 다 자란 기록만 도감(q.pet.collection)에 남아 있으면 3단계로 봐요 */
+  function petStageForSpecies(q, speciesId) {
+    q = petEnsureList(q || prof());
+    var sp = String(speciesId || '');
+    if (!sp) return 3;
+    var best = 0;
+    var cur = petSpecific(q.pet);
+    if (cur.currentEgg === sp && cur.stage >= 1) best = Math.max(best, Math.min(3, cur.stage));
+    for (var i = 0; i < q.pets.length; i++) {
+      var one = petSpecific(q.pets[i]);
+      if (one.currentEgg === sp && one.stage >= 1) best = Math.max(best, Math.min(3, one.stage));
+    }
+    return best || 3;
   }
 
   /* 예전에 키우던 친구는 목록에 그대로 두고, 고른 친구를 '지금 키우는' 자리로 올려요 */
@@ -11316,7 +11339,6 @@
     }
     /* 친구 (이 층에서 노는 친구들) */
     var pets = fl.pets || [];
-    var curPet = petState();
     /* 방이 넓고 친구가 많을수록 골고루 펼쳐 놓아요 (서로 겹치지 않게) */
     var petCols = pets.length <= 2 ? 2 : (pets.length <= 4 ? 2 : (pets.length <= 6 ? 3 : 4));
     var petRows = Math.max(1, Math.ceil(pets.length / petCols));
@@ -11326,8 +11348,8 @@
       var sp = speciesById(pets[pi]);
       var pcol = pi % petCols, prow = Math.floor(pi / petCols);
       var pp = iP(1.7 + pcol * petStepX, 3.0 + prow * petStepY);
-      /* 지금 키우는 친구는 지금 단계 모습으로, 다 자란 친구는 3단계 모습으로 */
-      var petShowStage = (pets[pi] === curPet.currentEgg && curPet.stage >= 1) ? Math.max(1, Math.min(3, curPet.stage)) : 3;
+      /* 친구마다 그 종족의 실제 부화 단계(1~3) 모습으로 보여 줘요 — 1단계 조개가 진주룡으로 보이지 않게 */
+      var petShowStage = petStageForSpecies(prof(), pets[pi]);
       draw.push({
         k: 6.5,
         html: '<g class="room-pet" data-sp="' + esc(sp.id) + '" transform="translate(' + pp[0].toFixed(1) + ',' + pp[1].toFixed(1) + ') scale(' + (0.72 + 0.28 * S).toFixed(3) + ')" pointer-events="none"><svg x="-34" y="-62" width="68" height="68" viewBox="0 0 100 100">' + monSvg(sp, petShowStage) + '</svg></g>'
@@ -11503,14 +11525,14 @@
         for (var c = 0; c < pickIds.length; c++) {
           var sp = speciesById(pickIds[c]);
           var on = fl.pets.indexOf(sp.id) >= 0;
-          var isCur = prof().pet.currentEgg === sp.id && prof().pet.stage >= 1;
+          var stg = petStageForSpecies(prof(), sp.id);
           var elsewhere = '';
           for (var c4 = 0; c4 < prof().room.floors.length; c4++) {
             if (prof().room.floors[c4].n === fl.n) continue;
             if ((prof().room.floors[c4].pets || []).indexOf(sp.id) >= 0) elsewhere = prof().room.floors[c4].n + '층';
           }
           h += '<button type="button" class="pet-pick' + (on ? ' on' : '') + '" data-act="room-pet-toggle" data-id="' + esc(sp.id) + '">' +
-            '<span class="pp-art">' + petArt(sp, isCur ? Math.max(1, prof().pet.stage) : 3, 0) + '</span><b>' + esc(isCur ? sp.names[Math.max(0, prof().pet.stage - 1)] : sp.names[2]) + '</b><small>' + esc(sp.rarityLabel) + '</small>' +
+            '<span class="pp-art">' + petArt(sp, stg, 0) + '</span><b>' + esc(sp.names[stg - 1]) + '</b><small>' + esc(sp.rarityLabel) + '</small>' +
             '<span class="pp-check">' + (on ? '이 층에 있음' : (elsewhere ? elsewhere + '에 있음' : '불러오기')) + '</span></button>';
         }
         h += '</div><p class="lf-note">' + (fl.size >= 3 ? '가장 넓은 방' : roomSizeInfo(fl.size).label) + '이라 친구 ' + roomPetMax(fl.size) + '명까지 함께 놀 수 있어요' +
