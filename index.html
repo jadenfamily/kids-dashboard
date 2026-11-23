@@ -640,10 +640,10 @@
   .ta-empty{ margin:0; padding:14px 6px; font-size:14px; font-weight:800; color:#8a7f70; line-height:1.5; }
 
   /* ---------- 주간 시간표 ---------- */
-  .week-grid{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:10px; }
+  .week-grid{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:10px; min-width:0; max-width:100%; }
   .day{
     border-radius:18px; background:#fbf7f2; padding:10px 9px; min-height:126px;
-    display:flex; flex-direction:column; gap:7px; border:2px solid transparent; min-width:0;
+    display:flex; flex-direction:column; gap:7px; border:2px solid transparent; min-width:0; max-width:100%;
   }
   .day.today{
     background:linear-gradient(160deg,#fff7dd,#ffe9c7);
@@ -655,10 +655,12 @@
   .today-badge{ font-size:10.5px; font-weight:900; background:#ff9f1c; color:#fff; padding:2px 7px; border-radius:999px; }
   .ev{
     background:#fff; border-radius:12px; padding:7px 8px; border-left:4px solid var(--ec);
-    box-shadow:0 2px 6px rgba(0,0,0,.04);
+    box-shadow:0 2px 6px rgba(0,0,0,.04); min-width:0; max-width:100%; overflow:hidden;
   }
   .ev-name{ display:block; font-size:13.5px; font-weight:900; line-height:1.2; }
   .ev-time{ display:block; font-size:11.5px; font-weight:800; color:var(--ink-2); margin-top:2px; }
+  /* 요일 칸이 좁아져도 일정 이름이 칸 밖으로 넘치지 않게 그 자리에서 접어요 */
+  .week-grid .ev-name{ word-break:keep-all; overflow-wrap:anywhere; }
   .day-empty{ font-size:12.5px; font-weight:800; color:#c0b4a3; padding:4px 2px; }
   .ev-edit{ display:flex; flex-direction:column; gap:4px; background:#fff; border:1.5px dashed #e2d5c4; border-radius:11px; padding:5px; }
   .ev-edit .del-btn{ width:100%; height:28px; font-size:12px; border-radius:8px; }
@@ -1091,11 +1093,19 @@
   .sections .sec{ min-width:0; }
   /* 반 폭 카드 안에서는 요일 칸이 좁으니 글자가 깨지지 않게 폭에 맞춰 접어요 */
   .sections .sec.sec-half .week-grid{ grid-template-columns:repeat(auto-fit, minmax(96px, 1fr)); }
-  .sections .sec.sec-half .day{ min-width:0; }
+  .sections .sec.sec-half .day{ min-width:0; max-width:100%; }
   /* 720px 미만(아이폰·작은 폰)에서만 한 줄로 쌓고, 태블릿·아이패드·PC는 두 칸 */
   @media (max-width:719px){
     .sec-row{ grid-template-columns:minmax(0,1fr); }
     .sec-col[data-col="right"]{ display:none; }
+    /* 폰에서는 일과표를 2열로 — 3열이면 요일 칸이 좁아 시간이 칸 밖으로 넘쳐요 */
+    .week-grid, .sections .sec.sec-half .week-grid{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    /* 그래도 칸보다 긴 시간이 적혀 있으면 옆 칸으로 넘치지 않고 그 자리에서 접어요 */
+    .week-grid .ev-time{ white-space:normal; word-break:keep-all; overflow-wrap:break-word; line-height:1.25;
+      font-variant-numeric:tabular-nums; }
+    /* 2열이 되면 카드가 더 길어져요 — 폰에서는 높이를 내용에 맞춰 한 주가 다 보이게 해요
+       (PC에서 맞춰 둔 카드 높이는 그대로 남아요) */
+    .sec.sec-week.has-h{ height:auto !important; }
   }
 
   /* ---------- DIY 블록 조립 ---------- */
