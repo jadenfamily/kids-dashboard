@@ -6568,6 +6568,18 @@
 
   function takePokePack(data) {
     if (!data || typeof data !== 'object' || !data.images || typeof data.images !== 'object') return 0;
+    /* 팩에 적힌 이름과 화면 이름이 다를 수 있으니, 팩 기준으로 이름을 맞춰 둬요 */
+    if (Object.prototype.toString.call(data.species) === '[object Array]') {
+      for (var si = 0; si < data.species.length; si++) {
+        var ps = data.species[si];
+        if (!ps || !ps.id || Object.prototype.toString.call(ps.names) !== '[object Array]' || ps.names.length < 3) continue;
+        for (var qi = 0; qi < PET_SPECIES.length; qi++) {
+          if (PET_SPECIES[qi].id !== ps.id) continue;
+          PET_SPECIES[qi].names = [String(ps.names[0]), String(ps.names[1]), String(ps.names[2])];
+          break;
+        }
+      }
+    }
     var imgs = {}, n = 0;
     for (var k in data.images) {
       if (!Object.prototype.hasOwnProperty.call(data.images, k)) continue;
