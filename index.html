@@ -3266,7 +3266,9 @@
         boardUpdatedAt: 0,
         clearedAt: 0,
         unit: 1000,
-        reasons: STICKER_REASON_PRESETS.slice(0)
+        reasons: STICKER_REASON_PRESETS.slice(0),
+        /* reasonsUpdatedAt: 칭찬 이유 목록이 마지막으로 바뀐 시각 — 오래된 목록이 덮어쓰지 않게 견줘요 */
+        reasonsUpdatedAt: 0
       },
       schedule: {
         mon: [makeEvent('태권도', '16:30–17:30'), makeEvent('피아노', '18:00–18:40')],
@@ -3636,6 +3638,8 @@
     }
     reasons = migrateStickerReasons(reasons);
     s.sticker.reasons = reasons.length ? reasons : d.sticker.reasons.slice(0);
+    var reasonsAt = Number(s.sticker.reasonsUpdatedAt);
+    s.sticker.reasonsUpdatedAt = (reasonsAt && !isNaN(reasonsAt)) ? reasonsAt : 0;
 
     if (!s.schedule || typeof s.schedule !== 'object') s.schedule = {};
     for (var n = 0; n < DAY_KEYS.length; n++) {
@@ -14977,7 +14981,9 @@
       }
     }
     list.push(name);
+    state.sticker.reasonsUpdatedAt = Date.now();
     saveState();
+    if (cloud.me) scheduleSync('stickers');
     refreshStickerReasonEditors();
     if (inp) {
       inp.value = '';
@@ -14998,7 +15004,9 @@
     }
     var gone = list[i];
     list.splice(i, 1);
+    state.sticker.reasonsUpdatedAt = Date.now();
     saveState();
+    if (cloud.me) scheduleSync('stickers');
     refreshStickerReasonEditors();
     sreMsgIn(box, '‘' + gone + '’' + josaOf(gone, '을', '를') + ' 지웠어요.');
   }
@@ -16859,7 +16867,7 @@
       settings: state.settings,
       categories: state.categories,
       schedule: state.schedule,
-      sticker: { slots: state.sticker.slots, goal: state.sticker.goal, unit: state.sticker.unit, reasons: state.sticker.reasons, clearedAt: state.sticker.clearedAt || 0 },
+      sticker: { slots: state.sticker.slots, goal: state.sticker.goal, unit: state.sticker.unit, reasons: state.sticker.reasons, reasonsUpdatedAt: Number(state.sticker.reasonsUpdatedAt) || 0, clearedAt: state.sticker.clearedAt || 0 },
       workbooks: state.workbooks,
       layoutOrder: state.layoutOrder,
       clearedAt: state.sticker.clearedAt || 0,
@@ -16976,6 +16984,7 @@
       unit: state.sticker.unit || 1000,
       clearedAt: state.sticker.clearedAt || 0,
       reasons: state.sticker.reasons || [],
+      reasonsUpdatedAt: Number(state.sticker.reasonsUpdatedAt) || 0,
       total: stickerTotal(),
       slots: Math.max(1, parseInt(state.sticker.slots, 10) || 10),
       board: state.sticker.stickers.slice(0),
@@ -17090,9 +17099,11 @@
       var res = await ghGet('config/stickers.json');
       if (!res || !res.ok || !res.data) return false;
       if (cloud.dirty.stickers || cloud.saving) return false;
-      var before = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature();
+      var before = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature() +
+        '#' + (state.sticker.reasons || []).join('|') + '#' + (Number(state.sticker.reasonsUpdatedAt) || 0);
       applyStickersPayload(res.data, { notify: true });
-      var after = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature();
+      var after = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature() +
+        '#' + (state.sticker.reasons || []).join('|') + '#' + (Number(state.sticker.reasonsUpdatedAt) || 0);
       if (before !== after) saveLocalOnly();
       return before !== after;
     } catch (e) {
@@ -17100,6 +17111,30 @@
     } finally {
       stickerPulling = false;
     }
+  }
+
+  /* ---- 칭찬 이유 목록은 '마지막으로 바뀐 시각'이 더 새로운 쪽을 따라요 ----
+     같은 목록이 settings.json과 stickers.json 두 곳에 들어 있어요. 두 파일을 차례로 받아 오는
+     사이에 오래된 쪽(stickers.json)이 방금 받은 새 목록을 덮어써서, 넣어 둔 이유가 사라지던
+     문제를 막아요. */
+  function reasonsStamp(at, fileUpdatedAt) {
+    var n = Number(at) || 0;
+    if (n > 0) return n;
+    /* 예전 파일에는 목록만 있고 시각이 없어요 — 파일이 저장된 시각으로 견줘요 */
+    var t = Date.parse(String(fileUpdatedAt || ''));
+    return isNaN(t) ? 0 : t;
+  }
+
+  /* 지금 갖고 있는 목록보다 새로울 때만 받고, 받은 시각도 함께 적어 둬요 */
+  function takeStickerReasons(list, stamp) {
+    if (Object.prototype.toString.call(list) !== '[object Array]' || !list.length) return false;
+    var cur = Number(state.sticker.reasonsUpdatedAt) || 0;
+    if (stamp && cur && stamp <= cur) return false;
+    /* 시각을 알 수 없는 목록으로는 이미 시각이 적힌 목록을 덮어쓰지 않아요 */
+    if (!stamp && cur) return false;
+    state.sticker.reasons = list;
+    state.sticker.reasonsUpdatedAt = stamp || Date.now();
+    return true;
   }
 
   /* ---- 클라우드 데이터 적용 ---- */
@@ -17131,7 +17166,8 @@
     state.sticker.slots = Math.max(probe.sticker.slots, state.sticker.stickers.length);
     state.sticker.goal = probe.sticker.goal;
     state.sticker.unit = probe.sticker.unit;
-    state.sticker.reasons = probe.sticker.reasons;
+    /* 목록의 시각(reasonsUpdatedAt)이 없던 예전 파일은 파일이 저장된 시각으로 견줘요 */
+    takeStickerReasons(probe.sticker.reasons, reasonsStamp(d.sticker && d.sticker.reasonsUpdatedAt, d.updatedAt));
     if (Object.prototype.toString.call(d.workbooks) === '[object Array]') state.workbooks = probe.workbooks;
     if (Object.prototype.toString.call(d.layoutOrder) === '[object Array]') state.layoutOrder = probe.layoutOrder;
     if (d.shop && typeof d.shop === 'object' && Object.prototype.toString.call(d.shop.items) === '[object Array]' && d.shop.items.length) state.shop = probe.shop;
@@ -17159,7 +17195,15 @@
       for (var i = 0; i < d.reasons.length && rs.length < 12; i++) {
         if (typeof d.reasons[i] === 'string' && d.reasons[i].trim()) rs.push(d.reasons[i].trim().slice(0, 20));
       }
-      if (rs.length) state.sticker.reasons = migrateStickerReasons(rs);
+      if (rs.length) {
+        var rsStamp = reasonsStamp(d.reasonsUpdatedAt, d.updatedAt);
+        var tookReasons = takeStickerReasons(migrateStickerReasons(rs), rsStamp);
+        /* 구름 스티커 파일이 더 오래된 목록을 들고 있으면, 새 목록으로 다시 올려 두 파일을 맞춰요 */
+        if (!tookReasons && (Number(state.sticker.reasonsUpdatedAt) || 0) > rsStamp) {
+          cloud.dirty.stickers = true;
+          if (cloud.me && cloud.conn) scheduleSync('stickers');
+        }
+      }
     }
 
     /* 지금 판(10칸)도 같이 맞춰요 — 아내 폰에서 붙인 스티커가 아이 화면에도 보이게 */
@@ -19025,7 +19069,9 @@
         if (rv) reasonList.push(rv.slice(0, 20));
       }
       state.sticker.reasons = reasonList;
+      state.sticker.reasonsUpdatedAt = Date.now();
       saveState();
+      if (cloud.me) scheduleSync('stickers');
       return;
     }
     if (field === 'wbName') {
