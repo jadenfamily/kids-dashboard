@@ -2393,6 +2393,32 @@
   .var-switch.on .sw-knob{ left:26px; }
   .var-switch:active{ transform:scale(.97); }
 
+  /* ---------- 💬 요청하기 (오른쪽 아래 작은 버튼 · 어떤 메뉴도 가리지 않게) ---------- */
+  .req-fab{
+    position:fixed; right:calc(12px + env(safe-area-inset-right,0px)); bottom:calc(14px + env(safe-area-inset-bottom,0px));
+    z-index:60; display:inline-flex; align-items:center; gap:5px;
+    min-height:42px; padding:9px 15px; border-radius:999px; border:2px solid #fff;
+    background:linear-gradient(135deg,#7c5cfc,#5b7cfa); color:#fff;
+    font-size:12.5px; font-weight:900; letter-spacing:-.01em; cursor:pointer;
+    box-shadow:0 8px 22px rgba(92,72,190,.32); touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+  }
+  .req-fab:active{ transform:scale(.96); }
+  .req-fab .rf-ico{ font-size:14px; }
+  @media (max-width:900px){ .app{ padding-bottom:78px; } }
+  @media (max-width:430px){ .req-fab{ min-height:38px; padding:8px 13px; font-size:12px; } }
+  .req-kinds{ display:flex; gap:6px; }
+  .req-kind{
+    flex:1 1 0; min-width:0; min-height:44px; padding:8px 4px;
+    border:2px solid #eee0cf; border-radius:14px; background:#fffdf8; color:#7a6d5d;
+    font-family:inherit; font-size:12.5px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .req-kind.on{ border-color:#a48ffc; background:#f3efff; color:#4b3f9e; }
+  .req-kind:active{ transform:scale(.97); }
+  .req-text{ width:100%; min-height:108px; resize:vertical; line-height:1.55; font-weight:700; font-size:14px; }
+  .req-actions{ display:flex; gap:8px; }
+  .req-actions .modal-btn{ flex:1 1 0; }
+  .req-note{ margin:0; font-size:11.5px; font-weight:800; color:#a2937f; text-align:center; }
+
 </style>
 </head>
 <body>
@@ -2447,6 +2473,9 @@
   <div class="sections" id="sections"></div>
 
   <p class="footer-note" id="footerNote">체크와 스티커는 자동으로 저장돼요 · 인터넷이 없어도 그대로 쓸 수 있어요</p>
+
+  <!-- 💬 요청하기 — 불편한 점·바라는 점을 사무실로 보내요 -->
+  <button type="button" class="req-fab" id="reqFab" data-act="req-open" aria-haspopup="dialog" aria-label="요청하기"><span class="rf-ico" aria-hidden="true">💬</span>요청하기</button>
 </div>
 
 <div class="fx" id="fx" aria-hidden="true"></div>
@@ -2651,6 +2680,24 @@
       <button class="hist-close" data-act="care-close" aria-label="케어 닫기">✕</button>
     </div>
     <div class="hist-body" id="careBody"></div>
+  </div>
+</div>
+
+<div class="hist" id="reqModal" hidden role="dialog" aria-modal="true" aria-labelledby="reqTitle">
+  <div class="hist-card" style="max-width:520px">
+    <div class="hist-head">
+      <h2 id="reqTitle">💬 요청하기</h2>
+      <button class="hist-close" data-act="req-close" aria-label="요청하기 닫기">✕</button>
+    </div>
+    <div class="hist-body">
+      <div class="req-kinds" id="reqKinds" role="group" aria-label="요청 종류"></div>
+      <textarea class="inp req-text" id="reqText" rows="4" maxlength="1000" placeholder="불편한 점이나 바라는 점을 편하게 적어 주세요"></textarea>
+      <div class="req-actions">
+        <button type="button" class="modal-btn" id="reqSend" data-act="req-send">보내기</button>
+        <button type="button" class="modal-btn sub" data-act="req-close">닫기</button>
+      </div>
+      <p class="req-note">적어 주신 그대로 사무실에 전해져요.</p>
+    </div>
   </div>
 </div>
 
@@ -5096,7 +5143,13 @@
     if (custom) {
       return '<img class="pet-img" src="' + esc(custom) + '" alt="' + esc(stage === 0 ? '알' : sp.names[stage - 1]) + '" loading="lazy">';
     }
-    return stage === 0 ? eggSvgHtml(sp.c, ratio || 0) : monSvg(sp, stage);
+    if (stage === 0) return eggSvgHtml(sp.c, ratio || 0);
+    /* 포켓몬 친구는 비공개 그림 팩의 PNG를 그대로 써요 (팩을 아직 못 받았으면 손그림으로) */
+    var pim = pokeImg(sp.id, stage);
+    if (pim) {
+      return '<img class="pet-img poke-img" src="' + esc(pim) + '" alt="' + esc(sp.names[stage - 1] || '') + '" loading="lazy">';
+    }
+    return monSvg(sp, stage);
   }
 
   function petNextEgg(p) {
@@ -6440,6 +6493,125 @@
     return out;
   })();
 
+  /* ---------------- 포켓몬 12종 ----------------
+     이름·속성·희귀도만 화면에 두고, 그림(PNG 36개)은 로그인한 기기만 비공개 저장소의
+     그림 팩(assets/pokemon/sprites.json)에서 받아 와 기기에 캐시해요.
+     기존 54종(18속성 × 3종)은 그대로 두고 뒤에 이어 붙입니다. */
+  var POKE_RARITY_IDX = { common: 0, rare: 1, legend: 2, legendary: 2 };
+  var POKE_LIST = [
+    { id: 'pk_pikachu', type: 'electric', rarity: 'rare', names: ['피츄', '피카츄', '라이츄'] },
+    { id: 'pk_charmander', type: 'fire', rarity: 'rare', names: ['파이리', '리자드', '리자몽'] },
+    { id: 'pk_squirtle', type: 'water', rarity: 'rare', names: ['꼬부기', '어니부기', '거북왕'] },
+    { id: 'pk_bulbasaur', type: 'grass', rarity: 'rare', names: ['이상해씨', '이상해풀', '이상해꽃'] },
+    { id: 'pk_dratini', type: 'dragon', rarity: 'legend', names: ['미뇽', '신뇽', '망나뇽'] },
+    { id: 'pk_gastly', type: 'ghost', rarity: 'common', names: ['고오스', '고우스트', '팬텀'] },
+    { id: 'pk_ralts', type: 'psychic', rarity: 'rare', names: ['랄토스', '킬리아', '가디안'] },
+    { id: 'pk_sprigatito', type: 'grass', rarity: 'rare', names: ['냐오하', '나로테', '마스카나'] },
+    { id: 'pk_fuecoco', type: 'fire', rarity: 'rare', names: ['뜨아거', '악뜨거', '라우드본'] },
+    { id: 'pk_mudkip', type: 'water', rarity: 'rare', names: ['물짱이', '늪짱이', '대짱이'] },
+    { id: 'pk_piplup', type: 'water', rarity: 'rare', names: ['팽도리', '팽태자', '엠페르트'] },
+    { id: 'pk_pidgey', type: 'flying', rarity: 'common', names: ['구구', '피죤', '피죤투'] }
+  ];
+  (function () {
+    for (var pi = 0; pi < POKE_LIST.length; pi++) {
+      var pk = POKE_LIST[pi];
+      var pt = petTypeInfo(pk.type);
+      var prk = POKE_RARITY_IDX[String(pk.rarity || 'rare')];
+      if (typeof prk !== 'number') prk = 1;
+      var pcl = pt.color;
+      PET_SPECIES.push({
+        id: pk.id, type: pk.type, typeLabel: pt.label, kind: pt.label,
+        c: pcl, d: shadeColor(pcl, -0.32), l: shadeColor(pcl, 0.78), accent: shadeColor(pcl, 0.3),
+        names: pk.names.slice(0, 3),
+        rarity: prk, rarityLabel: RARITY[prk].label, rarityColor: RARITY[prk].color,
+        shape: pi % 3, pat: (pi * 2) % 3,
+        no: PET_SPECIES.length + 1,
+        poke: 1,
+        desc: '포켓몬 친구'
+      });
+    }
+  })();
+
+  /* ---------------- 포켓몬 그림 팩 (비공개 저장소 → 기기 캐시) ---------------- */
+  var POKE_KEY = 'kidsDashboard.pokePack.v1';
+  var POKE_TTL = 12 * 60 * 60 * 1000;   /* 하루 두 번 새로 받아 와요 */
+  var pokePack = { imgs: null, at: 0, loading: false };
+
+  function pokeImg(spId, stage) {
+    var id = String(spId || '');
+    if (id.indexOf('pk_') !== 0 || !pokePack.imgs) return '';
+    var u = pokePack.imgs[id + ':' + Math.max(1, Math.min(3, Number(stage) || 1))];
+    return (typeof u === 'string' && u) ? u : '';
+  }
+
+  function loadPokeCache() {
+    try {
+      var j = JSON.parse(lsGet(POKE_KEY) || 'null');
+      if (j && j.imgs && typeof j.imgs === 'object') {
+        pokePack.imgs = j.imgs;
+        pokePack.at = Number(j.at) || 0;
+        return true;
+      }
+    } catch (e) { /* 무시 */ }
+    return false;
+  }
+
+  function savePokeCache(imgs) {
+    try {
+      lsSet(POKE_KEY, JSON.stringify({ v: 1, at: Date.now(), imgs: imgs }));
+      return true;
+    } catch (e) {
+      /* 기기 저장 공간이 모자라면 이번에 켠 동안만 그림을 쓰고 넘어가요 */
+      return false;
+    }
+  }
+
+  function takePokePack(data) {
+    if (!data || typeof data !== 'object' || !data.images || typeof data.images !== 'object') return 0;
+    var imgs = {}, n = 0;
+    for (var k in data.images) {
+      if (!Object.prototype.hasOwnProperty.call(data.images, k)) continue;
+      var u = data.images[k];
+      if (typeof u !== 'string' || !/^data:image\//.test(u)) continue;
+      imgs[k] = u;
+      n++;
+    }
+    if (!n) return 0;
+    pokePack.imgs = imgs;
+    pokePack.at = Date.now();
+    return n;
+  }
+
+  /* 그림을 다 받으면 그림을 쓰는 자리(내 펫·도감·마이룸·목표 바)만 다시 그려요 */
+  function refreshPokeArt() {
+    try { renderPet(); } catch (e) { /* 무시 */ }
+    try { renderRoutineTargets(); } catch (e) { /* 무시 */ }
+    try { renderTargetBars(); } catch (e) { /* 무시 */ }
+    try { renderPetHomeExtra(); } catch (e) { /* 무시 */ }
+    try { var rm = document.getElementById('roomModal'); if (rm && !rm.hidden) renderRoom(); } catch (e) { /* 무시 */ }
+    try { var pm = document.getElementById('petModal'); if (pm && !pm.hidden) renderPetDex(); } catch (e) { /* 무시 */ }
+    try { var sm = document.getElementById('shopModal'); if (sm && !sm.hidden) renderShop(); } catch (e) { /* 무시 */ }
+  }
+
+  async function loadPokePack(force) {
+    if (!cloud.conn || pokePack.loading) return false;
+    if (!force && pokePack.at && (Date.now() - pokePack.at) < POKE_TTL) return false;
+    pokePack.loading = true;
+    try {
+      var r = await ghGet('assets/pokemon/sprites.json');
+      if (r && r.ok && r.data) {
+        var n = takePokePack(r.data);
+        if (n) {
+          savePokeCache(pokePack.imgs);
+          refreshPokeArt();
+          return true;
+        }
+      }
+    } catch (e) { /* 무시 */ }
+    finally { pokePack.loading = false; }
+    return false;
+  }
+
   function speciesById(id) {
     for (var i = 0; i < PET_SPECIES.length; i++) if (PET_SPECIES[i].id === id) return PET_SPECIES[i];
     return PET_SPECIES[0];
@@ -7536,7 +7708,7 @@
 
     if (shopUi.tab === 'pet') {
       h += '<div class="pet-gacha shop">' +
-        '<span class="pg-txt"><b>🥚 랜덤 알 뽑기</b><small>' + fmtNum(PET_DRAW_COST) + '코인 · 18속성 54종 중 하나가 나와요</small></span>' +
+        '<span class="pg-txt"><b>🥚 랜덤 알 뽑기</b><small>' + fmtNum(PET_DRAW_COST) + '코인 · ' + PET_TYPES.length + '속성 ' + PET_SPECIES.length + '종 중 하나가 나와요</small></span>' +
         '<button type="button" class="pill-btn warm" data-act="pet-gacha">🥚 알 뽑기 (' + fmtNum(PET_DRAW_COST) + '코인)</button>' +
         '</div>';
     }
@@ -8053,7 +8225,7 @@
     var eggs = 0;
     for (var i = 0; i < list.length; i++) if (list[i].stage === 0) eggs++;
     var h = petFeedBarHtml() + '<div class="pet-gacha">' +
-      '<span class="pg-txt"><b>🥚 랜덤 알 뽑기</b><small>' + fmtNum(PET_DRAW_COST) + '코인 · 18속성 54종 중 하나가 나와요</small></span>' +
+      '<span class="pg-txt"><b>🥚 랜덤 알 뽑기</b><small>' + fmtNum(PET_DRAW_COST) + '코인 · ' + PET_TYPES.length + '속성 ' + PET_SPECIES.length + '종 중 하나가 나와요</small></span>' +
       '<button type="button" class="pill-btn warm" data-act="pet-gacha">🥚 알 뽑기 (' + fmtNum(PET_DRAW_COST) + '코인)</button>' +
       '</div>';
     h += '<h3 class="pet-sec-title">🐾 내 펫 <b>' + list.length + '</b>마리' + (eggs ? ' · 알 ' + eggs + '개' : '') + '</h3>';
@@ -8768,6 +8940,13 @@
 
   function monSvg(sp, stage) {
     stage = Math.max(1, Math.min(3, stage || 1));
+    /* 포켓몬 친구는 비공개 그림 팩의 PNG를 그대로 넣어요 (마이룸 방 안에서도 같은 둥실거림) */
+    var pim = pokeImg(sp && sp.id, stage);
+    if (pim) {
+      return '<svg viewBox="0 0 100 100" class="mon-svg poke-svg" data-type="' + esc(String((sp && sp.type) || 'normal')) +
+        '" data-stage="' + stage + '" data-species="' + esc(String((sp && sp.id) || '')) + '" aria-hidden="true">' +
+        '<image href="' + esc(pim) + '" x="4" y="4" width="92" height="92" preserveAspectRatio="xMidYMid meet"/></svg>';
+    }
     var g = petGeo(stage);
     var c = sp.c, d = sp.d, a = sp.accent, l = sp.l;
     var type = String(sp.type || 'normal');
@@ -14290,8 +14469,158 @@
     if (isOnlyModal('wbModal')) unlockScroll();
   }
 
+  /* ============ 💬 요청하기 — 사무실 접수함으로 보내기 ============
+     아이·가족이 화면에서 적은 요구를 사무실(inbox.json)에 그대로 덧붙여요.
+     기존 항목은 건드리지 않고, 다른 기기가 먼저 저장했으면 다시 읽어 이어 붙입니다. */
+  var INBOX_PATH = 'ai-office/inbox.json';
+  var reqUi = { kind: '불편', busy: false };
+  var REQ_KINDS = [['불편', '😣 불편'], ['요청', '🙏 요청'], ['질문', '❓ 질문']];
+
+  function reqKindsHtml() {
+    var h = '';
+    for (var i = 0; i < REQ_KINDS.length; i++) {
+      var k = REQ_KINDS[i][0];
+      var on = reqUi.kind === k;
+      h += '<button type="button" class="req-kind' + (on ? ' on' : '') + '" data-act="req-kind" data-k="' + esc(k) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + REQ_KINDS[i][1] + '</button>';
+    }
+    return h;
+  }
+
+  function renderReqKinds() {
+    var box = document.getElementById('reqKinds');
+    if (box) box.innerHTML = reqKindsHtml();
+  }
+
+  function openRequest() {
+    var m = document.getElementById('reqModal');
+    if (!m) return;
+    reqUi.kind = reqUi.kind || '불편';
+    renderReqKinds();
+    m.hidden = false;
+    raiseModal('reqModal');
+    lockScroll();
+    var t = document.getElementById('reqText');
+    if (t) window.setTimeout(function () { try { t.focus(); } catch (e) { /* 무시 */ } }, 80);
+  }
+
+  function closeRequest() {
+    var m = document.getElementById('reqModal');
+    if (m) m.hidden = true;
+    var t = document.getElementById('reqText');
+    if (t) t.value = '';
+    if (isOnlyModal('reqModal')) unlockScroll();
+  }
+
+  function inboxStamp(d) {
+    return String(d.getFullYear()) + pad2(d.getMonth() + 1) + pad2(d.getDate()) +
+      pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds());
+  }
+
+  function inboxRand4() {
+    var pool = 'abcdefghijklmnopqrstuvwxyz0123456789', out = '';
+    for (var i = 0; i < 4; i++) out += pool.charAt(Math.floor(Math.random() * pool.length));
+    return out;
+  }
+
+  /* 한 번만 저장해 보고 결과를 그대로 돌려줘요 (충돌은 부른 쪽이 다시 읽고 재시도) */
+  async function ghPutOnce(path, obj, message, sha) {
+    var payload = {
+      message: message || ('기록 업데이트: ' + path),
+      content: b64encodeUtf8(JSON.stringify(obj, null, 2)),
+      branch: (cloud.conn && cloud.conn.branch) || 'main'
+    };
+    if (sha) payload.sha = sha;
+    try {
+      var res = await window.fetch(ghBase() + '/contents/' + path, {
+        method: 'PUT', headers: ghHeaders(), body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        var j = await res.json();
+        var ns = j && j.content && j.content.sha;
+        if (ns) rememberSha(path, ns);
+        return { ok: true, sha: ns || '' };
+      }
+      if (res.status === 409 || res.status === 422) return { ok: false, conflict: true, status: res.status };
+      if (res.status === 401) return { ok: false, status: 401, error: '토큰이 올바르지 않아요' };
+      if (res.status === 403) return { ok: false, status: 403, error: '쓰기 권한이 없어요' };
+      return { ok: false, status: res.status, error: 'HTTP ' + res.status };
+    } catch (e) {
+      return { ok: false, status: 0, error: '네트워크에 연결하지 못했어요' };
+    }
+  }
+
+  async function appendInbox(item) {
+    for (var attempt = 0; attempt < 4; attempt++) {
+      var got = await ghGet(INBOX_PATH);
+      if (!got.ok) return { ok: false, error: got.error || '접수함을 읽지 못했어요' };
+      var box;
+      if (got.missing || !got.data || Object.prototype.toString.call(got.data) !== '[object Object]') {
+        box = { version: 1, updatedAt: item.at, items: [] };
+      } else {
+        box = got.data;
+      }
+      if (Object.prototype.toString.call(box.items) !== '[object Array]') box.items = [];
+      /* 아까 시도가 실제로 저장됐는데 응답만 놓쳤으면 또 넣지 않아요 */
+      for (var i = 0; i < box.items.length; i++) {
+        var it = box.items[i];
+        if (it && String(it.id) === item.id) return { ok: true, already: true };
+      }
+      box.items.push(item);
+      box.version = box.version || 1;
+      box.updatedAt = item.at;
+      var res = await ghPutOnce(INBOX_PATH, box, '대시보드 요청 접수: ' + item.kind + (item.name ? (' · ' + item.name) : ''), got.sha);
+      if (res.ok) return { ok: true };
+      if (res.conflict) {
+        await new Promise(function (resolve) { window.setTimeout(resolve, 320 * (attempt + 1)); });
+        continue;
+      }
+      return { ok: false, error: res.error || ('HTTP ' + res.status) };
+    }
+    return { ok: false, error: '다른 기기에서 먼저 저장했어요' };
+  }
+
+  async function sendRequest() {
+    if (reqUi.busy) return;
+    var ta = document.getElementById('reqText');
+    var raw = ta ? String(ta.value || '') : '';
+    if (!raw.replace(/\s/g, '')) {
+      showToast('보낼 내용을 먼저 적어 주세요.');
+      if (ta) { try { ta.focus(); } catch (e) { /* 무시 */ } }
+      return;
+    }
+    if (!cloud.conn) {
+      showToast('지금은 보낼 수 없어요. 연결을 확인한 뒤 다시 눌러 주세요.');
+      return;
+    }
+    reqUi.busy = true;
+    var btn = document.getElementById('reqSend');
+    var label = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = '보내는 중…'; }
+    var now = new Date();
+    var item = {
+      id: 'ib-' + inboxStamp(now) + '-' + inboxRand4(),
+      at: now.toISOString(),
+      source: 'kids',
+      sourceLabel: "Jaden's Today",
+      kind: reqUi.kind || '요청',
+      name: (cloud.me && cloud.me.name) || '',
+      text: raw,
+      status: 'new',
+      handledAt: null
+    };
+    var res = await appendInbox(item);
+    reqUi.busy = false;
+    if (btn) { btn.disabled = false; btn.textContent = label || '보내기'; }
+    if (res.ok) {
+      closeRequest();
+      showToast('사무실로 전달했어요!');
+      return;
+    }
+    showToast('사무실로 전달하지 못했어요. 잠시 뒤 다시 보내 주세요.');
+  }
+
   function isOnlyModal(id) {
-    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal', 'petHomeModal', 'roomModal', 'avatarModal', 'shopModal', 'careModal', 'allowModal', 'allowNoticeModal', 'targetAlertModal', 'bulkModal'];
+    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal', 'petHomeModal', 'roomModal', 'avatarModal', 'shopModal', 'careModal', 'allowModal', 'allowNoticeModal', 'targetAlertModal', 'bulkModal', 'reqModal'];
     for (var i = 0; i < ids.length; i++) {
       if (ids[i] === id) continue;
       var el = document.getElementById(ids[i]);
@@ -17480,6 +17809,7 @@
     try { creditStickerLogCoins(true); } catch (e5) { /* 무시 */ }
     saveLocalOnly();
     renderAll();
+    try { loadPokePack(); } catch (e6) { /* 포켓몬 그림 팩은 있어도 없어도 괜찮아요 */ }
     applyPermissions();
     setSync(navigator.onLine === false ? 'offline' : 'ok');
     if (cloud.dirty.day) scheduleSync('day');
@@ -18167,6 +18497,7 @@
     cloud.users = loadUsersCache();
     cloud.sha = loadShaCache() || {};
     cloud.lastSig = settingsSignature();
+    loadPokeCache();   /* 지난번에 받아 둔 포켓몬 그림이 있으면 먼저 쓰고, 로그인 뒤에 새로 확인해요 */
     renderSyncPill();
 
     /* 새 기기 연결 링크(#connect=…)로 들어왔으면 토큰 입력 없이 바로 연결해요 */
@@ -18220,6 +18551,11 @@
     if (act === 'acct-link-select') { try { el.focus(); el.select(); } catch (e) { /* 무시 */ } return; }
     if (act === 'relink') { renderLoginBody('setup', true); return; }
     if (act === 'relink-cancel') { renderLoginBody(cloud.conn ? 'login' : 'setup', true); return; }
+
+    if (act === 'req-open') { openRequest(); return; }
+    if (act === 'req-close') { closeRequest(); return; }
+    if (act === 'req-kind') { reqUi.kind = el.getAttribute('data-k') || '불편'; renderReqKinds(); return; }
+    if (act === 'req-send') { sendRequest(); return; }
 
     if (act === 'toggle-check' && !can('check')) return;
     if (act === 'wb-item-open' && !can('check')) return;
