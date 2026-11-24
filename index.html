@@ -746,6 +746,8 @@
   #tamText{ font-size:16px; font-weight:900; color:#5a4230; line-height:1.5; }
   #tamSound{ margin:0 0 14px; font-size:12.5px; font-weight:800; color:#a4782f; background:#fff5df; border-radius:12px; padding:8px 10px; }
   #targetAlertModal .modal-btn{ font-size:20px; }
+  #tamSoundBtn{ background:linear-gradient(135deg,#ffe066,#ffb703); animation:tamGlow 1.3s ease-out infinite; }
+  @keyframes tamGlow{ 0%{ box-shadow:0 0 0 0 rgba(255,183,3,.55); } 70%{ box-shadow:0 0 0 12px rgba(255,183,3,0); } 100%{ box-shadow:0 0 0 0 rgba(255,183,3,0); } }
 
 
   /* ---------- 로그인 ---------- */
@@ -2618,6 +2620,7 @@
     <p id="tamText">등교 준비 · 목표 08:30</p>
     <p id="tamSound" hidden>♪ 하와이 파이브오 알림 소리가 울리는 중 — 확인을 누르면 멈춰요</p>
     <div class="modal-actions">
+      <button class="modal-btn" id="tamSoundBtn" data-act="target-alert-sound" hidden>🔊 소리 켜기</button>
       <button class="modal-btn" id="tamOkBtn" data-act="target-alert-ok">확인</button>
     </div>
   </div>
@@ -12766,6 +12769,8 @@
   function closeTargetAlert() {
     var m = document.getElementById('targetAlertModal');
     if (m) m.hidden = true;
+    var sb = document.getElementById('tamSoundBtn');
+    if (sb) sb.hidden = true;
     tamOpen = null;
     stopTargetMelody();
     if (isOnlyModal('targetAlertModal')) unlockScroll();
@@ -12810,9 +12815,12 @@
     if (s) {
       s.textContent = (v === 'on')
         ? '♪ ' + alertSoundName(alertSoundId()) + ' 알림 소리가 울리는 중 — 확인을 누르면 멈춰요'
-        : '🔇 소리를 들으려면 화면을 한 번 눌러 주세요';
+        : '🔇 소리가 멈춰 있어요 — 아래 버튼을 눌러 주세요';
       s.hidden = (v !== 'on' && v !== 'blocked');
     }
+    /* 소리가 막혔을 때만 알림창에 🔊 소리 켜기 버튼이 보여요 */
+    var sb = document.getElementById('tamSoundBtn');
+    if (sb) sb.hidden = (v !== 'blocked');
     try { updateSoundUi(); } catch (e) { /* 무시 */ }
   }
 
@@ -13224,11 +13232,63 @@
     } catch (e) { return ''; }
   }
 
-  /* 🎺 하와이 파이브오 — 진짜 오프닝 테마(MP3)를 먼저 틀고,
-     못 불러오면(오프라인·차단) 직접 만든 .wav로 넘어가요 */
+  /* 🎺 하와이 파이브오 — 진짜 오프닝 테마(MP3).
+     · 로그인한 기기는 비공개 저장소에 넣어 둔 원본 음원을 한 번 받아 메모리에 들고 있다가 바로 틀어요.
+     · 외부 사이트 주소는 기기에 따라 인증서·연결이 막히고 늦어서, 마지막 순서로만 남겨 둬요. */
   var H50_REMOTE = {
     hawaii: 'https://www.myinstants.com/media/sounds/hawaii-five-o-2010-opening-theme.mp3'
   };
+
+  /* ---------------- 원본 음원 → 메모리 캐시 ----------------
+     그림 팩(sprites.json)과 같은 길로 받아 와요 — 로그인한 기기만.
+     받아 둔 음원은 blob: 주소로 들고 있다가 알림이 울릴 때 기다림 없이 바로 틀어요. */
+  var H50_SOUND_PATH = 'assets/sounds/hawaii.mp3';
+  var H50_SOUND_MAX = 1024 * 1024;          /* 1MB가 넘으면 받지 않아요 (지금 파일은 약 244KB) */
+  var H50_PACK_TTL = 6 * 60 * 60 * 1000;    /* 6시간마다 한 번 새로 받아 와요 */
+  var h50Pack = { url: '', at: 0, loading: false, tries: 0 };
+
+  function b64ToBytes(b64) {
+    var s = String(b64 || '').replace(/\s/g, '');
+    if (!s) return null;
+    var bin;
+    try { bin = window.atob(s); } catch (e) { return null; }
+    var out = new Uint8Array(bin.length), i;
+    for (i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  async function loadSoundPack(force) {
+    if (!cloud.conn || !cloud.me) return false;          /* 로그인한 기기만 받아요 */
+    if (h50Pack.loading || !window.fetch || !window.Blob || !window.Uint8Array) return false;
+    if (!window.URL || !window.URL.createObjectURL) return false;
+    if (!force && h50Pack.url && (Date.now() - h50Pack.at) < H50_PACK_TTL) return false;
+    h50Pack.loading = true;
+    h50Pack.tries = Date.now();
+    try {
+      var branch = (cloud.conn && cloud.conn.branch) || 'main';
+      var res = await window.fetch(ghBase() + '/contents/' + H50_SOUND_PATH + '?ref=' + encodeURIComponent(branch),
+        { headers: ghHeaders(), cache: 'no-store' });
+      if (!res.ok) return false;
+      var j = await res.json();
+      if (!j || !j.content) return false;
+      if (j.size && Number(j.size) > H50_SOUND_MAX) return false;
+      var bytes = b64ToBytes(j.content);
+      if (!bytes || bytes.length < 2048 || bytes.length > H50_SOUND_MAX) return false;
+      var old = h50Pack.url;
+      h50Pack.url = window.URL.createObjectURL(new window.Blob([bytes], { type: 'audio/mpeg' }));
+      h50Pack.at = Date.now();
+      /* 예전 주소는 지금 트는 소리가 그 주소가 아닐 때만 정리해요 */
+      if (old && old !== h50Pack.url && (!h50AudioEl || String(h50AudioEl.src || '') !== old)) {
+        try { window.URL.revokeObjectURL(old); } catch (e) { /* 무시 */ }
+      }
+      try { document.documentElement.setAttribute('data-h50-pack', 'ready'); } catch (e) { /* 무시 */ }
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      h50Pack.loading = false;
+    }
+  }
 
   /* 이 소리는 진짜 음원(주소)으로 트나요? 내 알림음이 같은 id를 쓰면 그쪽이 먼저예요 */
   function alertSoundRemote(id) {
@@ -13237,11 +13297,17 @@
     return H50_REMOTE[id];
   }
 
-  /* 알림음 재생 주소 — 내 알림음은 올린 소리·주소 그대로, 하와이는 진짜 MP3, 나머지는 Blob .wav */
+  /* 알림음 재생 주소 — 내 알림음은 올린 소리·주소 그대로,
+     하와이는 받아 둔 원본 음원 → 아직 준비 전이면 바로 내장 .wav, 나머지는 Blob .wav */
   function alertSoundSrc(id) {
     var c = customAlertSound(id);
     if (c && c.src) return String(c.src);
-    if (H50_REMOTE[id]) return H50_REMOTE[id];
+    if (H50_REMOTE[id]) {
+      if (h50Pack.url) return h50Pack.url;      /* 받아 둔 진짜 음원 — 기다림 없이 바로 */
+      var wav = alertWavUrl(id);
+      if (wav) return wav;                      /* 아직 안 받았으면 내장 소리로 바로 (터치 타이밍을 지켜요) */
+      return H50_REMOTE[id];
+    }
     return alertWavUrl(id);
   }
 
@@ -13316,7 +13382,8 @@
   function h50Stamp(id, src) {
     try {
       var d = document.documentElement, s = String(src), kind;
-      if (s.indexOf('blob:') === 0) kind = 'wav';
+      if (h50Pack.url && s === h50Pack.url) kind = 'mp3';
+      else if (s.indexOf('blob:') === 0) kind = 'wav';
       else if (s === alertSoundRemote(id)) kind = 'mp3';
       else kind = 'url';
       d.setAttribute('data-h50-play', 'playing');
@@ -13387,10 +13454,12 @@
      · 주소(MP3)로 트는 소리는 실패하면 직접 만든 .wav로 한 번 더 시도해요 */
   function h50PlayWav(loop, maxMs, id) {
     id = id || alertSoundId();
-    var el = h50Audio(), src = alertSoundSrc(id);
+    var el = h50Audio(), src = alertSoundSrc(id), wav = alertWavUrl(id);
     if (!el || !src) return false;
     if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
-    var want = { id: id, loop: !!loop, maxMs: maxMs || 0, canFallback: !!alertSoundRemote(id), no: ++h50Try };
+    /* 진짜 음원(blob MP3·올린 소리)이 안 열리면 내장 .wav로 이어서 틀어요.
+       이미 .wav로 트는 중이면 같은 소리를 또 대체하지 않아요. */
+    var want = { id: id, loop: !!loop, maxMs: maxMs || 0, canFallback: !!(wav && src !== wav), no: ++h50Try };
     h50Want = want;
     h50MarkFallback(false);
     var p = playWav(el, src, loop);
@@ -13478,6 +13547,10 @@
   function preloadTargetMelody() {
     try {
       if (!alertWavCache[alertSoundId()]) alertWavUrl(alertSoundId());
+    } catch (e) { /* 무시 */ }
+    /* 원본 음원은 처음 한 번만 받아 둬요 (터치할 때마다 요청하지 않게 1분 간격) */
+    try {
+      if (!h50Pack.url && (Date.now() - h50Pack.tries) > 60000) loadSoundPack();
     } catch (e) { /* 무시 */ }
   }
 
@@ -17876,6 +17949,7 @@
     saveLocalOnly();
     renderAll();
     try { loadPokePack(); } catch (e6) { /* 포켓몬 그림 팩은 있어도 없어도 괜찮아요 */ }
+    try { loadSoundPack(); } catch (e7) { /* 알림음 원본은 있어도 없어도 괜찮아요 */ }
     applyPermissions();
     setSync(navigator.onLine === false ? 'offline' : 'ok');
     if (cloud.dirty.day) scheduleSync('day');
@@ -18644,6 +18718,13 @@
     if (act === 'item-up') { moveItem(el.getAttribute('data-cat'), el.getAttribute('data-item'), -1); return; }
     if (act === 'item-down') { moveItem(el.getAttribute('data-cat'), el.getAttribute('data-item'), 1); return; }
     if (act === 'target-alert-ok') { closeTargetAlert(); return; }
+    if (act === 'target-alert-sound') {
+      /* 브라우저가 자동재생을 막았을 때 — 누른 그 순간 바로 소리를 켜요 */
+      unlockAudio();
+      playTargetMelody(true, 0);
+      updateSoundUi();
+      return;
+    }
     if (act === 'alert-mute') { stopAlertSoundByUser(); return; }
     if (act === 'target-sound-test') { toggleAlertSoundTest(); return; }
     if (act === 'alert-sound-pick') { pickAlertSound(el.getAttribute('data-sound')); return; }
