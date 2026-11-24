@@ -16978,8 +16978,8 @@
     if (n > 0) grantStickersAuto(n, '특별미션');
     saveState();
     if (!opts || opts.celebrate !== false) {
-      showMilestoneWin('🎯', '특별 미션 완료!', (m.emoji ? m.emoji + ' ' : '') + (m.title || '') +
-        (n > 0 ? '\n칭찬 스티커 ' + n + '개를 받았어요!' : '\n끝까지 해냈어요!'));
+      showMilestoneWin(m.emoji || '🎯', '특별 미션 완료!',
+        (m.title || '미션') + ' 미션을 끝냈어요!' + (n > 0 ? ' 칭찬 스티커 ' + n + '개를 받았어요!' : ''));
     }
     return n;
   }
@@ -17010,9 +17010,9 @@
     if (n > 0) grantStickersAuto(n, '역할:' + String(role.title || '').slice(0, 12));
     saveState();
     if (!opts || opts.celebrate !== false) {
-      showMilestoneWin(role.emoji || '⚡', '역할 완료!', (role.emoji ? role.emoji + ' ' : '') + (role.title || '') +
-        ' · ' + cycleShortLabel(role.cycle) + ' 몫을 다 했어요!' +
-        (n > 0 ? '\n칭찬 스티커 ' + n + '개를 받았어요!' : ''));
+      showMilestoneWin(role.emoji || '⚡', '역할 완료!',
+        (role.title || '역할') + ' 역할의 ' + cycleShortLabel(role.cycle) + ' 몫을 다 했어요!' +
+        (n > 0 ? ' 칭찬 스티커 ' + n + '개를 받았어요!' : ''));
     }
     return n;
   }
