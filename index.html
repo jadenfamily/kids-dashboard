@@ -2431,6 +2431,127 @@
   .req-actions .modal-btn{ flex:1 1 0; }
   .req-note{ margin:0; font-size:11.5px; font-weight:800; color:#a2937f; text-align:center; }
 
+  /* ---------- 🎯 특별 미션 ---------- */
+  .msn-list{ display:flex; flex-direction:column; gap:10px; min-width:0; }
+  .msn-card{
+    border:2px solid #f1e4d2; border-radius:20px; padding:12px 13px 11px;
+    background:linear-gradient(180deg,#fffefa 0%,#fff9f0 100%); min-width:0;
+  }
+  .msn-card.done{ border-color:#ffdf9a; background:linear-gradient(180deg,#fffbeb 0%,#fff4d3 100%); }
+  .msn-card.over{ opacity:.92; }
+  .msn-top{ display:flex; align-items:flex-start; gap:9px; min-width:0; }
+  .msn-emoji{ font-size:26px; line-height:1.1; flex:0 0 auto; }
+  .msn-meta{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .msn-title{ font-size:15.5px; font-weight:900; letter-spacing:-.02em; line-height:1.3; overflow-wrap:anywhere; }
+  .msn-sub{ font-size:11.5px; font-weight:800; color:var(--ink-2); opacity:.8; }
+  .msn-edit{
+    flex:0 0 auto; width:34px; height:34px; border-radius:12px; border:2px solid #efe0c9;
+    background:#fffdf8; font-size:14px; cursor:pointer; touch-action:manipulation; line-height:1;
+  }
+  .msn-edit:active{ transform:scale(.94); }
+  .msn-cells{ display:grid; grid-template-columns:repeat(auto-fit,minmax(38px,1fr)); gap:6px; margin:10px 0 9px; }
+  .msn-cell{
+    min-height:46px; padding:3px 1px; border-radius:13px; border:2px solid #efe3d2; background:#fff;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0;
+    font-family:inherit; color:#a99b8a; cursor:pointer; touch-action:manipulation; line-height:1.15;
+  }
+  .msn-cell .d{ font-size:13.5px; font-weight:900; }
+  .msn-cell .w{ font-size:9.5px; font-weight:800; opacity:.85; }
+  .msn-cell.today{ border-color:#ffb703; box-shadow:0 0 0 3px #fff3cf; }
+  .msn-cell.on{ background:linear-gradient(150deg,#ffe066,#ffc300); border-color:#f2a900; color:#6b4300; }
+  .msn-cell.off{ opacity:.4; cursor:default; }
+  .msn-cell.missed{ border-style:dashed; }
+  .msn-foot{ display:flex; align-items:center; gap:8px; min-width:0; }
+  .msn-bar{ flex:1 1 auto; height:9px; border-radius:999px; background:#f2e9da; overflow:hidden; min-width:40px; }
+  .msn-bar i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#ffb703,#ff8a3d); transition:width .25s; }
+  .msn-prog{ font-size:12px; font-weight:900; color:#9c7530; white-space:nowrap; }
+  .msn-reward{
+    font-size:11.5px; font-weight:900; color:#8a5b00; background:#fff2cd; border:1.5px solid #ffe2a3;
+    border-radius:999px; padding:2px 9px; white-space:nowrap;
+  }
+  .msn-msg{ margin:8px 0 0; font-size:12px; font-weight:900; color:#0f7a55; }
+  .msn-msg.wait{ color:#a4782f; }
+  .msn-msg.over{ color:#a2937f; }
+  .msn-add{
+    width:100%; min-height:44px; border:2px dashed #e6d6be; border-radius:16px; background:#fffdf8;
+    color:#9a7c4d; font-family:inherit; font-size:13px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .msn-add:active{ transform:scale(.99); }
+
+  /* ---------- ⚡ 역할 체크리스트 ---------- */
+  .rcl-list{ display:flex; flex-direction:column; gap:10px; min-width:0; }
+  .rcl-role{ border:2px solid #e6ecf7; border-radius:20px; padding:11px 12px 10px; background:linear-gradient(180deg,#fcfdff,#f6f9ff); min-width:0; }
+  .rcl-role.done{ border-color:#bfe3cd; background:linear-gradient(180deg,#f5fff9,#eafaf1); }
+  .rcl-head{ display:flex; align-items:center; gap:8px; min-width:0; }
+  .rcl-emoji{ font-size:23px; line-height:1.1; flex:0 0 auto; }
+  .rcl-name{ flex:1 1 auto; min-width:0; font-size:15px; font-weight:900; letter-spacing:-.02em; overflow-wrap:anywhere; }
+  .rcl-cycle{ flex:0 0 auto; font-size:11px; font-weight:900; color:#4a6a9c; background:#e9f1ff; border-radius:999px; padding:2px 8px; }
+  .rcl-cycle.is-week{ color:#7a4a9c; background:#f5eaff; }
+  .rcl-cycle.is-month{ color:#9c6a2a; background:#fff1dc; }
+  .rcl-items{ display:flex; flex-direction:column; gap:6px; margin:9px 0 8px; list-style:none; padding:0; }
+  .rcl-item{
+    width:100%; display:flex; align-items:center; gap:9px; min-height:42px; padding:7px 10px;
+    border:2px solid #e8eef9; border-radius:14px; background:#fff; color:#5d6a80;
+    font-family:inherit; font-size:13.5px; font-weight:800; text-align:left; cursor:pointer; touch-action:manipulation;
+  }
+  .rcl-item .box{
+    flex:0 0 auto; width:22px; height:22px; border-radius:8px; border:2px solid #cfdcef; background:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; color:transparent;
+  }
+  .rcl-item .tx{ flex:1 1 auto; min-width:0; overflow-wrap:anywhere; }
+  .rcl-item.on{ border-color:#a9e0c0; background:#f2fdf7; color:#0f6a4a; }
+  .rcl-item.on .box{ border-color:#12b886; background:#12b886; color:#fff; }
+  .rcl-item:active{ transform:scale(.995); }
+  .rcl-foot{ display:flex; align-items:center; gap:8px; }
+  .rcl-count{ font-size:11.5px; font-weight:900; color:#6a7d99; white-space:nowrap; }
+  .rcl-foot .msn-bar i{ background:linear-gradient(90deg,#4fc3a1,#12b886); }
+  .rcl-empty{ margin:0; font-size:12.5px; font-weight:800; color:#b3a696; text-align:center; padding:10px 4px; }
+  .rcl-more{ color:#9a7c4d; }
+
+  /* ---------- 미션·역할 고치기 팝업 ---------- */
+  #msnModal .modal-card, #rclModal .modal-card{ max-width:460px; text-align:left; padding:22px 20px 20px; }
+  #msnModal h2, #rclModal h2{ margin:0 0 4px; font-size:19px; font-weight:900; text-align:left; }
+  .me-note{ margin:0 0 10px; font-size:11.5px; font-weight:800; color:#a2937f; line-height:1.5; }
+  .me-row{ display:flex; gap:8px; margin-bottom:10px; min-width:0; }
+  .me-row > .me-field{ flex:1 1 0; min-width:0; }
+  .me-field{ display:flex; flex-direction:column; gap:4px; margin-bottom:8px; min-width:0; }
+  .me-field > span{ font-size:11.5px; font-weight:900; color:#8b7c68; }
+  .me-field .inp{ width:100%; min-height:42px; }
+  .me-emoji{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+  .me-emoji button{
+    width:34px; height:34px; border-radius:11px; border:2px solid #efe3d2; background:#fffdf8;
+    font-size:17px; line-height:1; cursor:pointer; touch-action:manipulation; padding:0;
+  }
+  .me-emoji button.on{ border-color:#ffb703; background:#fff3cf; }
+  .me-step{ display:flex; align-items:center; gap:6px; }
+  .me-step button{
+    width:40px; min-height:42px; border-radius:12px; border:2px solid #efe3d2; background:#fffdf8;
+    font-size:17px; font-weight:900; color:#8a6a2f; cursor:pointer; touch-action:manipulation;
+  }
+  .me-step .inp{ width:64px; min-width:0; flex:0 0 auto; text-align:center; }
+  .me-actions{ flex-wrap:wrap; }
+  .me-cycles{ display:flex; gap:6px; }
+  .me-cycles button{
+    flex:1 1 0; min-height:44px; border-radius:14px; border:2px solid #e8eef9; background:#fff;
+    color:#6a7d99; font-family:inherit; font-size:13px; font-weight:900; cursor:pointer; touch-action:manipulation;
+  }
+  .me-cycles button.on{ border-color:#7c5cfc; background:#f3efff; color:#4b3f9e; }
+  .me-items{ display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+  .me-item{ display:flex; gap:6px; align-items:center; }
+  .me-item .inp{ flex:1 1 auto; min-height:42px; }
+  .me-item .del-btn{ flex:0 0 auto; width:38px; min-height:42px; border-radius:12px; }
+  .me-add{ width:100%; min-height:42px; border-radius:14px; border:2px dashed #e6d6be; background:#fffdf8; color:#9a7c4d; font-family:inherit; font-size:12.5px; font-weight:900; cursor:pointer; touch-action:manipulation; }
+  .me-actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:13px; }
+  .me-actions .modal-btn{ flex:1 1 110px; width:auto; min-width:0; min-height:50px; font-size:15.5px; }
+  .me-actions .me-del{ flex:0 0 88px; min-width:88px; min-height:50px; background:#fff0f0; color:#b03a3a; border:2px solid #ffd3d3; border-radius:18px; font-family:inherit; font-size:14px; font-weight:900; cursor:pointer; }
+  .me-actions .modal-btn.sub{ flex:0 0 88px; min-width:88px; }
+  #msnWinModal .modal-card{ background:linear-gradient(180deg,#fffdf4,#fff4d8); border:3px solid #ffd77a; }
+  @media (max-width:430px){
+    .msn-cells{ grid-template-columns:repeat(auto-fit,minmax(34px,1fr)); gap:5px; }
+    .msn-cell{ min-height:44px; }
+    .me-actions .modal-btn{ font-size:14px; }
+  }
+
 </style>
 </head>
 <body>
@@ -2612,6 +2733,28 @@
   </div>
 </div>
 
+<!-- 🎯 특별 미션 · ⚡ 역할 고치기 -->
+<div class="modal" id="msnModal" hidden role="dialog" aria-modal="true" aria-labelledby="msnModalTitle">
+  <div class="modal-card">
+    <div id="msnEditBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="rclModal" hidden role="dialog" aria-modal="true" aria-labelledby="rclModalTitle">
+  <div class="modal-card">
+    <div id="rclEditBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="msnWinModal" hidden role="dialog" aria-modal="true" aria-labelledby="msnWinTitle">
+  <div class="modal-card">
+    <div class="modal-emoji" id="msnWinEmoji">🎉</div>
+    <h2 id="msnWinTitle">미션 완료!</h2>
+    <p id="msnWinText">침찬 스티커를 받았어요.</p>
+    <div class="modal-actions"><button class="modal-btn" data-act="msn-win-close">좋아요!</button></div>
+  </div>
+</div>
+
 <div class="modal" id="targetAlertModal" hidden role="alertdialog" aria-modal="true" aria-labelledby="tamTitle" aria-describedby="tamText">
   <div class="modal-card tam-card">
     <span class="tam-badge" id="tamBadge">30분</span>
@@ -2749,14 +2892,21 @@
   var SEC_CLASS = { routine: 'routine sec-routine', sticker: 'sticker', academy: 'today-academy', week: 'week sec-week' };
   var SEC_PRIMARY_BLOCK = { routine: 'routine', sticker: 'sticker_board', academy: 'today_schedule', week: 'weekly_schedule' };
   var SEC_ICON_CHOICES = ['✅', '⭐', '🎒', '🗓️', '🎯', '💬', '🌈', '🌙', '🧩', '🏡', '📚', '🍀', '🎨', '📌'];
-  var BLOCK_ORDER = ['routine', 'target_bar', 'notice_board', 'today_schedule', 'sticker_board', 'weekly_schedule'];
+  var BLOCK_ORDER = ['routine', 'target_bar', 'notice_board', 'today_schedule', 'sticker_board', 'weekly_schedule', 'special_missions', 'role_checklist'];
   var BLOCK_LABEL = {
     routine: '하루 루틴', target_bar: '목표시간 남은 시간 바', notice_board: '오늘의 한마디 / 게시판',
-    today_schedule: '오늘의 일정', sticker_board: '칭찬 스티커', weekly_schedule: '주간 일과표'
+    today_schedule: '오늘의 일정', sticker_board: '칭찬 스티커', weekly_schedule: '주간 일과표',
+    special_missions: '특별 미션', role_checklist: '역할 체크리스트'
   };
   var BLOCK_ICON = {
-    routine: '✅', target_bar: '🎯', notice_board: '💬', today_schedule: '🎒', sticker_board: '⭐', weekly_schedule: '🗓️'
+    routine: '✅', target_bar: '🎯', notice_board: '💬', today_schedule: '🎒', sticker_board: '⭐', weekly_schedule: '🗓️',
+    special_missions: '🎯', role_checklist: '⚡'
   };
+  /* 🎯 특별 미션 · ⚡ 역할 체크리스트 한도와 빠른 이모지 */
+  var MSN_MAX = 12, MSN_DAYS_MAX = 60, MSN_CELLS_MAX = 62, MSN_REWARD_MAX = 20;
+  var RCL_MAX = 12, RCL_ITEM_MAX = 12;
+  var MSN_EMOJI = ['🥛', '🦷', '📚', '🏃', '🧹', '🍎', '🎹', '🛏️', '🧴', '🐶'];
+  var RCL_EMOJI = ['⚡', '🪴', '🐕', '🍽️', '🧺', '🚪', '🧸', '💧', '🧽', '🗑️'];
   var BLOCK_MAX_PER_SEC = 8;
   var SEC_MAX = 10;
   var SEC_H_MIN = 140;      /* 카드 높이 드래그 최소 px */
@@ -3092,6 +3242,17 @@
         blocks: [{ id: 'blk-' + base, type: SEC_PRIMARY_BLOCK[base], group: '' }]
       });
     }
+    /* 🎯 특별 미션 · ⚡ 역할 체크리스트 — 새로 시작하는 기기에도 기본으로 보여요 */
+    out.push({
+      id: 'sec-special-missions', base: '', emoji: '🎯', title: '특별 미션',
+      width: 'full', w: 'full', h: 0, hidden: false,
+      blocks: [{ id: 'blk-sec-special-missions', type: 'special_missions', group: '', missions: defaultMissions() }]
+    });
+    out.push({
+      id: 'sec-roles', base: '', emoji: '⚡', title: '역할 체크리스트',
+      width: 'half', w: 'half', h: 0, hidden: false,
+      blocks: [{ id: 'blk-sec-roles', type: 'role_checklist', group: '', roles: defaultRoles() }]
+    });
     return out;
   }
 
@@ -3337,6 +3498,12 @@
       b.emoji = (typeof raw.emoji === 'string' && raw.emoji.trim()) ? raw.emoji.trim().slice(0, 4) : '💬';
       b.text = (typeof raw.text === 'string') ? raw.text.slice(0, 400) : '';
     }
+    if (type === 'special_missions') {
+      b.missions = normMissions(raw.missions);
+    }
+    if (type === 'role_checklist') {
+      b.roles = normRoles(raw.roles);
+    }
     return b;
   }
 
@@ -3418,7 +3585,7 @@
   function normalizeSections(s) {
     var defs = defaultSections();
     var defByBase = {};
-    for (var di = 0; di < defs.length; di++) defByBase[defs[di].base] = defs[di];
+    for (var di = 0; di < defs.length; di++) { if (defs[di].base) defByBase[defs[di].base] = defs[di]; }
     var titles = (s.settings && s.settings.sectionTitles) ? s.settings.sectionTitles : {};
     var order = (Object.prototype.toString.call(s.layoutOrder) === '[object Array]') ? s.layoutOrder : [];
     var raw = (s.settings && Object.prototype.toString.call(s.settings.dashboardSections) === '[object Array]')
@@ -3521,7 +3688,40 @@
         width: df3.width, w: df3.width, h: 0, row: null, col: '', hidden: false, blocks: clone(df3.blocks)
       });
     }
+    /* 🎯 특별 미션 · ⚡ 역할 체크리스트 카드는 처음 한 번만 기본으로 넣어요.
+       이미 다른 카드처럼 보이거나 가족이 지운 경우에는 다시 넣지 않도록 표시를 남겨 둬요. */
+    if (s.settings.missionsSeeded !== 1) {
+      s.settings.missionsSeeded = 1;
+      seedExtraSections(list);
+    }
     return applySectionRows(list);
+  }
+
+  /* 새 카드 두 장을 목록 끝에 붙여요 (이미 같은 블록이 있는 카드가 있으면 건너뜀) */
+  function seedExtraSections(list) {
+    var have = {}, i, k;
+    for (i = 0; i < list.length; i++) {
+      var bs = list[i].blocks || [];
+      for (k = 0; k < bs.length; k++) if (bs[k] && bs[k].type) have[bs[k].type] = 1;
+    }
+    var seeds = [
+      { id: 'sec-special-missions', emoji: '🎯', title: '특별 미션', width: 'full', type: 'special_missions' },
+      { id: 'sec-roles', emoji: '⚡', title: '역할 체크리스트', width: 'half', type: 'role_checklist' }
+    ];
+    for (i = 0; i < seeds.length; i++) {
+      var sd = seeds[i];
+      if (have[sd.type] || list.length >= SEC_MAX) continue;
+      var dup = false;
+      for (k = 0; k < list.length; k++) if (list[k].id === sd.id) dup = true;
+      if (dup) continue;
+      var seedBlk = { id: 'blk-' + sd.id, type: sd.type, group: '' };
+      if (sd.type === 'special_missions') seedBlk.missions = defaultMissions();
+      if (sd.type === 'role_checklist') seedBlk.roles = defaultRoles();
+      list.push({
+        id: sd.id, base: '', emoji: sd.emoji, title: sd.title,
+        width: sd.width, w: sd.width, h: 0, row: null, col: '', hidden: false, blocks: [seedBlk]
+      });
+    }
   }
 
   /* 예전 화면·다른 기기와 섞여도 보이도록 이름·순서도 맞춰 둡니다 */
@@ -4895,6 +5095,8 @@
       renderPet();
       renderTodayAcademy();
       renderWeek();
+      renderMissions();
+      renderRoles();
       updateOverall(true);
       renderCoinBadge();
       if (!document.getElementById('roomModal').hidden) renderRoom();
@@ -6054,7 +6256,8 @@
     var h = '<div class="diy-add-blk"><span>+ 블록 넣기</span>';
     var short = {
       routine: '✅ 루틴', target_bar: '🎯 목표바', notice_board: '💬 한마디',
-      today_schedule: '🎒 일정', sticker_board: '⭐ 스티커', weekly_schedule: '🗓️ 일과표'
+      today_schedule: '🎒 일정', sticker_board: '⭐ 스티커', weekly_schedule: '🗓️ 일과표',
+      special_missions: '🎯 미션', role_checklist: '⚡ 역할'
     };
     for (var i = 0; i < BLOCK_ORDER.length; i++) {
       var t = BLOCK_ORDER[i];
@@ -6092,6 +6295,10 @@
       h += '<p class="ep-hint">부모님 한 번 누르기 스티커 판이에요.</p>';
     } else if (blk.type === 'today_schedule') {
       h += '<p class="ep-hint">오늘 학원·일정을 모아 보여 줘요.</p>';
+    } else if (blk.type === 'special_missions') {
+      h += '<p class="ep-hint">기간 안에서 목표 일수만큼 채우면 칭찬 스티커를 자동으로 줘요. 미션은 카드의 ✏️에서 언제든 고치고 지울 수 있어요.</p>';
+    } else if (blk.type === 'role_checklist') {
+      h += '<p class="ep-hint">매일·매주·매월 맡은 집안 역할을 체크해요. 역할과 항목은 카드의 ✏️에서 고칠 수 있어요.</p>';
     }
     h += '</div>';
     return h;
@@ -12726,7 +12933,8 @@
       for (var mi = 0; mi < TAM_MARKS.length; mi++) {
         var mark = TAM_MARKS[mi];
         if (left > mark || left <= mark - TAM_GRACE) continue;
-        var key = currentKey + '|' + cat.id + '|' + mark;
+        /* 목표 시간을 고치면 같은 날이라도 새 시간에 맞춰 다시 울려야 해요 — 열쇠에 목표 시간을 넣어요 */
+        var key = currentKey + '|' + cat.id + '|' + cat.targetTime + '|' + mark;
         if (fired[key]) continue;
         if (!best || mark < best.mark) best = { cat: cat, mark: mark, left: left, key: key };
       }
@@ -13786,6 +13994,8 @@
     renderWeek();
     renderTargetBars();
     renderNoticeBlocks();
+    renderMissions();
+    renderRoles();
     renderEditPanel();
     applyLayoutOrder();
   }
@@ -14719,7 +14929,7 @@
   }
 
   function isOnlyModal(id) {
-    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal', 'petHomeModal', 'roomModal', 'avatarModal', 'shopModal', 'careModal', 'allowModal', 'allowNoticeModal', 'targetAlertModal', 'bulkModal', 'reqModal'];
+    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal', 'petHomeModal', 'roomModal', 'avatarModal', 'shopModal', 'careModal', 'allowModal', 'allowNoticeModal', 'targetAlertModal', 'bulkModal', 'reqModal', 'msnModal', 'rclModal', 'msnWinModal'];
     for (var i = 0; i < ids.length; i++) {
       if (ids[i] === id) continue;
       var el = document.getElementById(ids[i]);
@@ -16004,6 +16214,12 @@
     } else if (blk.type === 'weekly_schedule') {
       h += '<p class="il-note">요일마다 학원·일정을 적어 두면 일과표와 🔔 10분 전 알림에 쓰여요.</p>';
       h += '<div class="week-grid">' + weekGridHtml(true) + '</div>';
+    } else if (blk.type === 'special_missions') {
+      h += '<p class="il-note">기간 안에서 목표 일수만큼 채우면 칭찬 스티커를 자동으로 줘요. 미션은 이 카드의 ✏️나 아래 버튼에서 언제든 고치고 지울 수 있어요.</p>';
+      h += '<button class="add-item" type="button" data-act="msn-add" data-blk="' + esc(blk.id) + '">＋ 특별 미션 추가</button>';
+    } else if (blk.type === 'role_checklist') {
+      h += '<p class="il-note">매일·매주·매월 맺은 역할을 체크해요. 역할·주기·항목은 카드의 ✏️나 아래 버튼에서 고칠 수 있어요.</p>';
+      h += '<button class="add-item" type="button" data-act="rcl-add" data-blk="' + esc(blk.id) + '">＋ 역할 추가</button>';
     } else if (blk.type === 'sticker_board') {
       var st = state.sticker || {};
       h += '<div class="il-grid2">' +
@@ -16446,7 +16662,952 @@
     if (blk.type === 'weekly_schedule') return weekBlockInner(blk);
     if (blk.type === 'target_bar') return '<div class="rt-targets" data-part="box" hidden></div>';
     if (blk.type === 'notice_board') return noticeBlockInner(blk);
+    if (blk.type === 'special_missions') return missionBlockBodyHtml(blk);
+    if (blk.type === 'role_checklist') return roleBlockBodyHtml(blk);
     return '';
+  }
+
+  /* ============ 🎯 특별 미션 · ⚡ 역할 체크리스트 ============
+     두 카드 모두 부모님이 언제든 만들고·고치고·지울 수 있어요.
+     설정과 진행 기록은 config/settings.json(dashboardSections)에 담겨 가족 기기끼리 맞춰져요. */
+
+  function keyToDate(key) {
+    var p = String(key || '').split('-');
+    if (p.length !== 3) return null;
+    var y = parseInt(p[0], 10), m = parseInt(p[1], 10), d = parseInt(p[2], 10);
+    if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
+    var dt = new Date(y, m - 1, d);
+    if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+    return dt;
+  }
+  function dayKeyAdd(key, n) {
+    var d = keyToDate(key);
+    if (!d) return key;
+    d.setDate(d.getDate() + Number(n || 0));
+    return dateKey(d);
+  }
+  /* 두 날짜 사이 날 수 (둘 다 포함) */
+  function dayGap(aKey, bKey) {
+    var a = keyToDate(aKey), b = keyToDate(bKey);
+    if (!a || !b) return 1;
+    return Math.round((b.getTime() - a.getTime()) / 86400000) + 1;
+  }
+  function clampInt(v, lo, hi, def) {
+    var n = parseInt(v, 10);
+    if (isNaN(n)) n = def;
+    if (n < lo) n = lo;
+    if (n > hi) n = hi;
+    return n;
+  }
+  function fmtDayDot(key) {
+    var d = keyToDate(key);
+    return d ? (d.getMonth() + 1) + '/' + d.getDate() : String(key || '');
+  }
+  /* 월요일 시작 주 열쇠 — 매주 역할은 주마다 새로 시작해요 */
+  function weekKeyOf(d) {
+    var t = new Date((d || new Date()).getTime());
+    t = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    var dow = (t.getDay() + 6) % 7;          /* 월=0 … 일=6 */
+    t.setDate(t.getDate() - dow + 3);        /* 그 주의 목요일 */
+    var y = t.getFullYear();
+    var jan4 = new Date(y, 0, 4);
+    var jan4dow = (jan4.getDay() + 6) % 7;
+    var week1 = new Date(y, 0, 4 - jan4dow);
+    var wk = 1 + Math.round((t.getTime() - week1.getTime()) / (7 * 86400000));
+    return y + '-W' + (wk < 10 ? '0' + wk : wk);
+  }
+  function normCycle(v) { return (v === 'week' || v === 'month') ? v : 'day'; }
+  function cycleKeyOf(cycle) {
+    cycle = normCycle(cycle);
+    if (cycle === 'month') return dateKey().slice(0, 7);
+    if (cycle === 'week') return weekKeyOf(new Date());
+    return dateKey();
+  }
+  function cycleLabel(cycle) {
+    cycle = normCycle(cycle);
+    return cycle === 'month' ? '매월' : (cycle === 'week' ? '매주' : '매일');
+  }
+  function cycleShortLabel(cycle) {
+    cycle = normCycle(cycle);
+    return cycle === 'month' ? '이번 달' : (cycle === 'week' ? '이번 주' : '오늘');
+  }
+
+  /* ---- 미션 정리 ---- */
+  function missionDates(m) {
+    var out = [];
+    if (!m) return out;
+    var d = keyToDate(m.start), end = keyToDate(m.end);
+    if (!d || !end) return out;
+    while (d.getTime() <= end.getTime() && out.length < MSN_CELLS_MAX) {
+      out.push(dateKey(d));
+      d.setDate(d.getDate() + 1);
+    }
+    return out;
+  }
+  function missionDoneCount(m) {
+    if (!m || !m.checks) return 0;
+    var dates = missionDates(m), n = 0;
+    for (var i = 0; i < dates.length; i++) if (m.checks[dates[i]]) n++;
+    return n;
+  }
+  function missionComplete(m) {
+    return !!m && m.days > 0 && missionDoneCount(m) >= m.days;
+  }
+  function normMission(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    var start = /^\d{4}-\d{2}-\d{2}$/.test(String(raw.start || '')) ? String(raw.start) : dateKey();
+    var end = /^\d{4}-\d{2}-\d{2}$/.test(String(raw.end || '')) ? String(raw.end) : dayKeyAdd(start, 6);
+    if (end < start) end = start;
+    var span = dayGap(start, end);
+    var days = clampInt(raw.days, 1, MSN_DAYS_MAX, span);
+    if (days > span) days = span;
+    var m = {
+      id: (typeof raw.id === 'string' && /^sm-[A-Za-z0-9_-]{1,32}$/.test(raw.id)) ? raw.id : ('sm-' + uid('')),
+      emoji: (typeof raw.emoji === 'string' && raw.emoji.trim()) ? raw.emoji.trim().slice(0, 4) : '🎯',
+      title: (typeof raw.title === 'string' && raw.title.replace(/\s+/g, ' ').trim()) ? raw.title.replace(/\s+/g, ' ').trim().slice(0, 30) : '새 특별 미션',
+      start: start, end: end, days: days,
+      reward: clampInt(raw.reward, 0, MSN_REWARD_MAX, 1),
+      checks: {},
+      granted: raw.granted === true,
+      grantedAt: Math.max(0, Number(raw.grantedAt) || 0),
+      u: Math.max(0, Number(raw.u) || 0)
+    };
+    var rc = (raw.checks && typeof raw.checks === 'object' && Object.prototype.toString.call(raw.checks) !== '[object Array]') ? raw.checks : {};
+    for (var k in rc) {
+      if (!Object.prototype.hasOwnProperty.call(rc, k)) continue;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !rc[k]) continue;
+      if (k < m.start || k > m.end) continue;
+      m.checks[k] = 1;
+    }
+    return m;
+  }
+  function normMissions(rawList) {
+    var out = [], seen = {};
+    var arr = (Object.prototype.toString.call(rawList) === '[object Array]') ? rawList : [];
+    for (var i = 0; i < arr.length && out.length < MSN_MAX; i++) {
+      var m = normMission(arr[i]);
+      if (!m || seen[m.id]) continue;
+      seen[m.id] = 1;
+      out.push(m);
+    }
+    return out;
+  }
+  /* 처음 한 번 보여 줄 예시 미션 — 부모님이 고치거나 지울 수 있어요 */
+  function defaultMissions() {
+    var start = dateKey();
+    var d = keyToDate(start) || new Date();
+    var toSun = (7 - d.getDay()) % 7;
+    var end = dayKeyAdd(start, toSun);
+    return [{
+      id: 'sm-milk-1', emoji: '🥛', title: '이번 주 일요일까지 우유 마시기',
+      start: start, end: end, days: Math.max(1, dayGap(start, end)), reward: 1,
+      checks: {}, granted: false, grantedAt: 0, u: 0
+    }];
+  }
+
+  /* ---- 역할 정리 ---- */
+  function normRole(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    var items = [], seen = {};
+    var rawItems = (Object.prototype.toString.call(raw.items) === '[object Array]') ? raw.items : [];
+    for (var i = 0; i < rawItems.length && items.length < RCL_ITEM_MAX; i++) {
+      var it = rawItems[i] || {};
+      var txt = (typeof it.text === 'string') ? it.text.replace(/\s+/g, ' ').trim().slice(0, 40) : '';
+      if (!txt) continue;
+      var iid = (typeof it.id === 'string' && /^ri-[A-Za-z0-9_-]{1,32}$/.test(it.id) && !seen[it.id]) ? it.id : ('ri-' + uid(''));
+      if (seen[iid]) continue;
+      seen[iid] = 1;
+      items.push({ id: iid, text: txt });
+    }
+    var done = {}, keys = [];
+    var rawDone = (raw.done && typeof raw.done === 'object' && Object.prototype.toString.call(raw.done) !== '[object Array]') ? raw.done : {};
+    for (var k in rawDone) {
+      if (!Object.prototype.hasOwnProperty.call(rawDone, k)) continue;
+      if (!/^(\d{4}-\d{2}-\d{2}|\d{4}-W\d{2}|\d{4}-\d{2})$/.test(k)) continue;
+      var rec = rawDone[k];
+      if (!rec || typeof rec !== 'object') continue;
+      var one = { items: {}, g: rec.g ? 1 : 0, at: Math.max(0, Number(rec.at) || 0) };
+      var ri = (rec.items && typeof rec.items === 'object') ? rec.items : {};
+      for (var ik in ri) {
+        if (!Object.prototype.hasOwnProperty.call(ri, ik)) continue;
+        if (typeof ik !== 'string' || ik.length > 40 || !ri[ik]) continue;
+        one.items[ik] = 1;
+      }
+      done[k] = one;
+      keys.push(k);
+    }
+    if (keys.length > 24) {
+      keys.sort(function (a, b) { return (done[b].at || 0) - (done[a].at || 0); });
+      var keep = {};
+      for (var j = 0; j < 24; j++) keep[keys[j]] = done[keys[j]];
+      done = keep;
+    }
+    return {
+      id: (typeof raw.id === 'string' && /^rl-[A-Za-z0-9_-]{1,32}$/.test(raw.id)) ? raw.id : ('rl-' + uid('')),
+      emoji: (typeof raw.emoji === 'string' && raw.emoji.trim()) ? raw.emoji.trim().slice(0, 4) : '⚡',
+      title: (typeof raw.title === 'string' && raw.title.replace(/\s+/g, ' ').trim()) ? raw.title.replace(/\s+/g, ' ').trim().slice(0, 16) : '새 역할',
+      cycle: normCycle(raw.cycle),
+      reward: clampInt(raw.reward, 0, MSN_REWARD_MAX, 1),
+      items: items,
+      done: done,
+      u: Math.max(0, Number(raw.u) || 0)
+    };
+  }
+  function normRoles(rawList) {
+    var out = [], seen = {};
+    var arr = (Object.prototype.toString.call(rawList) === '[object Array]') ? rawList : [];
+    for (var i = 0; i < arr.length && out.length < RCL_MAX; i++) {
+      var r = normRole(arr[i]);
+      if (!r || seen[r.id]) continue;
+      seen[r.id] = 1;
+      out.push(r);
+    }
+    return out;
+  }
+  function defaultRoles() {
+    return [
+      {
+        id: 'rl-power-1', emoji: '⚡', title: '전력관리자', cycle: 'day', reward: 1,
+        items: [
+          { id: 'ri-power-1', text: '아침에 안 쓰는 전등·전자제품 끄기' },
+          { id: 'ri-power-2', text: '저녁에 방 불 끄고 나오기' }
+        ],
+        done: {}, u: 0
+      },
+      {
+        id: 'rl-plant-1', emoji: '🪴', title: '식집사', cycle: 'month', reward: 1,
+        items: [
+          { id: 'ri-plant-1', text: '화분마다 물 주기' },
+          { id: 'ri-plant-2', text: '잎 색·상태 살펴보기' }
+        ],
+        done: {}, u: 0
+      }
+    ];
+  }
+
+  /* ---- 블록·항목 찾기 ---- */
+  function blockNodeOf(blkId) {
+    var nodes = document.querySelectorAll('[data-block-type]');
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].getAttribute('data-block') === blkId) return nodes[i];
+    }
+    return null;
+  }
+  function missionBlk(blkId) {
+    var f = findBlk(blkId);
+    if (!f || f.blk.type !== 'special_missions') return null;
+    if (Object.prototype.toString.call(f.blk.missions) !== '[object Array]') f.blk.missions = [];
+    return f;
+  }
+  function roleBlk(blkId) {
+    var f = findBlk(blkId);
+    if (!f || f.blk.type !== 'role_checklist') return null;
+    if (Object.prototype.toString.call(f.blk.roles) !== '[object Array]') f.blk.roles = [];
+    return f;
+  }
+  function findMissionIn(blk, id) {
+    var list = (blk && blk.missions) || [];
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+  function findRoleIn(blk, id) {
+    var list = (blk && blk.roles) || [];
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+
+  /* ---- 스티커 자동 지급 (미션·역할 완료) ---- */
+  function archiveBoardQuiet() {
+    var st = state.sticker;
+    if (!st || !(st.slots > 0) || st.stickers.length < st.slots) return false;
+    state.boardLog.push({ d: dateKey(), t: Date.now(), slots: st.slots, goal: st.goal || '' });
+    st.stickers = [];
+    st.celebrated = false;
+    return true;
+  }
+  /* 칭찬 스티커를 n개 붙이고, 스티커 장부·코인까지 기존 방식 그대로 남겨요 */
+  function grantStickersAuto(count, reason) {
+    var n = clampInt(count, 0, 20, 0);
+    if (!n || !state.sticker) return 0;
+    var st = state.sticker;
+    var slots = Math.max(1, parseInt(st.slots, 10) || 10);
+    for (var i = 0; i < n; i++) {
+      if (st.stickers.length >= slots) archiveBoardQuiet();
+      var emoji = STICKER_SET[Math.floor(Math.random() * STICKER_SET.length)];
+      st.stickers.push(emoji);
+      var logged = logSticker(emoji, String(reason || '').slice(0, 20));
+      try { markStickerCoinSeen(logged); } catch (e0) { /* 무시 */ }
+      try { awardStickerCoins(); } catch (e1) { /* 무시 */ }
+    }
+    freshIdx = st.stickers.length - 1;
+    touchBoard(Date.now());
+    saveState();
+    try { renderStickers(); } catch (e2) { /* 무시 */ }
+    try { renderCoinBadge(); } catch (e3) { /* 무시 */ }
+    try { refreshAcctStickerPane(); } catch (e4) { /* 무시 */ }
+    try { confetti(22); snd('sticker'); } catch (e5) { /* 무시 */ }
+    return n;
+  }
+
+  function showMilestoneWin(emoji, title, text) {
+    var m = document.getElementById('msnWinModal');
+    if (!m) { showToast(title + ' ' + text); return; }
+    var e1 = document.getElementById('msnWinEmoji');
+    if (e1) e1.textContent = emoji || '🎉';
+    var e2 = document.getElementById('msnWinTitle');
+    if (e2) e2.textContent = title || '완료!';
+    var e3 = document.getElementById('msnWinText');
+    if (e3) e3.textContent = text || '';
+    m.hidden = false;
+    lockScroll();
+    try { confetti(60); snd('win'); } catch (e) { /* 무시 */ }
+  }
+  function closeMilestoneWin() {
+    var m = document.getElementById('msnWinModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('msnWinModal')) unlockScroll();
+  }
+
+  /* 모든 칸을 채운 미션은 보상을 한 번만 줘요 (granted 표시로 중복 지급 방지) */
+  function settleMission(blkId, m, opts) {
+    if (!m || m.granted || !missionComplete(m)) return 0;
+    m.granted = true;
+    m.grantedAt = Date.now();
+    m.u = Date.now();
+    var n = clampInt(m.reward, 0, MSN_REWARD_MAX, 0);
+    if (n > 0) grantStickersAuto(n, '특별미션');
+    saveState();
+    if (!opts || opts.celebrate !== false) {
+      showMilestoneWin('🎯', '특별 미션 완료!', (m.emoji ? m.emoji + ' ' : '') + (m.title || '') +
+        (n > 0 ? '\n칭찬 스티커 ' + n + '개를 받았어요!' : '\n끝까지 해냈어요!'));
+    }
+    return n;
+  }
+
+  function roleCycleState(role) {
+    if (!role.done || typeof role.done !== 'object') role.done = {};
+    var key = cycleKeyOf(role.cycle);
+    var cur = role.done[key];
+    if (!cur || typeof cur !== 'object') { cur = { items: {}, g: 0, at: 0 }; role.done[key] = cur; }
+    if (!cur.items || typeof cur.items !== 'object') cur.items = {};
+    return { key: key, cur: cur };
+  }
+  function roleDoneCount(role, cur) {
+    var n = 0, items = role.items || [];
+    for (var i = 0; i < items.length; i++) if (cur.items[items[i].id]) n++;
+    return n;
+  }
+  function roleComplete(role, cur) {
+    var items = role.items || [];
+    return items.length > 0 && roleDoneCount(role, cur) >= items.length;
+  }
+  function settleRole(role, cur, opts) {
+    if (!role || !cur || cur.g || !roleComplete(role, cur)) return 0;
+    var n = clampInt(role.reward, 0, MSN_REWARD_MAX, 0);
+    cur.g = 1;
+    cur.at = Date.now();
+    role.u = Date.now();
+    if (n > 0) grantStickersAuto(n, '역할:' + String(role.title || '').slice(0, 12));
+    saveState();
+    if (!opts || opts.celebrate !== false) {
+      showMilestoneWin(role.emoji || '⚡', '역할 완료!', (role.emoji ? role.emoji + ' ' : '') + (role.title || '') +
+        ' · ' + cycleShortLabel(role.cycle) + ' 몫을 다 했어요!' +
+        (n > 0 ? '\n칭찬 스티커 ' + n + '개를 받았어요!' : ''));
+    }
+    return n;
+  }
+
+  /* ---- 그리기 ---- */
+  function missionBlockBodyHtml(blk) {
+    var list = blk.missions || [];
+    var h = '<div class="msn-list">';
+    if (!list.length) {
+      h += '<p class="blk-empty">아직 특별 미션이 없어요.' + (can('edit') ? ' 아래 [＋ 미션 추가]로 만들어 보세요.' : '') + '</p>';
+    }
+    for (var i = 0; i < list.length; i++) h += missionCardHtml(blk, list[i]);
+    if (can('edit')) h += '<button type="button" class="msn-add" data-act="msn-add" data-blk="' + esc(blk.id) + '">＋ 미션 추가</button>';
+    h += '</div>';
+    return h;
+  }
+
+  function missionCardHtml(blk, m) {
+    var today = dateKey();
+    var dates = missionDates(m);
+    var done = missionDoneCount(m);
+    var goal = Math.max(1, m.days || 1);
+    var pct = Math.min(100, Math.round(done * 100 / goal));
+    var complete = done >= goal;
+    var over = m.end < today;
+    var notYet = m.start > today;
+    var rewardTxt = m.reward > 0 ? '⭐ ' + m.reward + '개' : '보상 없음';
+    var h = '<article class="msn-card' + (complete ? ' done' : '') + (over && !complete ? ' over' : '') + '" data-mission="' + esc(m.id) + '">';
+    h += '<div class="msn-top"><span class="msn-emoji" aria-hidden="true">' + esc(m.emoji || '🎯') + '</span>';
+    h += '<div class="msn-meta"><b class="msn-title">' + esc(m.title || '특별 미션') + '</b>';
+    h += '<span class="msn-sub">' + esc(fmtDayDot(m.start) + '~' + fmtDayDot(m.end)) + ' · ' + goal + '일 중 ' + Math.min(done, goal) + '일</span></div>';
+    if (can('edit')) {
+      h += '<button type="button" class="msn-edit" data-act="msn-edit" data-blk="' + esc(blk.id) + '" data-mission="' + esc(m.id) +
+        '" aria-label="미션 고치기" title="미션 고치기">✏️</button>';
+    }
+    h += '</div>';
+    h += '<div class="msn-cells" role="group" aria-label="' + esc((m.title || '미션') + ' 날짜 체크') + '">';
+    for (var i = 0; i < dates.length; i++) {
+      var dk = dates[i];
+      var dd = keyToDate(dk);
+      var on = !!m.checks[dk];
+      var isToday = dk === today;
+      var future = dk > today;
+      var missed = !on && dk < today;
+      var cls = 'msn-cell' + (on ? ' on' : '') + (isToday ? ' today' : '') + (future ? ' off' : '') + (missed ? ' missed' : '');
+      var dis = future ? ' disabled aria-disabled="true"' : '';
+      var lbl = dd ? ((dd.getMonth() + 1) + '월 ' + dd.getDate() + '일 ' + WEEK_KO[dd.getDay()] + '요일') : dk;
+      h += '<button type="button" class="' + cls + '" data-act="msn-check" data-blk="' + esc(blk.id) + '" data-mission="' + esc(m.id) +
+        '" data-date="' + esc(dk) + '"' + dis + ' aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + esc(lbl + (on ? ' 체크됨' : (future ? ' 아직' : ' 체크'))) + '">' +
+        '<span class="d">' + (dd ? dd.getDate() : '·') + '</span><span class="w">' + (dd ? WEEK_KO[dd.getDay()] : '') + '</span></button>';
+    }
+    h += '</div>';
+    h += '<div class="msn-foot"><div class="msn-bar" aria-hidden="true"><i style="width:' + pct + '%"></i></div>' +
+      '<span class="msn-prog">' + Math.min(done, goal) + '/' + goal + '</span>' +
+      '<span class="msn-reward">' + esc(rewardTxt) + '</span></div>';
+    if (complete) {
+      h += '<p class="msn-msg">🎉 미션 완료!' + (m.reward > 0 ? ' 칭찬 스티커 ' + m.reward + '개 받았어요.' : ' 끝까지 해냈어요!') + '</p>';
+    } else if (over) {
+      h += '<p class="msn-msg over">⏰ 기간이 끝났어요 · ' + Math.max(0, goal - done) + '일 모자랐어요</p>';
+    } else if (notYet) {
+      h += '<p class="msn-msg wait">⏳ ' + esc(fmtDayDot(m.start)) + '부터 시작해요</p>';
+    } else {
+      var left = dayGap(today, m.end);
+      h += '<p class="msn-msg wait">⏳ ' + left + '일 남았어요 · 오늘 한 칸 체크!</p>';
+    }
+    h += '</article>';
+    return h;
+  }
+
+  function roleBlockBodyHtml(blk) {
+    var roles = blk.roles || [];
+    var h = '<div class="rcl-list">';
+    if (!roles.length) {
+      h += '<p class="rcl-empty">아직 맡은 역할이 없어요.' + (can('edit') ? ' 아래 [＋ 역할 추가]로 만들어 보세요.' : '') + '</p>';
+    }
+    for (var i = 0; i < roles.length; i++) h += roleCardHtml(blk, roles[i]);
+    if (can('edit')) h += '<button type="button" class="msn-add" data-act="rcl-add" data-blk="' + esc(blk.id) + '">＋ 역할 추가</button>';
+    h += '</div>';
+    return h;
+  }
+
+  function roleCardHtml(blk, role) {
+    var st = roleCycleState(role);
+    var items = role.items || [];
+    var done = roleDoneCount(role, st.cur);
+    var total = items.length;
+    var pct = total ? Math.min(100, Math.round(done * 100 / total)) : 0;
+    var complete = total > 0 && done >= total;
+    var cyc = normCycle(role.cycle);
+    var h = '<article class="rcl-role' + (complete ? ' done' : '') + '" data-role="' + esc(role.id) + '">';
+    h += '<div class="rcl-head"><span class="rcl-emoji" aria-hidden="true">' + esc(role.emoji || '⚡') + '</span>' +
+      '<b class="rcl-name">' + esc(role.title || '역할') + '</b>' +
+      '<span class="rcl-cycle is-' + cyc + '">' + cycleLabel(cyc) + '</span>';
+    if (can('edit')) {
+      h += '<button type="button" class="msn-edit" data-act="rcl-edit" data-blk="' + esc(blk.id) + '" data-role="' + esc(role.id) +
+        '" aria-label="역할 고치기" title="역할 고치기">✏️</button>';
+    }
+    h += '</div>';
+    h += '<ul class="rcl-items">';
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      var on = !!st.cur.items[it.id];
+      h += '<li><button type="button" class="rcl-item' + (on ? ' on' : '') + '" data-act="rcl-toggle" data-blk="' + esc(blk.id) +
+        '" data-role="' + esc(role.id) + '" data-item="' + esc(it.id) + '" role="checkbox" aria-checked="' + (on ? 'true' : 'false') + '">' +
+        '<span class="box" aria-hidden="true">✓</span><span class="tx">' + esc(it.text) + '</span></button></li>';
+    }
+    if (!items.length) h += '<li class="msn-sub">체크 항목이 없어요. ✏️로 항목을 넣어 주세요.</li>';
+    h += '</ul>';
+    h += '<div class="rcl-foot"><div class="msn-bar" aria-hidden="true"><i style="width:' + pct + '%"></i></div>' +
+      '<span class="rcl-count">' + cycleShortLabel(cyc) + ' ' + done + '/' + total + '</span>' +
+      '<span class="msn-reward">' + esc(role.reward > 0 ? '⭐ ' + role.reward + '개' : '보상 없음') + '</span></div>';
+    if (complete) h += '<p class="msn-msg">🎉 ' + cycleShortLabel(cyc) + ' 몫을 다 했어요!' + (role.reward > 0 ? ' 스티커 ' + role.reward + '개 받았어요.' : '') + '</p>';
+    h += '</article>';
+    return h;
+  }
+
+  function renderMissionBlock(blkId) {
+    var f = missionBlk(blkId);
+    if (!f) return;
+    if (ui.editing && can('edit') && inlineSecOn(f.sec)) { renderSections(); return; }
+    var root = blockNodeOf(blkId);
+    if (!root) return;
+    var body = root.querySelector('.blk-body');
+    if (body) body.innerHTML = missionBlockBodyHtml(f.blk);
+  }
+  function renderRoleBlock(blkId) {
+    var f = roleBlk(blkId);
+    if (!f) return;
+    if (ui.editing && can('edit') && inlineSecOn(f.sec)) { renderSections(); return; }
+    var root = blockNodeOf(blkId);
+    if (!root) return;
+    var body = root.querySelector('.blk-body');
+    if (body) body.innerHTML = roleBlockBodyHtml(f.blk);
+  }
+  function renderMissions() {
+    eachBlockOfType('special_missions', function (root, blk) {
+      var body = root.querySelector('.blk-body');
+      if (body) body.innerHTML = missionBlockBodyHtml(blk);
+    });
+  }
+  function renderRoles() {
+    eachBlockOfType('role_checklist', function (root, blk) {
+      var body = root.querySelector('.blk-body');
+      if (body) body.innerHTML = roleBlockBodyHtml(blk);
+    });
+  }
+
+  /* ---- 체크 ---- */
+  function onMissionCheck(blkId, missionId, dk) {
+    if (!can('check')) return;
+    var f = missionBlk(blkId);
+    if (!f) return;
+    var m = findMissionIn(f.blk, missionId);
+    if (!m || !dk) return;
+    var today = dateKey();
+    if (dk < m.start || dk > m.end || dk > today) return;
+    var wasOn = !!m.checks[dk];
+    if (wasOn) delete m.checks[dk]; else m.checks[dk] = 1;
+    m.u = Date.now();
+    saveState();
+    if (!wasOn) {
+      try { snd('check'); } catch (e) { /* 무시 */ }
+      settleMission(blkId, m, { celebrate: true });
+    } else {
+      try { snd('uncheck'); } catch (e) { /* 무시 */ }
+    }
+    renderMissionBlock(blkId);
+  }
+
+  function onRoleToggle(blkId, roleId, itemId) {
+    if (!can('check')) return;
+    var f = roleBlk(blkId);
+    if (!f) return;
+    var role = findRoleIn(f.blk, roleId);
+    if (!role || !itemId) return;
+    var st = roleCycleState(role);
+    var wasOn = !!st.cur.items[itemId];
+    if (wasOn) delete st.cur.items[itemId]; else st.cur.items[itemId] = 1;
+    st.cur.at = Date.now();
+    role.u = Date.now();
+    saveState();
+    if (!wasOn) {
+      try { snd('check'); } catch (e) { /* 무시 */ }
+      settleRole(role, st.cur, { celebrate: true });
+    } else {
+      try { snd('uncheck'); } catch (e) { /* 무시 */ }
+    }
+    renderRoleBlock(blkId);
+  }
+
+  /* ---- 미션 고치기 팝업 ---- */
+  var msnEdit = { blk: '', id: '', isNew: false, d: null };
+
+  function openMissionEditor(blkId, missionId) {
+    if (!can('edit')) return;
+    var f = missionBlk(blkId);
+    if (!f) return;
+    var m = missionId ? findMissionIn(f.blk, missionId) : null;
+    var isNew = !m;
+    if (isNew && (f.blk.missions || []).length >= MSN_MAX) { showToast('미션은 ' + MSN_MAX + '개까지 만들 수 있어요.'); return; }
+    var start = dateKey();
+    msnEdit = {
+      blk: blkId, id: m ? m.id : ('sm-' + uid('')), isNew: isNew,
+      d: m ? { emoji: m.emoji, title: m.title, start: m.start, end: m.end, days: m.days, reward: m.reward }
+        : { emoji: '🎯', title: '', start: start, end: dayKeyAdd(start, 6), days: 7, reward: 1 }
+    };
+    renderMissionEditor();
+    var el = document.getElementById('msnModal');
+    if (el) { el.hidden = false; lockScroll(); }
+    var inp = document.getElementById('msnTitle');
+    if (inp) { try { inp.focus(); inp.select(); } catch (e) { /* 무시 */ } }
+  }
+  function closeMissionEditor() {
+    var el = document.getElementById('msnModal');
+    if (el) el.hidden = true;
+    msnEdit = { blk: '', id: '', isNew: false, d: null };
+    if (isOnlyModal('msnModal')) unlockScroll();
+  }
+  function missionCalcText(d) {
+    var span = dayGap(d.start, d.end);
+    var days = clampInt(d.days, 1, MSN_DAYS_MAX, 1);
+    if (days > span) return '기간이 ' + span + '일이라, 목표 ' + days + '일에 맞춰 종료일을 늘려 저장해요.';
+    return span + '일 기간 중 ' + days + '일을 채우면 완료! 하루에 한 칸씩 체크해요.';
+  }
+  function emojiRowHtml(cur, list, act) {
+    var h = '<div class="me-emoji">';
+    var all = list.slice(0);
+    if (cur && all.indexOf(cur) < 0) all.unshift(cur);
+    for (var i = 0; i < all.length; i++) {
+      h += '<button type="button" data-act="' + act + '" data-e="' + esc(all[i]) + '" class="' + (all[i] === cur ? 'on' : '') +
+        '" aria-pressed="' + (all[i] === cur ? 'true' : 'false') + '">' + esc(all[i]) + '</button>';
+    }
+    h += '</div>';
+    return h;
+  }
+  function missionEditorHtml() {
+    var d = msnEdit.d;
+    if (!d) return '';
+    var h = '<h2 id="msnModalTitle">' + (msnEdit.isNew ? '🎯 새 특별 미션' : '🎯 미션 고치기') + '</h2>';
+    h += '<p class="me-note">제목·기간·목표 일수·보상 스티커를 만들고 나서도 언제든 바꿀 수 있어요.</p>';
+    h += '<div class="me-field"><span>이모지</span>' + emojiRowHtml(d.emoji, MSN_EMOJI, 'msn-pick-emoji') +
+      '<input class="inp" id="msnEmoji" maxlength="4" value="' + esc(d.emoji || '🎯') + '" aria-label="미션 이모지"></div>';
+    h += '<label class="me-field"><span>무엇을 하나요</span><input class="inp" id="msnTitle" maxlength="30" placeholder="예: 일주일 동안 우유 마시기" value="' + esc(d.title || '') + '"></label>';
+    h += '<div class="me-row">' +
+      '<label class="me-field"><span>시작일</span><input class="inp" type="date" id="msnStart" value="' + esc(d.start) + '"></label>' +
+      '<label class="me-field"><span>종료일</span><input class="inp" type="date" id="msnEnd" value="' + esc(d.end) + '"></label>' +
+      '</div>';
+    h += '<div class="me-row">' +
+      '<div class="me-field"><span>목표 일수</span><div class="me-step">' +
+        '<button type="button" data-act="msn-days-minus" aria-label="목표 일수 줄이기">−</button>' +
+        '<input class="inp" type="number" inputmode="numeric" id="msnDays" min="1" max="' + MSN_DAYS_MAX + '" value="' + clampInt(d.days, 1, MSN_DAYS_MAX, 1) + '">' +
+        '<button type="button" data-act="msn-days-plus" aria-label="목표 일수 늘리기">＋</button></div></div>' +
+      '<div class="me-field"><span>보상 스티커</span><div class="me-step">' +
+        '<button type="button" data-act="msn-reward-minus" aria-label="보상 줄이기">−</button>' +
+        '<input class="inp" type="number" inputmode="numeric" id="msnReward" min="0" max="' + MSN_REWARD_MAX + '" value="' + clampInt(d.reward, 0, MSN_REWARD_MAX, 0) + '">' +
+        '<button type="button" data-act="msn-reward-plus" aria-label="보상 늘리기">＋</button></div></div>' +
+      '</div>';
+    h += '<p class="me-note" id="msnCalc">' + esc(missionCalcText(d)) + '</p>';
+    h += '<div class="me-actions">' +
+      '<button type="button" class="modal-btn" data-act="msn-save">저장</button>' +
+      '<button type="button" class="modal-btn sub" data-act="msn-close">취소</button>' +
+      (msnEdit.isNew ? '' : '<button type="button" class="me-del" data-act="msn-del">삭제</button>') +
+      '</div>';
+    return h;
+  }
+  function renderMissionEditor() {
+    var body = document.getElementById('msnEditBody');
+    if (body) body.innerHTML = missionEditorHtml();
+  }
+  function syncMissionCalc() {
+    var el = document.getElementById('msnCalc');
+    if (el && msnEdit.d) el.textContent = missionCalcText(msnEdit.d);
+    var ds = document.getElementById('msnDays');
+    if (ds && msnEdit.d) ds.value = clampInt(msnEdit.d.days, 1, MSN_DAYS_MAX, 1);
+    var rs = document.getElementById('msnReward');
+    if (rs && msnEdit.d) rs.value = clampInt(msnEdit.d.reward, 0, MSN_REWARD_MAX, 0);
+    var es = document.getElementById('msnEnd');
+    if (es && msnEdit.d) es.value = msnEdit.d.end;
+  }
+  function saveMissionEditor() {
+    if (!can('edit') || !msnEdit.d) return;
+    var f = missionBlk(msnEdit.blk);
+    if (!f) { closeMissionEditor(); return; }
+    var d = msnEdit.d;
+    var title = String(d.title || '').replace(/\s+/g, ' ').trim().slice(0, 30);
+    if (!title) { showToast('미션 이름을 적어 주세요.'); return; }
+    var start = /^\d{4}-\d{2}-\d{2}$/.test(String(d.start || '')) ? d.start : dateKey();
+    var end = /^\d{4}-\d{2}-\d{2}$/.test(String(d.end || '')) ? d.end : start;
+    if (end < start) end = start;
+    var days = clampInt(d.days, 1, MSN_DAYS_MAX, 1);
+    if (days > dayGap(start, end)) end = dayKeyAdd(start, days - 1);
+    var list = f.blk.missions || (f.blk.missions = []);
+    var at = -1;
+    for (var i = 0; i < list.length; i++) if (list[i].id === msnEdit.id) at = i;
+    if (at < 0 && list.length >= MSN_MAX) { showToast('미션은 ' + MSN_MAX + '개까지 만들 수 있어요.'); return; }
+    var old = at >= 0 ? list[at] : null;
+    var m = {
+      id: msnEdit.id, emoji: String(d.emoji || '🎯').trim().slice(0, 4) || '🎯', title: title,
+      start: start, end: end, days: days,
+      reward: clampInt(d.reward, 0, MSN_REWARD_MAX, 0),
+      checks: old ? (old.checks || {}) : {},
+      granted: old ? !!old.granted : false,
+      grantedAt: old ? (Number(old.grantedAt) || 0) : 0,
+      u: Date.now()
+    };
+    var keep = {}, dates = missionDates(m);
+    for (var k = 0; k < dates.length; k++) if (m.checks[dates[k]]) keep[dates[k]] = 1;
+    m.checks = keep;
+    if (at >= 0) list[at] = m; else list.push(m);
+    var blkId = msnEdit.blk, wasNew = msnEdit.isNew;
+    saveState();
+    closeMissionEditor();
+    settleMission(blkId, m, { celebrate: true });
+    renderMissionBlock(blkId);
+    try { renderEditPanel(); } catch (e0) { /* 무시 */ }
+    showToast(wasNew ? '🎯 특별 미션을 만들었어요.' : '🎯 미션을 고쳤어요.');
+    try { scheduleSync('settings'); } catch (e1) { /* 무시 */ }
+  }
+  function deleteMissionEditor() {
+    if (!can('edit') || !msnEdit.d) return;
+    var f = missionBlk(msnEdit.blk);
+    if (!f) { closeMissionEditor(); return; }
+    var list = f.blk.missions || [];
+    var at = -1;
+    for (var i = 0; i < list.length; i++) if (list[i].id === msnEdit.id) at = i;
+    if (at < 0) { closeMissionEditor(); return; }
+    var m = list[at];
+    if (!window.confirm('"' + (m.title || '미션') + '" 미션을 지울까요?\n체크한 날짜와 받은 보상 기록도 함께 사라져요.')) return;
+    var blkId = msnEdit.blk;
+    list.splice(at, 1);
+    saveState();
+    closeMissionEditor();
+    renderMissionBlock(blkId);
+    try { renderEditPanel(); } catch (e0) { /* 무시 */ }
+    showToast('미션을 지웠어요.');
+  }
+
+  /* ---- 역할 고치기 팝업 ---- */
+  var rclEdit = { blk: '', id: '', isNew: false, d: null };
+
+  function openRoleEditor(blkId, roleId) {
+    if (!can('edit')) return;
+    var f = roleBlk(blkId);
+    if (!f) return;
+    var role = roleId ? findRoleIn(f.blk, roleId) : null;
+    var isNew = !role;
+    if (isNew && (f.blk.roles || []).length >= RCL_MAX) { showToast('역할은 ' + RCL_MAX + '개까지 만들 수 있어요.'); return; }
+    rclEdit = {
+      blk: blkId, id: role ? role.id : ('rl-' + uid('')), isNew: isNew,
+      d: role
+        ? { emoji: role.emoji, title: role.title, cycle: role.cycle, reward: role.reward,
+            items: (role.items || []).map(function (it) { return { id: it.id, text: it.text }; }) }
+        : { emoji: '⚡', title: '', cycle: 'day', reward: 1, items: [{ id: 'ri-' + uid(''), text: '' }] }
+    };
+    renderRoleEditor();
+    var el = document.getElementById('rclModal');
+    if (el) { el.hidden = false; lockScroll(); }
+    var inp = document.getElementById('rclName');
+    if (inp) { try { inp.focus(); } catch (e) { /* 무시 */ } }
+  }
+  function closeRoleEditor() {
+    var el = document.getElementById('rclModal');
+    if (el) el.hidden = true;
+    rclEdit = { blk: '', id: '', isNew: false, d: null };
+    if (isOnlyModal('rclModal')) unlockScroll();
+  }
+  function roleEditorHtml() {
+    var d = rclEdit.d;
+    if (!d) return '';
+    var h = '<h2 id="rclModalTitle">' + (rclEdit.isNew ? '⚡ 새 역할' : '⚡ 역할 고치기') + '</h2>';
+    h += '<p class="me-note">이름·이모지·주기·보상 스티커와 체크 항목을 언제든 바꿀 수 있어요.</p>';
+    h += '<div class="me-field"><span>이모지</span>' + emojiRowHtml(d.emoji, RCL_EMOJI, 'rcl-pick-emoji') +
+      '<input class="inp" id="rclEmoji" maxlength="4" value="' + esc(d.emoji || '⚡') + '" aria-label="역할 이모지"></div>';
+    h += '<label class="me-field"><span>역할 이름</span><input class="inp" id="rclName" maxlength="16" placeholder="예: 전력관리자" value="' + esc(d.title || '') + '"></label>';
+    h += '<div class="me-field"><span>주기 — 이 주기가 바뀌면 체크가 새로 시작해요</span><div class="me-cycles">';
+    var cycles = [['day', '매일'], ['week', '매주'], ['month', '매월']];
+    for (var i = 0; i < cycles.length; i++) {
+      h += '<button type="button" data-act="rcl-cycle" data-c="' + cycles[i][0] + '" class="' + (normCycle(d.cycle) === cycles[i][0] ? 'on' : '') +
+        '" aria-pressed="' + (normCycle(d.cycle) === cycles[i][0] ? 'true' : 'false') + '">' + cycles[i][1] + '</button>';
+    }
+    h += '</div></div>';
+    h += '<div class="me-field"><span>완료 보상 스티커 (0 = 스티커 없이 완료)</span><div class="me-step">' +
+      '<button type="button" data-act="rcl-reward-minus" aria-label="보상 줄이기">−</button>' +
+      '<input class="inp" type="number" inputmode="numeric" id="rclReward" min="0" max="' + MSN_REWARD_MAX + '" value="' + clampInt(d.reward, 0, MSN_REWARD_MAX, 0) + '">' +
+      '<button type="button" data-act="rcl-reward-plus" aria-label="보상 늘리기">＋</button></div></div>';
+    h += '<div class="me-field"><span>체크 항목</span><div class="me-items">';
+    for (var j = 0; j < d.items.length; j++) {
+      h += '<div class="me-item"><input class="inp" data-ritem="' + j + '" maxlength="40" placeholder="예: 아침에 안 쓰는 불 끄기" value="' + esc(d.items[j].text || '') + '">' +
+        '<button type="button" class="del-btn" data-act="rcl-item-del" data-i="' + j + '" aria-label="항목 지우기">✕</button></div>';
+    }
+    h += '</div>';
+    if (d.items.length < RCL_ITEM_MAX) h += '<button type="button" class="me-add" data-act="rcl-item-add">＋ 항목 추가</button>';
+    h += '</div>';
+    h += '<div class="me-actions">' +
+      '<button type="button" class="modal-btn" data-act="rcl-save">저장</button>' +
+      '<button type="button" class="modal-btn sub" data-act="rcl-close">취소</button>' +
+      (rclEdit.isNew ? '' : '<button type="button" class="me-del" data-act="rcl-del">삭제</button>') +
+      '</div>';
+    return h;
+  }
+  function renderRoleEditor() {
+    var body = document.getElementById('rclEditBody');
+    if (body) body.innerHTML = roleEditorHtml();
+  }
+  function saveRoleEditor() {
+    if (!can('edit') || !rclEdit.d) return;
+    var f = roleBlk(rclEdit.blk);
+    if (!f) { closeRoleEditor(); return; }
+    var d = rclEdit.d;
+    var title = String(d.title || '').replace(/\s+/g, ' ').trim().slice(0, 16);
+    if (!title) { showToast('역할 이름을 적어 주세요.'); return; }
+    var items = [], seen = {};
+    for (var i = 0; i < d.items.length && items.length < RCL_ITEM_MAX; i++) {
+      var txt = String(d.items[i].text || '').replace(/\s+/g, ' ').trim().slice(0, 40);
+      if (!txt) continue;
+      var iid = (typeof d.items[i].id === 'string' && /^ri-[A-Za-z0-9_-]{1,32}$/.test(d.items[i].id) && !seen[d.items[i].id]) ? d.items[i].id : ('ri-' + uid(''));
+      if (seen[iid]) continue;
+      seen[iid] = 1;
+      items.push({ id: iid, text: txt });
+    }
+    if (!items.length) { showToast('체크 항목을 하나 이상 적어 주세요.'); return; }
+    var list = f.blk.roles || (f.blk.roles = []);
+    var at = -1;
+    for (var j = 0; j < list.length; j++) if (list[j].id === rclEdit.id) at = j;
+    if (at < 0 && list.length >= RCL_MAX) { showToast('역할은 ' + RCL_MAX + '개까지 만들 수 있어요.'); return; }
+    var old = at >= 0 ? list[at] : null;
+    var role = {
+      id: rclEdit.id, emoji: String(d.emoji || '⚡').trim().slice(0, 4) || '⚡', title: title,
+      cycle: normCycle(d.cycle),
+      reward: clampInt(d.reward, 0, MSN_REWARD_MAX, 0),
+      items: items,
+      done: old && old.done && typeof old.done === 'object' ? old.done : {},
+      u: Date.now()
+    };
+    if (old && normCycle(old.cycle) !== role.cycle) role.done = {};   /* 주기를 바꾸면 그 주기부터 새로 */
+    if (at >= 0) list[at] = role; else list.push(role);
+    var blkId = rclEdit.blk, wasNew = rclEdit.isNew;
+    saveState();
+    closeRoleEditor();
+    var st = roleCycleState(role);
+    settleRole(role, st.cur, { celebrate: true });
+    renderRoleBlock(blkId);
+    try { renderEditPanel(); } catch (e0) { /* 무시 */ }
+    showToast(wasNew ? '⚡ 역할을 만들었어요.' : '⚡ 역할을 고쳤어요.');
+    try { scheduleSync('settings'); } catch (e1) { /* 무시 */ }
+  }
+  function deleteRoleEditor() {
+    if (!can('edit') || !rclEdit.d) return;
+    var f = roleBlk(rclEdit.blk);
+    if (!f) { closeRoleEditor(); return; }
+    var list = f.blk.roles || [];
+    var at = -1;
+    for (var i = 0; i < list.length; i++) if (list[i].id === rclEdit.id) at = i;
+    if (at < 0) { closeRoleEditor(); return; }
+    var role = list[at];
+    if (!window.confirm('"' + (role.title || '역할') + '" 역할을 지울까요?\n체크 기록과 받은 보상 기록도 함께 사라져요.')) return;
+    var blkId = rclEdit.blk;
+    list.splice(at, 1);
+    saveState();
+    closeRoleEditor();
+    renderRoleBlock(blkId);
+    try { renderEditPanel(); } catch (e0) { /* 무시 */ }
+    showToast('역할을 지웠어요.');
+  }
+
+  /* 팝업 입력 — 미션·역할 고치기 */
+  document.addEventListener('input', function (e) {
+    var el = e.target;
+    if (!el || !el.getAttribute) return;
+    if (el.hasAttribute('data-ritem')) {
+      if (rclEdit.d) {
+        var rIdx = parseInt(el.getAttribute('data-ritem'), 10);
+        if (!isNaN(rIdx) && rclEdit.d.items[rIdx]) rclEdit.d.items[rIdx].text = String(el.value || '').slice(0, 40);
+      }
+      return;
+    }
+    if (!el.id) return;
+    if (el.id === 'msnTitle' && msnEdit.d) { msnEdit.d.title = String(el.value || '').slice(0, 30); return; }
+    if (el.id === 'msnEmoji' && msnEdit.d) { msnEdit.d.emoji = String(el.value || '').slice(0, 4); return; }
+    if (el.id === 'msnDays' && msnEdit.d) { msnEdit.d.days = clampInt(el.value, 1, MSN_DAYS_MAX, 1); syncMissionCalc(); return; }
+    if (el.id === 'msnReward' && msnEdit.d) { msnEdit.d.reward = clampInt(el.value, 0, MSN_REWARD_MAX, 0); syncMissionCalc(); return; }
+    if (el.id === 'rclName' && rclEdit.d) { rclEdit.d.title = String(el.value || '').slice(0, 16); return; }
+    if (el.id === 'rclEmoji' && rclEdit.d) { rclEdit.d.emoji = String(el.value || '').slice(0, 4); return; }
+    if (el.id === 'rclReward' && rclEdit.d) { rclEdit.d.reward = clampInt(el.value, 0, MSN_REWARD_MAX, 0); return; }
+  });
+  document.addEventListener('change', function (e) {
+    var el = e.target;
+    if (!el || !el.id) return;
+    if (el.id === 'msnStart' && msnEdit.d) {
+      var s = String(el.value || '');
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+        msnEdit.d.start = s;
+        if (msnEdit.d.end < s) msnEdit.d.end = dayKeyAdd(s, clampInt(msnEdit.d.days, 1, MSN_DAYS_MAX, 1) - 1);
+        syncMissionCalc();
+      }
+      return;
+    }
+    if (el.id === 'msnEnd' && msnEdit.d) {
+      var en = String(el.value || '');
+      if (/^\d{4}-\d{2}-\d{2}$/.test(en)) {
+        msnEdit.d.end = en;
+        if (msnEdit.d.end < msnEdit.d.start) msnEdit.d.end = msnEdit.d.start;
+        var span = dayGap(msnEdit.d.start, msnEdit.d.end);
+        if (msnEdit.d.days > span) msnEdit.d.days = span;
+        syncMissionCalc();
+      }
+    }
+  });
+
+  /* 다른 기기에서 체크한 진행을 조용히 맞춰요 (내가 고치는 중이 아닐 때만) */
+  var progressPullAt = 0, progressPulling = false;
+  function mergeMissionProgress(localList, remoteSettings) {
+    var remoteList = remoteSettings && remoteSettings.dashboardSections;
+    if (Object.prototype.toString.call(remoteList) !== '[object Array]') return false;
+    var rBlocks = {};
+    for (var i = 0; i < remoteList.length; i++) {
+      var bs = (remoteList[i] && remoteList[i].blocks) || [];
+      for (var k = 0; k < bs.length; k++) if (bs[k] && bs[k].id) rBlocks[bs[k].id] = bs[k];
+    }
+    var changed = false;
+    for (var li = 0; li < localList.length; li++) {
+      var lb = (localList[li] && localList[li].blocks) || [];
+      for (var lk = 0; lk < lb.length; lk++) {
+        var local = lb[lk];
+        if (!local || !local.id) continue;
+        var remote = rBlocks[local.id];
+        if (!remote || remote.type !== local.type) continue;
+        if (local.type === 'special_missions') {
+          var rl = normMissions(remote.missions), ll = local.missions || [];
+          for (var a = 0; a < rl.length; a++) {
+            var rm = rl[a];
+            for (var b = 0; b < ll.length; b++) {
+              if (ll[b].id !== rm.id) continue;
+              if ((rm.u || 0) > (ll[b].u || 0)) {
+                ll[b].checks = rm.checks;
+                ll[b].granted = rm.granted;
+                ll[b].grantedAt = rm.grantedAt;
+                ll[b].u = rm.u;
+                changed = true;
+              }
+              break;
+            }
+          }
+        } else if (local.type === 'role_checklist') {
+          var rr = normRoles(remote.roles), lrl = local.roles || [];
+          for (var c = 0; c < rr.length; c++) {
+            var rOne = rr[c];
+            for (var d2 = 0; d2 < lrl.length; d2++) {
+              if (lrl[d2].id !== rOne.id) continue;
+              var mine = lrl[d2];
+              if ((rOne.u || 0) > (mine.u || 0)) {
+                var keys = [];
+                for (var kk in rOne.done) if (Object.prototype.hasOwnProperty.call(rOne.done, kk)) keys.push(kk);
+                for (var kk2 = 0; kk2 < keys.length; kk2++) {
+                  var key = keys[kk2], rec = rOne.done[key];
+                  if (!mine.done || typeof mine.done !== 'object') mine.done = {};
+                  var cur = mine.done[key];
+                  if (!cur || (rec.at || 0) > (cur.at || 0)) { mine.done[key] = rec; changed = true; }
+                }
+                mine.u = rOne.u;
+                changed = true;
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+    return changed;
+  }
+  async function refreshProgressFromCloud() {
+    if (!cloud.conn || !cloud.me || !cloud.profileReady) return false;
+    if (progressPulling || cloud.saving || cloud.again) return false;
+    if (cloud.dirty.settings || cloud.dirty.stickers || cloud.dirty.day) return false;
+    if (ui.editing || msnEdit.d || rclEdit.d) return false;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return false;
+    var now = Date.now();
+    if (now - progressPullAt < 60000) return false;
+    progressPullAt = now;
+    progressPulling = true;
+    try {
+      var res = await ghGet('config/settings.json');
+      if (!res || !res.ok || !res.data) return false;
+      if (cloud.saving || cloud.dirty.settings) return false;
+      var changed = mergeMissionProgress(secList(), res.data.settings || {});
+      if (!changed) return false;
+      saveState();
+      try { renderMissions(); } catch (e0) { /* 무시 */ }
+      try { renderRoles(); } catch (e1) { /* 무시 */ }
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      progressPulling = false;
+    }
   }
 
   function renderSections() {
@@ -16496,6 +17657,8 @@
     try { renderTargetBars(); } catch (e) { /* 무시 */ }
     try { renderNoticeBlocks(); } catch (e) { /* 무시 */ }
     try { renderNotifyBtns(); } catch (e) { /* 무시 */ }
+    try { renderMissions(); } catch (e) { /* 무시 */ }
+    try { renderRoles(); } catch (e) { /* 무시 */ }
   }
 
   /* ---- 블록 골격 ---- */
@@ -17925,6 +19088,10 @@
       applySettingsPayload(sres.data);
       cloud.lastSig = settingsSignature();
       saveLocalOnly();
+      /* 🎯 특별 미션·⚡ 역할 카드를 처음 넣은 기기는 가족 설정에도 바로 저장해요 */
+      if (!(sres.data.settings && sres.data.settings.missionsSeeded === 1)) {
+        try { scheduleSync('settings'); } catch (eMig) { /* 무시 */ }
+      }
     }
 
     var kres = await ghGet('config/stickers.json');
@@ -18707,6 +19874,9 @@
          act === 'cat-day' || act === 'cat-day-preset' || act === 'item-up' || act === 'item-down') && !can('edit')) return;
     if (act === 'reset-all' && !can('reset')) return;
     if (act.indexOf('diy-') === 0 && !can('edit')) return;
+    if ((act === 'msn-check' || act === 'rcl-toggle') && !can('check')) return;
+    if (act.indexOf('msn-') === 0 && act !== 'msn-check' && act !== 'msn-win-close' && !can('edit')) return;
+    if (act.indexOf('rcl-') === 0 && act !== 'rcl-toggle' && !can('edit')) return;
     if ((act === 'nb-edit' || act === 'nb-save') && !can('edit')) return;
     if ((act === 'pet-art-apply' || act === 'pet-art-reset') && !canPetArt()) return;
     if (act === 'stickers-reset-logs' && !isAdmin()) return;
@@ -18821,6 +19991,52 @@
     if (act === 'nb-edit') { noticeUi.open = el.getAttribute('data-blk') || ''; renderNoticeBlocks(); return; }
     if (act === 'nb-cancel') { noticeUi.open = ''; renderNoticeBlocks(); return; }
     if (act === 'nb-save') { noticeUi.open = ''; renderNoticeBlocks(); renderEditPanel(); showToast('💬 한마디를 저장했어요.'); return; }
+    /* ---------- 🎯 특별 미션 · ⚡ 역할 체크리스트 ---------- */
+    if (act === 'msn-check') { onMissionCheck(el.getAttribute('data-blk'), el.getAttribute('data-mission'), el.getAttribute('data-date')); return; }
+    if (act === 'msn-edit') { openMissionEditor(el.getAttribute('data-blk'), el.getAttribute('data-mission') || ''); return; }
+    if (act === 'msn-add') { openMissionEditor(el.getAttribute('data-blk'), ''); return; }
+    if (act === 'msn-close') { closeMissionEditor(); return; }
+    if (act === 'msn-save') { saveMissionEditor(); return; }
+    if (act === 'msn-del') { deleteMissionEditor(); return; }
+    if (act === 'msn-win-close') { closeMilestoneWin(); return; }
+    if (act === 'msn-pick-emoji') { if (msnEdit.d) { msnEdit.d.emoji = el.getAttribute('data-e') || '🎯'; renderMissionEditor(); } return; }
+    if (act === 'msn-days-minus' || act === 'msn-days-plus') {
+      if (msnEdit.d) { msnEdit.d.days = clampInt(msnEdit.d.days + (act === 'msn-days-plus' ? 1 : -1), 1, MSN_DAYS_MAX, 1); renderMissionEditor(); }
+      return;
+    }
+    if (act === 'msn-reward-minus' || act === 'msn-reward-plus') {
+      if (msnEdit.d) { msnEdit.d.reward = clampInt(msnEdit.d.reward + (act === 'msn-reward-plus' ? 1 : -1), 0, MSN_REWARD_MAX, 0); renderMissionEditor(); }
+      return;
+    }
+    if (act === 'rcl-toggle') { onRoleToggle(el.getAttribute('data-blk'), el.getAttribute('data-role'), el.getAttribute('data-item')); return; }
+    if (act === 'rcl-edit') { openRoleEditor(el.getAttribute('data-blk'), el.getAttribute('data-role') || ''); return; }
+    if (act === 'rcl-add') { openRoleEditor(el.getAttribute('data-blk'), ''); return; }
+    if (act === 'rcl-close') { closeRoleEditor(); return; }
+    if (act === 'rcl-save') { saveRoleEditor(); return; }
+    if (act === 'rcl-del') { deleteRoleEditor(); return; }
+    if (act === 'rcl-pick-emoji') { if (rclEdit.d) { rclEdit.d.emoji = el.getAttribute('data-e') || '⚡'; renderRoleEditor(); } return; }
+    if (act === 'rcl-cycle') { if (rclEdit.d) { rclEdit.d.cycle = normCycle(el.getAttribute('data-c')); renderRoleEditor(); } return; }
+    if (act === 'rcl-reward-minus' || act === 'rcl-reward-plus') {
+      if (rclEdit.d) { rclEdit.d.reward = clampInt(rclEdit.d.reward + (act === 'rcl-reward-plus' ? 1 : -1), 0, MSN_REWARD_MAX, 0); renderRoleEditor(); }
+      return;
+    }
+    if (act === 'rcl-item-add') {
+      if (rclEdit.d && rclEdit.d.items.length < RCL_ITEM_MAX) {
+        rclEdit.d.items.push({ id: 'ri-' + uid(''), text: '' });
+        renderRoleEditor();
+        var newInp = document.querySelector('#rclEditBody [data-ritem="' + (rclEdit.d.items.length - 1) + '"]');
+        if (newInp) { try { newInp.focus(); } catch (e0) { /* 무시 */ } }
+      }
+      return;
+    }
+    if (act === 'rcl-item-del') {
+      if (rclEdit.d) {
+        var di2 = parseInt(el.getAttribute('data-i'), 10);
+        if (!isNaN(di2) && di2 >= 0 && di2 < rclEdit.d.items.length) rclEdit.d.items.splice(di2, 1);
+        renderRoleEditor();
+      }
+      return;
+    }
     if (act === 'routine-view-toggle') { toggleRoutineView(); return; }
     if (act === 'routine-jump') { jumpToCategory(el.getAttribute('data-cat')); return; }
     if (act === 'cat-add') { addCategory(); return; }
@@ -19456,6 +20672,7 @@
   }, 15000);
   /* 다른 기기에서 붙인 스티커·코인을 열어 둔 화면에도 1분 안에 보여 줘요 */
   window.setInterval(function () { try { refreshStickersFromCloud(false); } catch (e) { /* 무시 */ } }, 30000);
+  window.setInterval(function () { try { refreshProgressFromCloud(); } catch (e) { /* 무시 */ } }, 60000);
   window.addEventListener('focus', function () { try { refreshStickersFromCloud(false); } catch (e) { /* 무시 */ } });
   document.addEventListener('visibilitychange', function () {
     if (!document.hidden) { try { refreshStickersFromCloud(false); } catch (e) { /* 무시 */ } }
