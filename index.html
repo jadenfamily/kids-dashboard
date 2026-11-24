@@ -746,8 +746,13 @@
   #tamText{ font-size:16px; font-weight:900; color:#5a4230; line-height:1.5; }
   #tamSound{ margin:0 0 14px; font-size:12.5px; font-weight:800; color:#a4782f; background:#fff5df; border-radius:12px; padding:8px 10px; }
   #targetAlertModal .modal-btn{ font-size:20px; }
-  #tamSoundBtn{ background:linear-gradient(135deg,#ffe066,#ffb703); animation:tamGlow 1.3s ease-out infinite; }
-  @keyframes tamGlow{ 0%{ box-shadow:0 0 0 0 rgba(255,183,3,.55); } 70%{ box-shadow:0 0 0 12px rgba(255,183,3,0); } 100%{ box-shadow:0 0 0 0 rgba(255,183,3,0); } }
+  /* 🔇 평소에는 확인 버튼만 — 🔈 소리 켜기는 자동재생이 실제로 막혔을 때만 작게 보여요 */
+  #tamSoundBtn{
+    width:auto; min-height:36px; padding:0 14px; align-self:center; border-radius:999px;
+    background:linear-gradient(135deg,#ffe066,#ffb703); border:none;
+    font-size:13px; font-weight:900; color:#6b4a00;
+  }
+  #targetAlertModal .modal-actions{ gap:10px; }
 
 
   /* ---------- 로그인 ---------- */
@@ -1270,6 +1275,31 @@
   .reason-chip.custom{ border-color:#e0d7f5; background:#f8f4ff; color:#5b4bb0; }
   .reason-custom{ display:flex; gap:8px; margin-top:11px; }
   .reason-custom input{ flex:1 1 auto; min-height:48px; border-radius:13px; border:2px solid #e6dccf; padding:8px 12px; font-size:15px; font-weight:800; }
+  /* 🎨 스티커 모양 고르기 — 팝업·⚙️ 전체 설정 공통 */
+  .shape-row{ display:flex; flex-wrap:wrap; gap:7px; margin:2px 0 12px; }
+  .shape-chip{
+    display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+    width:58px; min-height:58px; padding:5px 2px; border-radius:15px; cursor:pointer;
+    border:2px solid #efe4d3; background:#fffdf7; color:#5a4230; touch-action:manipulation;
+    font-size:23px; line-height:1.05; font-weight:900;
+  }
+  .shape-chip small{ font-size:9.5px; font-weight:900; color:#a2937f; max-width:52px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .shape-chip:active{ transform:scale(.96); }
+  .shape-chip.on{ border-color:#ff9f1c; background:#fff3d6; box-shadow:0 4px 12px rgba(255,159,28,.25); }
+  .shape-chip.on small{ color:#b26a00; }
+  .shape-chip.add{ border-style:dashed; color:#b0a494; font-size:18px; }
+  .shape-form{ display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:0 0 10px; }
+  .shape-form .shape-emo{ width:64px; text-align:center; font-size:19px; }
+  .shape-form .inp{ flex:1 1 120px; min-width:0; }
+  .shape-form .lf-btn{ width:auto; padding:0 16px; min-height:44px; font-size:14px; }
+  .shape-hint{ flex:1 1 100%; margin:0; }
+  .shape-msg{ margin:0 0 8px; }
+  .shape-mine{ display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
+  .shape-mine-h{ margin:10px 0 0; }
+  .shape-x{
+    width:18px; height:18px; padding:0; border:none; border-radius:999px; cursor:pointer;
+    background:#ffe1b8; color:#a8641a; font-size:12px; font-weight:900; line-height:1;
+  }
   /* ⭐ 칭찬 이유 고치기 — 칩 목록 + 새 이유 넣기 (✏️ 편집 창·카드 인라인 공통) */
   .sre{ display:flex; flex-direction:column; gap:8px; margin-top:4px; min-width:0; }
   .sre-head{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:900; color:#6d6484; }
@@ -3049,6 +3079,23 @@
   ];
 
   var STICKER_SET = ['⭐️', '🌟', '🌈', '🦄', '🐰', '🍓', '🎈', '🌸', '🐥', '💎', '🍀', '🚀', '🍭', '🐼', '🎁', '🌻'];
+  /* 칭찬 스티커 모양 — 윈도우 10(세고에 UI 이모지)·안드로이드 7 태블릿에서도 깨지지 않는 이모지로만 골랐어요.
+     여기에 없는 모양은 '직접 추가'로 아이가 원하는 이모지를 넣어 쓸 수 있어요. */
+  var STICKER_SHAPES = [
+    { id: 'star', e: '⭐', name: '별' },
+    { id: 'heart', e: '❤️', name: '하트' },
+    { id: 'hamster', e: '🐹', name: '햄찌' },
+    { id: 'crown', e: '👑', name: '왕관' },
+    { id: 'rainbow', e: '🌈', name: '무지개' },
+    { id: 'dino', e: '🦖', name: '공룡' },
+    { id: 'rocket', e: '🚀', name: '로켓' },
+    { id: 'strawberry', e: '🍓', name: '딸기' },
+    { id: 'cat', e: '🐱', name: '고양이' },
+    { id: 'flower', e: '🌸', name: '꽃' },
+    { id: 'sparkle', e: '🌟', name: '반짝별' },
+    { id: 'clover', e: '🍀', name: '네잎클로버' }
+  ];
+  var STICKER_SHAPE_MAX = 24;      /* 직접 만든 모양은 24개까지 */
   var CONF = ['⭐️', '🎉', '✨', '🌟', '🎈', '💛', '💙', '💖', '🍬', '🌈'];
 
   /* ============ 오늘의 친구 (몬스터 키우기) 기본값 ============ */
@@ -3513,6 +3560,51 @@
     return !(state && state.settings && state.settings.alertEnabled === false);
   }
 
+  /* 직접 만든 스티커 모양 검사 — {id, e, name} 으로만 기억해요 */
+  function normalizeStickerShape(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    var e = String(raw.e || '').trim().slice(0, 8);
+    if (!e) return null;
+    var name = String(raw.name || '').trim().slice(0, 10) || '내 모양';
+    var id = String(raw.id || '').trim().slice(0, 24);
+    if (!/^[a-zA-Z0-9_-]+$/.test(id)) id = '';
+    if (!id) id = 'c' + Date.now().toString(36) + Math.floor(Math.random() * 46656).toString(36);
+    return { id: id, e: e, name: name };
+  }
+
+  /* 기본 12종 + 직접 만든 모양 */
+  function stickerShapesAll() {
+    var out = STICKER_SHAPES.slice(0);
+    var cs = (state.sticker && state.sticker.shapes) || [];
+    for (var i = 0; i < cs.length; i++) out.push(cs[i]);
+    return out;
+  }
+  function stickerShapeById(id) {
+    if (!id) return null;
+    var all = stickerShapesAll();
+    for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i];
+    return null;
+  }
+  function stickerShapeForEmoji(em) {
+    if (!em) return null;
+    var all = stickerShapesAll();
+    for (var i = 0; i < all.length; i++) if (all[i].e === em) return all[i];
+    return null;
+  }
+  /* 지금 붙일 모양 — 마지막으로 고른 모양, 아직 고른 적 없으면 기본 ⭐ */
+  function stickerActiveShape() {
+    var st = state.sticker || {};
+    return stickerShapeById(st.shapeId) || STICKER_SHAPES[0];
+  }
+  /* 칸 하나의 모양 id — 옛 스티커(모양 없음)는 이모지로 찾아보고, 그래도 없으면 '' */
+  function stickerIconOf(i) {
+    var st = state.sticker || {};
+    var id = (st.icons && st.icons[i]) || '';
+    if (stickerShapeById(id)) return id;
+    var found = stickerShapeForEmoji((st.stickers || [])[i] || '');
+    return found ? found.id : '';
+  }
+
   function defaultState() {
     return {
       version: 1,
@@ -3575,7 +3667,14 @@
         unit: 1000,
         reasons: STICKER_REASON_PRESETS.slice(0),
         /* reasonsUpdatedAt: 칭찬 이유 목록이 마지막으로 바뀐 시각 — 오래된 목록이 덮어쓰지 않게 견줘요 */
-        reasonsUpdatedAt: 0
+        reasonsUpdatedAt: 0,
+        /* icons: 칸별 스티커 모양 id (stickers 와 같은 순서) — 옛 스티커는 비워 두고 ⭐로 기억해요 */
+        icons: [],
+        /* shapes: 직접 추가한 스티커 모양 [{id, e, name}] */
+        shapes: [],
+        shapesUpdatedAt: 0,
+        /* shapeId: 마지막으로 고른 모양 (팝업을 열면 이 모양이 먼저 잡혀 있어요) */
+        shapeId: ''
       },
       schedule: {
         mon: [makeEvent('태권도', '16:30–17:30'), makeEvent('피아노', '18:00–18:40')],
@@ -4006,6 +4105,30 @@
     s.sticker.reasons = reasons.length ? reasons : d.sticker.reasons.slice(0);
     var reasonsAt = Number(s.sticker.reasonsUpdatedAt);
     s.sticker.reasonsUpdatedAt = (reasonsAt && !isNaN(reasonsAt)) ? reasonsAt : 0;
+
+    /* 직접 만든 스티커 모양 — [{"id","e","name"}] 만 받아요 */
+    var shapes = [];
+    var rawShapes = (Object.prototype.toString.call(s.sticker.shapes) === '[object Array]') ? s.sticker.shapes : [];
+    for (var sh = 0; sh < rawShapes.length && shapes.length < STICKER_SHAPE_MAX; sh++) {
+      var sn = normalizeStickerShape(rawShapes[sh]);
+      if (!sn) continue;
+      var dup = false;
+      for (var sd = 0; sd < shapes.length; sd++) if (shapes[sd].id === sn.id) { dup = true; break; }
+      if (!dup) shapes.push(sn);
+    }
+    s.sticker.shapes = shapes;
+    var shapesAt = Number(s.sticker.shapesUpdatedAt);
+    s.sticker.shapesUpdatedAt = (shapesAt && !isNaN(shapesAt)) ? shapesAt : 0;
+    s.sticker.shapeId = (typeof s.sticker.shapeId === 'string') ? s.sticker.shapeId.slice(0, 24) : '';
+
+    /* 칸별 모양 id — stickers 와 같은 순서로 맞춰요 (없는 칸은 '' = 옛 스티커) */
+    var icons = [];
+    var rawIcons = (Object.prototype.toString.call(s.sticker.icons) === '[object Array]') ? s.sticker.icons : [];
+    for (var ic = 0; ic < list.length; ic++) {
+      var iv = rawIcons[ic];
+      icons.push((typeof iv === 'string') ? iv.slice(0, 24) : '');
+    }
+    s.sticker.icons = icons;
 
     if (!s.schedule || typeof s.schedule !== 'object') s.schedule = {};
     for (var n = 0; n < DAY_KEYS.length; n++) {
@@ -5352,11 +5475,14 @@
     for (var i = 0; i < slots; i++) {
       var em = list[i];
       if (em) {
+        var shp = stickerShapeById(stickerIconOf(i));
+        var shpAttr = shp ? ' data-shape="' + esc(shp.id) + '"' : '';
+        var shpTitle = shp ? ' title="' + esc(shp.name) + '"' : '';
         if (can('stickerManage')) {
-          html += '<button class="slot filled' + (i === freshIdx ? ' fresh' : '') + '" data-act="sticker-undo" data-i="' + i +
-            '" aria-label="' + (i + 1) + '번째 스티커 떼기">' + em + '</button>';
+          html += '<button class="slot filled' + (i === freshIdx ? ' fresh' : '') + '" data-act="sticker-undo" data-i="' + i + '"' + shpAttr + shpTitle +
+            ' aria-label="' + (i + 1) + '번째 스티커 떼기">' + em + '</button>';
         } else {
-          html += '<span class="slot filled' + (i === freshIdx ? ' fresh' : '') + '">' + em + '</span>';
+          html += '<span class="slot filled' + (i === freshIdx ? ' fresh' : '') + '"' + shpAttr + shpTitle + '>' + em + '</span>';
         }
       } else {
         if (can('sticker')) {
@@ -5429,6 +5555,22 @@
       '<span class="lchip rem">남은 <b>' + fmtNum(left) + '개 · ' + fmtNum(left * unit) + '원</b></span>';
   }
 
+  /* 보드 한 칸에 스티커를 붙여요 (모양 id 도 같은 순서로 기억) */
+  function pushStickerSlot(emoji, shapeId) {
+    var st = state.sticker;
+    if (!st) return;
+    if (!st.icons || Object.prototype.toString.call(st.icons) !== '[object Array]') st.icons = [];
+    while (st.icons.length < st.stickers.length) st.icons.push('');
+    st.stickers.push(emoji);
+    st.icons.push(shapeId || '');
+  }
+  function clearStickerSlots() {
+    var st = state.sticker;
+    if (!st) return;
+    st.stickers = [];
+    st.icons = [];
+  }
+
   /* 스티커판이 꽉 차면(10/10) 기록만 남기고 곰바로 새 판(0/칸)으로 넘어가요.
      적립·사용·남은 개수와 스티커 장부는 그대로 두고, 판만 새로 시작해요. */
   function completeStickerBoard() {
@@ -5437,7 +5579,7 @@
     var full = st.slots;
     var earned = stickerTotal();
     state.boardLog.push({ d: dateKey(), t: Date.now(), slots: full, goal: st.goal || '' });
-    st.stickers = [];
+    clearStickerSlots();
     st.celebrated = false;
     touchBoard(Date.now());
     freshIdx = -1;
@@ -5453,13 +5595,16 @@
     return true;
   }
 
-  function addSticker(reason) {
+  function addSticker(reason, shapeId) {
     var st = state.sticker;
     if (st.stickers.length >= st.slots) return;
-    var emoji = STICKER_SET[Math.floor(Math.random() * STICKER_SET.length)];
-    st.stickers.push(emoji);
+    /* 고른 모양으로 붙여요 — 안 고르면 마지막에 쓴 모양(처음엔 ⭐) */
+    var shape = stickerShapeById(shapeId) || stickerActiveShape();
+    if (shapeId) st.shapeId = shape.id;
+    var emoji = shape.e;
+    pushStickerSlot(emoji, shape.id);
     freshIdx = st.stickers.length - 1;
-    var logged = logSticker(emoji, reason);
+    var logged = logSticker(emoji, reason, shape.id);
     touchBoard(logged ? logged.t : Date.now());
     markStickerCoinSeen(logged);   /* 이 기기에서 이미 받은 코인 — 다시 당기지 않게 */
     saveState();
@@ -5471,7 +5616,7 @@
     awardStickerCoins();
     saveState();
     renderCoinBadge();
-    showToast('⭐ 칭찬 스티커! ' + coinSvg() + ' +' + COIN_STICKER, true);
+    showToast(emoji + ' 칭찬 스티커! ' + coinSvg() + ' +' + COIN_STICKER, true);
 
     if (st.stickers.length >= st.slots) {
       /* 다 채웠어요 → 축하하고 바로 새 판으로 (새 판 시작 버튼을 누를 필요 없음) */
@@ -5488,6 +5633,7 @@
     if (isNaN(i) || i < 0 || i >= st.stickers.length) return;
     var emoji = st.stickers[i];
     st.stickers.splice(i, 1);
+    if (st.icons && st.icons.length > i) st.icons.splice(i, 1);
     st.celebrated = false;
     touchBoard(Date.now());
     dropStickerLog(emoji);
@@ -5501,7 +5647,7 @@
   function newBoard(direct) {
     /* direct: 완성 축하 모달의 '새 판 이어서 시작'처럼 잃을 게 없을 때는 확인 없이 진행 */
     if (!direct && !window.confirm('새 스티커 판을 시작할까요?\n적립된 스티커 개수와 사용 내역은 그대로 유지돼요.')) return;
-    state.sticker.stickers = [];
+    clearStickerSlots();
     state.sticker.celebrated = false;
     touchBoard(Date.now());
     saveState();
@@ -5511,7 +5657,7 @@
 
   function clearBoard() {
     if (!window.confirm('스티커를 모두 떼어낼까요?')) return;
-    state.sticker.stickers = [];
+    clearStickerSlots();
     state.sticker.celebrated = false;
     touchBoard(Date.now());
     saveState();
@@ -6616,10 +6762,31 @@
       '</div>' +
       '<p class="ep-hint">스티커를 붙일 때 고르는 칭찬 이유예요. 아래 칸에 적고 ＋ 추가를 누르면 바로 저장되고, 칩 옆 ×로 지울 수 있어요.</p>' +
       stickerReasonEditorHtml('panel') +
+      '<div class="ep-sub"><h3>🎨 스티커 모양</h3>' +
+      '<p class="ep-hint">붙일 때 고를 수 있는 모양이에요. 기본 ' + STICKER_SHAPES.length + '종에 우리 집만의 모양을 더할 수 있어요. (칸에 붙은 모양은 가족 기기에 같이 저장돼요)</p>' +
+      stickerShapeRowHtml(st.shapeId || '', can('edit')) +
+      shapeAddFormHtml('panel') +
+      (editPanelShapeMsg ? '<p class="lf-msg shape-msg">' + esc(editPanelShapeMsg) + '</p>' : '') +
+      stickerShapeMineHtml() +
+      '</div>' +
       '<div class="ep-actions">' +
       '<button class="ghost-btn" type="button" data-act="sticker-clear">스티커 보드 비우기</button>' +
       (isAdmin() ? '<button class="ghost-btn danger" type="button" data-act="stickers-reset-logs">🧹 스티커 기록 초기화</button>' : '') +
       '</div>';
+    return h;
+  }
+
+  /* ⚙️ 설정 창 — 직접 만든 모양 목록 (× 로 지우기) */
+  function stickerShapeMineHtml() {
+    var mine = (state.sticker && state.sticker.shapes) || [];
+    if (!mine.length) return '<p class="ep-hint">직접 만든 모양은 아직 없어요.</p>';
+    var h = '<p class="ep-hint shape-mine-h">내가 만든 모양 — × 를 누르면 지워져요</p><div class="shape-mine">';
+    for (var i = 0; i < mine.length; i++) {
+      h += '<span class="shape-chip mine" title="' + esc(mine[i].name) + '">' + esc(mine[i].e) +
+        '<small>' + esc(mine[i].name) + '</small>' +
+        '<button type="button" class="shape-x" data-act="shape-del" data-id="' + esc(mine[i].id) + '" aria-label="' + esc(mine[i].name) + ' 모양 지우기">×</button></span>';
+    }
+    h += '</div>';
     return h;
   }
 
@@ -11984,8 +12151,10 @@
     s += '<polyline points="' + pts([b, a, c]) + '" fill="none" stroke="' + (look.trim || darken(look.floor, .18)) + '" stroke-width="5" stroke-linejoin="round"/>';
     /* 바닥 테두리 */
     s += '<polygon points="' + pts([a, c, iP(N, N), b]) + '" fill="none" stroke="' + darken(look.floor, .14) + '" stroke-width="3"/>';
-    /* 바닥 클릭 영역 (가구보다 먼저 그려서 가구 클릭을 막지 않게) */
-    s += '<polygon points="' + pts([a, c, iP(N, N), b]) + '" fill="transparent" class="room-floor" data-act="room-floor"/>';
+    /* 바닥 클릭 영역 (가구보다 먼저 그려서 가구 클릭을 막지 않게)
+       data-act 는 층 이동 탭(room-floor data-n)과 꼭 달라야 해요 —
+       같은 이름을 쓰면 2·3층 바닥을 눌렀을 때 1층으로 내려가 버려요. */
+    s += '<polygon points="' + pts([a, c, iP(N, N), b]) + '" fill="transparent" class="room-floor" data-act="room-floor-tap"/>';
 
     /* 가구 + 아바타 + 친구: 뒤에서 앞으로 */
     var draw = [];
@@ -12493,7 +12662,7 @@
       if (Math.abs(e.clientX - grab.x) + Math.abs(e.clientY - grab.y) > 18) return;
       var tEl = (e.target && e.target.closest) ? e.target.closest('[data-act]') : null;
       var tAct = tEl ? (tEl.getAttribute('data-act') || '') : '';
-      if (tAct && tAct !== 'room-floor') return;
+      if (tAct && tAct !== 'room-floor-tap') return;
       var at = cellFromEvent(svg, e);
       if (at) roomAvaWalk(at.x, at.y);
     });
@@ -12653,7 +12822,10 @@
 
   function roomGoFloor(n) {
     var room = prof().room;
-    var want = parseInt(n, 10) || 1, found = false;
+    /* 층 번호가 없으면 아무것도 하지 않아요 (예전엔 1층으로 내려갔어요) */
+    var want = parseInt(n, 10);
+    if (!want || isNaN(want)) return;
+    var found = false;
     for (var i = 0; i < room.floors.length; i++) if (room.floors[i].n === want) found = true;
     if (!found) return;
     room.active = want;
@@ -12958,12 +13130,72 @@
     } catch (e) { /* 무시 */ }
   }
 
+  /* ---- 첫 터치 1회: 알림음 <audio>까지 미리 깨워 둬요 ----
+     브라우저는 '사용자가 한 번 누르기 전'에는 소리를 막아요. 예전에는 알림 순간마다
+     알림창의 🔊 소리 켜기 버튼을 한 번 더 눌러야 소리가 났는데,
+     이제 화면을 처음 누른 그 순간 조용한(무음) 소리로 <audio> 재생을 한 번 성공시켜 두고
+     바로 멈춰요 → 그 뒤에는 알림 시각에 버튼 없이 소리가 바로 나요. (무음이라 소리는 새지 않아요) */
+  var mediaWarm = { done: false, at: 0 };
+  var silentWavUrl = '';
+
+  /* 아주 짧은 무음 .wav 주소 (처음 한 번만 구워 둬요) */
+  function silentWavSrc() {
+    if (silentWavUrl) return silentWavUrl;
+    try {
+      var bytes = wavFile(new Float32Array(Math.max(1, Math.round(H50_SR * 0.12))), H50_SR);
+      silentWavUrl = window.URL.createObjectURL(new Blob([bytes], { type: 'audio/wav' }));
+    } catch (e) { silentWavUrl = ''; }
+    return silentWavUrl;
+  }
+
+  /* <audio> 하나를 무음으로 재생했다가 바로 멈춰 '이 기기에서 소리를 낼 수 있음'을 잡아 둬요.
+     · 지금 진짜 소리가 나고 있으면 건드리지 않아요.
+     · 멈추기 전에 주소가 바뀌었거나 다른 소리가 시작됐으면 그대로 둬요 (그 소리를 끊지 않게). */
+  function warmMediaElement(el, tag) {
+    if (!el) return false;
+    var src = silentWavSrc();
+    if (!src) return false;
+    try {
+      if (h50AudioOn || h50Want) return false;
+      if (!el.paused && !el.ended) return false;
+      try { el.setAttribute('playsinline', ''); } catch (e0) { /* 무시 */ }
+      if (el.getAttribute('src') !== src) el.src = src;
+      var settle = function () {
+        try {
+          if (String(el.getAttribute('src') || '') !== src) return;
+          if (h50AudioOn || h50Want) return;
+          el.pause();
+          el.currentTime = 0;
+        } catch (e1) { /* 무시 */ }
+        try { document.documentElement.setAttribute('data-media-warm', tag || '1'); } catch (e2) { /* 무시 */ }
+      };
+      var p = el.play();
+      if (p && p.then) p.then(settle, function () { if (tag === 'touch') mediaWarm.done = false; });
+      else settle();
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function warmAlertAudio(tag) {
+    var el = null;
+    try { el = h50Audio(); } catch (e) { el = null; }
+    return warmMediaElement(el, tag);
+  }
+
   function installAudioUnlock() {
     var opts = { capture: true, passive: true };
-    document.addEventListener('pointerdown', unlockAudio, opts);
-    document.addEventListener('touchstart', unlockAudio, opts);
-    document.addEventListener('mousedown', unlockAudio, opts);
-    document.addEventListener('keydown', unlockAudio, { capture: true });
+    /* 첫 터치 한 번이면 Web Audio 와 <audio> 를 함께 풀어 둬요 */
+    function firstTouch() {
+      unlockAudio();
+      if (mediaWarm.done) return;
+      mediaWarm.done = true;      /* 성공/실패와 상관없이 매 터치마다 되풀이하지는 않아요 */
+      mediaWarm.at = Date.now();
+      warmAlertAudio('touch');    /* 손가락이 닿은 그 순간에 (iOS 는 같은 순간이어야 풀려요) */
+    }
+    document.addEventListener('pointerdown', firstTouch, opts);
+    document.addEventListener('touchstart', firstTouch, opts);
+    document.addEventListener('mousedown', firstTouch, opts);
+    document.addEventListener('keydown', firstTouch, { capture: true });
   }
 
   /* ---------------- 주기 작업 ---------------- */
@@ -13268,6 +13500,38 @@
     var hit = null;
     try { hit = targetAlertDue(); } catch (e) { return; }
     if (hit) fireTargetAlert(hit);
+  }
+
+  /* ---- 알림 1분 전 사전 웜업 ----
+     화면을 오래 켜 두면 브라우저가 오디오 세션을 잠들게 해요. 그때 알림이 오면
+     버튼을 다시 눌러야 소리가 나요. 그래서 알림 1분 전(60초 이내)에, 이미 한 번
+     터치해서 잠금이 풀린 기기라면 무음으로 세션을 한 번 더 깨워 둬요. */
+  var tamWarmKey = '', tamWarmAt = 0;
+  function targetAlertWarmup() {
+    try {
+      if (tamOpen) return;
+      if (!targetAlertOn()) return;
+      if (document.hidden) return;
+      if (!mediaWarm.done) return;          /* 아직 한 번도 안 눌렀으면 깨울 수 없어요 */
+      var now = nowMinuteFloat();
+      var dow = keyDayIndex(currentKey);
+      var key = '';
+      for (var i = 0; i < state.categories.length; i++) {
+        var c = state.categories[i];
+        if (!hhmmValid(c.targetTime) || !activeDay(c, dow)) continue;
+        var left = hhmmMinutes(c.targetTime) - now;
+        if (left <= 0 || left > 1) continue;      /* 딱 60초 안쪽일 때만 */
+        key = c.id + '|' + c.targetTime;
+        break;
+      }
+      if (!key) return;
+      if (key === tamWarmKey && (Date.now() - tamWarmAt) < 40000) return;   /* 40초에 한 번만 */
+      tamWarmKey = key;
+      tamWarmAt = Date.now();
+      unlockAudio();
+      warmAlertAudio('pre');
+      try { document.documentElement.setAttribute('data-tam-warm', String(tamWarmAt)); } catch (e) { /* 무시 */ }
+    } catch (e) { /* 무시 */ }
   }
 
   /* ---- 알림 소리: 하와이 파이브오 멜로디를 .wav로 만들어 재생 ----
@@ -14568,6 +14832,7 @@
     for (i = 0; i < state.boardLog.length; i++) if (Number(state.boardLog[i].t) > ts) bl.push(state.boardLog[i]);
     state.boardLog = bl;
     state.sticker.stickers = [];
+    state.sticker.icons = [];
     state.sticker.celebrated = false;
     touchBoard(ts);
     state.stats = { stickersTotal: state.stickerLog.length };
@@ -14584,6 +14849,7 @@
     state.deletedSpends = {};
     state.boardLog = [];
     state.sticker.stickers = [];
+    state.sticker.icons = [];
     state.sticker.celebrated = false;
     touchBoard(now);
     state.stats = { stickersTotal: 0 };
@@ -14607,9 +14873,10 @@
     return (isNaN(v) || v < 0) ? 0 : v;
   }
 
-  function logSticker(emoji, reason) {
+  function logSticker(emoji, reason, shapeId) {
     var now = new Date();
     var entry = { d: dateKey(now), t: now.getTime(), e: emoji, r: (reason || '').slice(0, 20) };
+    if (shapeId) entry.s = String(shapeId).slice(0, 24);
     state.stickerLog.push(entry);
     state.stats.stickersTotal = stickerTotal() + 1;
     if (state.stickerLog.length > 6000) state.stickerLog.splice(0, state.stickerLog.length - 6000);
@@ -14973,7 +15240,9 @@
   }
 
   /* ============ 문제지 / 스티커 원장 / 통계 / 섹션 순서 ============ */
-  var reasonState = { custom: false, msg: '' };
+  var reasonState = { custom: false, msg: '', shape: '', shapeNew: false, shapeMsg: '' };
+  /* ⚙️ 전체 설정 > ⭐ 스티커 안의 모양 관리 상태 */
+  var editPanelShapeNew = false, editPanelShapeMsg = '';
   var spendState = { item: '', count: 1, date: '', msg: '' };
   var wbState = { sel: [], msg: '', itemId: '', catId: '' };
 
@@ -15472,12 +15741,12 @@
         /* 앞의 판이 다 찼으면 기록만 남기고 조용히 새 판으로 이어 붙여요 */
         st.celebrated = true;
         state.boardLog.push({ d: dateKey(), t: Date.now(), slots: st.slots, goal: st.goal || '' });
-        st.stickers = [];
+        clearStickerSlots();
         st.celebrated = false;
       }
-      var emoji = STICKER_SET[Math.floor(Math.random() * STICKER_SET.length)];
-      st.stickers.push(emoji);
-      var logged = logSticker(emoji, reason || '');
+      var shape = stickerActiveShape();
+      pushStickerSlot(shape.e, shape.id);
+      var logged = logSticker(shape.e, reason || '', shape.id);
       touchBoard(logged ? logged.t : Date.now());
       markStickerCoinSeen(logged);
       awardStickerCoins();
@@ -15640,10 +15909,10 @@
     sreMsgIn(box, '‘' + gone + '’' + josaOf(gone, '을', '를') + ' 지웠어요.');
   }
 
-  /* ---- 스티커 적립 이유 ---- */
+  /* ---- 스티커 적립 이유 · 붙일 모양 ---- */
   function openReason() {
     if (!can('stickerManage')) return;
-    reasonState = { custom: false, msg: '' };
+    reasonState = { custom: false, msg: '', shape: stickerActiveShape().id, shapeNew: false, shapeMsg: '' };
     renderReason();
     var m = document.getElementById('reasonModal');
     if (m) m.hidden = false;
@@ -15656,8 +15925,104 @@
     if (isOnlyModal('reasonModal')) unlockScroll();
   }
 
+  /* 스티커 모양 고르는 줄 — 팝업·설정 창에서 같이 써요 */
+  function stickerShapeRowHtml(curId, manage) {
+    var all = stickerShapesAll();
+    var h = '<div class="shape-row" role="group" aria-label="스티커 모양 고르기">';
+    for (var i = 0; i < all.length; i++) {
+      var s = all[i];
+      var on = (s.id === curId) ? ' on' : '';
+      h += '<button type="button" class="shape-chip' + on + (s.custom ? ' mine' : '') + '" data-act="reason-shape" data-id="' + esc(s.id) + '"' +
+        ' aria-pressed="' + (on ? 'true' : 'false') + '" title="' + esc(s.name) + '">' + esc(s.e) +
+        '<small>' + esc(s.name) + '</small></button>';
+    }
+    if (manage) h += '<button type="button" class="shape-chip add" data-act="shape-add">＋<small>모양 추가</small></button>';
+    h += '</div>';
+    return h;
+  }
+
+  /* 새 모양 추가 칸 — 팝업·설정 창에서 같이 써요 */
+  function shapeAddFormHtml(prefix) {
+    return '<div class="shape-form" id="' + prefix + 'ShapeForm">' +
+      '<input class="inp inp-sm shape-emo" id="' + prefix + 'ShapeEmoji" maxlength="8" placeholder="⭐" aria-label="새 스티커 이모지">' +
+      '<input class="inp inp-sm" id="' + prefix + 'ShapeName" maxlength="10" placeholder="이름 (예: 닭)" aria-label="새 스티커 이름">' +
+      '<button type="button" class="lf-btn" data-act="shape-save" data-prefix="' + prefix + '">추가</button>' +
+      '<p class="ep-hint shape-hint">이모지는 키보드 <b>Win + .</b>(윈도우) 로 골라 넣어요. 폰에서는 이모지 키보드를 쓰면 돼요. (최대 ' + STICKER_SHAPE_MAX + '개)</p>' +
+      '</div>';
+  }
+
+  function shapeAddOpen(prefix) {
+    if (!can('edit')) return;
+    if (prefix === 'reason') { reasonState.shapeNew = true; reasonState.shapeMsg = ''; renderReason(); }
+    else { editPanelShapeNew = true; editPanelShapeMsg = ''; renderEditSheetBody(); }
+  }
+
+  /* 모양을 넣거나 지운 뒤 화면 다시 그리기 (팝업이 열려 있으면 그 팝업만) */
+  function refreshShapeUi() {
+    var rm = document.getElementById('reasonModal');
+    if (rm && !rm.hidden) { renderReason(); return; }
+    try { renderEditSheetBody(); } catch (e) { /* 무시 */ }
+    try { renderStickers(); } catch (e2) { /* 무시 */ }
+  }
+
+  function shapeSave(prefix) {
+    if (!can('edit')) return;
+    var em = String(fieldVal(prefix + 'ShapeEmoji') || '').trim();
+    var nm = String(fieldVal(prefix + 'ShapeName') || '').trim();
+    function say(msg) {
+      if (prefix === 'reason') { reasonState.shapeMsg = msg; renderReason(); }
+      else { editPanelShapeMsg = msg; renderEditSheetBody(); }
+    }
+    if (!em) { say('이모지를 하나 넣어 주세요. (예: ⭐ · 🐣 · 🍎)'); return; }
+    if (nm.length > 10) nm = nm.slice(0, 10);
+    if (!nm) { say('이름을 적어 주세요. (예: 아기 병아리)'); return; }
+    var st = state.sticker;
+    if (!st) return;
+    if (!st.shapes || Object.prototype.toString.call(st.shapes) !== '[object Array]') st.shapes = [];
+    if (st.shapes.length >= STICKER_SHAPE_MAX) { say('모양은 ' + STICKER_SHAPE_MAX + '개까지만 넣을 수 있어요. 하나 지우고 넣어 주세요.'); return; }
+    var all = stickerShapesAll();
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].e === em) { st.shapeId = all[i].id; say('‘' + em + '’' + josaOf(all[i].name, '은', '는') + ' 이미 있어요. 그 모양으로 골랐어요.'); return; }
+    }
+    var shape = normalizeStickerShape({ id: 'c' + Date.now().toString(36), e: em, name: nm });
+    if (!shape) { say('이모지를 하나 넣어 주세요.'); return; }
+    st.shapes.push(shape);
+    st.shapesUpdatedAt = Date.now();
+    st.shapeId = shape.id;
+    if (prefix === 'reason') reasonState.shape = shape.id;
+    saveState();
+    if (cloud.me) scheduleSync('stickers');
+    say('‘' + em + ' ' + nm + '’ 모양을 넣었어요!');
+  }
+  function shapeDel(id) {
+    if (!can('edit')) return;
+    var st = state.sticker;
+    if (!st) return;
+    var list = st.shapes || [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id !== id) continue;
+      var gone = list[i];
+      list.splice(i, 1);
+      st.shapesUpdatedAt = Date.now();
+      if (st.shapeId === id) st.shapeId = '';
+      if (reasonState && reasonState.shape === id) reasonState.shape = stickerActiveShape().id;
+      saveState();
+      if (cloud.me) scheduleSync('stickers');
+      showToast('‘' + gone.e + ' ' + gone.name + '’ 모양을 지웠어요.');
+      break;
+    }
+    refreshShapeUi();
+  }
+
   function reasonHtml() {
-    var h = '<p class="lf-note">이번 스티커는 어떤 칭찬인가요? 고르면 바로 한 칸 붙어요.</p>';
+    var cur = reasonState.shape || stickerActiveShape().id;
+    var h = '<p class="lf-note">어떤 모양으로 붙일까요? 모양을 먼저 고르고 칭찬 이유를 누르면 한 칸 붙어요.</p>';
+    h += stickerShapeRowHtml(cur, can('edit'));
+    if (reasonState.shapeNew && can('edit')) h += shapeAddFormHtml('reason');
+    if (reasonState.shapeMsg) h += '<p class="lf-msg shape-msg">' + esc(reasonState.shapeMsg) + '</p>';
+    /* 직접 만든 모양은 팝업에서도 × 로 지울 수 있어요 */
+    if (can('edit') && (state.sticker.shapes || []).length) h += stickerShapeMineHtml();
+    h += '<p class="lf-note">이번 스티커는 어떤 칭찬인가요? 고르면 바로 한 칸 붙어요.</p>';
     h += '<div class="reason-grid">';
     for (var i = 0; i < state.sticker.reasons.length; i++) {
       var r = state.sticker.reasons[i];
@@ -15677,13 +16042,25 @@
     var body = document.getElementById('reasonBody');
     if (body) body.innerHTML = reasonHtml();
     var inp = document.getElementById('reasonInput');
-    if (inp) { try { inp.focus(); } catch (e) { /* 무시 */ } }
+    if (reasonState.custom) { if (inp) { try { inp.focus(); } catch (e) { /* 무시 */ } } }
+    else { var em = document.getElementById('reasonShapeEmoji'); if (em && reasonState.shapeNew) { try { em.focus(); } catch (e) { /* 무시 */ } } }
   }
 
   function pickReason(r) {
     if (!can('sticker')) return;
+    var sid = reasonState.shape || '';
     closeReason();
-    addSticker(r || '');
+    addSticker(r || '', sid);
+  }
+
+  function pickStickerShape(id) {
+    var s = stickerShapeById(id);
+    if (!s) return;
+    state.sticker.shapeId = s.id;
+    saveState();
+    var rm = document.getElementById('reasonModal');
+    if (rm && !rm.hidden) { reasonState.shape = s.id; renderReason(); return; }
+    try { renderEditSheetBody(); } catch (e) { /* 무시 */ }
   }
 
   /* ---- 스티커 사용(원장) ---- */
@@ -17370,7 +17747,7 @@
     var st = state.sticker;
     if (!st || !(st.slots > 0) || st.stickers.length < st.slots) return false;
     state.boardLog.push({ d: dateKey(), t: Date.now(), slots: st.slots, goal: st.goal || '' });
-    st.stickers = [];
+    clearStickerSlots();
     st.celebrated = false;
     return true;
   }
@@ -17382,9 +17759,9 @@
     var slots = Math.max(1, parseInt(st.slots, 10) || 10);
     for (var i = 0; i < n; i++) {
       if (st.stickers.length >= slots) archiveBoardQuiet();
-      var emoji = STICKER_SET[Math.floor(Math.random() * STICKER_SET.length)];
-      st.stickers.push(emoji);
-      var logged = logSticker(emoji, String(reason || '').slice(0, 20));
+      var shape = stickerActiveShape();
+      pushStickerSlot(shape.e, shape.id);
+      var logged = logSticker(shape.e, String(reason || '').slice(0, 20), shape.id);
       try { markStickerCoinSeen(logged); } catch (e0) { /* 무시 */ }
       try { awardStickerCoins(); } catch (e1) { /* 무시 */ }
     }
@@ -18636,7 +19013,11 @@
       settings: state.settings,
       categories: state.categories,
       schedule: state.schedule,
-      sticker: { slots: state.sticker.slots, goal: state.sticker.goal, unit: state.sticker.unit, reasons: state.sticker.reasons, reasonsUpdatedAt: Number(state.sticker.reasonsUpdatedAt) || 0, clearedAt: state.sticker.clearedAt || 0 },
+      sticker: { slots: state.sticker.slots, goal: state.sticker.goal, unit: state.sticker.unit, reasons: state.sticker.reasons, reasonsUpdatedAt: Number(state.sticker.reasonsUpdatedAt) || 0, clearedAt: state.sticker.clearedAt || 0,
+        /* 붙인 모양(칸별 id) · 직접 만든 모양 목록 — 다른 기기에도 같이 가요 */
+        icons: (state.sticker.icons || []).slice(0), shapes: (state.sticker.shapes || []).slice(0),
+        shapesUpdatedAt: Number(state.sticker.shapesUpdatedAt) || 0, shapeId: state.sticker.shapeId || '',
+        boardUpdatedAt: Number(state.sticker.boardUpdatedAt) || 0 },
       workbooks: state.workbooks,
       layoutOrder: state.layoutOrder,
       clearedAt: state.sticker.clearedAt || 0,
@@ -18757,6 +19138,10 @@
       total: stickerTotal(),
       slots: Math.max(1, parseInt(state.sticker.slots, 10) || 10),
       board: state.sticker.stickers.slice(0),
+      boardIcons: (state.sticker.icons || []).slice(0),
+      shapes: (state.sticker.shapes || []).slice(0),
+      shapesUpdatedAt: Number(state.sticker.shapesUpdatedAt) || 0,
+      shapeId: state.sticker.shapeId || '',
       boardUpdatedAt: Number(state.sticker.boardUpdatedAt) || 0,
       log: state.stickerLog,
       boardLog: state.boardLog,
@@ -18803,7 +19188,7 @@
       stickers: stickers,
       spends: spends,
       boards: boards,
-      board: (key === currentKey) ? { stickers: state.sticker.stickers.slice(0), celebrated: !!state.sticker.celebrated } : null
+      board: (key === currentKey) ? { stickers: state.sticker.stickers.slice(0), icons: (state.sticker.icons || []).slice(0), celebrated: !!state.sticker.celebrated } : null
     };
   }
 
@@ -18868,11 +19253,11 @@
       var res = await ghGet('config/stickers.json');
       if (!res || !res.ok || !res.data) return false;
       if (cloud.dirty.stickers || cloud.saving) return false;
-      var before = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature() +
-        '#' + (state.sticker.reasons || []).join('|') + '#' + (Number(state.sticker.reasonsUpdatedAt) || 0);
+      var before = state.sticker.stickers.join('|') + '#' + (state.sticker.icons || []).join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature() +
+        '#' + (state.sticker.reasons || []).join('|') + '#' + (Number(state.sticker.reasonsUpdatedAt) || 0) + '#' + (state.sticker.shapes || []).length + '#' + (Number(state.sticker.shapesUpdatedAt) || 0);
       applyStickersPayload(res.data, { notify: true });
-      var after = state.sticker.stickers.join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature() +
-        '#' + (state.sticker.reasons || []).join('|') + '#' + (Number(state.sticker.reasonsUpdatedAt) || 0);
+      var after = state.sticker.stickers.join('|') + '#' + (state.sticker.icons || []).join('|') + '#' + (Number(state.sticker.boardUpdatedAt) || 0) + '#' + state.stickerLog.length + '#' + spendsSignature() +
+        '#' + (state.sticker.reasons || []).join('|') + '#' + (Number(state.sticker.reasonsUpdatedAt) || 0) + '#' + (state.sticker.shapes || []).length + '#' + (Number(state.sticker.shapesUpdatedAt) || 0);
       if (before !== after) saveLocalOnly();
       return before !== after;
     } catch (e) {
@@ -18935,6 +19320,28 @@
     state.sticker.slots = Math.max(probe.sticker.slots, state.sticker.stickers.length);
     state.sticker.goal = probe.sticker.goal;
     state.sticker.unit = probe.sticker.unit;
+    /* 직접 만든 스티커 모양 — 시각(shapesUpdatedAt)이 있는 파일만 견줘요.
+       옛 설정 파일(모양 정보 없음)이 새로 만든 모양을 지우지 않게 조심해요. */
+    var dShapes = probe.sticker.shapes || [];
+    var shAt = Number(d.sticker && d.sticker.shapesUpdatedAt) || 0;
+    if (shAt && shAt >= (Number(state.sticker.shapesUpdatedAt) || 0)) {
+      state.sticker.shapes = dShapes.slice(0);
+      state.sticker.shapesUpdatedAt = Math.max(Number(state.sticker.shapesUpdatedAt) || 0, shAt);
+      if (d.sticker && typeof d.sticker.shapeId === 'string') state.sticker.shapeId = d.sticker.shapeId.slice(0, 24);
+    } else if (!shAt && dShapes.length && !(state.sticker.shapes || []).length) {
+      /* 모양을 처음 받는 기기 — 옛 파일에 목록만 있으면 그대로 받아 둬요 */
+      state.sticker.shapes = dShapes.slice(0);
+      state.sticker.shapesUpdatedAt = Date.now();
+    }
+    /* 칸별 모양 id — 판(board)이 같은 판본일 때만 받아요 (판과 어긋나지 않게) */
+    var sIcons = (d.sticker && Object.prototype.toString.call(d.sticker.icons) === '[object Array]') ? d.sticker.icons : null;
+    var dBoardAt = Number(d.sticker && d.sticker.boardUpdatedAt) || 0;
+    if (sIcons && dBoardAt && sIcons.length === state.sticker.stickers.length &&
+        dBoardAt === (Number(state.sticker.boardUpdatedAt) || 0)) {
+      var iconList = [];
+      for (var siI = 0; siI < sIcons.length; siI++) iconList.push(typeof sIcons[siI] === 'string' ? sIcons[siI].slice(0, 24) : '');
+      state.sticker.icons = iconList;
+    }
     /* 목록의 시각(reasonsUpdatedAt)이 없던 예전 파일은 파일이 저장된 시각으로 견줘요 */
     takeStickerReasons(probe.sticker.reasons, reasonsStamp(d.sticker && d.sticker.reasonsUpdatedAt, d.updatedAt));
     if (Object.prototype.toString.call(d.workbooks) === '[object Array]') state.workbooks = probe.workbooks;
@@ -18975,20 +19382,41 @@
       }
     }
 
+    /* 직접 만든 스티커 모양도 이 파일에 들어 있어요 — 더 새로울 때만 받아요 */
+    if (Object.prototype.toString.call(d.shapes) === '[object Array]') {
+      var shAt3 = Number(d.shapesUpdatedAt) || 0;
+      if (shAt3 && shAt3 > (Number(state.sticker.shapesUpdatedAt) || 0)) {
+        var gotShapes = [];
+        for (var sIn = 0; sIn < d.shapes.length && gotShapes.length < STICKER_SHAPE_MAX; sIn++) {
+          var sn3 = normalizeStickerShape(d.shapes[sIn]);
+          if (sn3) gotShapes.push(sn3);
+        }
+        state.sticker.shapes = gotShapes;
+        state.sticker.shapesUpdatedAt = shAt3;
+        if (typeof d.shapeId === 'string' && stickerShapeById(d.shapeId)) state.sticker.shapeId = d.shapeId;
+      }
+    }
+
     /* 지금 판(10칸)도 같이 맞춰요 — 아내 폰에서 붙인 스티커가 아이 화면에도 보이게 */
     var boardTouched = false;
     if (Object.prototype.toString.call(d.board) === '[object Array]') {
       var bAt = Number(d.boardUpdatedAt) || 0;
       var myAt = Number(state.sticker.boardUpdatedAt) || 0;
       var blist = [];
+      var cilist = [];
+      var rIcons = (Object.prototype.toString.call(d.boardIcons) === '[object Array]') ? d.boardIcons : [];
       for (var b0 = 0; b0 < d.board.length && b0 < 30; b0++) {
-        if (typeof d.board[b0] === 'string') blist.push(d.board[b0]);
+        if (typeof d.board[b0] === 'string') {
+          blist.push(d.board[b0]);
+          cilist.push(typeof rIcons[b0] === 'string' ? rIcons[b0].slice(0, 24) : '');
+        }
       }
       /* 구름 판이 더 새로울 때만 (내 기기에서 방금 붙인 판을 덮어쓰지 않게) */
       var takeBoard = bAt > clr && bAt > myAt;
       if (!takeBoard && !bAt && !myAt && blist.length && !state.sticker.stickers.length) takeBoard = true;
       if (takeBoard) {
         state.sticker.stickers = blist;
+        state.sticker.icons = cilist;
         state.sticker.boardUpdatedAt = bAt || Date.now();
         if (blist.length > state.sticker.slots) state.sticker.slots = Math.min(30, blist.length);
         freshIdx = -1;
@@ -19013,7 +19441,7 @@
         seen[kk] = true;
         merged.push({
           d: (typeof le.d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(le.d)) ? le.d : dateKey(new Date(Number(le.t))),
-          t: Number(le.t), e: le.e || '⭐️', r: le.r || ''
+          t: Number(le.t), e: le.e || '⭐️', r: le.r || '', s: (typeof le.s === 'string') ? le.s.slice(0, 24) : ''
         });
         logAdded += 1;
       }
@@ -20486,6 +20914,10 @@
     if (act === 'stats-close') { closeStats(); return; }
     if (act === 'reason-close') { closeReason(); return; }
     if (act === 'reason-pick') { pickReason(el.getAttribute('data-r') || ''); return; }
+    if (act === 'reason-shape') { pickStickerShape(el.getAttribute('data-id') || ''); return; }
+    if (act === 'shape-add') { shapeAddOpen(el.getAttribute('data-prefix') || 'reason'); return; }
+    if (act === 'shape-save') { shapeSave(el.getAttribute('data-prefix') || 'panel'); return; }
+    if (act === 'shape-del') { shapeDel(el.getAttribute('data-id') || ''); return; }
     if (act === 'reason-custom') { reasonState.custom = true; renderReason(); return; }
     if (act === 'reason-save') {
       var rv2 = fieldVal('reasonInput').trim();
@@ -20652,6 +21084,8 @@
     if (act === 'room-theme') { roomUi.panel = 'studio'; roomUi.studio = 'theme'; renderRoom(); return; }
     if (act === 'room-size') { roomUi.panel = (roomUi.panel === 'size' ? 'main' : 'size'); renderRoom(); return; }
     if (act === 'room-floor') { roomGoFloor(el.getAttribute('data-n')); return; }
+    /* 바닥을 눌렀을 때는 층을 바꾸지 않아요 — installRoomDrag 가 아바타만 그 자리로 걸어가게 해요 */
+    if (act === 'room-floor-tap') { return; }
     if (act === 'room-floor-add') { roomAddFloor(); return; }
     if (act === 'room-theme-set') { setRoomTheme(el.getAttribute('data-id')); return; }
     if (act === 'room-size-up') { roomSizeUp(); return; }
@@ -21108,6 +21542,7 @@
     updateClock(now);
     try { phaseTick(); } catch (e) { /* 무시 */ }
     try { tickTargets(); } catch (e) { /* 무시 */ }
+    try { targetAlertWarmup(); } catch (e) { /* 무시 */ }
     try { checkTargetAlerts(); } catch (e) { /* 무시 */ }
     try { checkDayRollover(); } catch (e) { /* 무시 */ }
   }
