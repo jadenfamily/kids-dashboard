@@ -1553,6 +1553,68 @@
     box-shadow:0 2px 6px rgba(190,140,20,.16); white-space:nowrap;
   }
   .coin-badge b{ font-size:13px; letter-spacing:-.02em; }
+  /* ⭐ 상단 레벨 배지 · 경험치 바 */
+  .lv-badge{
+    display:inline-flex; align-items:center; gap:4px; position:relative;
+    background:linear-gradient(135deg,#f4efff,#e6dcff); color:#5b3ea8;
+    border:1.5px solid #d6c6ff; border-radius:999px; padding:3px 9px 3px 7px;
+    font-size:11.5px; font-weight:900; box-shadow:0 2px 6px rgba(110,80,190,.16); white-space:nowrap;
+  }
+  .lv-badge b{ font-size:12.5px; letter-spacing:-.02em; }
+  .lv-badge .lvb-star{ font-size:10.5px; }
+  .xpbar{ display:flex; align-items:center; gap:7px; min-width:0; font-weight:900; }
+  .xpbar .xp-lv{
+    flex:0 0 auto; background:linear-gradient(135deg,#f4efff,#e2d5ff); color:#5b3ea8;
+    border:1.5px solid #d6c6ff; border-radius:999px; padding:2px 8px; font-size:11px;
+  }
+  .xpbar .xp-track{ flex:1 1 auto; height:9px; min-width:60px; border-radius:999px; background:#eee6f8; overflow:hidden; }
+  .xpbar .xp-track i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#9b7bf0,#6f4bd8); transition:width .35s ease; }
+  .xpbar .xp-num{ flex:0 0 auto; font-size:10.5px; color:#8a7f9a; }
+
+  /* 🏆 업적 도감 */
+  .ach-sum{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:linear-gradient(135deg,#fffdf6,#f4efff);
+    border:2px solid #e6dcff; border-radius:16px; padding:10px 12px; }
+  .ach-sum-l{ display:flex; flex-direction:column; gap:2px; flex:1 1 150px; }
+  .ach-sum-l b{ font-size:15px; color:#4b3a7a; }
+  .ach-sum-l small{ font-size:11px; font-weight:800; color:#8a7f9a; }
+  .ach-sum-r{ flex:1 1 160px; }
+  .ach-h{ margin:14px 2px 6px; font-size:13px; color:#6b5a46; }
+  .ach-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
+  .ach-card{ background:#fff; border:2px solid #f0e7da; border-radius:16px; padding:9px 10px; display:flex; flex-direction:column; gap:6px; }
+  .ach-card.on{ border-color:#ffd98a; background:linear-gradient(160deg,#fffdf3,#fff6e2); }
+  .ach-top{ display:flex; align-items:center; gap:7px; }
+  .ach-emoji{ font-size:22px; line-height:1; filter:grayscale(1) opacity(.45); }
+  .ach-card.on .ach-emoji{ filter:none; }
+  .ach-meta{ display:flex; flex-direction:column; min-width:0; flex:1 1 auto; }
+  .ach-meta b{ font-size:12.5px; color:#3f3552; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ach-meta small{ font-size:10px; font-weight:800; color:#a09484; overflow:hidden; display:-webkit-box;
+    -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.25; }
+  .ach-edit{ border:0; background:#f3ecff; color:#6f4bd8; border-radius:9px; padding:3px 6px; font-size:11px; cursor:pointer; font-family:inherit; }
+  .ach-done{ margin:0; font-size:11px; font-weight:900; color:#12805c; }
+  .ach-done span{ color:#9a8f7e; font-weight:800; }
+  .ach-bar{ height:8px; border-radius:999px; background:#f1e9dc; overflow:hidden; }
+  .ach-bar i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#ffc36b,#ff9f1c); }
+  .ach-prog{ margin:0; font-size:10.5px; font-weight:800; color:#9a8f7e; }
+  .ach-check{ border:2px solid #ffe0a3; background:linear-gradient(135deg,#fffdf6,#fff3d6); color:#7a5200;
+    border-radius:12px; padding:5px 8px; font-size:11.5px; font-weight:900; cursor:pointer; font-family:inherit; min-height:32px; }
+  .ach-foot{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  .ach-editor{ background:#fff; border:2px solid #e6dcff; border-radius:16px; padding:10px 11px; display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+  .ae-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .ae-head b{ font-size:13px; color:#4b3a7a; }
+  .ae-emoji{ display:flex; gap:4px; flex-wrap:wrap; }
+  .ae-em{ border:2px solid #eee2d2; background:#fff; border-radius:10px; padding:3px 6px; font-size:16px; cursor:pointer; line-height:1; font-family:inherit; }
+  .ae-em.on{ border-color:#9b7bf0; background:#f4efff; }
+  .ae-field{ display:flex; flex-direction:column; gap:3px; font-size:11px; font-weight:900; color:#8a7f70; flex:1 1 120px; }
+  .ae-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .ae-kinds{ display:flex; gap:5px; flex-wrap:wrap; }
+  .ae-kind{ border:2px solid #eee2d2; background:#fff; color:#6d6484; border-radius:11px; padding:5px 7px; font-size:11px; font-weight:900; cursor:pointer; font-family:inherit; }
+  .ae-kind.on{ background:#2c2440; border-color:#2c2440; color:#fff; }
+  .ae-actions{ display:flex; gap:6px; flex-wrap:wrap; }
+  .ghost-btn.danger{ color:#c6415a; border-color:#ffd0d8; }
+  .room-xprow{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .room-xprow .xpbar{ flex:1 1 auto; }
+  .room-xprow .tool-pill{ flex:0 0 auto; }
+  .av-xp{ margin:2px 0 4px; }
   .coin-pop{
     position:absolute; right:2px; top:-4px; font-style:normal; font-size:12px; font-weight:900;
     color:#0f9d58; animation:coinPop 1.05s ease-out forwards; pointer-events:none;
@@ -2210,8 +2272,26 @@
   .av-fig.jump, .av-fig.dance{ transform-box:fill-box; transform-origin:50% 96%; }
   .av-wave-hand{ transform-box:fill-box; transform-origin:50% 90%; }
   .av-cape{ transform-box:fill-box; transform-origin:90% 10%; }
+
+  /* 🚶 걷기 — 왼팔·오른다리 / 오른팔·왼다리가 서로 엇갈려 흔들려요 */
+  @keyframes avWalkLegA{ 0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(11deg)} }
+  @keyframes avWalkLegB{ 0%,100%{transform:rotate(11deg)} 50%{transform:rotate(-12deg)} }
+  @keyframes avWalkArmA{ 0%,100%{transform:rotate(14deg)} 50%{transform:rotate(-14deg)} }
+  @keyframes avWalkArmB{ 0%,100%{transform:rotate(-14deg)} 50%{transform:rotate(14deg)} }
+  @keyframes avWalkBob{ 0%,100%{transform:translateY(0)} 25%{transform:translateY(-2.6px)} 50%{transform:translateY(0)} 75%{transform:translateY(-2.6px)} }
+  @keyframes avWalkShadow{ 0%,100%{transform:scale(1);opacity:.11} 50%{transform:scale(.86);opacity:.07} }
+  .av-fig.walking{ animation:none; }
+  .av-fig.walking .av-leg-l{ animation:avWalkLegA .56s ease-in-out infinite; transform-box:view-box; transform-origin:54px 151px; }
+  .av-fig.walking .av-leg-r{ animation:avWalkLegB .56s ease-in-out infinite; transform-box:view-box; transform-origin:66px 151px; }
+  .av-fig.walking .av-arm-l{ animation:avWalkArmA .56s ease-in-out infinite; transform-box:view-box; transform-origin:45px 104px; }
+  .av-fig.walking .av-arm-r{ animation:avWalkArmB .56s ease-in-out infinite; transform-box:view-box; transform-origin:75px 104px; }
+  .av-fig.walking .av-bob{ animation:avWalkBob .28s ease-in-out infinite; }
+  .av-fig.walking .av-shadow{ animation:avWalkShadow .56s ease-in-out infinite; transform-box:view-box; transform-origin:60px 195px; }
+  .av-shadow{ transform-box:view-box; transform-origin:60px 195px; }
   @media (prefers-reduced-motion:reduce){
     .av-fig.jump, .av-fig.dance, .av-wave-hand, .av-cape{ animation:none; }
+    .av-fig.walking .av-leg-l, .av-fig.walking .av-leg-r, .av-fig.walking .av-arm-l, .av-fig.walking .av-arm-r,
+    .av-fig.walking .av-bob, .av-fig.walking .av-shadow{ animation:none; }
   }
 
   @media (max-width:700px){
@@ -2682,6 +2762,7 @@
         <span id="clockLine">-</span>
         <span class="sync-pill" id="syncPill" title="저장 상태">☁️ 준비</span>
         <span class="coin-badge" id="coinBadge" title="내 코인"><svg class="coin-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11.4" fill="url(#coinRim)"/><circle cx="12" cy="12" r="9.3" fill="url(#coinGold)"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#c98b00" stroke-width="1" opacity=".45"/><text x="12" y="15.4" text-anchor="middle" font-size="8.6" font-weight="900" fill="#a8690a" font-family="inherit">C</text><ellipse cx="8.4" cy="7.2" rx="3.2" ry="1.8" fill="#fffbe8" opacity=".8" transform="rotate(-30 8.4 7.2)"/></svg> <b>-</b></span>
+        <span class="lv-badge" id="lvBadge" title="아바타 레벨"><span class="lvb-star" aria-hidden="true">⭐</span> <b>Lv.1</b></span>
       </p>
     </div>
 
@@ -2700,6 +2781,7 @@
         <button class="edit-btn room-btn" id="roomBtn" data-act="room-open" aria-haspopup="dialog" title="마이룸"><span class="bi" aria-hidden="true">🏡</span><span class="bl">마이룸</span></button>
         <button class="icon-btn" id="soundBtn" data-act="sound-toggle" aria-label="소리 켜기">🔔</button>
         <button class="edit-btn" id="accountsBtn" data-act="accounts-open" aria-haspopup="dialog" hidden><span class="bi" aria-hidden="true">👥</span><span class="bl">계정</span></button>
+        <button class="edit-btn ach-btn" id="achBtn" data-act="ach-open" aria-haspopup="dialog" title="업적 도감"><span class="bi" aria-hidden="true">🏆</span><span class="bl">업적</span></button>
         <button class="edit-btn hist-btn" id="historyBtn" data-act="history-open" aria-haspopup="dialog"><span class="bi" aria-hidden="true">📅</span><span class="bl">기록</span></button>
         <button class="icon-btn fs-btn" id="fsBtn" data-act="fullscreen-toggle" aria-label="전체화면" title="전체화면"><svg class="fs-ico" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.2 7V3.2H7M13 3.2h3.8V7M16.8 13v3.8H13M7 16.8H3.2V13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
         <button class="edit-btn" id="statsBtn" data-act="stats-open" aria-haspopup="dialog" hidden><span class="bi" aria-hidden="true">📊</span><span class="bl">통계</span></button>
@@ -2924,6 +3006,16 @@
     <div class="modal-actions">
       <button class="modal-btn" data-act="allow-accept">고맙습니다! 받기</button>
     </div>
+  </div>
+</div>
+
+<div class="hist" id="achModal" hidden role="dialog" aria-modal="true" aria-labelledby="achTitle">
+  <div class="hist-card" style="max-width:760px">
+    <div class="hist-head">
+      <h2 id="achTitle">🏆 업적 도감</h2>
+      <button class="hist-close" data-act="ach-close" aria-label="업적 도감 닫기">✕</button>
+    </div>
+    <div class="hist-body" id="achBody"></div>
   </div>
 </div>
 
@@ -3614,7 +3706,8 @@
         alertSound: ALERT_SOUND_DEFAULT, customAlertSounds: [],
         sectionTitles: { routine: '하루 루틴', sticker: '칭찬 스티커', academy: '오늘의 학원', week: '학원 시간표' },
         dashboardSections: defaultSections(),
-        vars: defaultVars()
+        vars: defaultVars(),
+        achievements: defaultAchievements()
       },
       categories: [
         {
@@ -4038,6 +4131,8 @@
 
     /* 조절 가능한 변수 (🎛️ 변수 설정) */
     s.settings.vars = normVars(s.settings.vars);
+    /* 🏆 업적 정의 — 보호자가 만든 것까지 기기끼리 함께 써요 */
+    s.settings.achievements = normAchievements(s.settings.achievements);
 
     var cats = [];
     if (Object.prototype.toString.call(s.categories) === '[object Array]') {
@@ -4502,6 +4597,7 @@
 
     renderSoundBtn();
     renderCoinBadge();
+    renderLevelBadges();
     updateClock(new Date());
   }
 
@@ -5317,6 +5413,8 @@
     if (on) {
       var gotCoin = awardCheckCoins(itemId);
       if (gotCoin.coin && gotCoin.first) showToast(coinSvg() + ' +' + gotCoin.coin + ' 코인!', true);
+      bumpProgress('routine', 1);
+      gainXp(XP_CHECK);
       var gcat = findCat(catId);
       if (gcat && gcat.items.length) {
         var allDone = true;
@@ -5328,6 +5426,8 @@
       }
     } else {
       revokeCheckCoins(itemId);
+      bumpProgress('routine', -1);
+      gainXp(-XP_CHECK);
     }
     saveState();
     renderCoinBadge();
@@ -5614,6 +5714,8 @@
     confetti(12, slot || document.getElementById('stickerBoard'));
     snd('sticker');
     awardStickerCoins();
+    bumpProgress('sticker', 1);
+    gainXp(XP_STICKER);
     saveState();
     renderCoinBadge();
     showToast(emoji + ' 칭찬 스티커! ' + coinSvg() + ' +' + COIN_STICKER, true);
@@ -5638,6 +5740,8 @@
     touchBoard(Date.now());
     dropStickerLog(emoji);
     revokeStickerCoins();
+    bumpProgress('sticker', -1);
+    gainXp(-XP_STICKER);
     saveState();
     renderCoinBadge();
     renderStickers();
@@ -7039,6 +7143,18 @@
   var COIN_STICKER = 10;    /* 칭찬 스티커 */
   var COIN_START = 120;     /* 새 계정 시작 코인 */
   var COIN_MAX = 999999999;  /* 코인 상한 — 사실상 무제한 (입력·잔액 모두 여기까지만 잘라요) */
+  /* ⭐ 아바타 경험치(EXP) — 코인을 받는 일을 하면 함께 쌓여요 */
+  var XP_CHECK = 10;        /* 루틴 체크 · 문제지 완료 · 역할 체크 */
+  var XP_MISSION = 15;      /* 특별 미션 칸 체크 */
+  var XP_STICKER = 15;      /* 칭찬 스티커 한 장 */
+  var ACH_MAX = 40;         /* 업적 최대 개수 */
+  var ACH_NAME_MAX = 16, ACH_DESC_MAX = 40, ACH_GOAL_MAX = 999, ACH_REWARD_MAX = 999;
+  var ACH_KIND_LABEL = {
+    routine: '루틴 체크', workbook: '문제지 완료', sticker: '칭찬 스티커', mission: '특별 미션',
+    role: '역할 체크', level: '아바타 레벨', pet: '펫 부화', manual: '직접 완료'
+  };
+  var ACH_KIND_UNIT = { routine: '번', workbook: '번', sticker: '장', mission: '번', role: '번', level: 'Lv', pet: '마리', manual: '' };
+  var ACH_EMOJI = ['🏆', '🥇', '🏅', '👑', '⭐', '🌟', '🎯', '🏹', '📚', '🎓', '🔥', '💪', '🚀', '🛸', '🥚', '🐣', '🌈', '🍀', '💎', '🎖️'];
   var HATCH_MS = 24 * 60 * 60 * 1000;  /* 새 알 기본 부화 시간 24시간 (🎛️ hatchHours 변수로 바뀌어요) */
   var EXP_MAX = 100;        /* 단계마다 필요한 경험치 (🎛️ expMax 변수로 바뀌어요) */
 
@@ -7462,6 +7578,12 @@
       },
       room: defaultRoom(),
       avatar: defaultAvatar(),
+      /* ⭐ 경험치·레벨 (레벨은 한 번 오르면 내려가지 않아요) */
+      xp: 0, level: 1,
+      /* 업적용 누적 횟수 — 체크를 풀면 함께 줄어요 */
+      progress: { routine: 0, workbook: 0, sticker: 0, mission: 0, role: 0, pet: 0 },
+      /* 🏆 달성한 업적 { 업적id: { at } } */
+      ach: { done: {} },
       allowanceNotices: [],
       award: { day: '', checks: {}, groups: {}, stickers: 0, refunded: {} },
       updatedAt: new Date().toISOString()
@@ -7487,6 +7609,11 @@
     if (!p.award || typeof p.award !== 'object') p.award = { day: '', checks: {}, groups: {}, stickers: 0, refunded: {} };
     if (!p.award.refunded || typeof p.award.refunded !== 'object') p.award.refunded = {};
     if (p.award.day !== currentKey) p.award = { day: currentKey, checks: {}, groups: {}, stickers: 0, refunded: {} };
+    if (p.xp == null) p.xp = 0;
+    if (p.level == null) p.level = 1;
+    if (!p.progress || typeof p.progress !== 'object') p.progress = { routine: 0, workbook: 0, sticker: 0, mission: 0, role: 0, pet: 0 };
+    if (!p.ach || typeof p.ach !== 'object') p.ach = { done: {} };
+    if (!p.ach.done || typeof p.ach.done !== 'object') p.ach.done = {};
     return p;
   }
 
@@ -7502,6 +7629,12 @@
       owned: {},
       room: defaultRoom(),
       avatar: defaultAvatar(),
+      /* ⭐ 경험치·레벨 (레벨은 한 번 오르면 내려가지 않아요) */
+      xp: 0, level: 1,
+      /* 업적용 누적 횟수 — 체크를 풀면 함께 줄어요 */
+      progress: { routine: 0, workbook: 0, sticker: 0, mission: 0, role: 0, pet: 0 },
+      /* 🏆 달성한 업적 { 업적id: { at } } */
+      ach: { done: {} },
       allowanceNotices: [],
       award: { day: '', checks: {}, groups: {}, stickers: 0, refunded: {} },
       updatedAt: (typeof p.updatedAt === 'string' && p.updatedAt) ? p.updatedAt : new Date().toISOString(),
@@ -7725,6 +7858,27 @@
     }
     out.avatar = av;
 
+    /* ---- ⭐ 경험치 · 레벨 · 업적 ---- */
+    var rxp = parseInt(p.xp, 10);
+    out.xp = (isNaN(rxp) || rxp < 0) ? 0 : Math.min(rxp, 99999999);
+    var rlv = parseInt(p.level, 10);
+    out.level = (isNaN(rlv) || rlv < 1) ? 1 : Math.min(rlv, 999);
+    var rpg = (p.progress && typeof p.progress === 'object') ? p.progress : {};
+    var progKeys = ['routine', 'workbook', 'sticker', 'mission', 'role', 'pet'];
+    for (var pki = 0; pki < progKeys.length; pki++) {
+      var pv = parseInt(rpg[progKeys[pki]], 10);
+      out.progress[progKeys[pki]] = (isNaN(pv) || pv < 0) ? 0 : Math.min(pv, 999999);
+    }
+    var rAch = (p.ach && typeof p.ach === 'object' && p.ach.done && typeof p.ach.done === 'object') ? p.ach.done : {};
+    var achN = 0;
+    for (var ak in rAch) {
+      if (!own(rAch, ak) || !rAch[ak] || achN >= 200) continue;
+      if (!/^ach-[A-Za-z0-9_-]{1,32}$/.test(ak)) continue;
+      var atv = Number(rAch[ak] && rAch[ak].at);
+      out.ach.done[ak] = { at: (atv && !isNaN(atv)) ? atv : Date.now() };
+      achN += 1;
+    }
+
     /* ---- 코인 기록 (용돈 주기 · 빼기 · 직접 맞추기) ---- */
     var an = [];
     var rawAn = (Object.prototype.toString.call(p.allowanceNotices) === '[object Array]') ? p.allowanceNotices : [];
@@ -7907,6 +8061,393 @@
     coinAdd(-COIN_STICKER);
   }
 
+  /* ================= ⭐ 경험치(EXP) · 레벨 =================
+     · 코인을 받는 일을 하면 경험치도 함께 쌓여요.
+     · Lv.1→2 는 100, 그다음부터는 레벨마다 +50 씩 더 필요해요 (100·150·200·250…).
+     · 레벨이 오를 때마다 '새 레벨 × 20코인'을 보너스로 줘요.
+     · 체크를 풀면 준 경험치도 돌아와요(반복 체크로 레벨을 올릴 수 없어요).
+       레벨은 한 번 오르면 내려가지 않아서, 다시 채워도 보너스가 또 나가지는 않아요. */
+  function xpToLevel(level) {
+    var L = Math.max(1, parseInt(level, 10) || 1);
+    return 25 * (L - 1) * (L + 2);
+  }
+  function xpStep(level) { return 50 * ((parseInt(level, 10) || 1) + 1); }
+  function levelOfXp(xp) {
+    var L = 1;
+    while (L < 300 && xp >= xpToLevel(L + 1)) L++;
+    return L;
+  }
+  function xpInfo() {
+    var p = prof();
+    var xp = Math.max(0, parseInt(p.xp, 10) || 0);
+    var lv = Math.max(1, parseInt(p.level, 10) || 1);
+    var calc = levelOfXp(xp);
+    if (calc > lv) lv = calc;
+    var base = xpToLevel(lv), next = xpToLevel(lv + 1);
+    var span = Math.max(1, next - base);
+    var into = Math.max(0, Math.min(span, xp - base));
+    return { xp: xp, level: lv, base: base, next: next, need: span, into: into, pct: Math.round(into * 100 / span) };
+  }
+  /* 경험치 더하기(빼기) — 레벨업하면 축하와 함께 보너스 코인 */
+  function gainXp(n) {
+    n = Math.round(Number(n) || 0);
+    if (!n) return null;
+    var p = prof();
+    var before = xpInfo();
+    p.xp = Math.max(0, (parseInt(p.xp, 10) || 0) + n);
+    var after = xpInfo();
+    var bonus = 0;
+    if (after.level > before.level) {
+      for (var L = before.level + 1; L <= after.level; L++) bonus += L * 20;
+      p.level = after.level;
+      if (bonus > 0) coinAdd(bonus);
+      try { snd('win'); confetti(26); } catch (e1) { /* 무시 */ }
+      showToast('🎉 <b>Lv.' + after.level + '</b> 레벨업! ' + coinSvg() + ' +' + fmtNum(bonus) + ' 코인', true, 3800);
+    } else if (after.level < (parseInt(p.level, 10) || 1)) {
+      /* 레벨은 내려가지 않아요 (한 번 이룬 것은 그대로) */
+      p.level = Math.max(1, parseInt(p.level, 10) || 1);
+    }
+    p.updatedAt = new Date().toISOString();
+    renderLevelBadges();
+    try { checkAchievements(); } catch (e2) { /* 무시 */ }
+    return { xp: p.xp, level: after.level, bonus: bonus };
+  }
+  /* 업적용 누적 횟수 — 체크를 풀면 함께 줄어 반복 체크로 부풀지 않아요 */
+  function bumpProgress(key, n) {
+    var p = prof();
+    if (!p.progress || typeof p.progress !== 'object') p.progress = {};
+    var cur = parseInt(p.progress[key], 10) || 0;
+    p.progress[key] = Math.max(0, Math.min(999999, cur + (Number(n) || 0)));
+    return p.progress[key];
+  }
+
+  /* 레벨 배지 · 경험치 바 (상단 · 마이룸 · 아바타 창) */
+  function renderLevelBadges() {
+    var x = xpInfo();
+    var el = document.getElementById('lvBadge');
+    if (el) {
+      el.innerHTML = '<span class="lvb-star" aria-hidden="true">⭐</span> <b>Lv.' + x.level + '</b>';
+      el.setAttribute('title', '아바타 레벨 ' + x.level + ' · 다음 레벨까지 ' + fmtNum(Math.max(0, x.need - x.into)) + ' EXP');
+    }
+    var bars = document.querySelectorAll('[data-xpbar]');
+    for (var i = 0; i < bars.length; i++) {
+      var host = bars[i];
+      if (!host) continue;
+      host.innerHTML = '<span class="xp-lv">Lv.' + x.level + '</span>' +
+        '<span class="xp-track"><i style="width:' + x.pct + '%"></i></span>' +
+        '<span class="xp-num">' + fmtNum(x.into) + ' / ' + fmtNum(x.need) + '</span>';
+    }
+  }
+
+  /* ================= 🏆 업적 ================= */
+  function defaultAchievements() {
+    return [
+      { id: 'ach-routine-10', emoji: '🥇', name: '루틴 새싹', desc: '루틴을 10번 체크했어요', kind: 'routine', goal: 10, reward: 20 },
+      { id: 'ach-routine-50', emoji: '🏅', name: '루틴 달인', desc: '루틴을 50번 체크했어요', kind: 'routine', goal: 50, reward: 35 },
+      { id: 'ach-routine-100', emoji: '👑', name: '루틴 왕', desc: '루틴을 100번 체크했어요', kind: 'routine', goal: 100, reward: 50 },
+      { id: 'ach-workbook-10', emoji: '📚', name: '문제지 첫걸음', desc: '문제지를 10번 마쳤어요', kind: 'workbook', goal: 10, reward: 20 },
+      { id: 'ach-workbook-30', emoji: '🎓', name: '공부 대장', desc: '문제지를 30번 마쳤어요', kind: 'workbook', goal: 30, reward: 40 },
+      { id: 'ach-sticker-10', emoji: '⭐', name: '칭찬 받는 날', desc: '칭찬 스티커를 10장 모았어요', kind: 'sticker', goal: 10, reward: 20 },
+      { id: 'ach-sticker-30', emoji: '🌟', name: '스티커 부자', desc: '칭찬 스티커를 30장 모았어요', kind: 'sticker', goal: 30, reward: 40 },
+      { id: 'ach-mission-1', emoji: '🎯', name: '첫 미션', desc: '특별 미션을 처음 해냈어요', kind: 'mission', goal: 1, reward: 20 },
+      { id: 'ach-mission-5', emoji: '🏹', name: '미션 사냥꾼', desc: '특별 미션을 5번 해냈어요', kind: 'mission', goal: 5, reward: 35 },
+      { id: 'ach-role-10', emoji: '⚡', name: '우리집 일꾼', desc: '역할 체크를 10번 했어요', kind: 'role', goal: 10, reward: 20 },
+      { id: 'ach-role-30', emoji: '🔋', name: '역할 챔피언', desc: '역할 체크를 30번 했어요', kind: 'role', goal: 30, reward: 40 },
+      { id: 'ach-level-3', emoji: '🚀', name: 'Lv.3 도전자', desc: '아바타가 Lv.3 이 되었어요', kind: 'level', goal: 3, reward: 25 },
+      { id: 'ach-level-5', emoji: '🛸', name: 'Lv.5 대장', desc: '아바타가 Lv.5 이 되었어요', kind: 'level', goal: 5, reward: 40 },
+      { id: 'ach-pet-1', emoji: '🐣', name: '첫 친구', desc: '펫을 처음 부화시켰어요', kind: 'pet', goal: 1, reward: 20 },
+      { id: 'ach-pet-3', emoji: '🦄', name: '친구 부자', desc: '펫을 3마리 부화시켰어요', kind: 'pet', goal: 3, reward: 40 }
+    ];
+  }
+  function normAchievement(raw, i) {
+    if (!raw || typeof raw !== 'object') return null;
+    var id = String(raw.id || '');
+    if (!/^ach-[A-Za-z0-9_-]{1,32}$/.test(id)) id = 'ach-' + uid('');
+    var kind = ACH_KIND_LABEL[raw.kind] ? raw.kind : 'routine';
+    var nm = String(raw.name == null ? '' : raw.name).replace(/\s+/g, ' ').trim();
+    if (!nm) return null;
+    var dsc = String(raw.desc == null ? '' : raw.desc).replace(/\s+/g, ' ').trim();
+    var em = String(raw.emoji == null ? '' : raw.emoji).trim();
+    return {
+      id: id,
+      emoji: em ? fixEmoji(em.slice(0, 4)) : '🏆',
+      name: nm.slice(0, ACH_NAME_MAX),
+      desc: dsc.slice(0, ACH_DESC_MAX),
+      kind: kind,
+      goal: clampInt(raw.goal, 1, ACH_GOAL_MAX, 10),
+      reward: clampInt(raw.reward, 0, ACH_REWARD_MAX, 20)
+    };
+  }
+  function normAchievements(rawList) {
+    var arr = (Object.prototype.toString.call(rawList) === '[object Array]') ? rawList : null;
+    if (!arr) return defaultAchievements();
+    var out = [], seen = {};
+    for (var i = 0; i < arr.length && out.length < ACH_MAX; i++) {
+      var one = normAchievement(arr[i], i);
+      if (!one || seen[one.id]) continue;
+      seen[one.id] = 1;
+      out.push(one);
+    }
+    return out;
+  }
+  function achList() {
+    if (!state.settings) state.settings = {};
+    if (Object.prototype.toString.call(state.settings.achievements) !== '[object Array]') {
+      state.settings.achievements = defaultAchievements();
+    }
+    return state.settings.achievements;
+  }
+  function achFind(id) {
+    var list = achList();
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+  function achDone() {
+    var p = prof();
+    if (!p.ach || typeof p.ach !== 'object') p.ach = { done: {} };
+    if (!p.ach.done || typeof p.ach.done !== 'object') p.ach.done = {};
+    return p.ach.done;
+  }
+  function achValue(d) {
+    if (!d) return 0;
+    if (d.kind === 'manual') return achDone()[d.id] ? d.goal : 0;
+    if (d.kind === 'level') return xpInfo().level;
+    var p = prof();
+    return Math.max(0, parseInt((p.progress || {})[d.kind], 10) || 0);
+  }
+  function achEarnedCount() {
+    var list = achList(), done = achDone(), n = 0;
+    for (var i = 0; i < list.length; i++) if (done[list[i].id]) n++;
+    return n;
+  }
+  /* 조건을 채운 업적을 한 번만 달성 처리하고 보상 코인을 줘요 */
+  function checkAchievements() {
+    var list = achList(), done = achDone(), got = [], changed = false;
+    for (var i = 0; i < list.length; i++) {
+      var d = list[i];
+      if (!d || done[d.id]) continue;
+      if (d.kind === 'manual') continue;
+      if (achValue(d) < Math.max(1, d.goal)) continue;
+      done[d.id] = { at: Date.now() };
+      changed = true;
+      got.push(d);
+      if (d.reward > 0) coinAdd(d.reward);
+    }
+    if (!changed) return got;
+    saveState();
+    renderCoinBadge();
+    try { snd('win'); confetti(18); } catch (e1) { /* 무시 */ }
+    if (got.length === 1) {
+      showToast('🏆 업적 달성! <b>' + esc((got[0].emoji || '🏆') + ' ' + got[0].name) + '</b>' +
+        (got[0].reward > 0 ? ' ' + coinSvg() + ' +' + fmtNum(got[0].reward) : ''), true, 3800);
+    } else {
+      var names = [];
+      for (var k = 0; k < got.length; k++) names.push(esc(got[k].name));
+      showToast('🏆 업적 ' + got.length + '개 달성! <b>' + names.join(' · ') + '</b>', true, 4200);
+    }
+    if (document.getElementById('achModal') && !document.getElementById('achModal').hidden) renderAch();
+    return got;
+  }
+  /* ---- 🏆 업적 도감 그리기 ---- */
+  var achUi = { edit: null };
+
+  function openAch() {
+    achUi.edit = null;
+    renderAch();
+    var m = document.getElementById('achModal');
+    if (m) m.hidden = false;
+    raiseModal('achModal');
+    lockScroll();
+  }
+  function closeAch() {
+    achUi.edit = null;
+    var m = document.getElementById('achModal');
+    if (m) m.hidden = true;
+    if (isOnlyModal('achModal')) unlockScroll();
+  }
+  function renderAch() {
+    var b = document.getElementById('achBody');
+    if (!b) return;
+    b.innerHTML = achBodyHtml();
+    try { renderLevelBadges(); } catch (e0) { /* 무시 */ }
+  }
+  function achDateText(at) {
+    if (!at) return '';
+    var d = new Date(Number(at));
+    if (!d || isNaN(d.getTime())) return '';
+    return (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
+  }
+  function achCardHtml(d, done, editable) {
+    var val = achValue(d);
+    var goal = Math.max(1, d.goal);
+    var pct = Math.min(100, Math.round(val * 100 / goal));
+    var manual = d.kind === 'manual';
+    var h = '<article class="ach-card' + (done ? ' on' : '') + (manual ? ' manual' : '') + '" data-ach="' + esc(d.id) + '">';
+    h += '<div class="ach-top"><span class="ach-emoji" aria-hidden="true">' + esc(d.emoji || '🏆') + '</span>' +
+      '<div class="ach-meta"><b>' + esc(d.name) + '</b>' +
+      '<small>' + esc(d.desc || (ACH_KIND_LABEL[d.kind] + ' ' + goal + (ACH_KIND_UNIT[d.kind] || ''))) + '</small></div>';
+    if (editable) {
+      h += '<button type="button" class="ach-edit" data-act="ach-edit" data-id="' + esc(d.id) + '" aria-label="업적 고치기" title="업적 고치기">✏️</button>';
+    }
+    h += '</div>';
+    if (done) {
+      h += '<p class="ach-done">🏆 획득! <span>' + esc(achDateText(done.at)) + '</span></p>';
+    } else if (manual) {
+      h += '<button type="button" class="ach-check" data-act="ach-manual" data-id="' + esc(d.id) + '">☑ 완료 체크</button>';
+    } else {
+      var leftTxt = d.kind === 'level' ? ('Lv.' + fmtNum(Math.min(val, goal))) : fmtNum(Math.min(val, goal));
+      var rightTxt = d.kind === 'level' ? ('Lv.' + fmtNum(goal)) : (fmtNum(goal) + (ACH_KIND_UNIT[d.kind] || ''));
+      h += '<div class="ach-bar" aria-hidden="true"><i style="width:' + pct + '%"></i></div>' +
+        '<p class="ach-prog">' + leftTxt + ' / ' + rightTxt + ' · 🪙' + fmtNum(d.reward) + '</p>';
+    }
+    if (done && d.reward > 0) h += '<p class="ach-prog">보상 🪙' + fmtNum(d.reward) + '</p>';
+    h += '</article>';
+    return h;
+  }
+  function achEditorHtml() {
+    var d = achUi.edit;
+    if (!d) return '';
+    var h = '<div class="ach-editor" id="achEditor">';
+    h += '<div class="ae-head"><b>' + (d.isNew ? '＋ 새 업적 만들기' : '✏️ 업적 고치기') + '</b>' +
+      '<button type="button" class="ghost-btn tiny" data-act="ach-cancel">닫기</button></div>';
+    h += '<div class="ae-emoji">';
+    for (var i = 0; i < ACH_EMOJI.length; i++) {
+      h += '<button type="button" class="ae-em' + (d.emoji === ACH_EMOJI[i] ? ' on' : '') + '" data-act="ach-emoji" data-e="' + ACH_EMOJI[i] + '">' + ACH_EMOJI[i] + '</button>';
+    }
+    h += '</div>';
+    h += '<label class="ae-field"><span>이름</span><input class="inp" id="achName" maxlength="' + ACH_NAME_MAX + '" value="' + esc(d.name) + '" placeholder="예: 수영 25m 성공"></label>';
+    h += '<label class="ae-field"><span>설명</span><input class="inp" id="achDesc" maxlength="' + ACH_DESC_MAX + '" value="' + esc(d.desc) + '" placeholder="어떻게 얻는 업적인지 적어 주세요"></label>';
+    h += '<div class="ae-field"><span>조건</span><div class="ae-kinds">';
+    var kinds = ['routine', 'workbook', 'sticker', 'mission', 'role', 'level', 'pet', 'manual'];
+    for (var k = 0; k < kinds.length; k++) {
+      h += '<button type="button" class="ae-kind' + (d.kind === kinds[k] ? ' on' : '') + '" data-act="ach-kind" data-kind="' + kinds[k] + '">' + ACH_KIND_LABEL[kinds[k]] + '</button>';
+    }
+    h += '</div></div>';
+    h += '<div class="ae-row">' +
+      '<label class="ae-field"><span>목표 ' + (ACH_KIND_UNIT[d.kind] || '횟수') + '</span>' +
+        '<input class="inp" id="achGoal" type="number" min="1" max="' + ACH_GOAL_MAX + '" step="1" value="' + d.goal + '"></label>' +
+      '<label class="ae-field"><span>보상 코인</span>' +
+        '<input class="inp" id="achReward" type="number" min="0" max="' + ACH_REWARD_MAX + '" step="5" value="' + d.reward + '"></label>' +
+      '</div>';
+    h += '<div class="ae-actions">' +
+      '<button type="button" class="pill-btn" data-act="ach-save">💾 저장</button>' +
+      (d.isNew ? '' : '<button type="button" class="ghost-btn danger" data-act="ach-del" data-id="' + esc(d.id) + '">🗑 지우기</button>') +
+      '<button type="button" class="ghost-btn" data-act="ach-cancel">취소</button></div>';
+    h += '<p class="lf-note">‘직접 완료’ 업적은 도감에서 완료 체크를 눌러 획득해요. 나머지는 조건을 채우면 저절로 획득해요.</p>';
+    h += '</div>';
+    return h;
+  }
+  function achBodyHtml() {
+    var list = achList(), done = achDone(), editable = can('edit');
+    var earned = 0, i;
+    for (i = 0; i < list.length; i++) if (done[list[i].id]) earned++;
+    var h = '<div class="ach-sum">' +
+      '<div class="ach-sum-l"><b>🏆 업적 ' + earned + ' / ' + list.length + '</b>' +
+      '<small>모은 뱃지 ' + earned + '개 · 아직 ' + (list.length - earned) + '개 남았어요</small></div>' +
+      '<div class="ach-sum-r xpbar" data-xpbar>' + '' + '</div>' +
+      '</div>';
+    if (achUi.edit) h += achEditorHtml();
+    var earnedList = [], todoList = [];
+    for (i = 0; i < list.length; i++) (done[list[i].id] ? earnedList : todoList).push(list[i]);
+    if (earnedList.length) {
+      h += '<h3 class="ach-h">🏅 획득한 뱃지</h3><div class="ach-grid">';
+      for (i = 0; i < earnedList.length; i++) h += achCardHtml(earnedList[i], done[earnedList[i].id], editable);
+      h += '</div>';
+    }
+    h += '<h3 class="ach-h">🎯 도전 중인 업적</h3>';
+    if (!todoList.length) h += '<p class="lf-note">모든 업적을 다 모았어요! 대단해요 🎉</p>';
+    else {
+      h += '<div class="ach-grid">';
+      for (i = 0; i < todoList.length; i++) h += achCardHtml(todoList[i], null, editable);
+      h += '</div>';
+    }
+    if (editable) {
+      h += '<div class="ach-foot"><button type="button" class="pill-btn warm" data-act="ach-add">＋ 업적 추가</button>' +
+        '<button type="button" class="ghost-btn" data-act="ach-close">닫기</button></div>';
+    } else {
+      h += '<div class="ach-foot"><button type="button" class="ghost-btn" data-act="ach-close">닫기</button></div>';
+    }
+    h += '<p class="lf-note">업적은 보호자·관리자가 만들고 고칠 수 있어요. 업적과 달성 기록은 가족 기기끼리 함께 저장돼요.</p>';
+    return h;
+  }
+  function achEditOpen(id) {
+    if (!can('edit')) return;
+    var d = id ? achFind(id) : null;
+    achUi.edit = d
+      ? { id: d.id, emoji: d.emoji, name: d.name, desc: d.desc, kind: d.kind, goal: d.goal, reward: d.reward, isNew: false }
+      : { id: '', emoji: '🏆', name: '', desc: '', kind: 'routine', goal: 10, reward: 20, isNew: true };
+    renderAch();
+    var el = document.getElementById('achEditor');
+    if (el && el.scrollIntoView) { try { el.scrollIntoView({ block: 'start' }); } catch (e) { /* 무시 */ } }
+  }
+  function achEditSyncFields() {
+    if (!achUi.edit) return;
+    achUi.edit.name = fieldVal('achName').slice(0, ACH_NAME_MAX);
+    achUi.edit.desc = fieldVal('achDesc').slice(0, ACH_DESC_MAX);
+    var g = parseInt(fieldVal('achGoal'), 10);
+    var r = parseInt(fieldVal('achReward'), 10);
+    if (!isNaN(g)) achUi.edit.goal = clampInt(g, 1, ACH_GOAL_MAX, 10);
+    if (!isNaN(r)) achUi.edit.reward = clampInt(r, 0, ACH_REWARD_MAX, 20);
+  }
+  function achSave() {
+    if (!can('edit') || !achUi.edit) return;
+    achEditSyncFields();
+    var d = achUi.edit;
+    var nm = String(d.name || '').replace(/\s+/g, ' ').trim();
+    if (!nm) { showToast('업적 이름을 적어 주세요.'); return; }
+    var list = achList();
+    if (d.isNew) {
+      if (list.length >= ACH_MAX) { showToast('업적은 ' + ACH_MAX + '개까지 만들 수 있어요.'); return; }
+      list.push({ id: 'ach-' + uid(''), emoji: d.emoji, name: nm, desc: String(d.desc || '').trim(), kind: d.kind, goal: d.goal, reward: d.reward });
+    } else {
+      var cur = achFind(d.id);
+      if (!cur) return;
+      cur.emoji = d.emoji; cur.name = nm; cur.desc = String(d.desc || '').trim();
+      cur.kind = d.kind; cur.goal = d.goal; cur.reward = d.reward;
+    }
+    achUi.edit = null;
+    saveAndPush();
+    renderAch();
+    try { checkAchievements(); } catch (e0) { /* 무시 */ }
+    showToast('🏆 업적을 저장했어요. 가족 기기에도 함께 보여요.');
+  }
+  function achDelete(id) {
+    if (!can('edit')) return;
+    var d = achFind(id);
+    if (!d) return;
+    if (!window.confirm('"' + d.name + '" 업적을 지울까요?\n모은 뱃지 기록도 함께 사라져요.')) return;
+    var list = achList();
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === id) { list.splice(i, 1); break; }
+    }
+    var done = achDone();
+    if (done[id]) delete done[id];
+    achUi.edit = null;
+    saveAndPush();
+    renderAch();
+    showToast('🗑 업적을 지웠어요.');
+  }
+  /* 수동 완료 업적 — 도감에서 직접 체크 */
+  function achManualToggle(id) {
+    if (!can('check')) return;
+    var d = achFind(id);
+    if (!d || d.kind !== 'manual') return;
+    var done = achDone();
+    if (done[id]) {
+      delete done[id];
+      snd('uncheck');
+    } else {
+      done[id] = { at: Date.now() };
+      if (d.reward > 0) coinAdd(d.reward);
+      snd('check');
+      try { confetti(16); } catch (e0) { /* 무시 */ }
+      showToast('🏆 <b>' + esc(d.name) + '</b> 완료!' + (d.reward > 0 ? ' ' + coinSvg() + ' +' + fmtNum(d.reward) : ''), true, 3200);
+      renderCoinBadge();
+    }
+    saveState();
+    renderAch();
+  }
+
   /* ---- 다른 기지에서 붙인 스티커의 코인 ----
      스티커 원장(stickers.json)은 가족 모두가 같이 봐요. 그래서 아내 폰에서 붙인 스티커가
      아이 화면으로 넘어올 때도 아이 계정에 +COIN_STICKER가 들어가야 해요.
@@ -7969,6 +8510,8 @@
     pruneStickerCoinSeen(sc);
     p.award.stickers = (parseInt(p.award.stickers, 10) || 0) + n;
     coinAdd(COIN_STICKER * n);
+    bumpProgress('sticker', n);
+    gainXp(XP_STICKER * n);
     try { saveProfileLocal(); } catch (e2) { /* 무시 */ }
     try { onProfileChanged(); } catch (e3) { /* 무시 */ }
     renderCoinBadge();
@@ -8815,6 +9358,7 @@
       one.hatchedAt = Date.now();
       one.exp = 0;
       one.xp = 0;
+      bumpProgress('pet', 1);
       changed = true;
     }
     if (!changed) return false;
@@ -8968,6 +9512,7 @@
     p.exp = 0;
     p.hatchAt = 0;
     p.hatchedAt = Date.now();
+    bumpProgress('pet', 1);
     var spNow = speciesById(p.currentEgg);
     var roomAdded = roomAutoPlacePet(spNow.id);
     p.updatedAt = new Date().toISOString();
@@ -9018,6 +9563,7 @@
         p.hatchAt = 0;
         p.hatchedAt = Date.now();
         reached = 1;
+        bumpProgress('pet', 1);
         var spHatch = speciesById(p.currentEgg);
         if (roomAutoPlacePet(spHatch.id) && !opts.quiet) {
           showToast('🏡 ' + spHatch.names[0] + '이가 마이룸에 놀러 왔어요!');
@@ -10076,217 +10622,323 @@
   function avHand(cx, cy, r, skin) {
     return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + skin + '"/>';
   }
+  /* 엄지손 — 손바닥 동글 + 손가락 쪽으로 살짝 솟은 엄지 */
+  function avHandThumb(cx, cy, r, skin, dir) {
+    var d = dir === 'in' ? -1 : 1;
+    return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + skin + '"/>' +
+      '<circle cx="' + (cx + d * r * 0.62).toFixed(1) + '" cy="' + (cy + r * 0.42).toFixed(1) +
+      '" r="' + (r * 0.44).toFixed(1) + '" fill="' + skin + '"/>';
+  }
 
-  /* 표정 — 얼굴 전체를 그려요 (기본은 방긋 웃음) */
+  /* 아바타 그라데이션 id 는 그릴 때마다 새로 붙여요.
+     한 화면에 여러 아바타(피팅룸 카드·마이룸·상단 배지)가 함께 그려져도
+     id 가 겹쳐 엉뚱한 색이 칠해지지 않아요. */
+  var AV_GID = 0;
+
+  /* 얼굴 — 표정마다 눈·입·볼이 확실히 달라요 (새 어린이 얼굴 비율) */
   function avFaceSvg(st, girl, skin) {
-    var s = '', dark = '#2c2440';
-    var erx = girl ? 4.1 : 3.4, ery = girl ? 5.6 : 4.5;
-    var hl = girl ? 1.55 : 1.3;
-    function openEyes(rx, ry, cy) {
+    var s = '', dark = '#33274a';
+    var eyeY = 66;
+    var erx = girl ? 6.0 : 5.6, ery = girl ? 7.2 : 6.8;
+    var exL = 47.4, exR = 72.6;
+    var mouthC = '#c4644f';
+    var browC = '#7b5638';
+    function hl(cx, cy, rx) { return rx || (girl ? 2.1 : 1.9); }
+
+    /* 큰 눈 — 홍채 + 눈동자 + 별빛 하이라이트 2개 */
+    function openEye(cx, cy, rx, ry, sparkle) {
       var o = '';
-      cy = cy || 65;
-      o += '<ellipse cx="48" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + dark + '"/>';
-      o += '<ellipse cx="72" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + dark + '"/>';
-      o += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="' + (cy - 1.8) + '" r="' + hl + '" fill="#fff"/>';
-      o += '<circle cx="' + (girl ? 73.4 : 73.2) + '" cy="' + (cy - 1.8) + '" r="' + hl + '" fill="#fff"/>';
+      o += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + dark + '"/>';
+      o += '<ellipse cx="' + cx + '" cy="' + (cy + ry * 0.08).toFixed(2) + '" rx="' + (rx * 0.84).toFixed(2) +
+        '" ry="' + (ry * 0.86).toFixed(2) + '" fill="#87593a"/>';
+      o += '<ellipse cx="' + cx + '" cy="' + (cy + ry * 0.18).toFixed(2) + '" rx="' + (rx * 0.38).toFixed(2) +
+        '" ry="' + (ry * 0.46).toFixed(2) + '" fill="#2f2033"/>';
+      var r1 = hl(cx, cy);
+      o += '<circle cx="' + (cx - rx * 0.40).toFixed(2) + '" cy="' + (cy - ry * 0.44).toFixed(2) + '" r="' + r1 + '" fill="#ffffff"/>';
+      o += '<circle cx="' + (cx + rx * 0.44).toFixed(2) + '" cy="' + (cy + ry * 0.42).toFixed(2) + '" r="' + (r1 * 0.48).toFixed(2) +
+        '" fill="#ffffff" opacity=".9"/>';
+      if (sparkle) o += avTwinkle(cx + rx * 0.10, cy - ry * 0.30, 1.5, '#ffffff');
       return o;
     }
+    function openEyes(rx, ry, cy) {
+      cy = cy || eyeY;
+      rx = rx || erx; ry = ry || ery;
+      return openEye(exL, cy, rx, ry) + openEye(exR, cy, rx, ry);
+    }
     function closedEyes(bend, cy) {
-      cy = cy || 65;
-      return '<path d="M43 ' + cy + 'q5 ' + bend + ' 10 0" fill="none" stroke="' + dark + '" stroke-width="2.6" stroke-linecap="round"/>' +
-        '<path d="M67 ' + cy + 'q5 ' + bend + ' 10 0" fill="none" stroke="' + dark + '" stroke-width="2.6" stroke-linecap="round"/>';
+      cy = cy || eyeY;
+      return '<path d="M' + (exL - 5.2) + ' ' + cy + 'q5.2 ' + bend + ' 10.4 0" fill="none" stroke="' + dark + '" stroke-width="2.6" stroke-linecap="round"/>' +
+        '<path d="M' + (exR - 5.2) + ' ' + cy + 'q5.2 ' + bend + ' 10.4 0" fill="none" stroke="' + dark + '" stroke-width="2.6" stroke-linecap="round"/>';
     }
     function girlLashes() {
-      return '<path d="M44.8 60.8q-2.8-1.6-4.2-4.6" fill="none" stroke="#2c2440" stroke-width="1.6" stroke-linecap="round"/>' +
-        '<path d="M75.2 60.8q2.8-1.6 4.2-4.6" fill="none" stroke="#2c2440" stroke-width="1.6" stroke-linecap="round"/>' +
-        '<path d="M47.4 59.6q-1.2-1.6-1.6-3.2" fill="none" stroke="#2c2440" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>' +
-        '<path d="M72.6 59.6q1.2-1.6 1.6-3.2" fill="none" stroke="#2c2440" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>';
+      return '<path d="M' + (exL - 5.4) + ' ' + (eyeY - 4.6) + 'q-2.4-1.2-3.4-3.6" fill="none" stroke="' + dark + '" stroke-width="1.5" stroke-linecap="round"/>' +
+        '<path d="M' + (exR + 5.4) + ' ' + (eyeY - 4.6) + 'q2.4-1.2 3.4-3.6" fill="none" stroke="' + dark + '" stroke-width="1.5" stroke-linecap="round"/>';
     }
-    function brow(l, r) {
-      return '<path d="' + l + '" fill="none" stroke="#5a4638" stroke-width="3" stroke-linecap="round"/>' +
-        '<path d="' + r + '" fill="none" stroke="#5a4638" stroke-width="3" stroke-linecap="round"/>';
+    /* 자연스러운 눈썹 — 살짝 휘고 끝이 가늘어져요 */
+    function brow(l, r, c, w) {
+      c = c || browC; w = w || 2.2;
+      return '<path d="' + l + '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>' +
+        '<path d="' + r + '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>';
+    }
+    function blush(o, rx, ry, cy) {
+      o = o == null ? .55 : o;
+      rx = rx || 5.4; ry = ry || 3.1; cy = cy || 79;
+      return '<ellipse cx="37.2" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="#ff9ec4" opacity="' + o + '"/>' +
+        '<ellipse cx="82.8" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="#ff9ec4" opacity="' + o + '"/>';
+    }
+    /* 작은 코 포인트 */
+    function nose() {
+      return '<ellipse cx="60" cy="75.4" rx="1.7" ry="1.2" fill="' + darken(skin, .26) + '" opacity=".45"/>';
+    }
+    function smileMouth(cy) {
+      cy = cy || 81;
+      return '<path d="M54.4 ' + cy + 'q5.6 4.8 11.2 0" fill="none" stroke="' + mouthC + '" stroke-width="2.3" stroke-linecap="round"/>';
+    }
+    function openMouth(cy, w) {
+      cy = cy || 80; w = w || 7.4;
+      return '<path d="M' + (60 - w) + ' ' + cy + 'q' + w + ' 9.6 ' + (w * 2) + ' 0z" fill="#b5563f"/>' +
+        '<path d="M' + (60 - w + 1.4) + ' ' + (cy + 0.9) + 'h' + (w * 2 - 2.8) + 'q-' + (w - 1.4) + ' 3.2 -' + (w * 2 - 2.8) + ' 0z" fill="#ffffff"/>';
     }
 
+    s += nose();
+
     if (st === 'bright') {
-      s += openEyes(erx + 0.2, ery - 0.3, 64.6);
-      s += brow('M41 56q7-3 13-1', 'M79 56q-7-3-13-1');
-      s += '<path d="M52 71q8 12 16 0z" fill="#b0603f"/>';
-      s += '<path d="M53.4 71.6h13.2q-1.5 3.2-6.6 3.2t-6.6-3.2z" fill="#ffffff"/>';
-      s += '<path d="M49 69q-3 1-4 4M71 69q3 1 4 4" fill="none" stroke="#b0603f" stroke-width="1.8" stroke-linecap="round"/>';
-      s += '<ellipse cx="38.5" cy="73.4" rx="5.4" ry="3.1" fill="#ff9ec4" opacity=".7"/>';
-      s += '<ellipse cx="81.5" cy="73.4" rx="5.4" ry="3.1" fill="#ff9ec4" opacity=".7"/>';
+      s += openEyes(erx + 0.2, ery - 0.2, eyeY - 0.6);
+      s += brow('M40.6 56.4q7.4-3.4 13.6-1.2', 'M79.4 56.4q-7.4-3.4-13.6-1.2');
+      s += openMouth(79.4, 7.6);
+      s += blush(.62, 5.8, 3.3, 80);
+      if (girl) s += girlLashes();
     } else if (st === 'wink') {
-      s += '<ellipse cx="48" cy="65" rx="' + erx + '" ry="' + ery + '" fill="' + dark + '"/>';
-      s += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="63.2" r="' + hl + '" fill="#fff"/>';
-      s += '<path d="M66.5 65.5q5.5-4.5 11 0" fill="none" stroke="' + dark + '" stroke-width="2.8" stroke-linecap="round"/>';
-      s += '<path d="M77.8 64.6l4-3" fill="none" stroke="' + dark + '" stroke-width="1.6" stroke-linecap="round"/>';
-      s += '<path d="M54 73.6q6 7.4 12 0" fill="none" stroke="#b0603f" stroke-width="2.4" stroke-linecap="round"/>';
-      s += '<ellipse cx="39" cy="73.6" rx="4.6" ry="2.7" fill="#ff9ec4" opacity=".8"/>';
-      s += '<ellipse cx="81" cy="73.6" rx="4.6" ry="2.7" fill="#ff9ec4" opacity=".8"/>';
+      s += openEye(exL, eyeY, erx, ery, true);
+      s += '<path d="M' + (exR - 5.4) + ' ' + (eyeY + 0.4) + 'q5.4-4.8 10.8 0" fill="none" stroke="' + dark + '" stroke-width="2.7" stroke-linecap="round"/>';
+      s += '<path d="M' + (exR + 5.4) + ' ' + (eyeY + 0.4) + 'l3.8-2.8" fill="none" stroke="' + dark + '" stroke-width="1.6" stroke-linecap="round"/>';
+      if (girl) s += '<path d="M' + (exL - 5.8) + ' ' + (eyeY - 4.4) + 'q-3-1.6-4.4-4.8" fill="none" stroke="' + dark + '" stroke-width="1.7" stroke-linecap="round"/>';
+      s += brow('M41 56q7-2.4 13-1', 'M79 55.4q-7-1.6-13 1.4');
+      s += openMouth(80.4, 6.2);
+      s += blush(.6, 5.6, 3.2, 79.6);
     } else if (st === 'angry') {
-      s += brow('M40 56l14 7', 'M80 56l-14 7');
-      s += '<ellipse cx="48" cy="66" rx="3.9" ry="2.7" fill="' + dark + '"/>';
-      s += '<ellipse cx="72" cy="66" rx="3.9" ry="2.7" fill="' + dark + '"/>';
-      s += '<circle cx="49.2" cy="65.2" r="1.1" fill="#fff"/>';
-      s += '<circle cx="73.2" cy="65.2" r="1.1" fill="#fff"/>';
-      s += '<path d="M55 79q5-6 10 0" fill="none" stroke="#b0603f" stroke-width="2.6" stroke-linecap="round"/>';
-      s += '<circle cx="37" cy="71.5" r="6.6" fill="#ffc9a8" opacity=".95"/>';
-      s += '<circle cx="83" cy="71.5" r="6.6" fill="#ffc9a8" opacity=".95"/>';
-      s += '<path d="M86 40q7-4 5-11M93 44q7-4 5-11" fill="none" stroke="#d9c9b6" stroke-width="2.6" stroke-linecap="round"/>';
+      s += brow('M40.4 57.4l14 6.4', 'M79.6 57.4l-14 6.4', '#5a3a2a', 3);
+      s += '<ellipse cx="' + exL + '" cy="' + (eyeY + 0.6) + '" rx="4.4" ry="3.2" fill="' + dark + '"/>';
+      s += '<ellipse cx="' + exR + '" cy="' + (eyeY + 0.6) + '" rx="4.4" ry="3.2" fill="' + dark + '"/>';
+      s += '<circle cx="' + (exL - 1.2) + '" cy="' + (eyeY - 0.2) + '" r="1.35" fill="#ffffff"/>';
+      s += '<circle cx="' + (exR - 1.2) + '" cy="' + (eyeY - 0.2) + '" r="1.35" fill="#ffffff"/>';
+      s += '<path d="M55 84.4q5-6 10 0" fill="none" stroke="' + mouthC + '" stroke-width="2.6" stroke-linecap="round"/>';
+      s += '<circle cx="34.6" cy="78.6" r="6.6" fill="#ffb3a0" opacity=".5"/>';
+      s += '<circle cx="85.4" cy="78.6" r="6.6" fill="#ffb3a0" opacity=".5"/>';
+      s += '<path d="M88 42q7-4 5-11M95 46q7-4 5-11" fill="none" stroke="#d9c9b6" stroke-width="2.6" stroke-linecap="round"/>';
     } else if (st === 'sad') {
-      s += brow('M41 53q7 0 12 5', 'M79 53q-7 0-12 5');
-      s += openEyes(erx + 0.3, ery + 0.2, 66);
-      s += '<path d="M54.5 78q5.5-5 11 0" fill="none" stroke="#b0603f" stroke-width="2.4" stroke-linecap="round"/>';
-      s += '<path d="M45.6 71.2q-1.4 5.4.2 7.6 2 2.4 3.4-.2 1.2-2.8-3.6-7.4z" fill="#7cc6f2"/>';
-      s += '<path d="M75.4 70.4q-1.2 4.4.2 6.2 1.6 2 2.8-.2 1-2.2-3-6z" fill="#a9dbff"/>';
-      s += '<ellipse cx="38" cy="73" rx="4.6" ry="2.8" fill="#ffb3c6" opacity=".6"/>';
-      s += '<ellipse cx="82" cy="73" rx="4.6" ry="2.8" fill="#ffb3c6" opacity=".6"/>';
+      s += brow('M41 55.6q7 0 12 5.4', 'M79 55.6q-7 0-12 5.4');
+      s += openEyes(erx + 0.2, ery + 0.1, eyeY + 0.8);
+      s += '<path d="M55 84.6q5-5.4 10 0" fill="none" stroke="' + mouthC + '" stroke-width="2.4" stroke-linecap="round"/>';
+      s += '<path d="M' + (exL + 1.4) + ' 73.6q-1.4 5.4.2 7.6 2 2.4 3.4-.2 1.2-2.8-3.6-7.4z" fill="#7cc6f2"/>';
+      s += '<path d="M' + (exR - 1.4) + ' 72.8q-1.2 4.4.2 6.2 1.6 2 2.8-.2 1-2.2-3-6z" fill="#a9dbff"/>';
+      s += blush(.5, 5, 3, 79);
     } else if (st === 'surprise') {
-      s += brow('M41 50q7-2 12 0', 'M79 50q-7-2-12 0');
-      s += '<ellipse cx="48" cy="64" rx="5.2" ry="6.2" fill="#ffffff" stroke="' + dark + '" stroke-width="1.7"/>';
-      s += '<ellipse cx="72" cy="64" rx="5.2" ry="6.2" fill="#ffffff" stroke="' + dark + '" stroke-width="1.7"/>';
-      s += '<circle cx="48" cy="64.6" r="2.5" fill="' + dark + '"/>';
-      s += '<circle cx="72" cy="64.6" r="2.5" fill="' + dark + '"/>';
-      s += '<ellipse cx="60" cy="77.6" rx="4.6" ry="5.4" fill="#b0603f"/>';
-      s += '<ellipse cx="60" cy="79.4" rx="2.7" ry="2.9" fill="#e8897f"/>';
+      s += brow('M41 52.4q7-2.6 12 0', 'M79 52.4q-7-2.6-12 0');
+      s += '<ellipse cx="' + exL + '" cy="' + eyeY + '" rx="6" ry="7" fill="#ffffff" stroke="' + dark + '" stroke-width="1.7"/>';
+      s += '<ellipse cx="' + exR + '" cy="' + eyeY + '" rx="6" ry="7" fill="#ffffff" stroke="' + dark + '" stroke-width="1.7"/>';
+      s += '<circle cx="' + exL + '" cy="' + (eyeY + 0.6) + '" r="2.7" fill="' + dark + '"/>';
+      s += '<circle cx="' + exR + '" cy="' + (eyeY + 0.6) + '" r="2.7" fill="' + dark + '"/>';
+      s += '<circle cx="' + (exL - 0.8) + '" cy="' + (eyeY - 0.6) + '" r="1" fill="#ffffff"/>';
+      s += '<circle cx="' + (exR - 0.8) + '" cy="' + (eyeY - 0.6) + '" r="1" fill="#ffffff"/>';
+      s += '<ellipse cx="60" cy="83.4" rx="4.8" ry="5.6" fill="#b5563f"/>';
+      s += '<ellipse cx="60" cy="85.4" rx="2.8" ry="3" fill="#e8897f"/>';
+      s += blush(.4, 5, 2.9, 79.6);
     } else if (st === 'shy') {
-      s += closedEyes(-5);
-      s += '<ellipse cx="37.5" cy="72.8" rx="7.2" ry="4.6" fill="#ff9ec4" opacity=".95"/>';
-      s += '<ellipse cx="82.5" cy="72.8" rx="7.2" ry="4.6" fill="#ff9ec4" opacity=".95"/>';
-      s += '<circle cx="35.4" cy="71.4" r="1.2" fill="#ffffff" opacity=".75"/>';
-      s += '<circle cx="84.6" cy="71.4" r="1.2" fill="#ffffff" opacity=".75"/>';
-      s += '<path d="M56.6 75.6q3.4 3.4 6.8 0" fill="none" stroke="#b0603f" stroke-width="2.2" stroke-linecap="round"/>';
-      s += avTwinkle(84, 52, 2.6, '#ffd34d');
+      s += closedEyes(-5.4);
+      s += blush(.92, 7.4, 4.7, 79);
+      s += '<circle cx="35" cy="77.4" r="1.3" fill="#ffffff" opacity=".75"/>';
+      s += '<circle cx="85" cy="77.4" r="1.3" fill="#ffffff" opacity=".75"/>';
+      s += '<path d="M56.8 82.4q3.2 3.6 6.4 0" fill="none" stroke="' + mouthC + '" stroke-width="2.2" stroke-linecap="round"/>';
+      s += avTwinkle(86, 54, 2.6, '#ffd34d');
+      if (girl) s += girlLashes();
     } else if (st === 'pout') {
-      s += brow('M41 55l12 5', 'M79 55l-12 5');
-      s += '<path d="M43 63.4h10M67 63.4h10" stroke="' + dark + '" stroke-width="2.4" stroke-linecap="round"/>';
-      s += '<ellipse cx="48" cy="66.4" rx="3.3" ry="2.6" fill="' + dark + '"/>';
-      s += '<ellipse cx="72" cy="66.4" rx="3.3" ry="2.6" fill="' + dark + '"/>';
-      s += '<path d="M56.4 77.4q4.6 2.6 9-1.4" fill="none" stroke="#b0603f" stroke-width="2.6" stroke-linecap="round"/>';
-      s += '<circle cx="82" cy="72" r="6.4" fill="#ffc9a8" opacity=".95"/>';
-      s += '<path d="M89 44q6-3 5-9" fill="none" stroke="#d9c9b6" stroke-width="2.4" stroke-linecap="round"/>';
+      s += brow('M41 56.4l12 5.4', 'M79 56.4l-12 5.4');
+      s += '<path d="M43.4 64h9.2M67.4 64h9.2" stroke="' + dark + '" stroke-width="2.4" stroke-linecap="round"/>';
+      s += '<ellipse cx="' + exL + '" cy="' + (eyeY + 1.4) + '" rx="3.7" ry="2.9" fill="' + dark + '"/>';
+      s += '<ellipse cx="' + exR + '" cy="' + (eyeY + 1.4) + '" rx="3.7" ry="2.9" fill="' + dark + '"/>';
+      s += '<path d="M56.4 83.8q4.6 2.8 9-1.4" fill="none" stroke="' + mouthC + '" stroke-width="2.6" stroke-linecap="round"/>';
+      s += '<circle cx="85.4" cy="78.4" r="6.4" fill="#ffb3a0" opacity=".5"/>';
+      s += '<path d="M90 42q6-3 5-9" fill="none" stroke="#d9c9b6" stroke-width="2.4" stroke-linecap="round"/>';
     } else if (st === 'heart') {
-      s += '<polygon points="' + avHeartPts(48, 65, 0.29) + '" fill="#ff5c8a"/>';
-      s += '<polygon points="' + avHeartPts(72, 65, 0.29) + '" fill="#ff5c8a"/>';
-      s += '<circle cx="45.6" cy="62" r="1.3" fill="#ffffff"/>';
-      s += '<circle cx="69.6" cy="62" r="1.3" fill="#ffffff"/>';
-      s += '<path d="M52 72.6q8 10.4 16 0z" fill="#b0603f"/>';
-      s += '<path d="M54 73.4h12q-1.2 2.6-6 2.6t-6-2.6z" fill="#ffffff"/>';
-      s += '<ellipse cx="37" cy="73" rx="5.2" ry="3" fill="#ff9ec4" opacity=".85"/>';
-      s += '<ellipse cx="83" cy="73" rx="5.2" ry="3" fill="#ff9ec4" opacity=".85"/>';
-      s += avHeartPts ? '<polygon points="' + avHeartPts(94, 40, 0.16) + '" fill="#ff9ec4" opacity=".9"/>' : '';
+      s += '<polygon points="' + avHeartPts(exL, eyeY, 0.31) + '" fill="#ff5c8a"/>';
+      s += '<polygon points="' + avHeartPts(exR, eyeY, 0.31) + '" fill="#ff5c8a"/>';
+      s += '<circle cx="' + (exL - 2) + '" cy="' + (eyeY - 3.4) + '" r="1.5" fill="#ffffff"/>';
+      s += '<circle cx="' + (exR - 2) + '" cy="' + (eyeY - 3.4) + '" r="1.5" fill="#ffffff"/>';
+      s += openMouth(79.6, 7.2);
+      s += blush(.8, 5.4, 3.1, 80);
+      s += '<polygon points="' + avHeartPts(94, 42, 0.16) + '" fill="#ff9ec4" opacity=".9"/>';
+      if (girl) s += girlLashes();
     } else if (st === 'star') {
-      s += '<polygon points="' + avStarPts(48, 65, 7.6) + '" fill="#ffcf1f" stroke="#e0a800" stroke-width="1"/>';
-      s += '<polygon points="' + avStarPts(72, 65, 7.6) + '" fill="#ffcf1f" stroke="#e0a800" stroke-width="1"/>';
-      s += '<circle cx="48" cy="65" r="1.4" fill="#9a6a00"/>';
-      s += '<circle cx="72" cy="65" r="1.4" fill="#9a6a00"/>';
-      s += '<path d="M52.4 72.8q7.6 9.6 15.2 0z" fill="#b0603f"/>';
-      s += '<path d="M54.2 73.4h11.6q-1.2 2.4-5.8 2.4t-5.8-2.4z" fill="#ffffff"/>';
-      s += avTwinkle(18, 44, 4.4, '#ffd34d') + avTwinkle(102, 40, 3.6, '#ffe680') + avTwinkle(88, 26, 2.8, '#fff0a8');
+      s += '<polygon points="' + avStarPts(exL, eyeY, 7.8) + '" fill="#ffcf1f" stroke="#e0a800" stroke-width="1"/>';
+      s += '<polygon points="' + avStarPts(exR, eyeY, 7.8) + '" fill="#ffcf1f" stroke="#e0a800" stroke-width="1"/>';
+      s += '<circle cx="' + exL + '" cy="' + eyeY + '" r="1.5" fill="#9a6a00"/>';
+      s += '<circle cx="' + exR + '" cy="' + eyeY + '" r="1.5" fill="#9a6a00"/>';
+      s += openMouth(80, 7);
+      s += avTwinkle(18, 46, 4.4, '#ffd34d') + avTwinkle(102, 42, 3.6, '#ffe680') + avTwinkle(88, 26, 2.8, '#fff0a8');
     } else if (st === 'sweat') {
-      s += brow('M41 51q7 1 12 4', 'M79 51q-7 1-12 4');
-      s += openEyes(erx + 0.2, ery - 0.4, 65);
-      s += '<path d="M52.6 74.6q7.4 6.4 14.8-1.6" fill="none" stroke="#b0603f" stroke-width="2.4" stroke-linecap="round"/>';
-      s += '<path d="M35.6 41q-3.2 5.4.2 8 3.4 2.4 4.6-1.4 1.2-3.6-4.8-6.6z" fill="#9ed6ff"/>';
-      s += '<path d="M90.4 46q-2.4 4 .2 6 2.6 1.8 3.4-1 0.8-2.6-3.6-5z" fill="#c6e9ff"/>';
-      s += '<path d="M80 36q4-4 4-9" fill="none" stroke="#9ed6ff" stroke-width="2.4" stroke-linecap="round"/>';
+      s += brow('M41 53.4q7 1 12 4.4', 'M79 53.4q-7 1-12 4.4');
+      s += openEyes(erx + 0.2, ery - 0.3, eyeY - 0.4);
+      s += '<path d="M54.4 81.8q7.4 6 14.8-1.6" fill="none" stroke="' + mouthC + '" stroke-width="2.4" stroke-linecap="round"/>';
+      s += '<path d="M34.4 45q-3.2 5.4.2 8 3.4 2.4 4.6-1.4 1.2-3.6-4.8-6.6z" fill="#9ed6ff"/>';
+      s += '<path d="M90.4 50q-2.4 4 .2 6 2.6 1.8 3.4-1 0.8-2.6-3.6-5z" fill="#c6e9ff"/>';
+      s += '<path d="M80 40q4-4 4-9" fill="none" stroke="#9ed6ff" stroke-width="2.4" stroke-linecap="round"/>';
+      s += blush(.42, 5, 3, 79);
     } else if (st === 'tongue') {
-      s += '<ellipse cx="48" cy="65" rx="' + erx + '" ry="' + ery + '" fill="' + dark + '"/>';
-      s += '<circle cx="' + (girl ? 49.4 : 49.2) + '" cy="63.2" r="' + hl + '" fill="#fff"/>';
-      s += '<path d="M66.6 65.4q5.4-4.4 10.8 0" fill="none" stroke="' + dark + '" stroke-width="2.8" stroke-linecap="round"/>';
-      s += '<path d="M53 72.6q7 9.6 14 0z" fill="#b0603f"/>';
-      s += '<ellipse cx="60" cy="79" rx="3.8" ry="3.2" fill="#ff8fb0"/>';
-      s += '<path d="M60 76.6v4.6" stroke="#e0698c" stroke-width="1.2"/>';
-      s += '<ellipse cx="38.6" cy="73" rx="4.8" ry="2.8" fill="#ff9ec4" opacity=".8"/>';
-      s += '<ellipse cx="81.4" cy="73" rx="4.8" ry="2.8" fill="#ff9ec4" opacity=".8"/>';
+      s += openEye(exL, eyeY, erx, ery, true);
+      s += '<path d="M' + (exR - 5.4) + ' ' + (eyeY + 0.4) + 'q5.4-4.8 10.8 0" fill="none" stroke="' + dark + '" stroke-width="2.7" stroke-linecap="round"/>';
+      s += openMouth(79.8, 6.6);
+      s += '<ellipse cx="60" cy="87.4" rx="3.9" ry="3.4" fill="#ff8fb0"/>';
+      s += '<path d="M60 84.6v4.8" stroke="#e0698c" stroke-width="1.2"/>';
+      s += blush(.55, 5.2, 3, 79.6);
+      if (girl) s += '<path d="M' + (exL - 5.8) + ' ' + (eyeY - 4.4) + 'q-3-1.6-4.4-4.8" fill="none" stroke="' + dark + '" stroke-width="1.7" stroke-linecap="round"/>';
     } else if (st === 'sleepy') {
-      s += '<path d="M42 63q6 6 12 1" fill="none" stroke="' + dark + '" stroke-width="2.8" stroke-linecap="round"/>';
-      s += '<path d="M66 64q6 5 12-1" fill="none" stroke="' + dark + '" stroke-width="2.8" stroke-linecap="round"/>';
-      s += '<ellipse cx="60" cy="77.8" rx="5.2" ry="6.6" fill="#b0603f"/>';
-      s += '<ellipse cx="60" cy="80" rx="3.4" ry="3.8" fill="#e8897f"/>';
-      s += '<text x="86" y="48" font-size="13" font-weight="900" fill="#8fb8ff" font-family="inherit">Z</text>';
-      s += '<text x="95" y="36" font-size="9.5" font-weight="900" fill="#b8d4ff" font-family="inherit">z</text>';
+      s += brow('M41 58q7-2 12 0', 'M79 58q-7-2-12 0');
+      s += '<path d="M' + (exL - 5.4) + ' ' + (eyeY - 0.6) + 'q5.4 6.4 10.8 0" fill="none" stroke="' + dark + '" stroke-width="2.7" stroke-linecap="round"/>';
+      s += '<path d="M' + (exR - 5.4) + ' ' + (eyeY + 0.4) + 'q5.4 5.4 10.8-1" fill="none" stroke="' + dark + '" stroke-width="2.7" stroke-linecap="round"/>';
+      s += '<ellipse cx="60" cy="83.6" rx="5.2" ry="6.4" fill="#b5563f"/>';
+      s += '<ellipse cx="60" cy="85.8" rx="3.3" ry="3.6" fill="#e8897f"/>';
+      s += '<text x="86" y="50" font-size="13" font-weight="900" fill="#8fb8ff" font-family="inherit">Z</text>';
+      s += '<text x="95" y="38" font-size="9.5" font-weight="900" fill="#b8d4ff" font-family="inherit">z</text>';
+      s += blush(.4, 4.8, 2.8, 79.6);
     } else if (st === 'cool') {
-      s += '<rect x="35.6" y="57.4" width="20" height="13" rx="5.4" fill="#2c2440"/>';
-      s += '<rect x="64.4" y="57.4" width="20" height="13" rx="5.4" fill="#2c2440"/>';
-      s += '<path d="M55.6 62.6h8.8" stroke="#2c2440" stroke-width="3.2"/>';
-      s += '<path d="M38 60.4l5 5M66.6 60.4l5 5" stroke="#ffffff" stroke-width="1.6" opacity=".55" stroke-linecap="round"/>';
-      s += '<path d="M54.6 76.6q7 4 13.4-2.6" fill="none" stroke="#b0603f" stroke-width="2.6" stroke-linecap="round"/>';
-      s += avTwinkle(92, 46, 3, '#ffffff');
+      s += '<rect x="35.4" y="58.6" width="21.4" height="14" rx="6" fill="#2c2440"/>';
+      s += '<rect x="63.2" y="58.6" width="21.4" height="14" rx="6" fill="#2c2440"/>';
+      s += '<path d="M56.8 63.6h6.4" stroke="#2c2440" stroke-width="3.2"/>';
+      s += '<path d="M38.4 61.6l5.4 5.4M66.2 61.6l5.4 5.4" stroke="#ffffff" stroke-width="1.7" opacity=".6" stroke-linecap="round"/>';
+      s += '<path d="M55 82q7 4 13.4-2.6" fill="none" stroke="' + mouthC + '" stroke-width="2.6" stroke-linecap="round"/>';
+      s += avTwinkle(92, 48, 3, '#ffffff');
+      s += brow('M40.6 56l13-4.4', 'M79.4 56l-13-4.4', '#5a4a3a', 2.4);
     } else {
       /* 방긋 웃음 — 기본 얼굴 */
-      s += openEyes(erx, ery, 65);
+      s += openEyes(erx, ery, eyeY);
       if (girl) {
-        s += '<circle cx="46.6" cy="67.2" r="0.95" fill="#fff" opacity=".85"/>';
-        s += '<circle cx="70.6" cy="67.2" r="0.95" fill="#fff" opacity=".85"/>';
         s += girlLashes();
-        s += '<ellipse cx="39.4" cy="73.6" rx="5.3" ry="3" fill="#ff9ec4" opacity=".82"/>';
-        s += '<ellipse cx="80.6" cy="73.6" rx="5.3" ry="3" fill="#ff9ec4" opacity=".82"/>';
-        s += '<circle cx="37.6" cy="72.4" r="1.05" fill="#ffffff" opacity=".6"/>';
-        s += '<circle cx="82.4" cy="72.4" r="1.05" fill="#ffffff" opacity=".6"/>';
-        s += '<path d="M55.2 74.4q4.8 5.6 9.6 0q-4.8 2.2-9.6 0z" fill="#f4799f"/>';
-        s += '<path d="M57.6 75.4q2.4 1.6 4.8 0" fill="none" stroke="#ffffff" stroke-width=".9" opacity=".55"/>';
+        s += blush(.85, 5.6, 3.2, 79.4);
+        s += '<circle cx="35.6" cy="78" r="1.15" fill="#ffffff" opacity=".65"/>';
+        s += '<circle cx="84.4" cy="78" r="1.15" fill="#ffffff" opacity=".65"/>';
       } else {
-        s += '<ellipse cx="40" cy="74" rx="4.2" ry="2.6" fill="#ffb3c6" opacity=".45"/>';
-        s += '<ellipse cx="80" cy="74" rx="4.2" ry="2.6" fill="#ffb3c6" opacity=".45"/>';
-        s += '<path d="M55 75q5 5 10 0" fill="none" stroke="#b0603f" stroke-width="2.2" stroke-linecap="round"/>';
+        s += blush(.5, 4.6, 2.8, 79.4);
       }
+      s += brow('M40.8 56.6q7-3 13-1', 'M79.2 56.6q-7-3-13-1');
+      s += smileMouth(81);
     }
     return s;
   }
 
-  /* 동작 — 팔 모양 (기본 서기는 예전 그대로) */
+  /* 동작 — 팔 모양 (기본 서기는 몸과 이어지게 avatarInner 안에서 그려요) */
   function avPoseArms(st, skin, topC, topC2) {
     var s = '', sw = 12.6, sl = 6.4;
     if (st === 'wave') {
-      s += avLimb([[44, 106], [37, 124]], 13, topC) + avHand(36, 128, sl, skin);
+      s += avLimb([[44, 106], [37, 124]], 13, topC) + avHandThumb(36, 128, sl, skin, 'in');
       s += avLimb([[76, 106], [90, 88], [96, 66]], sw, topC);
       s += '<g class="av-wave-hand">' + avHand(98, 61, 6.8, skin) +
         '<path d="M95 55v-5M99.4 54.4l1.2-5M103.4 57l3.6-3.4" fill="none" stroke="' + skin + '" stroke-width="2.6" stroke-linecap="round"/></g>';
     } else if (st === 'v') {
-      s += avLimb([[44, 106], [38, 124]], 13, topC) + avHand(37, 128, sl, skin);
+      s += avLimb([[44, 106], [38, 124]], 13, topC) + avHandThumb(37, 128, sl, skin, 'in');
       s += avLimb([[76, 106], [86, 119]], sw, topC);
       s += avLimb([[86, 119], [74, 91]], 9, skin);
       s += avHand(72, 87, 6.2, skin);
       s += '<path d="M69.6 84.2l-3.6-9.4M74.4 83.4l2.2-9.2" fill="none" stroke="' + skin + '" stroke-width="3" stroke-linecap="round"/>';
     } else if (st === 'cheer') {
-      s += avLimb([[44, 106], [30, 86], [25, 60]], sw, topC) + avHand(24, 55, sl, skin);
-      s += avLimb([[76, 106], [90, 86], [95, 60]], sw, topC) + avHand(96, 55, sl, skin);
+      s += avLimb([[44, 106], [30, 86], [25, 60]], sw, topC) + avHandThumb(24, 55, sl, skin, 'in');
+      s += avLimb([[76, 106], [90, 86], [95, 60]], sw, topC) + avHandThumb(96, 55, sl, skin, 'out');
       s += avTwinkle(16, 42, 4, '#ffd34d') + avTwinkle(104, 42, 4, '#ffd34d');
     } else if (st === 'jump') {
-      s += avLimb([[44, 106], [27, 92], [19, 73]], sw, topC) + avHand(17, 69, sl, skin);
-      s += avLimb([[76, 106], [93, 92], [101, 73]], sw, topC) + avHand(103, 69, sl, skin);
+      s += avLimb([[44, 106], [27, 92], [19, 73]], sw, topC) + avHandThumb(17, 69, sl, skin, 'in');
+      s += avLimb([[76, 106], [93, 92], [101, 73]], sw, topC) + avHandThumb(103, 69, sl, skin, 'out');
       s += avTwinkle(50, 20, 3, '#ffd34d') + avTwinkle(74, 16, 2.4, '#ffe680');
     } else if (st === 'dance') {
-      s += avLimb([[44, 106], [28, 86], [20, 62]], sw, topC) + avHand(19, 57, sl, skin);
-      s += avLimb([[76, 106], [94, 116], [105, 106]], sw, topC) + avHand(108, 103, sl, skin);
+      s += avLimb([[44, 106], [28, 86], [20, 62]], sw, topC) + avHandThumb(19, 57, sl, skin, 'in');
+      s += avLimb([[76, 106], [94, 116], [105, 106]], sw, topC) + avHandThumb(108, 103, sl, skin, 'out');
       s += '<path d="M16 40q5-3 4-8M108 46q5-3 4-8" fill="none" stroke="#ffb0d0" stroke-width="2.6" stroke-linecap="round"/>';
     } else if (st === 'heart') {
-      s += avLimb([[44, 106], [35, 126], [52, 121]], sw, topC) + avHand(54, 120, sl, skin);
-      s += avLimb([[76, 106], [85, 126], [68, 121]], sw, topC) + avHand(66, 120, sl, skin);
+      s += avLimb([[44, 106], [35, 126], [52, 121]], sw, topC) + avHandThumb(54, 120, sl, skin, 'in');
+      s += avLimb([[76, 106], [85, 126], [68, 121]], sw, topC) + avHandThumb(66, 120, sl, skin, 'out');
       s += '<polygon points="' + avHeartPts(60, 115, 0.42) + '" fill="#ff5c8a" opacity=".95"/>';
       s += avTwinkle(88, 48, 2.6, '#ffb0d0');
     } else if (st === 'kick') {
-      s += avLimb([[44, 106], [50, 88]], 12, topC) + avHand(51, 84, 5.8, skin);
-      s += avLimb([[76, 106], [70, 88]], 12, topC) + avHand(69, 84, 5.8, skin);
+      s += avLimb([[44, 106], [50, 88]], 12, topC) + avHandThumb(51, 84, 5.8, skin, 'in');
+      s += avLimb([[76, 106], [70, 88]], 12, topC) + avHandThumb(69, 84, 5.8, skin, 'out');
       s += '<path d="M104 104q6-6 4-12M110 110q5-5 4-10" fill="none" stroke="#c9d6ff" stroke-width="2.4" stroke-linecap="round"/>';
     } else if (st === 'fight') {
-      s += avLimb([[44, 106], [35, 122], [47, 131]], sw, topC) + avHand(49, 132, 6, skin);
+      s += avLimb([[44, 106], [35, 122], [47, 131]], sw, topC) + avHandThumb(49, 132, 6, skin, 'in');
       s += avLimb([[76, 106], [93, 116], [85, 95]], sw, topC);
       s += avHand(84, 91, 7, skin);
       s += '<path d="M79.6 88.6h8.8M80.4 92h7.6" stroke="#c98a5e" stroke-width="1.4" opacity=".55"/>';
       s += '<path d="M96 104q6-4 6-11" fill="none" stroke="#ff9f1c" stroke-width="2.6" stroke-linecap="round"/>';
       s += avTwinkle(104, 84, 3, '#ffd34d');
     } else if (st === 'cross') {
-      s += avLimb([[45, 108], [74, 125]], 12.4, topC) + avHand(76, 126, sl, skin);
-      s += avLimb([[75, 108], [46, 126]], 12.4, topC) + avHand(44, 127, sl, skin);
+      s += avLimb([[45, 108], [74, 125]], 12.4, topC) + avHandThumb(76, 126, sl, skin, 'out');
+      s += avLimb([[75, 108], [46, 126]], 12.4, topC) + avHandThumb(44, 127, sl, skin, 'in');
     } else if (st === 'hero') {
       s += avLimb([[44, 106], [30, 84], [26, 58]], sw, topC);
       s += avHand(25, 53, 7, skin);
       s += '<path d="M20 46l1.6 4.4 4.4 1.6-4.4 1.6L20 58l-1.6-4.4L14 52l4.4-1.6z" fill="#ffd34d" stroke="#f0b400" stroke-width="1"/>';
-      s += avLimb([[76, 106], [85, 122], [66, 132]], sw, topC) + avHand(64, 133, 6, skin);
+      s += avLimb([[76, 106], [85, 122], [66, 132]], sw, topC) + avHandThumb(64, 133, 6, skin, 'in');
     }
     return s;
+  }
+
+  /* 다리 — 동작마다 다르게. 왼발·오른발은 따로 움직여요(걷기) */
+  function avLegsSvg(pstyle, skin, sstyle, shoeC, shoeC2, bot) {
+    /* 바지 다리 조각 — 다리와 함께 흔들려요 (허리 부분은 따로 그려요) */
+    function pantLeg(side) {
+      if (!bot || !bot.pants) return '';
+      var bottom = bot.hem || 176;
+      /* 가랑이 쪽은 위에서 맞닿고 발목으로 갈수록 살짝 벌어져요 */
+      var inTop = side === 'l' ? 60.4 : 59.6, inBot = side === 'l' ? 58.8 : 61.2;
+      var outer = side === 'l' ? 41.4 : 78.6;
+      var d = side === 'l'
+        ? '<path d="M' + outer + ' 149 L' + inTop + ' 149 L' + inBot + ' ' + bottom + ' L' + outer + ' ' + bottom + ' Z" fill="' + bot.c + '"/>'
+        : '<path d="M' + inTop + ' 149 L' + outer + ' 149 L' + outer + ' ' + bottom + ' L' + inBot + ' ' + bottom + ' Z" fill="' + bot.c + '"/>';
+      var o = d;
+      if (bot.style === 'jogger') {
+        o += '<path d="M' + (side === 'l' ? 42.4 : 63) + ' ' + (bottom - 3.4) + 'h14" stroke="#ffffff" stroke-width="2.8" opacity=".7"/>';
+      } else if (bot.style === 'train') {
+        o += '<path d="M' + (side === 'l' ? 43.4 : 76.6) + ' 151v' + (bottom - 153) + '" stroke="#ffffff" stroke-width="2.4" opacity=".42"/>';
+      } else if (bot.style === 'jeans') {
+        o += '<path d="M' + (side === 'l' ? 43.4 : 66.6) + ' ' + (bottom - 17) + 'q4 2 8 .4" stroke="' + darken(bot.c, .16) + '" stroke-width="1.6" opacity=".55" fill="none"/>';
+      }
+      return o;
+    }
+    function shoe(cx, cy, dir) {
+      var s = '';
+      if (sstyle === 'boots') {
+        s += '<rect x="' + (cx - 8) + '" y="' + (cy - 19) + '" width="16" height="22" rx="5" fill="' + shoeC + '"/>';
+        s += '<rect x="' + (cx - 11) + '" y="' + (cy - 2) + '" width="22" height="9" rx="4.5" fill="' + shoeC + '"/>';
+        s += '<path d="M' + (cx - 9) + ' ' + (cy - 2) + 'h18" stroke="' + shoeC2 + '" stroke-width="2" opacity=".7"/>';
+      } else if (sstyle === 'slipper') {
+        s += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="11.4" ry="6" fill="' + shoeC + '"/>';
+        s += '<path d="M' + (cx - 7) + ' ' + (cy - 2.4) + 'q7-6 14 0" fill="none" stroke="' + shoeC2 + '" stroke-width="2.1"/>';
+        s += '<ellipse cx="' + (cx + dir * 6) + '" cy="' + (cy + 1.4) + '" rx="4.6" ry="2.6" fill="' + shoeC2 + '" opacity=".35"/>';
+      } else {
+        /* 운동화 — 발끝이 바깥쪽으로, 좌우가 구분돼요 */
+        s += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="9.4" ry="5.8" fill="' + shoeC + '"/>';
+        s += '<path d="M' + (cx - 8.4) + ' ' + (cy + 3) + 'q8.4 3.4 16.8 0" fill="none" stroke="' + shoeC2 + '" stroke-width="2.8" stroke-linecap="round"/>';
+        s += '<path d="M' + (cx - dir * 2) + ' ' + (cy - 2) + 'q' + (dir * 2.4) + ' -1.6 ' + (dir * 5) + ' -.2" fill="none" stroke="#ffffff" stroke-width="1.5" opacity=".9"/>';
+        s += '<circle cx="' + (cx + dir * 5.6) + '" cy="' + (cy - 0.4) + '" r="1.4" fill="' + shoeC2 + '" opacity=".6"/>';
+      }
+      return s;
+    }
+    function sock(cx) {
+      return '<rect x="' + (cx - 5.2) + '" y="174" width="10.4" height="11.4" rx="4.2" fill="#fbfcff"/>' +
+        '<path d="M' + (cx - 4.6) + ' 178h9.2" stroke="#dbe3f2" stroke-width="1.6"/>';
+    }
+    var out = {};
+    if (pstyle === 'jump') {
+      out.l = '<path d="M53 152l-7 15 7 12" fill="none" stroke="' + skin + '" stroke-width="11.4" stroke-linecap="round" stroke-linejoin="round"/>' + shoe(49, 183, -1);
+      out.r = '<path d="M67 152l7 13-8 13" fill="none" stroke="' + skin + '" stroke-width="11.4" stroke-linecap="round" stroke-linejoin="round"/>' + shoe(71, 181, 1);
+    } else {
+      out.l = '<path d="M54 151 C53 162 52.2 172 52.4 182" fill="none" stroke="' + skin + '" stroke-width="11" stroke-linecap="round"/>' + sock(52.4) + shoe(50, 190, -1) + pantLeg('l');
+      out.r = '<path d="M66 151 C67 162 67.8 172 67.6 182" fill="none" stroke="' + skin + '" stroke-width="11" stroke-linecap="round"/>' + sock(67.6) + shoe(70, 190, 1) + pantLeg('r');
+      if (pstyle === 'dance') {
+        out.r = '<path d="M66 152l10 13-4 15" fill="none" stroke="' + skin + '" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>' + sock(71) + shoe(74, 187, 1) + pantLeg('r');
+      } else if (pstyle === 'kick') {
+        out.r = '<path d="M66 152l19-4 13-10" fill="none" stroke="' + skin + '" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>' + shoe(101, 136, 1) + pantLeg('r');
+      }
+    }
+    return out;
   }
 
   function avatarInner(av) {
@@ -10300,7 +10952,7 @@
     var topC2 = top ? (top.color2 || top.color) : '#7ec8f0';
     var botC = bottom ? bottom.color : '#5b8cc8';
     var shoeC = shoes ? shoes.color : '#ffffff';
-    var shoeC2 = shoes ? (shoes.color2 || shoes.color) : '#7ec8f0';
+    var shoeC2 = shoes ? (shoes.color2 || '#7ec8f0') : '#7ec8f0';
     var hstyle = hair ? hair.style : 'short';
     var ast = accItem ? accItem.style : '';
     var hst = hatItem ? hatItem.style : '';
@@ -10310,9 +10962,30 @@
     var fstyle = faceItem ? faceItem.style : 'smile';
     var pstyle = poseItem ? poseItem.style : 'stand';
     var motion = (pstyle === 'jump' || pstyle === 'dance' || pstyle === 'wave' || pstyle === 'hero') ? (' ' + pstyle) : '';
-    var s = '<g class="av-fig ' + (girl ? 'girl' : 'boy') + motion + '">';
+    var uid = 'a' + (++AV_GID);
+    var gSkin = 'sk' + uid, gShade = 'sd' + uid, gFace = 'fc' + uid;
+    var s = '';
 
-    s += '<ellipse cx="60" cy="194" rx="31" ry="6" fill="#2c2440" opacity=".10"/>';
+    /* 피부 톤 입체 그라데이션 — 아바타마다 다른 id 로 그려요 */
+    var skinHi = lighten(skin, .20), skinLo = darken(skin, .12);
+    s += '<defs>' +
+      '<radialGradient id="' + gSkin + '" cx="38%" cy="26%" r="86%">' +
+        '<stop offset="0" stop-color="' + lighten(skin, .34) + '"/>' +
+        '<stop offset=".46" stop-color="' + skinHi + '"/>' +
+        '<stop offset=".86" stop-color="' + skin + '"/>' +
+        '<stop offset="1" stop-color="' + skinLo + '"/>' +
+      '</radialGradient>' +
+      '<linearGradient id="' + gShade + '" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="' + skin + '" stop-opacity="0"/>' +
+        '<stop offset="1" stop-color="' + skinLo + '" stop-opacity=".55"/>' +
+      '</linearGradient>' +
+      '<clipPath id="' + gFace + '"><path d="' + avFacePath() + '"/></clipPath>' +
+      '</defs>';
+
+    s += '<g class="av-fig ' + (girl ? 'girl' : 'boy') + motion + '">';
+
+    /* 발밑 그림자 — 걷는 동안 숨 쉬듯 오므라들어요 */
+    s += '<ellipse class="av-shadow" cx="60" cy="195" rx="29" ry="5.4" fill="#2c2440" opacity=".11"/>';
 
     /* 영웅 망토는 몸 뒤에서 펄럭여요 */
     if (pstyle === 'hero') {
@@ -10328,116 +11001,6 @@
       s += '<rect x="33" y="102" width="54" height="42" rx="13" fill="' + accC + '"/>';
       s += '<rect x="33" y="112" width="54" height="9" fill="#ffffff" opacity=".38"/>';
     }
-
-    /* 다리 — 동작마다 다르게 */
-    if (pstyle === 'jump') {
-      s += '<path d="M52 150l-7 17 8 13" fill="none" stroke="' + skin + '" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>';
-      s += '<path d="M68 150l7 15-8 14" fill="none" stroke="' + skin + '" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>';
-    } else if (pstyle === 'dance') {
-      s += '<rect x="47" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
-      s += '<path d="M67 152l13 14-6 18" fill="none" stroke="' + skin + '" stroke-width="12.5" stroke-linecap="round" stroke-linejoin="round"/>';
-    } else if (pstyle === 'kick') {
-      s += '<rect x="47" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
-      s += '<path d="M67 151l20-4 14-11" fill="none" stroke="' + skin + '" stroke-width="12.5" stroke-linecap="round" stroke-linejoin="round"/>';
-    } else {
-      s += '<rect x="47" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
-      s += '<rect x="60" y="150" width="13" height="36" rx="6.5" fill="' + skin + '"/>';
-    }
-
-    /* 하의 */
-    var bstyle = bottom ? bottom.style : 'jeans';
-    if (bstyle === 'skirt') {
-      s += '<path d="M40 136h40l11 30H29z" fill="' + botC + '"/>';
-      s += '<path d="M42 144h36l3 8H39z" fill="#ffffff" opacity=".22"/>';
-    } else if (bstyle === 'shorts') {
-      s += '<rect x="39" y="136" width="42" height="18" rx="6" fill="' + botC + '"/>';
-      s += '<rect x="42" y="150" width="15" height="10" rx="5" fill="' + botC + '"/>';
-      s += '<rect x="63" y="150" width="15" height="10" rx="5" fill="' + botC + '"/>';
-    } else if (bstyle === 'train') {
-      s += '<rect x="39" y="136" width="42" height="24" rx="7" fill="' + botC + '"/>';
-      s += '<rect x="43" y="156" width="14" height="16" rx="6" fill="' + botC + '"/>';
-      s += '<rect x="63" y="156" width="14" height="16" rx="6" fill="' + botC + '"/>';
-      s += '<path d="M39 146h42" stroke="#ffffff" stroke-width="2" opacity=".35"/>';
-    } else if (bstyle === 'pleats') {
-      s += '<path d="M41 133h38l11 33H30z" fill="' + botC + '"/>';
-      s += '<path d="M46 136l-4 27M54 136l-2 29M62 136v29M70 136l2 29M78 136l4 27" stroke="#ffffff" stroke-width="1.6" opacity=".42"/>';
-      s += '<path d="M30 160h61l2 6H28z" fill="' + darken(botC, .1) + '"/>';
-    } else if (bstyle === 'denimskirt') {
-      s += '<path d="M42 134h36l8 27H34z" fill="' + botC + '"/>';
-      s += '<path d="M42 137h36" stroke="#ffffff" stroke-width="2" opacity=".45"/>';
-      s += '<path d="M50 137v22M70 137v22" stroke="#ffffff" stroke-width="1.4" stroke-dasharray="3 3" opacity=".55"/>';
-      s += '<path d="M34 156h52l1 5H33z" fill="' + darken(botC, .12) + '"/>';
-    } else if (bstyle === 'dress') {
-      s += '<path d="M39 132h42l5 20 5 28H29l6-28z" fill="' + botC + '"/>';
-      s += '<path d="M39 132h42" stroke="' + darken(botC, .12) + '" stroke-width="3" opacity=".45"/>';
-      s += '<path d="M29 168h62l-1 7H31z" fill="#ffffff" opacity=".55"/>';
-      s += '<path d="M56 136h8" stroke="' + darken(botC, .18) + '" stroke-width="2.4"/>';
-    } else if (bstyle === 'jogger') {
-      s += '<rect x="40" y="135" width="40" height="20" rx="7" fill="' + botC + '"/>';
-      s += '<path d="M43 152h12l-2 22h-9z" fill="' + botC + '"/>';
-      s += '<path d="M65 152h12l-1 22h-9z" fill="' + botC + '"/>';
-      s += '<path d="M43 170h11M66 170h10" stroke="#ffffff" stroke-width="3" opacity=".7"/>';
-    } else {
-      s += '<rect x="39" y="136" width="42" height="26" rx="6" fill="' + botC + '"/>';
-      s += '<rect x="42" y="158" width="15" height="16" rx="6" fill="' + botC + '"/>';
-      s += '<rect x="63" y="158" width="15" height="16" rx="6" fill="' + botC + '"/>';
-      s += '<path d="M40 142h40" stroke="#ffffff" stroke-width="2" opacity=".25"/>';
-    }
-
-    /* 상의 — 여아는 어깨 폭이 조금 좁아요 */
-    var tw = girl ? 31 : 36;
-    var thh = girl ? 40 : 42;
-    var tx = 60 - tw / 2;
-    var swid = girl ? 12 : 14;
-    var slx = girl ? 33 : 30;
-    var srx = girl ? 75 : 76;
-    var handCx = girl ? 38.6 : 35;
-    var handR = girl ? 5.9 : 6.4;
-    s += '<path d="M' + tx + ' 100q' + (tw / 2) + ' -8 ' + tw + ' 0v' + thh + 'q-' + (tw / 2) + ' 7 -' + tw + ' 0z" fill="' + topC + '"/>';
-    if (pstyle === 'stand') {
-      s += '<rect x="' + slx + '" y="104" width="' + swid + '" height="22" rx="' + (swid / 2) + '" fill="' + topC + '"/>';
-      s += '<rect x="' + srx + '" y="104" width="' + swid + '" height="22" rx="' + (swid / 2) + '" fill="' + topC + '"/>';
-      s += '<circle cx="' + handCx + '" cy="130" r="' + handR + '" fill="' + skin + '"/>';
-      s += '<circle cx="' + (120 - handCx) + '" cy="130" r="' + handR + '" fill="' + skin + '"/>';
-    } else {
-      s += avPoseArms(pstyle, skin, topC, topC2);
-    }
-    var tstyle = top ? top.style : 'tee';
-    if (tstyle === 'stripe') {
-      for (var i = 0; i < 3; i++) {
-        s += '<path d="M' + tx + ' ' + (108 + i * 10) + 'h' + tw + '" stroke="' + topC2 + '" stroke-width="5" opacity=".95"/>';
-      }
-    } else if (tstyle === 'hood') {
-      s += '<path d="M42 100q18 12 36 0q-4 12-18 12t-18-12z" fill="' + topC2 + '"/>';
-      s += '<rect x="50" y="124" width="20" height="12" rx="5" fill="' + topC2 + '" opacity=".85"/>';
-      s += '<path d="M56 104v6M64 104v6" stroke="#ffffff" stroke-width="2" opacity=".7"/>';
-    } else if (tstyle === 'knit') {
-      for (var k = 0; k < 4; k++) {
-        s += '<path d="M' + (45 + k * 9) + ' 104v34" stroke="#ffffff" stroke-width="2" opacity=".35"/>';
-      }
-      s += '<path d="M42 100q18-8 36 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
-    } else if (tstyle === 'blouse') {
-      /* 둥근 카라 + 리본 + 단추 */
-      s += '<path d="M53 99q7 9 14 0l-2 5H55z" fill="' + topC2 + '"/>';
-      s += '<path d="M52 100q8 10 16 0" fill="none" stroke="' + topC2 + '" stroke-width="2.6"/>';
-      s += '<path d="M60 108l-5-4v8z" fill="' + topC2 + '"/><path d="M60 108l5-4v8z" fill="' + topC2 + '"/>';
-      s += '<circle cx="60" cy="108" r="2.2" fill="' + darken(topC2, .12) + '"/>';
-      s += '<circle cx="60" cy="118" r="1.7" fill="' + topC2 + '" opacity=".9"/><circle cx="60" cy="126" r="1.7" fill="' + topC2 + '" opacity=".9"/>';
-      s += '<path d="M46 132q14 5 28 0" fill="none" stroke="' + topC2 + '" stroke-width="2" opacity=".55"/>';
-    } else if (tstyle === 'soccer') {
-      s += '<path d="M' + (tx + 6) + ' 100v34M' + (tx + tw - 6) + ' 100v34" stroke="' + topC2 + '" stroke-width="3" opacity=".8"/>';
-      s += '<path d="M' + tx + ' 116h' + tw + '" stroke="' + topC2 + '" stroke-width="2.4" opacity=".55"/>';
-      s += '<text x="60" y="112" text-anchor="middle" font-size="13" font-weight="900" fill="' + topC2 + '">7</text>';
-    } else {
-      s += '<path d="M' + tx + ' 100q' + (tw / 2) + ' -8 ' + tw + ' 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
-      s += '<circle cx="60" cy="118" r="5" fill="' + topC2 + '" opacity=".85"/>';
-    }
-    if (ast === 'backpack') {
-      s += '<path d="M50 100q-7 16-3 30M70 100q7 16 3 30" stroke="' + accC + '" stroke-width="4" fill="none" stroke-linecap="round"/>';
-    }
-
-    /* 목 */
-    s += '<rect x="54" y="88" width="12" height="14" rx="5" fill="' + skin + '"/>';
 
     /* 긴 머리는 얼굴 뒤로 어깨까지 내려와요 */
     var bh = 0;
@@ -10458,7 +11021,6 @@
       s += '<circle cx="90" cy="70" r="5.5" fill="#ff8fb0"/>';
     }
     if (hstyle === 'braid') {
-      /* 한쪽으로 땋아 내린 머리 — 어깨 위로 동글동글 */
       var brx = [31, 33, 35, 37, 39], bry = [74, 84, 94, 104, 114];
       s += '<path d="M29 68q3 4 4 8" fill="none" stroke="' + hairC + '" stroke-width="4" stroke-linecap="round"/>';
       for (var bri = 0; bri < brx.length; bri++) {
@@ -10467,11 +11029,119 @@
       s += '<ellipse cx="40" cy="121" rx="5.2" ry="2.6" fill="#ff8fb0"/>';
     }
 
-    /* 얼굴 — 표정마다 눈·입·볼이 확실히 달라요 */
-    var headR = girl ? 33 : 33.5;
-    s += '<circle cx="26" cy="64" r="6" fill="' + skin + '"/>';
-    s += '<circle cx="94" cy="64" r="6" fill="' + skin + '"/>';
-    s += '<circle cx="60" cy="62" r="' + headR + '" fill="' + skin + '"/>';
+    /* ---- 다리 (걷기에서 따로 흔들리게 묶어요) ---- */
+    var bstyle = bottom ? bottom.style : 'jeans';
+    var kneeC = darken(botC, .16);
+    var PANTS = { jeans: 1, shorts: 1, train: 1, jogger: 1 };
+    var botInfo = PANTS[bstyle] ? { pants: 1, style: bstyle, c: botC, hem: bstyle === 'shorts' ? 160 : (bstyle === 'jogger' ? 172 : 176) } : null;
+    var legs = avLegsSvg(pstyle, skin, shoes ? shoes.style : 'sneaker', shoeC, shoeC2, botInfo);
+    s += '<g class="av-leg-l">' + legs.l + '</g>';
+    s += '<g class="av-leg-r">' + legs.r + '</g>';
+    if (bstyle === 'skirt') {
+      s += '<path d="M40 133h40l11 36H29z" fill="' + botC + '"/>';
+      s += '<path d="M42 143h36l3.4 10H38.6z" fill="#ffffff" opacity=".22"/>';
+      s += '<path d="M29.4 163h61.2l1.6 6H27.8z" fill="' + darken(botC, .1) + '"/>';
+    } else if (bstyle === 'shorts') {
+      s += '<path d="M41 133 C40.6 141 41 147 41.4 152 L78.6 152 C79 147 79.4 141 79 133 Z" fill="' + botC + '"/>';
+      s += '<path d="M41 139.6h38" stroke="#ffffff" stroke-width="1.8" opacity=".3"/>';
+    } else if (bstyle === 'train') {
+      s += '<path d="M41 133 C40.4 144 40.6 149.4 41.4 152 L78.6 152 C79.4 149.4 79.6 144 79 133 Z" fill="' + botC + '"/>';
+      s += '<path d="M41 140h38" stroke="#ffffff" stroke-width="2" opacity=".38"/>';
+    } else if (bstyle === 'pleats') {
+      s += '<path d="M41 131h38l12 40H29z" fill="' + botC + '"/>';
+      s += '<path d="M46 135l-4 29M54 135l-2 31M62 135v31M70 135l2 31M78 135l4 29" stroke="#ffffff" stroke-width="1.6" opacity=".42"/>';
+      s += '<path d="M29 165h62l2 6.4H27z" fill="' + darken(botC, .12) + '"/>';
+    } else if (bstyle === 'denimskirt') {
+      s += '<path d="M42 131h36l9 33H33z" fill="' + botC + '"/>';
+      s += '<path d="M42 136h36" stroke="#ffffff" stroke-width="2.1" opacity=".45"/>';
+      s += '<path d="M50 136v23M70 136v23" stroke="#ffffff" stroke-width="1.4" stroke-dasharray="3 3" opacity=".55"/>';
+      s += '<path d="M33 160h54l1.4 6H31.6z" fill="' + darken(botC, .12) + '"/>';
+      s += '<circle cx="60" cy="136" r="1.5" fill="#ffe08a"/>';
+    } else if (bstyle === 'dress') {
+      s += '<path d="M38 130h44l6 24 6 30H26l7-30z" fill="' + botC + '"/>';
+      s += '<path d="M38 130h44" stroke="' + darken(botC, .14) + '" stroke-width="3" opacity=".45"/>';
+      s += '<path d="M26.4 176h67.2l-1.2 8H27.6z" fill="#ffffff" opacity=".55"/>';
+      s += '<path d="M56 133h8" stroke="' + darken(botC, .18) + '" stroke-width="2.4"/>';
+      s += '<path d="M42 141q18 6 36 0" fill="none" stroke="' + darken(botC, .12) + '" stroke-width="1.6" opacity=".55"/>';
+    } else if (bstyle === 'jogger') {
+      s += '<path d="M41 133 C40.4 144 40.6 149 41.4 152 L78.6 152 C79.4 149 79.6 144 79 133 Z" fill="' + botC + '"/>';
+      s += '<path d="M41 139h38" stroke="#ffffff" stroke-width="1.8" opacity=".28"/>';
+    } else {
+      /* 청바지 — 이어진 실루엣에 Y자 가랑이 · 무릎 주름 */
+      s += '<path d="M41 133 C40.4 144 40.6 149.4 41.4 152 L78.6 152 C79.4 149.4 79.6 144 79 133 Z" fill="' + botC + '"/>';
+      s += '<path d="M41 140.4h38" stroke="#ffffff" stroke-width="2.1" opacity=".3"/>';
+      s += '<path d="M59.4 148.2q1.4 2.6 1.4 4.4M60.6 148.2q-1.4 2.6-1.4 4.4" stroke="' + darken(botC, .2) + '" stroke-width="1.2" opacity=".5" fill="none"/>';
+    }
+
+    /* 몸통·팔·머리는 한 덩어리로 살짝 위아래로 (걷기 바운스) */
+    s += '<g class="av-bob">';
+    /* ---- 상의 — 목에서 어깨·팔로 이어지는 연속 곡선 ---- */
+    s += '<path d="M43.6 103 C47.6 99 52.4 97.6 60 97.6 C67.6 97.6 72.4 99 76.4 103 C80 108 81 118 81 140 L39 140 C39 118 40 108 43.6 103 Z" fill="' + topC + '"/>';
+    if (pstyle === 'stand') {
+      /* 왼팔 · 오른팔 (어깨에서 손까지 한 붓으로) */
+      s += '<g class="av-arm-l">' +
+        '<path d="M37 118 C36 126 35.2 131 34.8 135" fill="none" stroke="' + skin + '" stroke-width="9.4" stroke-linecap="round"/>' +
+        '<path d="M45.4 104.6 C41.6 109 38.6 113.6 37.2 119.6" fill="none" stroke="' + topC + '" stroke-width="13" stroke-linecap="round"/>' +
+        '<path d="M45.4 104.6 C41.6 109 38.6 113.6 37.2 119.6" fill="none" stroke="' + darken(topC, .07) + '" stroke-width="13" stroke-linecap="round" opacity=".0"/>' +
+        avHandThumb(34.6, 140, 5.5, skin, 'in') +
+        '</g>';
+      s += '<g class="av-arm-r">' +
+        '<path d="M83 118 C84 126 84.8 131 85.2 135" fill="none" stroke="' + skin + '" stroke-width="9.4" stroke-linecap="round"/>' +
+        '<path d="M74.6 104.6 C78.4 109 81.4 113.6 82.8 119.6" fill="none" stroke="' + topC + '" stroke-width="13" stroke-linecap="round"/>' +
+        avHandThumb(85.4, 140, 5.5, skin, 'out') +
+        '</g>';
+    } else {
+      s += '<g class="av-arm-l"><path d="M45.4 104.6 C41.6 109 38.6 113.6 37.2 119.6" fill="none" stroke="' + topC + '" stroke-width="13" stroke-linecap="round"/></g>';
+      s += '<g class="av-arm-r"><path d="M74.6 104.6 C78.4 109 81.4 113.6 82.8 119.6" fill="none" stroke="' + topC + '" stroke-width="13" stroke-linecap="round"/></g>';
+      s += avPoseArms(pstyle, skin, topC, topC2);
+    }
+    var tstyle = top ? top.style : 'tee';
+    if (tstyle === 'stripe') {
+      for (var i = 0; i < 3; i++) {
+        s += '<path d="M43.4 ' + (106 + i * 9.4) + 'h33.2" stroke="' + topC2 + '" stroke-width="5" opacity=".95"/>';
+      }
+      s += '<path d="M43.4 106.4h33.2" stroke="#ffffff" stroke-width="1.2" opacity=".3"/>';
+    } else if (tstyle === 'hood') {
+      s += '<path d="M44 101.4q16 13 32 0q-3.4 13-16 13t-16-13z" fill="' + topC2 + '"/>';
+      s += '<rect x="50" y="124" width="20" height="12" rx="5" fill="' + topC2 + '" opacity=".85"/>';
+      s += '<path d="M56 104v7M64 104v7" stroke="#ffffff" stroke-width="2" opacity=".7" stroke-linecap="round"/>';
+    } else if (tstyle === 'knit') {
+      for (var k = 0; k < 4; k++) {
+        s += '<path d="M' + (46.5 + k * 9) + ' 104.6v32" stroke="#ffffff" stroke-width="2" opacity=".34"/>';
+      }
+      s += '<path d="M43.4 103.4q16.6-8.4 33.2 0" stroke="' + topC2 + '" stroke-width="4" fill="none"/>';
+    } else if (tstyle === 'blouse') {
+      s += '<path d="M53 96.6q7 9.6 14 0l-2 6H55z" fill="' + topC2 + '"/>';
+      s += '<path d="M52 98.6q8 10.4 16 0" fill="none" stroke="' + topC2 + '" stroke-width="2.6"/>';
+      s += '<path d="M60 105l-5.2-4.2v8.4z" fill="' + topC2 + '"/><path d="M60 105l5.2-4.2v8.4z" fill="' + topC2 + '"/>';
+      s += '<circle cx="60" cy="105" r="2.2" fill="' + darken(topC2, .12) + '"/>';
+      s += '<circle cx="60" cy="115.6" r="1.7" fill="' + topC2 + '" opacity=".9"/><circle cx="60" cy="124.6" r="1.7" fill="' + topC2 + '" opacity=".9"/>';
+      s += '<path d="M45.4 131.4q14.6 5.2 29.2 0" fill="none" stroke="' + topC2 + '" stroke-width="2" opacity=".55"/>';
+    } else if (tstyle === 'soccer') {
+      s += '<path d="M45.4 99v39M74.6 99v39" stroke="' + topC2 + '" stroke-width="3" opacity=".8"/>';
+      s += '<path d="M43 116.4h34" stroke="' + topC2 + '" stroke-width="2.4" opacity=".55"/>';
+      s += '<text x="60" y="112" text-anchor="middle" font-size="13" font-weight="900" fill="' + topC2 + '" font-family="inherit">7</text>';
+    } else {
+      s += '<path d="M52.6 98.6q7.4 6.2 14.8 0" stroke="' + topC2 + '" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".9"/>';
+      s += '<circle cx="60" cy="120" r="4.4" fill="' + topC2 + '" opacity=".75"/>';
+    }
+    if (ast === 'backpack') {
+      s += '<path d="M50 100q-7 16-3 30M70 100q7 16 3 30" stroke="' + accC + '" stroke-width="4" fill="none" stroke-linecap="round"/>';
+    }
+
+    /* 목 */
+    s += '<rect x="54.4" y="90" width="11.2" height="14" rx="4.6" fill="' + darken(skin, .12) + '"/>';
+    s += '<rect x="54.4" y="90" width="11.2" height="8" rx="3.4" fill="' + darken(skin, .02) + '"/>';
+
+    /* ---- 얼굴 (통통한 볼 + 부드러운 턱선) ---- */
+    s += '<ellipse cx="28.2" cy="68" rx="6.2" ry="7.8" fill="url(#' + gSkin + ')"/>';
+    s += '<ellipse cx="91.8" cy="68" rx="6.2" ry="7.8" fill="url(#' + gSkin + ')"/>';
+    s += '<path d="M29.6 63.6q3-1.4 3.6 1.6" fill="none" stroke="' + darken(skin, .2) + '" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>';
+    s += '<path d="M90.4 63.6q-3-1.4-3.6 1.6" fill="none" stroke="' + darken(skin, .2) + '" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>';
+    s += '<path d="' + avFacePath() + '" fill="url(#' + gSkin + ')"/>';
+    s += '<g clip-path="url(#' + gFace + ')">' +
+      '<ellipse cx="60" cy="101" rx="24" ry="12" fill="url(#' + gShade + ')" opacity=".5"/>' +
+      '</g>';
     s += avFaceSvg(fstyle, girl, skin);
 
     /* 헤어 (앞머리) — 모양마다 실루엣이 또렷하게 달라요 */
@@ -10481,7 +11151,7 @@
       s += '<path d="M26 56c0-21 15-34 34-34s34 13 34 34z" fill="' + hairC + '"/>';
       s += '<rect x="23" y="52" width="11" height="32" rx="5.5" fill="' + hairC + '"/>';
       s += '<rect x="86" y="52" width="11" height="32" rx="5.5" fill="' + hairC + '"/>';
-      s += '<path d="M33 40q14-10 30-8" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".2"/>';
+      s += '<path d="M33 40q14-10 30-8" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".24"/>';
     } else if (hstyle === 'twin') {
       s += '<circle cx="24" cy="42" r="12" fill="' + hairC + '"/>';
       s += '<circle cx="96" cy="42" r="12" fill="' + hairC + '"/>';
@@ -10501,81 +11171,80 @@
       s += '<path d="M46 31l3 7 4-6 4 7 3-6 4 6" fill="none" stroke="' + hairC + '" stroke-width="3" stroke-linecap="round"/>';
     } else if (hstyle === 'bang') {
       s += '<path d="M27 64c0-23 14-37 33-37s33 14 33 37c-2-12-6-18-13-19-6 5-12 7-20 7s-14-2-20-7c-7 1-11 7-13 19z" fill="' + hairC + '"/>';
-      s += '<path d="M39 47h42" stroke="' + hairHi + '" stroke-width="2.4" opacity=".16"/>';
+      s += '<path d="M39 47h42" stroke="' + hairHi + '" stroke-width="2.6" opacity=".2"/>';
     } else if (hstyle === 'spiky') {
       s += '<path d="M26 62c0-23 15-36 34-36s34 13 34 36l-7-9-6 6-4-12-7 10-6-14-6 14-7-10-4 12-6-6z" fill="' + hairC + '"/>';
+      s += '<path d="M34 46q12-8 26-7" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".22"/>';
     } else if (hstyle === 'parted') {
       s += '<path d="M26 62c0-23 15-36 34-36 18 0 30 10 33 27-6-6-12-9-19-9-9 0-16 4-21 10-4 5-6 12-6 20-6-14-11-15-21-12z" fill="' + hairC + '"/>';
-      s += '<path d="M62 30q-3 12 2 22" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".22"/>';
+      s += '<path d="M62 30q-3 12 2 22" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".26"/>';
     } else if (hstyle === 'bowl') {
       s += '<path d="M25 66c0-25 16-39 35-39s35 14 35 39l-3 8c-2-16-6-22-14-23H42c-8 1-12 7-14 23z" fill="' + hairC + '"/>';
-      s += '<path d="M42 44h36" stroke="' + hairHi + '" stroke-width="2.6" opacity=".2"/>';
+      s += '<path d="M42 44h36" stroke="' + hairHi + '" stroke-width="2.8" opacity=".22"/>';
     } else if (hstyle === 'mohawk') {
-      s += '<path d="M52 38c2-14 14-14 16 0l5 24H47z" fill="' + hairC + '"/>';
-      s += '<path d="M30 50q8-8 16-6l-3 12H29z" fill="' + hairC + '" opacity=".55"/>';
-      s += '<path d="M74 44q8-2 16 6l1 6H77z" fill="' + hairC + '" opacity=".55"/>';
+      s += '<path d="M52 41c1-18 15-18 16 0l4 21H48z" fill="' + hairC + '"/>';
+      s += '<path d="M52 27l4-11 5 10 4-9 4 10" fill="' + hairC + '"/>';
+      s += '<path d="M57 30q1 12 0 22" fill="none" stroke="' + hairHi + '" stroke-width="1.8" opacity=".3"/>';
+      s += '<path d="M30 52q8-8 16-6l-3 12H29z" fill="' + hairC + '" opacity=".6"/>';
+      s += '<path d="M74 46q8-2 16 6l1 6H77z" fill="' + hairC + '" opacity=".6"/>';
     } else if (hstyle === 'crop') {
-      s += '<path d="M28 54c0-21 14-33 32-33s32 12 32 33c-3-6-7-9-12-10-6 2-13 3-20 3s-14-1-20-3c-5 1-9 4-12 10z" fill="' + hairC + '"/>';
-      s += '<path d="M44 33c-4 6-6 11-6 17" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".2"/>';
-      s += '<path d="M40 36q10-6 22-5" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".2"/>';
+      s += '<path d="M28 51.6c0-20.6 14-32.6 32-32.6s32 12 32 32.6c-3-6-7-9-12-10-6 2-13 3-20 3s-14-1-20-3c-5 1-9 4-12 10z" fill="' + hairC + '"/>';
+      s += '<path d="M42 33c-3 5-4.4 9-4.6 13" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".18"/>';
     } else if (hstyle === 'dandy') {
-      /* 옆은 짧게(밝게), 위는 볼륨 있는 두 덩어리 */
       s += '<path d="M29 54c0-18 14-29 31-29s31 11 31 29q-4-7-9-9H38q-5 2-9 9z" fill="' + lighten(hairC, .26) + '"/>';
       s += '<path d="M30 45c1-14 13-23 30-23s29 9 30 23c-2 2-5 2-8 0-6-4-14-6-22-6s-16 2-22 6c-3 2-6 2-8 0z" fill="' + hairC + '"/>';
-      s += '<path d="M38 32q11-7 24-6" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".22"/>';
+      s += '<path d="M38 32q11-7 24-6" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".24"/>';
     } else if (hstyle === 'comma') {
       s += cap;
       s += '<path d="M62 29c10 3 17 11 18 22 1 7-1 12-5 13-3 1-5-1-5-4 0-7-4-12-10-15-4-2-8-3-12-2 4-5 9-9 14-14z" fill="' + lighten(hairC, .1) + '"/>';
-      s += '<path d="M50 34c-5 6-8 12-9 19" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".22"/>';
+      s += '<path d="M50 34c-5 6-8 12-9 19" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".24"/>';
     } else if (hstyle === 'regent') {
       s += cap;
       s += '<path d="M38 36c4-14 18-21 31-15 8 4 13 11 15 20-4-6-9-10-15-11-9-2-17 1-23 8-2 2-4 3-8 2z" fill="' + lighten(hairC, .18) + '"/>';
-      s += '<path d="M45 25q15-6 28 2" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".3"/>';
-      s += '<path d="M40 44q8-6 18-6" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".18"/>';
-    } else if (hstyle === 'mohawk') {
-      s += '<path d="M32 50c2-15 13-24 28-24s26 9 28 24q-6-8-28-8t-28 8z" fill="' + hairC + '" opacity=".22"/>';
-      s += '<path d="M52 41c1-18 15-18 16 0l4 21H48z" fill="' + hairC + '"/>';
-      s += '<path d="M52 27l4-11 5 10 4-9 4 10" fill="' + hairC + '"/>';
-      s += '<path d="M57 30q1 12 0 22" fill="none" stroke="' + hairHi + '" stroke-width="1.8" opacity=".26"/>';
+      s += '<path d="M45 25q15-6 28 2" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".32"/>';
+      s += '<path d="M40 44q8-6 18-6" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".2"/>';
     } else if (hstyle === 'shag') {
       s += '<path d="M26 58c0-23 15-36 34-36s34 13 34 36c0 8-2 14-5 17-3 2-6 1-6-2 0-2 0-4-1-6-2 3-4 5-7 6-3 1-4-1-3-4 0-2 1-4 1-6-3 3-8 5-13 5s-10-2-13-5c0 2 1 4 1 6 1 3 0 5-3 4-3-1-5-3-7-6-1 2-1 4-1 6 0 3-3 4-6 2-3-3-5-9-5-17z" fill="' + hairC + '"/>';
-      s += '<path d="M38 44q22-13 44 0" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".2"/>';
+      s += '<path d="M38 44q22-13 44 0" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".22"/>';
       s += '<path d="M31 56q-1 8 1 14M89 56q1 8-1 14" stroke="' + hairC + '" stroke-width="3.6" stroke-linecap="round"/>';
     } else if (hstyle === 'hime') {
       s += '<path d="M27 50c0-18 15-28 33-28s33 10 33 28z" fill="' + hairC + '"/>';
       s += '<rect x="27" y="44" width="66" height="9" rx="3" fill="' + hairC + '"/>';
       s += '<rect x="25" y="49" width="13" height="47" rx="5" fill="' + hairC + '"/>';
       s += '<rect x="82" y="49" width="13" height="47" rx="5" fill="' + hairC + '"/>';
-      s += '<path d="M34 51h52" stroke="' + hairHi + '" stroke-width="2" opacity=".18"/>';
+      s += '<path d="M34 51h52" stroke="' + hairHi + '" stroke-width="2" opacity=".2"/>';
     } else if (hstyle === 'bunup') {
       s += cap;
       s += '<circle cx="60" cy="19" r="13" fill="' + lighten(hairC, .06) + '"/>';
-      s += '<path d="M50 18q10-6 20 0" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".28"/>';
+      s += '<path d="M50 18q10-6 20 0" fill="none" stroke="' + hairHi + '" stroke-width="2.2" opacity=".3"/>';
       s += '<ellipse cx="60" cy="29" rx="12" ry="3.6" fill="#ff8fb0"/>';
       s += '<circle cx="60" cy="29" r="2.4" fill="#ff6fa1"/>';
-      s += '<path d="M40 42q20-12 40 0" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".2"/>';
+      s += '<path d="M40 42q20-12 40 0" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".22"/>';
     } else if (hstyle === 'long') {
       s += cap;
-      s += '<path d="M60 30v15" stroke="' + hairHi + '" stroke-width="1.8" opacity=".2"/>';
+      s += '<path d="M60 30v15" stroke="' + hairHi + '" stroke-width="1.8" opacity=".22"/>';
+      s += '<path d="M36 44q12-16 26-13" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".18"/>';
     } else if (hstyle === 'wave') {
       s += cap;
-      s += '<path d="M33 42q14-16 30-12" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".2"/>';
+      s += '<path d="M33 42q14-16 30-12" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".22"/>';
     } else if (hstyle === 'pony') {
       s += '<path d="M28 60c0-20 14-31 32-31s32 11 32 31c-9-11-18-15-32-15s-23 4-32 15z" fill="' + hairC + '"/>';
-      s += '<path d="M42 40q18-10 36 0" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".18"/>';
+      s += '<path d="M42 40q18-10 36 0" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".2"/>';
     } else if (hstyle === 'buns') {
       s += cap;
       s += '<circle cx="40" cy="27" r="11.5" fill="' + hairC + '"/>';
       s += '<circle cx="80" cy="27" r="11.5" fill="' + hairC + '"/>';
-      s += '<path d="M34 25q6-5 12 0M74 25q6-5 12 0" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".22"/>';
+      s += '<path d="M34 25q6-5 12 0M74 25q6-5 12 0" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".24"/>';
     } else if (hstyle === 'ribbon') {
       s += cap;
       s += '<path d="M60 26l-14-9 2 17z" fill="#ff8fb0"/><path d="M60 26l14-9-2 17z" fill="#ff8fb0"/>';
       s += '<circle cx="60" cy="26" r="4.2" fill="#ff6fa1"/>';
     } else {
-      s += cap;
-      s += '<path d="M40 40q20-12 40 0" fill="none" stroke="' + hairHi + '" stroke-width="3" opacity=".22"/>';
+      s += '<path d="M28 52.4c0-20.4 14-32.4 32-32.4s32 12 32 32.4c-3-6-7.2-9.2-12-10.4-6 2.4-12.6 3.4-20 3.4s-14-1-20-3.4c-4.8 1.2-9 4.4-12 10.4z" fill="' + hairC + '"/>';
+      s += '<path d="M42 38q18-10 36 0" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".2"/>';
     }
+    /* 앞머리 윤기 — 어떤 머리든 머리 위쪽에 한 줄 반짝 */
+    s += '<path d="M43.6 38.6q10-8.6 22-8.2" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" opacity=".16"/>';
 
     /* 모자 · 머리장식 */
     if (hst === 'cap') {
@@ -10591,7 +11260,6 @@
       s += '<path d="M38 32l4-14 8 9 10-13 10 13 8-9 4 14z" fill="' + hatC + '" stroke="#e0a800" stroke-width="1.5"/>';
       s += '<circle cx="60" cy="24" r="2.6" fill="#ff6b8a"/>';
     } else if (hst === 'bunnyband') {
-      /* 머리띠는 이마가 아니라 머리 위에 얹히도록 조금 올려 그려요 */
       s += '<g transform="translate(0,-6)">';
       s += '<path d="M30 54q30-22 60 0" fill="none" stroke="' + hatC + '" stroke-width="6" stroke-linecap="round"/>';
       s += '<ellipse cx="43" cy="20" rx="7.5" ry="17" fill="#ffffff" stroke="#f3c6d8" stroke-width="2" transform="rotate(-12 43 20)"/>';
@@ -10622,21 +11290,21 @@
 
     /* 안경 · 얼굴 소품 */
     if (ast === 'glasses') {
-      s += '<circle cx="48" cy="65" r="10" fill="none" stroke="' + accC + '" stroke-width="2.6"/>';
-      s += '<circle cx="72" cy="65" r="10" fill="none" stroke="' + accC + '" stroke-width="2.6"/>';
-      s += '<path d="M58 65h4" stroke="' + accC + '" stroke-width="2.6"/>';
-      s += '<path d="M38 62l-8-3M82 62l8-3" stroke="' + accC + '" stroke-width="2.2" stroke-linecap="round"/>';
+      s += '<circle cx="47.4" cy="66" r="10.2" fill="none" stroke="' + accC + '" stroke-width="2.6"/>';
+      s += '<circle cx="72.6" cy="66" r="10.2" fill="none" stroke="' + accC + '" stroke-width="2.6"/>';
+      s += '<path d="M57.6 66h4.8" stroke="' + accC + '" stroke-width="2.6"/>';
+      s += '<path d="M37.2 63l-8.4-3M82.8 63l8.4-3" stroke="' + accC + '" stroke-width="2.2" stroke-linecap="round"/>';
     } else if (ast === 'heartglasses') {
-      s += '<path d="M48 58c-4-4-9-1-9 4 0 5 5 8 9 12 4-4 9-7 9-12 0-5-5-8-9-4z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
-      s += '<path d="M72 58c-4-4-9-1-9 4 0 5 5 8 9 12 4-4 9-7 9-12 0-5-5-8-9-4z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
-      s += '<path d="M57 64h6" stroke="' + accC + '" stroke-width="2.4"/>';
+      s += '<path d="M47.4 59c-4-4-9-1-9 4 0 5 5 8 9 12 4-4 9-7 9-12 0-5-5-8-9-4z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
+      s += '<path d="M72.6 59c-4-4-9-1-9 4 0 5 5 8 9 12 4-4 9-7 9-12 0-5-5-8-9-4z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
+      s += '<path d="M56.6 65h6.8" stroke="' + accC + '" stroke-width="2.4"/>';
     } else if (ast === 'starglasses') {
-      s += '<path d="M48 56.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
-      s += '<path d="M72 56.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
-      s += '<path d="M45 64.5l2-2.6M69 64.5l2-2.6" stroke="#ffffff" stroke-width="1.4" opacity=".8" stroke-linecap="round"/>';
-      s += '<path d="M58 64h4" stroke="' + accC + '" stroke-width="2"/>';
+      s += '<path d="M47.4 57.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
+      s += '<path d="M72.6 57.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
+      s += '<path d="M44.4 65.4l2-2.6M69.6 65.4l2-2.6" stroke="#ffffff" stroke-width="1.4" opacity=".8" stroke-linecap="round"/>';
+      s += '<path d="M57.6 65h4.8" stroke="' + accC + '" stroke-width="2"/>';
     } else if (ast === 'bag') {
-      s += '<path d="M44 102l24 44" stroke="' + accC + '" stroke-width="5" stroke-linecap="round"/>';
+      s += '<path d="M45 102l24 44" stroke="' + accC + '" stroke-width="5" stroke-linecap="round"/>';
       s += '<rect x="62" y="128" width="26" height="20" rx="6" fill="' + accC + '"/>';
       s += '<rect x="62" y="128" width="26" height="7" rx="3.5" fill="#ffffff" opacity=".45"/>';
     } else if (ast === 'necklace') {
@@ -10644,35 +11312,17 @@
       s += '<circle cx="60" cy="99" r="3.4" fill="' + accC + '" stroke="#e0a800" stroke-width="1"/>';
     }
 
-    /* 신발 — 점프·춤·발차기는 발 위치가 달라요 */
-    var sstyle = shoes ? shoes.style : 'sneaker';
-    if (pstyle === 'jump') {
-      s += '<ellipse cx="52" cy="182" rx="9" ry="6" fill="' + shoeC + '" transform="rotate(-18 52 182)"/>';
-      s += '<ellipse cx="68" cy="180" rx="9" ry="6" fill="' + shoeC + '" transform="rotate(18 68 180)"/>';
-    } else if (pstyle === 'dance') {
-      s += '<ellipse cx="51" cy="187" rx="11" ry="7" fill="' + shoeC + '"/>';
-      s += '<ellipse cx="75" cy="185" rx="11" ry="7" fill="' + shoeC + '" transform="rotate(14 75 185)"/>';
-    } else if (pstyle === 'kick') {
-      s += '<ellipse cx="51" cy="187" rx="11" ry="7" fill="' + shoeC + '"/>';
-      s += '<ellipse cx="104" cy="133" rx="9" ry="11" fill="' + shoeC + '" transform="rotate(58 104 133)"/>';
-    } else if (sstyle === 'boots') {
-      s += '<rect x="44" y="168" width="16" height="24" rx="5" fill="' + shoeC + '"/>';
-      s += '<rect x="60" y="168" width="16" height="24" rx="5" fill="' + shoeC + '"/>';
-      s += '<rect x="42" y="186" width="20" height="8" rx="4" fill="' + shoeC + '"/>';
-      s += '<rect x="58" y="186" width="20" height="8" rx="4" fill="' + shoeC + '"/>';
-    } else if (sstyle === 'slipper') {
-      s += '<ellipse cx="51" cy="188" rx="11" ry="6" fill="' + shoeC + '"/>';
-      s += '<ellipse cx="69" cy="188" rx="11" ry="6" fill="' + shoeC + '"/>';
-      s += '<path d="M44 185q7-6 14 0" fill="none" stroke="#ffffff" stroke-width="2"/>';
-      s += '<path d="M62 185q7-6 14 0" fill="none" stroke="#ffffff" stroke-width="2"/>';
-    } else {
-      s += '<ellipse cx="51" cy="187" rx="11" ry="7" fill="' + shoeC + '"/>';
-      s += '<ellipse cx="69" cy="187" rx="11" ry="7" fill="' + shoeC + '"/>';
-      s += '<path d="M42 190h18M60 190h18" stroke="' + shoeC2 + '" stroke-width="3" stroke-linecap="round"/>';
-    }
-
-    s += '</g>';
+    s += '</g>';   /* av-bob */
+    s += '</g>';   /* av-fig */
     return s;
+  }
+
+  /* 어린이 얼굴 — 정원이 아니라 볼이 통통하고 턱이 부드러운 곡선 */
+  function avFacePath() {
+    return 'M60 28.4 C47.6 28.4 34.4 34.6 30 45.6 C27.6 51.8 27.2 60.4 27.8 68.2 ' +
+      'C28.6 79.6 33.6 89.2 42.4 94.6 C47.6 97.9 53.6 99.2 60 99.2 ' +
+      'C66.4 99.2 72.4 97.9 77.6 94.6 C86.4 89.2 91.4 79.6 92.2 68.2 ' +
+      'C92.8 60.4 92.4 51.8 90 45.6 C85.6 34.6 72.4 28.4 60 28.4 Z';
   }
 
   function avatarSvg(av, cls) {
@@ -11018,7 +11668,9 @@
       '<div class="av-preview">' + avatarSvg(av) + '</div>' +
       '<div class="av-side">' +
         '<div class="av-title-row"><b>나의 아바타</b>' +
+          '<button type="button" class="av-reset" data-act="ach-open">🏆 업적</button>' +
           '<button type="button" class="av-reset" data-act="av-reset">🔄 초기화</button></div>' +
+        '<div class="xpbar av-xp" data-xpbar></div>' +
         '<p class="lf-note">옷·표정·동작을 고르면 미리 보여 주고, 위쪽 <b>적용하기</b>를 누르면 저장돼요.</p>' +
         '<div class="av-gender"><span>성별</span>' + genderButtonsHtml(av) + '</div>' +
         '<div class="av-swatches"><span>피부</span>';
@@ -11107,6 +11759,7 @@
     var sc = keepScroll ? b.scrollTop : 0;
     b.innerHTML = avatarHtml();
     if (keepScroll) b.scrollTop = sc;
+    try { renderLevelBadges(); } catch (e0) { /* 무시 */ }
   }
 
   /* ---------------- 코인 조절 (엄마·아빠 → 아이) — 주기 / 빼기 / 직접 맞추기 ---------------- */
@@ -12255,7 +12908,9 @@
       return '<button type="button" class="tool-pill' + (roomUi.panel === key ? ' on' : '') + '" data-act="' + (act || ('room-' + key)) + '">' + label + '</button>';
     }
     /* 네 칸 반듯하게 — 아이폰 390px에서는 2×2, 넓은 화면에서는 한 줄 */
-    var h = '<div class="room-ctrl">' +
+    var h = '<div class="room-xprow"><div class="xpbar" data-xpbar></div>' +
+      '<button type="button" class="tool-pill" data-act="ach-open">🏆 업적</button></div>' +
+      '<div class="room-ctrl">' +
       pill('studio', '🎨 벽지·컨셉') +
       pill('storage', '🧺 보관함 ' + Math.max(0, ownedFurni - placed)) +
       pill('pets', '🐾 친구 ' + pets.length + '/' + roomPetMax(fl.size)) +
@@ -12463,6 +13118,7 @@
     var keepTop = (roomUi._drawerKey === key) ? b.scrollTop : 0;
     if (st) st.innerHTML = roomStageHtml();
     b.innerHTML = roomDrawerHtml();
+    try { renderLevelBadges(); } catch (e0) { /* 무시 */ }
     roomUi.panel = keep;
     roomUi._drawerKey = key;
     try { b.scrollTop = keepTop; } catch (e) { /* 무시 */ }
@@ -12510,6 +13166,8 @@
     if (!svg) return;
     var avaEl = svg.querySelector('.room-ava');
     var hopEl = avaEl ? avaEl.querySelector('.room-ava-hop') : null;
+    var figEl = avaEl ? avaEl.querySelector('.av-fig') : null;
+    var faceDir = 1;   /* 1 = 오른쪽을 보고 걸어요, -1 = 왼쪽 */
     var ringEl = svg.querySelector('.room-ava-target');
     var nodes = svg.querySelectorAll('.room-pet');
     var pets = [];
@@ -12555,7 +13213,16 @@
           roomAva.y += dy / dist * step;
           roomAva.walkPh += dt * 8.5;
           roomAva.moving = true;
-          if (hopEl) hopEl.setAttribute('transform', 'translate(0,' + (-Math.abs(Math.sin(roomAva.walkPh)) * 3.6).toFixed(2) + ')');
+          /* 걷는 방향으로 몸을 돌려요 — 오른쪽으로 가면 그대로, 왼쪽으로 가면 좌우 반전 */
+          if (dx !== 0) faceDir = dx > 0 ? 1 : -1;
+          if (figEl && figEl.setAttribute) {
+            if (figEl.getAttribute('data-walk') !== '1') {
+              figEl.setAttribute('data-walk', '1');
+              try { figEl.classList.add('walking'); } catch (e0) { /* 무시 */ }
+            }
+            var flip = faceDir < 0 ? 'translate(120,0) scale(-1,1)' : 'translate(0,0)';
+            if (figEl.getAttribute('transform') !== flip) figEl.setAttribute('transform', flip);
+          }
         } else if (roomAva.moving) {
           roomAva.x = roomAva.tx;
           roomAva.y = roomAva.ty;
@@ -12565,6 +13232,12 @@
           /* 산책한 자리는 메모리에만 남겨 두고, 다음 저장 때 함께 저장돼요 */
           curFloor().avatarPos = { x: Math.round(roomAva.x * 100) / 100, y: Math.round(roomAva.y * 100) / 100 };
           roomMirror();
+          /* 도착하면 걷기를 멈추고 차분한 대기 모션으로 돌아가요 */
+          if (figEl && figEl.getAttribute('data-walk') === '1') {
+            try { figEl.classList.remove('walking'); } catch (e1) { /* 무시 */ }
+            figEl.setAttribute('data-walk', '0');
+            figEl.setAttribute('transform', 'translate(0,0)');
+          }
           if (hopEl) hopEl.setAttribute('transform', 'translate(0,0)');
           if (ringEl) ringEl.setAttribute('visibility', 'hidden');
           /* 걷는 사이 방을 다시 그렸다면 목표 표시도 새것으로 찾아 숨겨요 (안 그러면 링이 남아요) */
@@ -12903,7 +13576,8 @@
     return JSON.stringify({
       c: p.coins, pt: p.pet, pe: p.pets, ap: p.activePetId, rp: p.runnerPetId,
       b: p.bag, o: p.owned, r: p.room, a: p.avatar, al: p.allowanceNotices,
-      sc: p.stickerCoin || null
+      sc: p.stickerCoin || null,
+      xp: p.xp, lv: p.level, pg: p.progress, ach: p.ach
     });
   }
 
@@ -12925,6 +13599,10 @@
       owned: p.owned,
       room: p.room,
       avatar: p.avatar,
+      xp: Math.max(0, parseInt(p.xp, 10) || 0),
+      level: Math.max(1, parseInt(p.level, 10) || 1),
+      progress: p.progress || null,
+      ach: p.ach || null,
       allowanceNotices: p.allowanceNotices || [],
       award: p.award,
       stickerCoin: p.stickerCoin || null
@@ -15534,7 +16212,7 @@
   }
 
   function isOnlyModal(id) {
-    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal', 'petHomeModal', 'roomModal', 'avatarModal', 'shopModal', 'careModal', 'allowModal', 'allowNoticeModal', 'targetAlertModal', 'bulkModal', 'reqModal', 'msnModal', 'rclModal', 'msnWinModal'];
+    var ids = ['histModal', 'acctModal', 'reasonModal', 'spendModal', 'statsModal', 'wbModal', 'goalModal', 'winModal', 'petModal', 'evoModal', 'petHomeModal', 'roomModal', 'avatarModal', 'shopModal', 'careModal', 'allowModal', 'allowNoticeModal', 'targetAlertModal', 'bulkModal', 'reqModal', 'msnModal', 'rclModal', 'msnWinModal', 'achModal'];
     for (var i = 0; i < ids.length; i++) {
       if (ids[i] === id) continue;
       var el = document.getElementById(ids[i]);
@@ -15614,6 +16292,8 @@
     if (on) {
       var got = awardCheckCoins(itemId);
       if (got.coin && got.first) showToast(coinSvg() + ' +' + got.coin + ' 코인!', true);
+      bumpProgress('workbook', 1);
+      gainXp(XP_CHECK);
       var cat = findCat(catId);
       if (cat && cat.items.length) {
         var allDone = true;
@@ -15626,6 +16306,8 @@
       snd('check');
     } else {
       revokeCheckCoins(itemId);
+      bumpProgress('workbook', -1);
+      gainXp(-XP_CHECK);
       snd('uncheck');
     }
     saveState();
@@ -17767,6 +18449,8 @@
     }
     freshIdx = st.stickers.length - 1;
     touchBoard(Date.now());
+    bumpProgress('sticker', n);
+    gainXp(XP_STICKER * n);
     saveState();
     try { renderStickers(); } catch (e2) { /* 무시 */ }
     try { renderCoinBadge(); } catch (e3) { /* 무시 */ }
@@ -18004,6 +18688,8 @@
     if (!wasOn) {
       try { snd('check'); } catch (e) { /* 무시 */ }
       /* 칸 하나를 체크할 때마다 코인 (미션을 다 채운 보상 스티커는 settleMission 이 따로 줘요) */
+      bumpProgress('mission', 1);
+      gainXp(XP_MISSION);
       var gotM = awardCoinsOnce(coinKey, coinN);
       if (gotM.coin) {
         try { showToast(coinSvg() + ' +' + fmtNum(gotM.coin) + ' 코인!', true); } catch (e2) { /* 무시 */ }
@@ -18012,7 +18698,10 @@
       settleMission(blkId, m, { celebrate: true });
     } else {
       try { snd('uncheck'); } catch (e) { /* 무시 */ }
-      if (revokeCoinsOnce(coinKey, coinN)) { try { renderCoinBadge(); } catch (e4) { /* 무시 */ } }
+      revokeCoinsOnce(coinKey, coinN);
+      bumpProgress('mission', -1);
+      gainXp(-XP_MISSION);
+      try { renderCoinBadge(); } catch (e4) { /* 무시 */ }
     }
     renderMissionBlock(blkId);
   }
@@ -18034,6 +18723,8 @@
     var rCoin = vnum('coinRoleCheck');
     if (!wasOn) {
       try { snd('check'); } catch (e) { /* 무시 */ }
+      bumpProgress('role', 1);
+      gainXp(XP_CHECK);
       var gotR = awardCoinsOnce(rKey, rCoin);
       if (gotR.coin) {
         try { showToast(coinSvg() + ' +' + fmtNum(gotR.coin) + ' 코인!', true); } catch (e2) { /* 무시 */ }
@@ -18042,7 +18733,10 @@
       settleRole(role, st.cur, { celebrate: true });
     } else {
       try { snd('uncheck'); } catch (e) { /* 무시 */ }
-      if (revokeCoinsOnce(rKey, rCoin)) { try { renderCoinBadge(); } catch (e4) { /* 무시 */ } }
+      revokeCoinsOnce(rKey, rCoin);
+      bumpProgress('role', -1);
+      gainXp(-XP_CHECK);
+      try { renderCoinBadge(); } catch (e4) { /* 무시 */ }
     }
     renderRoleBlock(blkId);
   }
@@ -20831,6 +21525,8 @@
     if ((act === 'nb-edit' || act === 'nb-save') && !can('edit')) return;
     if ((act === 'pet-art-apply' || act === 'pet-art-reset') && !canPetArt()) return;
     if (act === 'stickers-reset-logs' && !isAdmin()) return;
+    if ((act === 'ach-add' || act === 'ach-edit' || act === 'ach-save' || act === 'ach-del') && !can('edit')) return;
+    if (act === 'ach-manual' && !can('check')) return;
 
     if (act === 'toggle-check') { onToggleCheck(el); return; }
     if (act === 'wb-item-open') { openWbForItem(el); return; }
@@ -21054,6 +21750,17 @@
     if (act === 'reset-all') { resetAll(); return; }
 
     /* ---------- Phase 2: 상점 · 케어 · 마이룸 · 아바타 ---------- */
+    /* ---------- 🏆 업적 도감 ---------- */
+    if (act === 'ach-open') { openAch(); return; }
+    if (act === 'ach-close') { closeAch(); return; }
+    if (act === 'ach-add') { achEditOpen(''); return; }
+    if (act === 'ach-edit') { achEditOpen(el.getAttribute('data-id')); return; }
+    if (act === 'ach-cancel') { achUi.edit = null; renderAch(); return; }
+    if (act === 'ach-save') { achSave(); return; }
+    if (act === 'ach-del') { achDelete(el.getAttribute('data-id')); return; }
+    if (act === 'ach-manual') { achManualToggle(el.getAttribute('data-id')); return; }
+    if (act === 'ach-emoji' && achUi.edit) { achUi.edit.emoji = el.getAttribute('data-e') || '🏆'; renderAch(); return; }
+    if (act === 'ach-kind' && achUi.edit) { achEditSyncFields(); achUi.edit.kind = el.getAttribute('data-kind') || 'routine'; renderAch(); return; }
     if (act === 'shop-open') { openShop(el.getAttribute('data-shop-tab') || undefined); return; }
     if (act === 'shop-close') { closeShop(); return; }
     if (act === 'shop-tab') { shopUi.tab = el.getAttribute('data-tab') || 'pet'; shopUi.msg = ''; renderShop(); return; }
