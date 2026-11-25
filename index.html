@@ -10639,8 +10639,8 @@
   function avFaceSvg(st, girl, skin) {
     var s = '', dark = '#33274a';
     var eyeY = 66;
-    var erx = girl ? 6.0 : 5.6, ery = girl ? 7.2 : 6.8;
-    var exL = 47.4, exR = 72.6;
+    var erx = girl ? 5.8 : 5.4, ery = girl ? 7.0 : 6.6;
+    var exL = 48, exR = 72;
     var mouthC = '#c4644f';
     var browC = '#7b5638';
     function hl(cx, cy, rx) { return rx || (girl ? 2.1 : 1.9); }
@@ -10674,17 +10674,18 @@
       return '<path d="M' + (exL - 5.4) + ' ' + (eyeY - 4.6) + 'q-2.4-1.2-3.4-3.6" fill="none" stroke="' + dark + '" stroke-width="1.5" stroke-linecap="round"/>' +
         '<path d="M' + (exR + 5.4) + ' ' + (eyeY - 4.6) + 'q2.4-1.2 3.4-3.6" fill="none" stroke="' + dark + '" stroke-width="1.5" stroke-linecap="round"/>';
     }
-    /* 자연스러운 눈썹 — 살짝 휘고 끝이 가늘어져요 */
+    /* 자연스러운 눈썹 — 살짝 휘고 끝이 가늘어져요 (얼굴이 갸름해져 눈썹도 살짝 안으로) */
     function brow(l, r, c, w) {
       c = c || browC; w = w || 2.2;
-      return '<path d="' + l + '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>' +
-        '<path d="' + r + '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>';
+      return '<g transform="translate(60 0) scale(.96 1) translate(-60 0)">' +
+        '<path d="' + l + '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>' +
+        '<path d="' + r + '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/></g>';
     }
     function blush(o, rx, ry, cy) {
       o = o == null ? .55 : o;
-      rx = rx || 5.4; ry = ry || 3.1; cy = cy || 79;
-      return '<ellipse cx="37.2" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="#ff9ec4" opacity="' + o + '"/>' +
-        '<ellipse cx="82.8" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="#ff9ec4" opacity="' + o + '"/>';
+      rx = rx || 5.0; ry = ry || 2.9; cy = cy || 79;
+      return '<ellipse cx="39.5" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="#ff9ec4" opacity="' + o + '"/>' +
+        '<ellipse cx="80.5" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="#ff9ec4" opacity="' + o + '"/>';
     }
     /* 작은 코 포인트 */
     function nose() {
@@ -10723,8 +10724,8 @@
       s += '<circle cx="' + (exL - 1.2) + '" cy="' + (eyeY - 0.2) + '" r="1.35" fill="#ffffff"/>';
       s += '<circle cx="' + (exR - 1.2) + '" cy="' + (eyeY - 0.2) + '" r="1.35" fill="#ffffff"/>';
       s += '<path d="M55 84.4q5-6 10 0" fill="none" stroke="' + mouthC + '" stroke-width="2.6" stroke-linecap="round"/>';
-      s += '<circle cx="34.6" cy="78.6" r="6.6" fill="#ffb3a0" opacity=".5"/>';
-      s += '<circle cx="85.4" cy="78.6" r="6.6" fill="#ffb3a0" opacity=".5"/>';
+      s += '<circle cx="37.2" cy="78.6" r="6.2" fill="#ffb3a0" opacity=".5"/>';
+      s += '<circle cx="82.8" cy="78.6" r="6.2" fill="#ffb3a0" opacity=".5"/>';
       s += '<path d="M88 42q7-4 5-11M95 46q7-4 5-11" fill="none" stroke="#d9c9b6" stroke-width="2.6" stroke-linecap="round"/>';
     } else if (st === 'sad') {
       s += brow('M41 55.6q7 0 12 5.4', 'M79 55.6q-7 0-12 5.4');
@@ -10747,8 +10748,8 @@
     } else if (st === 'shy') {
       s += closedEyes(-5.4);
       s += blush(.92, 7.4, 4.7, 79);
-      s += '<circle cx="35" cy="77.4" r="1.3" fill="#ffffff" opacity=".75"/>';
-      s += '<circle cx="85" cy="77.4" r="1.3" fill="#ffffff" opacity=".75"/>';
+      s += '<circle cx="37.4" cy="77.4" r="1.2" fill="#ffffff" opacity=".75"/>';
+      s += '<circle cx="82.6" cy="77.4" r="1.2" fill="#ffffff" opacity=".75"/>';
       s += '<path d="M56.8 82.4q3.2 3.6 6.4 0" fill="none" stroke="' + mouthC + '" stroke-width="2.2" stroke-linecap="round"/>';
       s += avTwinkle(86, 54, 2.6, '#ffd34d');
       if (girl) s += girlLashes();
@@ -10758,7 +10759,7 @@
       s += '<ellipse cx="' + exL + '" cy="' + (eyeY + 1.4) + '" rx="3.7" ry="2.9" fill="' + dark + '"/>';
       s += '<ellipse cx="' + exR + '" cy="' + (eyeY + 1.4) + '" rx="3.7" ry="2.9" fill="' + dark + '"/>';
       s += '<path d="M56.4 83.8q4.6 2.8 9-1.4" fill="none" stroke="' + mouthC + '" stroke-width="2.6" stroke-linecap="round"/>';
-      s += '<circle cx="85.4" cy="78.4" r="6.4" fill="#ffb3a0" opacity=".5"/>';
+      s += '<circle cx="82.8" cy="78.4" r="6" fill="#ffb3a0" opacity=".5"/>';
       s += '<path d="M90 42q6-3 5-9" fill="none" stroke="#d9c9b6" stroke-width="2.4" stroke-linecap="round"/>';
     } else if (st === 'heart') {
       s += '<polygon points="' + avHeartPts(exL, eyeY, 0.31) + '" fill="#ff5c8a"/>';
@@ -10802,10 +10803,10 @@
       s += '<text x="95" y="38" font-size="9.5" font-weight="900" fill="#b8d4ff" font-family="inherit">z</text>';
       s += blush(.4, 4.8, 2.8, 79.6);
     } else if (st === 'cool') {
-      s += '<rect x="35.4" y="58.6" width="21.4" height="14" rx="6" fill="#2c2440"/>';
-      s += '<rect x="63.2" y="58.6" width="21.4" height="14" rx="6" fill="#2c2440"/>';
-      s += '<path d="M56.8 63.6h6.4" stroke="#2c2440" stroke-width="3.2"/>';
-      s += '<path d="M38.4 61.6l5.4 5.4M66.2 61.6l5.4 5.4" stroke="#ffffff" stroke-width="1.7" opacity=".6" stroke-linecap="round"/>';
+      s += '<rect x="37.4" y="58.8" width="20.4" height="13.6" rx="6" fill="#2c2440"/>';
+      s += '<rect x="62.2" y="58.8" width="20.4" height="13.6" rx="6" fill="#2c2440"/>';
+      s += '<path d="M57.8 63.6h4.4" stroke="#2c2440" stroke-width="3.2"/>';
+      s += '<path d="M40.2 61.8l5.2 5.2M66.4 61.8l5.2 5.2" stroke="#ffffff" stroke-width="1.7" opacity=".6" stroke-linecap="round"/>';
       s += '<path d="M55 82q7 4 13.4-2.6" fill="none" stroke="' + mouthC + '" stroke-width="2.6" stroke-linecap="round"/>';
       s += avTwinkle(92, 48, 3, '#ffffff');
       s += brow('M40.6 56l13-4.4', 'M79.4 56l-13-4.4', '#5a4a3a', 2.4);
@@ -10815,8 +10816,8 @@
       if (girl) {
         s += girlLashes();
         s += blush(.85, 5.6, 3.2, 79.4);
-        s += '<circle cx="35.6" cy="78" r="1.15" fill="#ffffff" opacity=".65"/>';
-        s += '<circle cx="84.4" cy="78" r="1.15" fill="#ffffff" opacity=".65"/>';
+        s += '<circle cx="37.8" cy="78" r="1.1" fill="#ffffff" opacity=".65"/>';
+        s += '<circle cx="82.2" cy="78" r="1.1" fill="#ffffff" opacity=".65"/>';
       } else {
         s += blush(.5, 4.6, 2.8, 79.4);
       }
@@ -10963,6 +10964,8 @@
     var pstyle = poseItem ? poseItem.style : 'stand';
     var motion = (pstyle === 'jump' || pstyle === 'dance' || pstyle === 'wave' || pstyle === 'hero') ? (' ' + pstyle) : '';
     var uid = 'a' + (++AV_GID);
+    /* 머리·모자는 갸름해진 얼굴 폭(31.5~88.5)에 맞춰 가로로 살짝 모아 그려요 */
+    var hx = 'translate(60 0) scale(.877 1) translate(-60 0)';
     var gSkin = 'sk' + uid, gShade = 'sd' + uid, gFace = 'fc' + uid;
     var s = '';
 
@@ -11003,6 +11006,7 @@
     }
 
     /* 긴 머리는 얼굴 뒤로 어깨까지 내려와요 */
+    s += '<g transform="' + hx + '">';
     var bh = 0;
     if (hstyle === 'long' || hstyle === 'wave') bh = 48;
     else if (hstyle === 'pony' || hstyle === 'ribbon') bh = 28;
@@ -11028,6 +11032,7 @@
       }
       s += '<ellipse cx="40" cy="121" rx="5.2" ry="2.6" fill="#ff8fb0"/>';
     }
+    s += '</g>';
 
     /* ---- 다리 (걷기에서 따로 흔들리게 묶어요) ---- */
     var bstyle = bottom ? bottom.style : 'jeans';
@@ -11133,19 +11138,22 @@
     s += '<rect x="54.4" y="90" width="11.2" height="14" rx="4.6" fill="' + darken(skin, .12) + '"/>';
     s += '<rect x="54.4" y="90" width="11.2" height="8" rx="3.4" fill="' + darken(skin, .02) + '"/>';
 
-    /* ---- 얼굴 (통통한 볼 + 부드러운 턱선) ---- */
-    s += '<ellipse cx="28.2" cy="68" rx="6.2" ry="7.8" fill="url(#' + gSkin + ')"/>';
-    s += '<ellipse cx="91.8" cy="68" rx="6.2" ry="7.8" fill="url(#' + gSkin + ')"/>';
-    s += '<path d="M29.6 63.6q3-1.4 3.6 1.6" fill="none" stroke="' + darken(skin, .2) + '" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>';
-    s += '<path d="M90.4 63.6q-3-1.4-3.6 1.6" fill="none" stroke="' + darken(skin, .2) + '" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>';
+    /* ---- 얼굴 (갸름한 계란형 + 부드러운 턱선, 귀는 얼굴 폭에 딱 붙게) ---- */
+    s += '<ellipse cx="29.5" cy="68" rx="5.6" ry="7.6" fill="url(#' + gSkin + ')"/>';
+    s += '<ellipse cx="90.5" cy="68" rx="5.6" ry="7.6" fill="url(#' + gSkin + ')"/>';
+    s += '<path d="M30.6 63.8q2.6-1.2 3 1.4" fill="none" stroke="' + darken(skin, .2) + '" stroke-width="1.4" stroke-linecap="round" opacity=".5"/>';
+    s += '<path d="M89.4 63.8q-2.6-1.2-3 1.4" fill="none" stroke="' + darken(skin, .2) + '" stroke-width="1.4" stroke-linecap="round" opacity=".5"/>';
     s += '<path d="' + avFacePath() + '" fill="url(#' + gSkin + ')"/>';
     s += '<g clip-path="url(#' + gFace + ')">' +
-      '<ellipse cx="60" cy="101" rx="24" ry="12" fill="url(#' + gShade + ')" opacity=".5"/>' +
+      '<ellipse cx="60" cy="100" rx="21.5" ry="11" fill="url(#' + gShade + ')" opacity=".5"/>' +
       '</g>';
     s += avFaceSvg(fstyle, girl, skin);
 
     /* 헤어 (앞머리) — 모양마다 실루엣이 또렷하게 달라요 */
-    var cap = '<path d="M27 53c0-20 15-31 33-31s33 11 33 31z" fill="' + hairC + '"/>';
+    s += '<g transform="' + hx + '">';
+    var cap = '<path d="M27 55.6 C27 34 41 21.6 60 21.6 C79 21.6 93 34 93 55.6 ' +
+      'C89.2 51.8 84.8 50 79.4 50.4 C72.6 51 66 52.2 60 52.6 ' +
+      'C54 52.2 47.4 51 40.6 50.4 C35.2 50 30.8 51.8 27 55.6 Z" fill="' + hairC + '"/>';
     var hairHi = '#ffffff';
     if (hstyle === 'bob') {
       s += '<path d="M26 56c0-21 15-34 34-34s34 13 34 34z" fill="' + hairC + '"/>';
@@ -11160,10 +11168,14 @@
       s += '<path d="M26 56c0-21 15-34 34-34s34 13 34 34z" fill="' + hairC + '"/>';
     } else if (hstyle === 'curly') {
       var curls = [[32, 34], [44, 26], [60, 23], [76, 26], [88, 34], [28, 48], [92, 48]];
+      /* 곱슬 사이로 살갗이 비치지 않게 머리 전체를 한 번 깔아요 */
+      s += '<path d="M27.4 54c0-18.6 14.6-30.4 32.6-30.4S92.6 35.4 92.6 54z" fill="' + hairC + '"/>';
       for (var ci = 0; ci < curls.length; ci++) s += '<circle cx="' + curls[ci][0] + '" cy="' + curls[ci][1] + '" r="9" fill="' + hairC + '"/>';
       s += '<path d="M27 62c0-16 14-26 33-26s33 10 33 26c-8-8-17-12-33-12s-25 4-33 12z" fill="' + hairC + '"/>';
     } else if (hstyle === 'poodle') {
       var pcurls = [[30, 40], [38, 30], [48, 24], [60, 21], [72, 24], [82, 30], [90, 40], [27, 54], [93, 54], [26, 67], [94, 67]];
+      /* 곱슬 사이로 살갗이 비치지 않게 머리 전체를 한 번 깔아요 */
+      s += '<path d="M27.4 56c0-19 14.6-31 32.6-31S92.6 37 92.6 56z" fill="' + hairC + '"/>';
       for (var pc = 0; pc < pcurls.length; pc++) s += '<circle cx="' + pcurls[pc][0] + '" cy="' + pcurls[pc][1] + '" r="8.2" fill="' + hairC + '"/>';
       s += '<path d="M28 64c0-18 14-28 32-28s32 10 32 28c-8-9-18-13-32-13s-24 4-32 13z" fill="' + hairC + '"/>';
     } else if (hstyle === 'buzz') {
@@ -11182,11 +11194,12 @@
       s += '<path d="M25 66c0-25 16-39 35-39s35 14 35 39l-3 8c-2-16-6-22-14-23H42c-8 1-12 7-14 23z" fill="' + hairC + '"/>';
       s += '<path d="M42 44h36" stroke="' + hairHi + '" stroke-width="2.8" opacity=".22"/>';
     } else if (hstyle === 'mohawk') {
-      s += '<path d="M52 41c1-18 15-18 16 0l4 21H48z" fill="' + hairC + '"/>';
-      s += '<path d="M52 27l4-11 5 10 4-9 4 10" fill="' + hairC + '"/>';
-      s += '<path d="M57 30q1 12 0 22" fill="none" stroke="' + hairHi + '" stroke-width="1.8" opacity=".3"/>';
-      s += '<path d="M30 52q8-8 16-6l-3 12H29z" fill="' + hairC + '" opacity=".6"/>';
-      s += '<path d="M74 46q8-2 16 6l1 6H77z" fill="' + hairC + '" opacity=".6"/>';
+      /* 옆머리는 짧게 붙이고 가운데만 세운 크레스트 */
+      s += '<path d="M28 57.6c0-20.4 14.2-31.4 32-31.4s32 11 32 31.4q-6.2-11.4-32-11.4T28 57.6z" fill="' + hairC + '"/>';
+      s += '<path d="M49 44 C49 27 52.6 16.4 60.2 11.8 C67.8 16.4 71 27 71 44 Z" fill="' + hairC + '"/>';
+      s += '<path d="M58 19q1.4 11 1 23" fill="none" stroke="' + hairHi + '" stroke-width="1.8" opacity=".26"/>';
+      s += '<path d="M36.4 40.2q7.8-4.4 13.4-3.4" fill="none" stroke="' + hairHi + '" stroke-width="1.8" opacity=".2"/>';
+      s += '<path d="M83.6 40.2q-7.8-4.4-13.4-3.4" fill="none" stroke="' + hairHi + '" stroke-width="1.8" opacity=".2"/>';
     } else if (hstyle === 'crop') {
       s += '<path d="M28 51.6c0-20.6 14-32.6 32-32.6s32 12 32 32.6c-3-6-7-9-12-10-6 2-13 3-20 3s-14-1-20-3c-5 1-9 4-12 10z" fill="' + hairC + '"/>';
       s += '<path d="M42 33c-3 5-4.4 9-4.6 13" fill="none" stroke="' + hairHi + '" stroke-width="2" opacity=".18"/>';
@@ -11222,7 +11235,6 @@
       s += '<path d="M40 42q20-12 40 0" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".22"/>';
     } else if (hstyle === 'long') {
       s += cap;
-      s += '<path d="M60 30v15" stroke="' + hairHi + '" stroke-width="1.8" opacity=".22"/>';
       s += '<path d="M36 44q12-16 26-13" fill="none" stroke="' + hairHi + '" stroke-width="2.4" opacity=".18"/>';
     } else if (hstyle === 'wave') {
       s += cap;
@@ -11240,13 +11252,21 @@
       s += '<path d="M60 26l-14-9 2 17z" fill="#ff8fb0"/><path d="M60 26l14-9-2 17z" fill="#ff8fb0"/>';
       s += '<circle cx="60" cy="26" r="4.2" fill="#ff6fa1"/>';
     } else {
-      s += '<path d="M28 52.4c0-20.4 14-32.4 32-32.4s32 12 32 32.4c-3-6-7.2-9.2-12-10.4-6 2.4-12.6 3.4-20 3.4s-14-1-20-3.4c-4.8 1.2-9 4.4-12 10.4z" fill="' + hairC + '"/>';
-      s += '<path d="M42 38q18-10 36 0" fill="none" stroke="' + hairHi + '" stroke-width="2.6" opacity=".2"/>';
+      /* 기본 머리 — 이마를 자연스럽게 덮는 앞머리 + 귀 앞으로 내려오는 구레나룻 */
+      s += '<path d="M28.8 66.8 C29.6 62.6 30.6 57.2 32 52.6 ' +
+        'Q35.8 55.6 41.6 56 Q46.2 53.4 50.4 49.8 Q54.4 51.8 58.4 56.2 ' +
+        'Q63 53.8 67.2 50 Q71.6 52 75.6 55.6 Q81 55 84.4 52.4 ' +
+        'C85.6 57.4 86.8 62.6 87.8 66.8 ' +
+        'C90.4 63.6 93.1 58 93.4 52 ' +
+        'C93.4 33.2 78.8 19.6 60 19.6 C41.2 19.6 26.6 33.2 26.6 52 ' +
+        'C26.6 58 27.9 62.8 28.8 66.8 Z" fill="' + hairC + '"/>';
     }
     /* 앞머리 윤기 — 어떤 머리든 머리 위쪽에 한 줄 반짝 */
     s += '<path d="M43.6 38.6q10-8.6 22-8.2" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" opacity=".16"/>';
+    s += '</g>';
 
     /* 모자 · 머리장식 */
+    s += '<g transform="' + hx + '">';
     if (hst === 'cap') {
       s += '<path d="M28 52c0-20 14-30 32-30s32 10 32 30z" fill="' + hatC + '"/>';
       s += '<path d="M28 52h44q10 0 14 5H26z" fill="' + hatC + '" opacity=".85"/>';
@@ -11287,22 +11307,23 @@
       s += '<ellipse cx="62" cy="30" rx="25" ry="10" fill="' + lighten(hatC, .2) + '" opacity=".55" transform="rotate(-8 62 30)"/>';
       s += '<circle cx="89" cy="22" r="3.4" fill="' + darken(hatC, .12) + '"/>';
     }
+    s += '</g>';
 
     /* 안경 · 얼굴 소품 */
     if (ast === 'glasses') {
-      s += '<circle cx="47.4" cy="66" r="10.2" fill="none" stroke="' + accC + '" stroke-width="2.6"/>';
-      s += '<circle cx="72.6" cy="66" r="10.2" fill="none" stroke="' + accC + '" stroke-width="2.6"/>';
-      s += '<path d="M57.6 66h4.8" stroke="' + accC + '" stroke-width="2.6"/>';
-      s += '<path d="M37.2 63l-8.4-3M82.8 63l8.4-3" stroke="' + accC + '" stroke-width="2.2" stroke-linecap="round"/>';
+      s += '<circle cx="48" cy="66" r="9.6" fill="none" stroke="' + accC + '" stroke-width="2.5"/>';
+      s += '<circle cx="72" cy="66" r="9.6" fill="none" stroke="' + accC + '" stroke-width="2.5"/>';
+      s += '<path d="M57.6 66h4.8" stroke="' + accC + '" stroke-width="2.5"/>';
+      s += '<path d="M38.4 63.2l-7.6-2.8M81.6 63.2l7.6-2.8" stroke="' + accC + '" stroke-width="2.1" stroke-linecap="round"/>';
     } else if (ast === 'heartglasses') {
-      s += '<path d="M47.4 59c-4-4-9-1-9 4 0 5 5 8 9 12 4-4 9-7 9-12 0-5-5-8-9-4z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
-      s += '<path d="M72.6 59c-4-4-9-1-9 4 0 5 5 8 9 12 4-4 9-7 9-12 0-5-5-8-9-4z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
-      s += '<path d="M56.6 65h6.8" stroke="' + accC + '" stroke-width="2.4"/>';
+      s += '<path d="M48 59.4c-3.8-3.8-8.4-1-8.4 3.8 0 4.7 4.7 7.6 8.4 11.4 3.7-3.8 8.4-6.7 8.4-11.4 0-4.8-4.6-7.6-8.4-3.8z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
+      s += '<path d="M72 59.4c-3.8-3.8-8.4-1-8.4 3.8 0 4.7 4.7 7.6 8.4 11.4 3.7-3.8 8.4-6.7 8.4-11.4 0-4.8-4.6-7.6-8.4-3.8z" fill="' + accC + '" opacity=".92" stroke="#ffffff" stroke-width="1.4"/>';
+      s += '<path d="M57 65h6" stroke="' + accC + '" stroke-width="2.3"/>';
     } else if (ast === 'starglasses') {
-      s += '<path d="M47.4 57.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
-      s += '<path d="M72.6 57.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
-      s += '<path d="M44.4 65.4l2-2.6M69.6 65.4l2-2.6" stroke="#ffffff" stroke-width="1.4" opacity=".8" stroke-linecap="round"/>';
-      s += '<path d="M57.6 65h4.8" stroke="' + accC + '" stroke-width="2"/>';
+      s += '<path d="M48 57.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
+      s += '<path d="M72 57.6l2.7 5.6 6.1.8-4.4 4.2 1.1 6-5.5-3-5.5 3 1.1-6-4.4-4.2 6.1-.8z" fill="' + accC + '"/>';
+      s += '<path d="M45 65.4l2-2.6M69 65.4l2-2.6" stroke="#ffffff" stroke-width="1.4" opacity=".8" stroke-linecap="round"/>';
+      s += '<path d="M57.4 65h5.2" stroke="' + accC + '" stroke-width="2"/>';
     } else if (ast === 'bag') {
       s += '<path d="M45 102l24 44" stroke="' + accC + '" stroke-width="5" stroke-linecap="round"/>';
       s += '<rect x="62" y="128" width="26" height="20" rx="6" fill="' + accC + '"/>';
@@ -11317,12 +11338,12 @@
     return s;
   }
 
-  /* 어린이 얼굴 — 정원이 아니라 볼이 통통하고 턱이 부드러운 곡선 */
+  /* 어린이 얼굴 — 갸름한 계란형(가로 57) · 볼은 부드럽게, 턱은 살짝 좁게 */
   function avFacePath() {
-    return 'M60 28.4 C47.6 28.4 34.4 34.6 30 45.6 C27.6 51.8 27.2 60.4 27.8 68.2 ' +
-      'C28.6 79.6 33.6 89.2 42.4 94.6 C47.6 97.9 53.6 99.2 60 99.2 ' +
-      'C66.4 99.2 72.4 97.9 77.6 94.6 C86.4 89.2 91.4 79.6 92.2 68.2 ' +
-      'C92.8 60.4 92.4 51.8 90 45.6 C85.6 34.6 72.4 28.4 60 28.4 Z';
+    return 'M60 28.4 C49.8 28.4 39.8 33.2 34.8 43.2 C32.2 48.2 31.26 55.2 31.56 62.2 ' +
+      'C32.1 74 36.4 84.4 43.6 92 C48.2 96.8 53.7 99.2 60 99.2 ' +
+      'C66.3 99.2 71.8 96.8 76.4 92 C83.6 84.4 87.9 74 88.44 62.2 ' +
+      'C88.74 55.2 87.8 48.2 85.4 43.2 C80.2 33.2 70.2 28.4 60 28.4 Z';
   }
 
   function avatarSvg(av, cls) {
