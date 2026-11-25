@@ -18703,6 +18703,7 @@
       gainXp(-XP_MISSION);
       try { renderCoinBadge(); } catch (e4) { /* 무시 */ }
     }
+    saveState();   /* 코인·EXP·진행도까지 바로 저장해요 */
     renderMissionBlock(blkId);
   }
 
@@ -18738,6 +18739,7 @@
       gainXp(-XP_CHECK);
       try { renderCoinBadge(); } catch (e4) { /* 무시 */ }
     }
+    saveState();   /* 코인·EXP·진행도까지 바로 저장해요 */
     renderRoleBlock(blkId);
   }
 
