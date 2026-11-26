@@ -1492,7 +1492,7 @@ function showLogin(mode) {
   renderSyncPill();
 }
 
-/* 문은 가족 허브(../../home/)예요. 이 화면은 허브로 보내고, 필요하면 여기서 바로 로그인할 수 있어요. */
+/* 문은 가족 허브(../home/)예요. 이 화면은 허브로 보내고, 필요하면 여기서 바로 로그인할 수 있어요. */
 function gateHtml(mode) {
   var setup = (mode === 'setup');
   return '<div class="lf">' +
@@ -1808,7 +1808,7 @@ function b64urlDecodeUtf8(s) {
 }
 /* 새 기기 연결 링크는 가족 허브(/home/)의 로그인 화면으로 보내요 */
 function homePortalUrl() {
-  try { return new URL('../../home/', window.location.href).href.replace(/[?#].*$/, ''); }
+  try { return new URL('../home/', window.location.href).href.replace(/[?#].*$/, ''); }
   catch (e) { return 'https://jadenfamily.github.io/home/'; }
 }
 
