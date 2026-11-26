@@ -181,6 +181,13 @@ document.addEventListener('click', function (e) {
   if (act === 'diy-blk-del') { deleteBlock(el.getAttribute('data-blk')); return; }
   if (act === 'diy-blk-up') { moveBlock(el.getAttribute('data-blk'), -1); return; }
   if (act === 'diy-blk-down') { moveBlock(el.getAttribute('data-blk'), 1); return; }
+  if (act === 'diy-nb-add') {
+    /* 한마디 블록에서 바로 새 한마디 카드를 만들어요 (data-sec 가 없으면 블록이 속한 카드 기준) */
+    var nbSecId = el.getAttribute('data-sec') || '';
+    if (!nbSecId) { var nbFind = findBlk(el.getAttribute('data-blk') || ''); if (nbFind) nbSecId = nbFind.sec.id; }
+    addNoticeSection(nbSecId);
+    return;
+  }
   if (act === 'nb-edit') { noticeUi.open = el.getAttribute('data-blk') || ''; renderNoticeBlocks(); return; }
   if (act === 'nb-cancel') { noticeUi.open = ''; renderNoticeBlocks(); return; }
   if (act === 'nb-save') {

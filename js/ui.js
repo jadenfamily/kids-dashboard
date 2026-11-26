@@ -112,6 +112,55 @@ function addSection() {
   showToast('새 섹션을 만들었어요. 블록을 넣어 꾸며 보세요!');
 }
 
+/* 한마디 카드 안의 '＋ 새 한마디 카드 추가' —
+   ⚙️ 전체 설정 → 📐 화면 배치 켜기까지 가지 않아도 한마디 카드를 하나 더 만들 수 있어요.
+   지금 카드 바로 아랫줄에 넣고, 새 카드를 그 자리에서 ✏️ 편집으로 열어 둬요. */
+function addNoticeSection(afterSecId) {
+  if (!can('edit')) return;
+  var list = secList();
+  if (list.length >= SEC_MAX) { showToast('카드는 ' + SEC_MAX + '개까지 만들 수 있어요.'); return; }
+  applySectionRows(list);            /* 예전 배치라 줄·칸이 비어 있으면 먼저 채워요 */
+  var cur = findSec(afterSecId || '');
+  var baseRow = -1;
+  if (cur && typeof cur.row === 'number' && isFinite(cur.row)) baseRow = Math.floor(cur.row);
+  else {
+    /* 기준 카드를 못 찾으면 맨 아래 줄 뒤에 붙여요 */
+    for (var r0 = 0; r0 < list.length; r0++) {
+      if (typeof list[r0].row === 'number' && isFinite(list[r0].row) && Math.floor(list[r0].row) > baseRow) baseRow = Math.floor(list[r0].row);
+    }
+  }
+  /* 새 카드가 들어갈 줄을 비우려고, 그 아래 카드는 한 줄씩 내려요 */
+  for (var i = 0; i < list.length; i++) {
+    if (typeof list[i].row === 'number' && isFinite(list[i].row) && Math.floor(list[i].row) > baseRow) {
+      list[i].row = Math.floor(list[i].row) + 1;
+      list[i].col = normColOf(list[i].col);
+    }
+  }
+  var id = 'sec-' + uid('');
+  var sec = {
+    id: id, base: '', emoji: '💬', title: '한마디', width: 'half', w: 'half', wPx: 0, row: baseRow + 1, col: 'left', hidden: false,
+    blocks: [{ id: uid('blk'), type: 'notice_board', group: '', title: '오늘의 한마디', emoji: '💬', text: '' }]
+  };
+  /* 지금 카드 바로 뒤 자리에 넣어요 */
+  var at = list.length;
+  if (cur) { for (i = 0; i < list.length; i++) if (list[i] === cur) { at = i + 1; break; } }
+  list.splice(at, 0, sec);
+  ui.inlineEditSecId = id;           /* 새 카드를 바로 고칠 수 있게 열어 둬요 */
+  state.settings.dashboardSections = applySectionRows(list);
+  syncSectionMirrors(state);
+  saveAndPush();
+  renderSections();
+  /* ⚙️ 전체 설정을 닫힌 상태로 그리는 renderEditPanel 은 인라인 편집 표시를 지우니 부르지 않아요 */
+  try {
+    var el = document.querySelector('#sections .sec[data-sec="' + id + '"]');
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center' });
+    /* 제목 칸에 바로 커서를 놓아요 — 누르자마자 한마디를 적을 수 있게요 */
+    var t = document.querySelector('#sections .sec[data-sec="' + id + '"] [data-field="diyNbTitle"]');
+    if (t) { t.focus(); if (t.select) t.select(); }
+  } catch (e) { /* 무시 */ }
+  showToast('💬 새 한마디 카드를 만들었어요. 제목·문구를 적고 💾 저장을 누르면 가족 기기에도 보여요.');
+}
+
 function deleteSection(id) {
   if (!can('edit')) return;
   var sec = findSec(id);
@@ -733,6 +782,8 @@ function inlineBlockEditorHtml(sec, blk, idx, total) {
       '<input class="inp inp-sm" data-field="diyNbTitle" data-blk="' + esc(blk.id) + '" value="' + esc(blk.title || '') + '" maxlength="24" placeholder="제목" aria-label="게시판 제목">' +
       '</div>' +
       '<textarea class="inp nb-text-inp" data-field="diyNbText" data-blk="' + esc(blk.id) + '" rows="3" maxlength="400" placeholder="가족에게 남길 한마디를 적어 주세요">' + esc(blk.text || '') + '</textarea>';
+    /* 한마디 카드도 여기서 바로 하나 더 만들 수 있어요 (루틴의 '＋ 그룹 추가'와 같은 자리) */
+    h += '<button class="add-item" type="button" data-act="diy-nb-add" data-sec="' + esc(sec.id) + '" data-blk="' + esc(blk.id) + '">＋ 새 한마디 카드 추가</button>';
   } else if (blk.type === 'today_schedule') {
     var ti = new Date().getDay();
     h += '<p class="il-note">' + DAY_NAMES[ti] + '요일 일정이에요. 적은 내용은 오늘의 일정 카드에 바로 보여요.</p>';
