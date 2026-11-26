@@ -697,7 +697,50 @@ function installAudioUnlock() {
   document.addEventListener('touchstart', firstTouch, opts);
   document.addEventListener('mousedown', firstTouch, opts);
   document.addEventListener('keydown', firstTouch, { capture: true });
+  startAudioKeepAlive();
 }
+
+/* ---- 소리 세션 계속 깨어 있게 ----
+   첫 터치로 풀린 AudioContext 도 오랫동안 소리가 없으면 브라우저가 잠들게 해요.
+   (안드로이드 크롬·아이폰 사파리 모두, 특히 화면을 껐다 켜거나 다른 앱을 다녀오면요)
+   잠든 채로 30분·10분 알림을 지나 0분 알림이 오면 <audio>.play() 가 막혀서
+   또 🔊 소리 켜기를 눌러야 소리가 났어요.
+   → 한 번이라도 터치해서 잠금이 풀린 기기라면 화면이 보이는 동안 25초마다
+     아주 짧은 무음을 흘려 세션을 깨어 있게 둬요. (무음이라 소리는 새지 않아요) */
+var audioKeep = { timer: 0, at: 0 };
+function audioKeepTick() {
+  try {
+    if (!mediaWarm.done) return;        /* 아직 한 번도 안 눌렀으면 풀 수 없어요 */
+    if (document.hidden) return;        /* 화면이 꺼져 있으면 굳이 깨우지 않아요 */
+    unlockAudio();
+    audioKeep.at = Date.now();
+    try { document.documentElement.setAttribute('data-h50-keep', String(audioKeep.at)); } catch (e) { /* 무시 */ }
+    /* <audio> 쪽도 가끔 무음으로 다시 잡아 둬요 (4분에 한 번, 소리가 나는 중이면 건너뜀) */
+    if (!melodyPlaying() && (Date.now() - mediaWarm.at) > 240000) {
+      mediaWarm.at = Date.now();
+      warmAlertAudio('keep');
+    }
+  } catch (e) { /* 무시 */ }
+}
+function startAudioKeepAlive() {
+  if (audioKeep.timer) return;
+  audioKeep.timer = window.setInterval(audioKeepTick, 25000);
+  /* 탭·앱으로 돌아오면 바로 한 번 더 깨워요 (돌아온 직후 알림이 와도 소리가 나게) */
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) audioKeepTick();
+  });
+  window.addEventListener('focus', function () { audioKeepTick(); });
+}
+/* 점검용: 세션 유지 상태 (화면에는 안 보여요) */
+try {
+  document.documentElement.h50Keep = function () {
+    return {
+      on: !!audioKeep.timer, at: audioKeep.at,
+      state: audioCtx ? String(audioCtx.state || '') : '',
+      mediaWarm: !!(mediaWarm && mediaWarm.done), pcm: h50BufPlaying()
+    };
+  };
+} catch (e) { /* 무시 */ }
 
 /* ---------------- 주기 작업 ---------------- */
 function phaseTick() {
@@ -990,6 +1033,15 @@ function closeTargetAlert() {
   tamOpen = null;
   tamSoundId = '';
   stopTargetMelody();
+  /* '확인'을 누른 그 손가락 안에서 오디오 세션을 다시 풀어 둬요.
+     그래야 30분·10분 알림을 지나 0분 알림이 올 때 버튼 없이 바로 울려요.
+     (확인을 누르는 순간이 브라우저가 '사용자가 눌렀다'고 인정하는 마지막 순간이에요) */
+  try { unlockAudio(); } catch (e) { /* 무시 */ }
+  try { warmAlertAudio('confirm'); } catch (e) { /* 무시 */ }
+  try {
+    if (mediaWarm) { mediaWarm.done = true; mediaWarm.at = Date.now(); }
+    document.documentElement.setAttribute('data-audio-rewarm', String(Date.now()));
+  } catch (e) { /* 무시 */ }
   if (isOnlyModal('targetAlertModal')) unlockScroll();
 }
 
@@ -1021,9 +1073,16 @@ function targetAlertWarmup() {
       var c = state.categories[i];
       if (!hhmmValid(c.targetTime) || !activeDay(c, dow)) continue;
       var left = hhmmMinutes(c.targetTime) - now;
-      if (left <= 0 || left > 1) continue;      /* 딱 60초 안쪽일 때만 */
-      key = c.id + '|' + c.targetTime;
-      break;
+      /* 30분·10분·0분 — 어떤 알림이든 그 60초 전이면 미리 깨워 둬요.
+         알림이 바로 앞에 없어도 목표 시간 1분 전이면 예전처럼 한 번 깨워 둬요. */
+      for (var mi = 0; mi < TAM_MARKS.length; mi++) {
+        var mark = TAM_MARKS[mi];
+        if (!(left > mark && left <= mark + 1)) continue;
+        key = c.id + '|' + c.targetTime + '|' + mark;
+        break;
+      }
+      if (!key && left > 0 && left <= 1) key = c.id + '|' + c.targetTime + '|near';
+      if (key) break;
     }
     if (!key) return;
     if (key === tamWarmKey && (Date.now() - tamWarmAt) < 40000) return;   /* 40초에 한 번만 */
@@ -1481,6 +1540,124 @@ function alertWavUrl(id) {
   } catch (e) { return ''; }
 }
 
+/* ---- <audio> 자동재생이 막혔을 때: 고른 소리를 Web Audio PCM 버퍼로 ----
+   브라우저가 한동안 손대지 않은 <audio>.play() 를 막아도, 첫 터치·'확인'으로 풀어 둔
+   AudioContext 가 아직 깨어 있으면 같은 소리를 그대로 틀 수 있어요.
+   (예전엔 여기서 하와이 파이브오 신시사이저로 넘어가서, 차임벨을 골랐어도 하와이가 났어요) */
+var h50Buf = { src: null, gain: null, id: '', at: 0 };
+var h50BufCache = {};      /* id → { ctx, buffer } — AudioContext 가 바뀌면 다시 만들어요 */
+
+function h50BufPlaying() { return !!h50Buf.src; }
+
+/* 내가 올린 소리(주소·파일)는 PCM 으로 만들 수 없어요 — 내장 소리만 */
+function alertSoundPcmAllowed(id) {
+  if (!id) return false;
+  try { if (customAlertSound(id)) return false; } catch (e) { /* 무시 */ }
+  return true;
+}
+
+function h50BufferFor(ctx, id) {
+  var c = h50BufCache[id];
+  if (c && c.ctx === ctx && c.buffer) return c.buffer;
+  if (!alertSoundPcmAllowed(id)) return null;
+  var samples = null;
+  try { samples = alertSoundSamples(id); } catch (e) { samples = null; }
+  if (!samples || !samples.length) return null;
+  var buf = ctx.createBuffer(1, samples.length, H50_SR);
+  var ch = buf.getChannelData(0);
+  if (ch.set) ch.set(samples);
+  else { for (var i = 0; i < samples.length; i++) ch[i] = samples[i]; }
+  h50BufCache[id] = { ctx: ctx, buffer: buf };
+  return buf;
+}
+
+/* 점검용 표시 — 화면에는 안 보여요 */
+function h50StampPcm(id) {
+  try {
+    var d = document.documentElement;
+    d.setAttribute('data-h50-play', 'playing');
+    d.setAttribute('data-h50-sound', id);
+    d.setAttribute('data-h50-source', 'pcm');
+    d.setAttribute('data-h50-pcm', id);
+    d.removeAttribute('data-h50-wav');
+    d.removeAttribute('data-h50-mp3');
+    d.removeAttribute('data-h50-src');
+  } catch (e) { /* 무시 */ }
+}
+
+function h50BufStop() {
+  var b = h50Buf;
+  h50Buf = { src: null, gain: null, id: '', at: 0 };
+  try { document.documentElement.removeAttribute('data-h50-pcm'); } catch (e) { /* 무시 */ }
+  if (!b.src) return;
+  var ctx = audioCtx;
+  try { b.src.onended = null; } catch (e) { /* 무시 */ }
+  try {
+    if (ctx && b.gain) {
+      var g = b.gain.gain, t = ctx.currentTime;
+      g.cancelScheduledValues(t);
+      g.setValueAtTime(Math.max(0.0001, g.value), t);
+      g.exponentialRampToValueAtTime(0.0001, t + 0.08);
+    }
+    b.src.stop((ctx ? ctx.currentTime : 0) + 0.12);
+  } catch (e) { /* 무시 */ }
+  try { b.src.disconnect(); } catch (e) { /* 무시 */ }
+  try { if (b.gain) b.gain.disconnect(); } catch (e) { /* 무시 */ }
+}
+
+/* AudioContext 가 지금 바로 소리를 낼 수 있나 */
+function h50PcmReady() {
+  try {
+    if (!audioCtx) return false;
+    if (audioCtx.state !== 'running' && audioCtx.resume) {
+      try { audioCtx.resume(); } catch (e) { /* 무시 */ }
+    }
+    return audioCtx.state === 'running';
+  } catch (e) { return false; }
+}
+
+/* PCM 버퍼로 재생 — 틀었으면 true. (loop 면 '확인'을 누를 때까지 반복)
+   <audio> 가 막혔을 때만 불러요 — 고른 알림 소리를 그대로 들려줘야 하니까요. */
+function h50PlayPcm(want) {
+  var id = (want && want.id) || alertSoundId();
+  if (!h50PcmReady()) return false;
+  var ctx = audioCtx, buf = null;
+  try { buf = h50BufferFor(ctx, id); } catch (e) { buf = null; }
+  if (!buf) return false;
+  try {
+    h50BufStop();
+    var gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.85, ctx.currentTime + 0.06);
+    gain.connect(ctx.destination);
+    var src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = !!(want && want.loop);
+    src.connect(gain);
+    src.onended = function () {
+      if (h50Buf.src !== src || src.loop) return;
+      h50Buf = { src: null, gain: null, id: '', at: 0 };
+      h50AudioOn = false;
+      h50Want = null;
+      try { document.documentElement.removeAttribute('data-h50-pcm'); } catch (e) { /* 무시 */ }
+      try { document.documentElement.setAttribute('data-h50-play', 'stopped'); } catch (e) { /* 무시 */ }
+      if (!h50.on) h50SetState('off');
+      try { updateSoundUi(); } catch (e) { /* 무시 */ }
+    };
+    h50Buf = { src: src, gain: gain, id: id, at: Date.now() };
+    src.start(0);
+    h50AudioOn = true;
+    h50Want = want || { id: id, loop: false, maxMs: 0, canFallback: false, no: ++h50Try };
+    h50SetState('on');      /* 'on' 이면 🔊 소리 켜기 버튼은 숨어요 */
+    h50StampPcm(id);
+    h50ArmStop(h50Want);
+    return true;
+  } catch (e) {
+    h50BufStop();
+    return false;
+  }
+}
+
 /* 🎺 하와이 파이브오 — 진짜 오프닝 테마(MP3).
    · 로그인한 기기는 비공개 저장소에 넣어 둔 원본 음원을 한 번 받아 메모리에 들고 있다가 바로 틀어요.
    · 외부 사이트 주소는 기기에 따라 인증서·연결이 막히고 늦어서, 마지막 순서로만 남겨 둬요. */
@@ -1613,7 +1790,8 @@ try {
     return {
       src: el ? String(el.src || '') : '', paused: el ? !!el.paused : true,
       currentTime: el ? Number(el.currentTime || 0) : 0, loop: el ? !!el.loop : false,
-      duration: el ? Number(el.duration || 0) : 0, on: h50AudioOn
+      duration: el ? Number(el.duration || 0) : 0, on: h50AudioOn,
+      pcm: h50BufPlaying(), pcmId: h50Buf.id || ''
     };
   };
   /* 점검용: 소리 멈추기 (화면에는 안 보여요) */
@@ -1700,19 +1878,20 @@ function h50ArmStop(want) {
 }
 
 /* .wav/MP3 재생 → 아예 못 틀면 false (부르는 쪽이 신시사이저로 넘어가요)
-   · 주소(MP3)로 트는 소리는 실패하면 직접 만든 .wav로 한 번 더 시도해요 */
+   · 주소(MP3)로 트는 소리는 실패하면 직접 만든 .wav로 한 번 더 시도해요
+   · <audio> 가 막히면(자동재생 제한) 깨어 있는 AudioContext 로 같은 소리를 PCM 재생해요 */
 function h50PlayWav(loop, maxMs, id) {
   id = id || alertSoundId();
   var el = h50Audio(), src = alertSoundSrc(id), wav = alertWavUrl(id);
-  if (!el || !src) return false;
-  if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
   /* 진짜 음원(blob MP3·올린 소리)이 안 열리면 내장 .wav로 이어서 틀어요.
      이미 .wav로 트는 중이면 같은 소리를 또 대체하지 않아요. */
   var want = { id: id, loop: !!loop, maxMs: maxMs || 0, canFallback: !!(wav && src !== wav), no: ++h50Try };
+  if (!el || !src) return h50PlayPcm(want);      /* <audio> 자체가 없으면 Web Audio 로 */
+  if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
   h50Want = want;
   h50MarkFallback(false);
   var p = playWav(el, src, loop);
-  if (p === null) return want.canFallback ? h50PlayFallback(want) : false;
+  if (p === null) return want.canFallback ? h50PlayFallback(want) : h50PlayPcm(want);
   h50AudioOn = true;
   h50SetState('on');
   h50Stamp(id, src);
@@ -1725,6 +1904,7 @@ function h50PlayWav(loop, maxMs, id) {
       h50Want = null;
       h50AudioOn = false;
       try { document.documentElement.setAttribute('data-h50-play', 'blocked'); } catch (e) { /* 무시 */ }
+      if (h50PlayPcm(want)) return;                     /* 고른 소리를 Web Audio 로 */
       if (!h50.on) h50Start();
     });
   }
@@ -1732,14 +1912,14 @@ function h50PlayWav(loop, maxMs, id) {
   return true;
 }
 
-/* 진짜 음원(MP3)이 안 될 때 — 직접 만든 .wav로 이어서 틀어요. 그것도 안 되면 신시사이저.
+/* 진짜 음원(MP3)이 안 될 때 — 직접 만든 .wav로 이어서 틀어요. 그것도 안 되면 PCM → 신시사이저.
    (아이폰 무음 스위치에서도 들리는 쪽은 여전히 <audio>예요) */
 function h50PlayFallback(want) {
   var id = want.id, el = h50Audio(), wav = alertWavUrl(id);
   var next = { id: id, loop: want.loop, maxMs: want.maxMs, canFallback: false, no: ++h50Try };
   h50Want = next;
   h50MarkFallback(true);
-  if (!el || !wav) { if (!h50.on) h50Start(); return false; }
+  if (!el || !wav) return h50PlayPcm(next);
   if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
   try { el.pause(); } catch (e) { /* 무시 */ }
   var p = playWav(el, wav, next.loop);
@@ -1754,6 +1934,7 @@ function h50PlayFallback(want) {
       h50Want = null;
       h50AudioOn = false;
       try { document.documentElement.setAttribute('data-h50-play', 'blocked'); } catch (e) { /* 무시 */ }
+      if (h50PlayPcm(next)) return;
       if (!h50.on) h50Start();
     });
   }
@@ -1765,6 +1946,7 @@ function stopWavMelody() {
   if (h50AudioStop) { window.clearTimeout(h50AudioStop); h50AudioStop = 0; }
   h50AudioOn = false;
   h50Want = null;
+  h50BufStop();
   var el = h50AudioEl;
   if (el) {
     try { el.pause(); } catch (e) { /* 무시 */ }
@@ -1776,10 +1958,11 @@ function stopWavMelody() {
 
 function melodyPlaying() { return h50AudioOn || h50.on; }
 
-/* 알림 멜로디 재생 — 1순위 .wav/올린 소리, 2순위 신시사이저 */
+/* 알림 멜로디 재생 — 1순위 .wav/올린 소리, 2순위 Web Audio PCM, 3순위 신시사이저 */
 function playTargetMelody(loop, maxMs, id) {
   id = id || (tamOpen ? tamSoundId : '') || alertSoundId();
   if (h50PlayWav(loop, maxMs, id)) return true;
+  if (h50PlayPcm({ id: id, loop: !!loop, maxMs: maxMs || 0, canFallback: false, no: ++h50Try })) return true;
   return h50Start();
 }
 
