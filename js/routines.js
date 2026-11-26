@@ -659,22 +659,37 @@ function warmMediaElement(el, tag) {
   try {
     if (h50AudioOn || h50Want) return false;
     if (!el.paused && !el.ended) return false;
+    /* 같은 순간에 두 번 걸지 않아요 (pointerdown·touchstart 가 잇달아 와도 한 번만)
+       단 3초가 지나면 풀어 둬요 — 응답이 안 오는 기기라도 다음 터치에 다시 시도할 수 있게 */
+    var now = Date.now();
+    if (el.__warmBusy && (now - (el.__warmAt || 0)) < 3000) return false;
     try { el.setAttribute('playsinline', ''); } catch (e0) { /* 무시 */ }
     if (el.getAttribute('src') !== src) el.src = src;
-    var settle = function () {
+    el.__warmBusy = true;
+    el.__warmAt = now;
+    /* 진짜로 <audio>.play() 가 성공했을 때만 '이 기기에서 소리가 풀렸다'고 표시해요.
+       실패하면(구형 안드로이드 크롬이 이 터치를 안 쳐줘서) 다음 터치(touchend·click)에서 다시 시도해요. */
+    var settle = function (ok) {
+      el.__warmBusy = false;
       try {
-        if (String(el.getAttribute('src') || '') !== src) return;
-        if (h50AudioOn || h50Want) return;
-        el.pause();
-        el.currentTime = 0;
+        if (ok && !h50AudioOn && !h50Want && String(el.getAttribute('src') || '') === src) {
+          el.pause();
+          el.currentTime = 0;
+        }
       } catch (e1) { /* 무시 */ }
-      try { document.documentElement.setAttribute('data-media-warm', tag || '1'); } catch (e2) { /* 무시 */ }
+      if (ok) {
+        mediaWarm.done = true;
+        mediaWarm.at = Date.now();
+        try { document.documentElement.setAttribute('data-media-warm', tag || '1'); } catch (e2) { /* 무시 */ }
+      } else if (tag === 'touch') {
+        mediaWarm.done = false;
+      }
     };
     var p = el.play();
-    if (p && p.then) p.then(settle, function () { if (tag === 'touch') mediaWarm.done = false; });
-    else settle();
+    if (p && p.then) p.then(function () { settle(true); }, function () { settle(false); });
+    else settle(true);
     return true;
-  } catch (e) { return false; }
+  } catch (e) { try { el.__warmBusy = false; } catch (e2) { /* 무시 */ } return false; }
 }
 
 function warmAlertAudio(tag) {
@@ -685,18 +700,26 @@ function warmAlertAudio(tag) {
 
 function installAudioUnlock() {
   var opts = { capture: true, passive: true };
-  /* 첫 터치 한 번이면 Web Audio 와 <audio> 를 함께 풀어 둬요 */
-  function firstTouch() {
-    unlockAudio();
+  /* 화면을 누를 때마다 Web Audio 와 알림음 <audio> 를 함께 풀어 둬요.
+     · 손가락이 '닿는 순간'(pointerdown·touchstart)과 '떼는 순간'(touchend·click)을 모두 들어요.
+       구형 안드로이드 크롬(7.0 태블릿 등)은 닿는 순간을 진짜 터치로 쳐주지 않고
+       떼는 순간만 쳐줘서, 예전에는 화면을 눌러도 소리가 안 풀리고
+       알림창의 🔊 소리 켜기 버튼을 또 눌러야 했어요. (버튼은 click 이라 그때 풀렸어요) */
+  function onGesture() {
+    /* 아직 안 깨어 있으면 풀어 봐요 — 깨어난 뒤에는 조용히 넘어가요 */
+    if (!audioCtx || audioCtx.state !== 'running') unlockAudio();
+    /* 웜업이 '진짜로 성공'할 때까지 누를 때마다 다시 시도해요.
+       성공하면 warmMediaElement 의 settle 안에서 mediaWarm.done = true 가 돼요. */
     if (mediaWarm.done) return;
-    mediaWarm.done = true;      /* 성공/실패와 상관없이 매 터치마다 되풀이하지는 않아요 */
     mediaWarm.at = Date.now();
-    warmAlertAudio('touch');    /* 손가락이 닿은 그 순간에 (iOS 는 같은 순간이어야 풀려요) */
+    warmAlertAudio('touch');
   }
-  document.addEventListener('pointerdown', firstTouch, opts);
-  document.addEventListener('touchstart', firstTouch, opts);
-  document.addEventListener('mousedown', firstTouch, opts);
-  document.addEventListener('keydown', firstTouch, { capture: true });
+  document.addEventListener('pointerdown', onGesture, opts);
+  document.addEventListener('touchstart', onGesture, opts);
+  document.addEventListener('touchend', onGesture, opts);
+  document.addEventListener('mousedown', onGesture, opts);
+  document.addEventListener('click', onGesture, opts);
+  document.addEventListener('keydown', onGesture, { capture: true });
   startAudioKeepAlive();
 }
 
@@ -710,13 +733,16 @@ function installAudioUnlock() {
 var audioKeep = { timer: 0, at: 0 };
 function audioKeepTick() {
   try {
-    if (!mediaWarm.done) return;        /* 아직 한 번도 안 눌렀으면 풀 수 없어요 */
+    /* 한 번이라도 터치가 먹혀 AudioContext 가 깨어 있으면, <audio> 웜업이 실패했더라도
+       계속 깨워 둬요 — 그러면 알림은 PCM 으로 저절로 울려요. (구형 안드로이드 대비) */
+    var ctxUp = !!(audioCtx && audioCtx.state === 'running');
+    if (!mediaWarm.done && !ctxUp) return;   /* 아직 한 번도 안 눌렀으면 풀 수 없어요 */
     if (document.hidden) return;        /* 화면이 꺼져 있으면 굳이 깨우지 않아요 */
     unlockAudio();
     audioKeep.at = Date.now();
     try { document.documentElement.setAttribute('data-h50-keep', String(audioKeep.at)); } catch (e) { /* 무시 */ }
     /* <audio> 쪽도 가끔 무음으로 다시 잡아 둬요 (4분에 한 번, 소리가 나는 중이면 건너뜀) */
-    if (!melodyPlaying() && (Date.now() - mediaWarm.at) > 240000) {
+    if (mediaWarm.done && !melodyPlaying() && (Date.now() - mediaWarm.at) > 240000) {
       mediaWarm.at = Date.now();
       warmAlertAudio('keep');
     }
@@ -1610,7 +1636,11 @@ function h50PcmReady() {
   try {
     if (!audioCtx) return false;
     if (audioCtx.state !== 'running' && audioCtx.resume) {
-      try { audioCtx.resume(); } catch (e) { /* 무시 */ }
+      try {
+        var pr = audioCtx.resume();
+        /* 아직 터치가 없어 못 깨우면 조용히 넘어가요 (콘솔에 오류를 남기지 않게) */
+        if (pr && pr.catch) pr.catch(function () { /* 무시 */ });
+      } catch (e) { /* 무시 */ }
     }
     return audioCtx.state === 'running';
   } catch (e) { return false; }
