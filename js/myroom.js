@@ -558,7 +558,7 @@ function wallMatrix(from, to, t, h) {
   var len = Math.sqrt(dx * dx + dy * dy) || 1;
   var ux = dx / len, uy = dy / len;
   var ox = from[0] + ux * len * t, oy = from[1] + uy * len * t - (h || 0);
-  return 'matrix(' + ux.toFixed(4) + ' ' + uy.toFixed(4) + ' 0 -1 ' + ox.toFixed(1) + ' ' + oy.toFixed(1) + ')';
+  return 'matrix(' + ux.toFixed(4) + ' ' + uy.toFixed(4) + ' 0 1 ' + ox.toFixed(1) + ' ' + oy.toFixed(1) + ')';
 }
 
 function wallDecorSvg(it, a, b, c) {
