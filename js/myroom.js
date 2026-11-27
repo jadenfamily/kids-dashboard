@@ -606,7 +606,9 @@ function wallDecorSvg(it, a, b, c) {
     g += '<text x="0" y="-25" font-size="24" text-anchor="middle">' + ic + '</text>';
     g += '<circle cx="0" cy="-6" r="2.2" fill="' + darken(c1, .3) + '"/>';
   }
-  return '<g class="room-decor' + (roomUi.dsel === it.u ? ' on' : '') + '" data-act="room-decor-select" data-u="' + esc(it.u) + '" transform="' + tf + '">' + g + '</g>';
+  /* 탭 영역을 그림보다 조금 넓혀요 — 손가락으로 눌렀을 때 잘 안 잡히던 문제를 줄여요 */
+  var hit = '<rect x="-32" y="-64" width="64" height="72" fill="transparent" pointer-events="all"/>';
+  return '<g class="room-decor' + (roomUi.dsel === it.u ? ' on' : '') + '" data-act="room-decor-select" data-u="' + esc(it.u) + '" transform="' + tf + '">' + hit + g + '</g>';
 }
 
 function roomRand(i) {
@@ -891,6 +893,9 @@ function roomFloorBarHtml() {
   }
   h += '</div>';
   h += '<span class="rt-tag floor-tag" aria-label="지금 층 컨셉">' + th.icon + ' ' + esc(th.name) + '</span>';
+  var decoN = (fl.wallItems || []).length;
+  var decoMax = 2 * wallSlotCount(fl.size);
+  h += '<span class="rt-tag" aria-label="벽 장식 개수">🖼 벽 장식 ' + decoN + '/' + decoMax + '개</span>';
   h += '<span class="shop-coin" id="roomCoins">' + coinSvg() + ' ' + fmtNum(prof().coins) + '</span>';
   h += '</div>';
   return h;
@@ -965,7 +970,10 @@ function roomPanelHtml() {
       }
       if (!anyDeco) h += '<p class="spend-empty">아직 벽 장식이 없어요. 상점에서 골라 보세요!</p>';
       h += '</div>';
-      h += '<p class="lf-note">' + (fl.wallItems || []).length + '개를 벽에 걸었어요. 벽에 걸린 장식을 누르면 치울 수 있어요.</p>';
+      var decoN2 = (fl.wallItems || []).length;
+      var decoMax2 = 2 * wallSlotCount(fl.size);
+      h += '<p class="lf-note">벽 장식 ' + decoN2 + '개 / 최대 ' + decoMax2 + '개 · 벽에 걸린 장식을 누르면 치울 수 있어요.</p>';
+      if (decoN2 > 0) h += '<button type="button" class="pill-btn shop-jump" data-act="room-decor-reset">🧹 벽장식 초기화 (모두 치우기)</button>';
       h += '<button type="button" class="pill-btn warm shop-jump" data-act="shop-open" data-shop-tab="room">🖼 벽 장식 상점 가기</button>';
     } else {
       h += '<div class="rp-grid">';
@@ -1452,6 +1460,18 @@ function roomDecorRemoveSel() {
       return;
     }
   }
+}
+
+/* 벽 장식 초기화 — 지금 층에 걸린 벽 장식을 모두 치워요 */
+function roomDecorResetAll() {
+  var fl = curFloor();
+  var n = (fl.wallItems || []).length;
+  if (!n) return;
+  fl.wallItems = [];
+  roomUi.dsel = '';
+  roomUi.msg = '벽 장식 ' + n + '개를 모두 치웠어요.';
+  saveState();
+  renderRoom();
 }
 
 /* 새 층 올리기 (층 수 제한 없음) */
