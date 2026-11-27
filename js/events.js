@@ -338,6 +338,7 @@ document.addEventListener('click', function (e) {
   if (act === 'room-size-up') { roomSizeUp(); return; }
   if (act === 'room-decor-place') { roomPlaceDecor(el.getAttribute('data-id')); return; }
   if (act === 'room-decor-remove') { roomDecorRemoveSel(); return; }
+  if (act === 'room-decor-reset') { roomDecorResetAll(); return; }
   if (act === 'room-decor-select') { roomUi.dsel = el.getAttribute('data-u'); roomUi.sel = ''; renderRoom(); return; }
   if (act === 'room-storage') { roomUi.panel = (roomUi.panel === 'storage' ? 'main' : 'storage'); renderRoom(); return; }
   if (act === 'room-pets') { roomUi.panel = (roomUi.panel === 'pets' ? 'main' : 'pets'); renderRoom(); return; }
